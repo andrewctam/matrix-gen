@@ -1,10 +1,125 @@
 import React from 'react';
+import Row from './Row.js';
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {matrix: [["", ""], ["", ""]], sparseVal: "0"}
     }
+    render() {
+        var matrixTable = this.state.matrix.map((x, i) => <Row  rows = {this.state.matrix.length} 
+                                                                cols = {this.state.matrix[0].length}
+                                                                tryToDelete = {this.tryToDelete}
+                                                                addRows = {this.addRows} 
+                                                                addCols = {this.addCols} 
+                                                                updateEntry = {this.updateEntry}
+                                                                boxes={x} row = {i} />)
+        return (
+        <div>
+            <table className = "table table-bordered table-hover" >
+                <tbody>
+                    {matrixTable}
+                </tbody>
+            </table>
+        <textarea readonly className="output" value = {this.matrixToString(this.state.matrix)} />
+        <p>Interpret empty entires (excluding last row and column) as <ParameterInput defaultVal = {0} id={0} updateParameter={this.updateParameter}/></p>
+        </div>)
+    }
+
+    handleFocus = (e) => {
+        e.target.select();
+    }
+
+    tryToDelete = (row, col) => {
+        var temp = this.state.matrix;
+        var toDelete = true;
+        
+        //{{1,1,1,1},
+        // {0,0,0,0}, row
+        // {1,1,1,1}}
+        //Try to Delete an Empty Row
+        console.log(col)
+        for (var i = 0; i < this.state.matrix[0].length; i++) {
+            if (this.state.matrix[row][i] !== "") {
+                toDelete = false;
+                break;
+            }
+                
+        }
+        if (toDelete)
+            temp.splice(row, 1);
+
+
+                
+       //      col
+        //{{1,1,0,1},
+        // {1,1,0,1},
+        // {1,1,0,1}}
+        var toDelete = true;
+        for (var i = 0; i < this.state.matrix.length; i++) {
+            if (this.state.matrix[i][col] !== ""){
+                toDelete = false;
+                break;
+            }
+        }
+
+        if (toDelete)
+            for (var i = 0; i < temp.length; i++) {
+                temp[i].splice(col, 1); //delete cols
+            } 
+        
+
+
+
+        
+
+        this.setState({matrix: temp, sparseVal: this.state.sparseVal});        
+
+    }
+
+    
+    updateEntry = (i, j, val) => {
+        var temp = this.state.matrix;
+        temp[i][j] = val;
+
+        this.setState({matrix: temp, sparseVal: this.state.sparseVal});        
+    }
+    
+    addCols = (num) => {
+        var temp = this.state.matrix;
+        for (var i = 0; i < temp.length; i++) {
+            for (var j = 0; j < num; j++)
+                temp[i].push("")
+        }
+
+        this.setState({matrix: temp, sparseVal: this.state.sparseVal});  
+    }
+
+    addRows = (num) => {
+        var emptyRow = [];
+        for (var i = 0; i < this.state.matrix[0].length; i++) {
+            emptyRow.push("");
+        }
+
+        var temp = this.state.matrix;
+        for (var i = 0; i < num; i++) {
+            temp.push(emptyRow)
+        }
+
+        this.setState({matrix: temp, sparseVal: this.state.sparseVal});  
+    }
+
+    updateParameter = (i, updated) => {
+        switch (i) {
+            case 0:
+                this.setState({matrix: this.state.matrix, sparseVal: updated});  
+                break;
+                
+            default: break;
+  
+        }
+    }
+
     matrixToString() {
         var start = "{";
         var end = "}";
@@ -33,127 +148,10 @@ class App extends React.Component {
         return result + end;
 
     }
-    render() {
-        var matrixTable = this.state.matrix.map((x, i) => <Row  rows = {this.state.matrix[0].length} 
-                                                                cols = {this.state.matrix.length}
-                                                                addRows = {this.addRows} 
-                                                                addCols = {this.addCols} 
-                                                                updateEntry = {this.updateEntry}
-                                                                boxes={x} col = {i} />)
-        return (
-        <div>
-            <table className = "table table-bordered table-hover" >
-                <tbody>
-                    {matrixTable}
-                </tbody>
-            </table>
-        <input className="output" value = {this.matrixToString(this.state.matrix)} />
-        <p>Interpret empty entires (excluding last row and column) as <ParameterInput defaultVal = {0} id={0} updateParameter={this.updateParameter}/></p>
-        </div>)
-    }
-
-    updateEntry = (i, j, val) => {
-        var temp = this.state.matrix;
-        temp[i][j] = val;
-
-        this.setState({matrix: temp, sparseVal: this.state.sparseVal});        
-    }
-    
-    addRows = (num) => {
-        var temp = this.state.matrix;
-        for (var i = 0; i < temp.length; i++) {
-            for (var j = 0; j < num; j++)
-                temp[i].push("")
-        }
-
-        this.setState({matrix: temp, sparseVal: this.state.sparseVal});  
-    }
-
-    addCols = (num) => {
-        var emptyCol = [];
-        for (var i = 0; i < this.state.matrix[0].length; i++) {
-            emptyCol.push("");
-        }
-
-        var temp = this.state.matrix;
-        for (var i = 0; i < num; i++) {
-            temp.push(emptyCol)
-        }
-
-        this.setState({matrix: temp, sparseVal: this.state.sparseVal});  
-    }
-
-    updateParameter = (i, updated) => {
-        switch (i) {
-            case 0:
-                this.setState({matrix: this.state.matrix, sparseVal: updated});  
-                break;
-                
-            default: break;
-  
-        }
-    }
 }
 
-class Row extends React.Component {
-    render() {
-        return <tr>{this.props.boxes.map((x, i) => <Box addRows = {this.props.addRows} 
-                                                    addCols = {this.props.addCols}
-                                                    rows = {this.props.rows}
-                                                    cols = {this.props.cols}
-                                                    updateEntry = {this.props. updateEntry} 
-                                                    num={x} 
-                                                    col = {this.props.col} 
-                                                    row = {i} />)}</tr>
-    }
-}
-
-class Box extends React.Component {
-    render() {
-        if (this.props.cols === (this.props.col + 1) && this.props.rows === (this.props.row + 1))
-            return <td><input id = {this.props.row + ":" + this.props.col} 
-            onChange = {this.handleAddBoth} value={this.props.num} /></td>
-
-        if (this.props.cols === (this.props.col + 1))
-            return <td><input id = {this.props.row + ":" + this.props.col} 
-            onChange = {this.handleAddCol} value={this.props.num} /></td>
 
 
-        if (this.props.rows === (this.props.row + 1))
-            return <td><input id = {this.props.row + ":" + this.props.col} 
-            onChange = {this.handleAddRow} value={this.props.num} /></td>
-
-        else
-            return <td><input id = {this.props.row + ":" + this.props.col} 
-            onChange = {this.handleChange} value={this.props.num} /></td>
-
-
-    }
-
-    handleChange = (e) => {
-        this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-    }
-
-    handleAddRow = (e) => {
-        this.props.addRows(1);
-        this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-
-    }
-
-    handleAddCol = (e) => {
-        this.props.addCols(1);
-        this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-
-    }
-
-    handleAddBoth = (e) => {
-        this.props.addCols(1);
-        this.props.addRows(1);
-        this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-
-    }
-
-}
 
 class ParameterInput extends React.Component {
     render() {
