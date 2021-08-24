@@ -155,7 +155,7 @@ class App extends React.Component {
 
 class ParameterInput extends React.Component {
     render() {
-        return <input value = {this.props.defaultVal} onChange = {this.handleChange}></input>
+        return <input type="text" defaultValue = {this.props.defaultVal} onChange = {this.handleChange}></input>
     }
 
     handleChange = (e) => {
