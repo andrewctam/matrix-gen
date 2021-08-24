@@ -4,7 +4,7 @@ import Row from './Row.js';
 class App extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {matrix: [["", ""], ["", ""]], sparseVal: "0"}
+        this.state = {matrix: [["", ""], ["", ""]], sparseVal: "0", start: "{", end: "}", delim: ","}
     }
     render() {
         var matrixTable = this.state.matrix.map((x, i) => <Row  rows = {this.state.matrix.length} 
@@ -16,6 +16,7 @@ class App extends React.Component {
                                                                 boxes={x} row = {i} />)
         return (
         <div>
+            Start entering your matrix below. Typing in the red row/column will create a new row or column. Use the arrow keys to navigate in the matrix.
             <table className = "table table-bordered table-hover" >
                 <tbody>
                     {matrixTable}
@@ -23,6 +24,10 @@ class App extends React.Component {
             </table>
         <textarea readonly onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.state.matrix)} />
         <p>Interpret empty elements (excluding red row and red column) as <ParameterInput defaultVal = {0} id={0} updateParameter={this.updateParameter}/></p>
+        <p>Open arrays with  <ParameterInput defaultVal = {"{"} id={1} updateParameter={this.updateParameter}/></p>
+        <p>Close arrays with <ParameterInput defaultVal = {"}"} id={2} updateParameter={this.updateParameter}/></p>
+        <p>Deliminate elements with <ParameterInput defaultVal = {","} id={3} updateParameter={this.updateParameter}/></p>
+
         </div>)
     }
 
@@ -115,17 +120,26 @@ class App extends React.Component {
     updateParameter = (i, updated) => {
         switch (i) {
             case 0:
-                this.setState({matrix: this.state.matrix, sparseVal: updated});  
+                this.setState({matrix: this.state.matrix, sparseVal: updated, start: this.state.start, end: this.state.end, delim: this.state.delim});  
                 break;
-                
+            case 1:
+                this.setState({matrix: this.state.matrix, sparseVal: this.state.sparseVal, start: updated, end: this.state.end, delim: this.state.delim});  
+                break;  
+            case 2:
+                this.setState({matrix: this.state.matrix, sparseVal: this.state.sparseVal, start: this.state.start, end: updated, delim: this.state.delim});  
+                break;  
+            case 3:
+                this.setState({matrix: this.state.matrix, sparseVal: this.state.sparseVal, start: this.state.start, end: this.state.end, delim: updated});  
+                break;  
             default: break;
   
         }
     }
 
     matrixToString() {
-        var start = "{";
-        var end = "}";
+        var start = this.state.start;
+        var end = this.state.end;
+        var delim = this.state.delim;
         var result = start.toString();
 
         for (var i = 0; i < this.state.matrix.length - 1; i++) {
@@ -137,14 +151,15 @@ class App extends React.Component {
                 else
                     result += this.state.sparseVal;
                     
+                    
                 if (j !== this.state.matrix[0].length - 2) {
-                    result += ","
+                    result += delim;
                 }
             }
             
             result += end;
             if (i != this.state.matrix.length - 2) {
-                result += ","
+                result += delim;
             }
 
         }

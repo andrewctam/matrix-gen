@@ -3,27 +3,27 @@ import React from 'react';
 class Box extends React.Component {
     render() {
         if (this.props.cols === (this.props.col + 1) && this.props.rows === (this.props.row + 1))
-            return <td><input key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
+            return <td><input autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
             onChange = {this.handleAddBoth} value={this.props.num} /></td>
 
 
 
         if (this.props.cols === (this.props.col + 1))
-            return <td><input key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
+            return <td><input autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
             onChange = {this.handleAddCol} value={this.props.num} /></td>
 
 
 
 
         if (this.props.rows === (this.props.row + 1))
-            return <td><input key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
+            return <td><input autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
             onChange = {this.handleAddRow} value={this.props.num} /></td>
 
 
 
 
         else
-            return <td><input key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
+            return <td><input autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
             onChange = {this.handleChange} value={this.props.num} /></td>
 
 
@@ -94,7 +94,7 @@ class Box extends React.Component {
             else */
             if (this.props.row !== this.props.rows - 1) {
                 document.getElementById((this.props.row + 1 )+  ":" + (this.props.col) ).focus();
-            } else if (this.props.row !== this.props.rows - 1) { //Wrap
+            } else if (this.props.col !== this.props.cols - 1) { //Wrap
                 document.getElementById("0:" + (this.props.col + 1)).focus();
             }
             
