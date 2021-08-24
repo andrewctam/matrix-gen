@@ -21,8 +21,8 @@ class App extends React.Component {
                     {matrixTable}
                 </tbody>
             </table>
-        <textarea readonly className="output" value = {this.matrixToString(this.state.matrix)} />
-        <p>Interpret empty entires (excluding last row and column) as <ParameterInput defaultVal = {0} id={0} updateParameter={this.updateParameter}/></p>
+        <textarea readonly onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.state.matrix)} />
+        <p>Interpret empty elements (excluding red row and red column) as <ParameterInput defaultVal = {0} id={0} updateParameter={this.updateParameter}/></p>
         </div>)
     }
 
@@ -31,6 +31,9 @@ class App extends React.Component {
     }
 
     tryToDelete = (row, col) => {
+        if (row === this.state.matrix.length - 1|| col === this.state.matrix[0].length - 1) 
+            return null;
+            
         var temp = this.state.matrix;
         var toDelete = true;
         
