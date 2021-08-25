@@ -11,7 +11,7 @@ class Row extends React.Component {
             rows = {this.props.rows}
             cols = {this.props.cols}
             updateEntry = {this.props. updateEntry} 
-            num={x} 
+            num ={x} 
             row = {this.props.row} 
             col = {i} />)}</tr>
     }

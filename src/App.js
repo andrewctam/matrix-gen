@@ -15,15 +15,18 @@ class App extends React.Component {
             addRows = {this.addRows} 
             addCols = {this.addCols} 
             updateEntry = {this.updateEntry}
-            boxes={x} row = {i} />)
+            boxes={x} 
+            row = {i} />)
+
         return (
         <div>
-            Start entering your matrix below. The pink row and column are not part of the matrix, and typing in one of them will create a new row or column. Use the arrow keys to navigate in the matrix.
+            Start entering your matrix below. The pink row and column are not ignored from the matrix, and typing in one of them will create a new row or column. Use the arrow keys or Tab to quickly navigate the matrix (The Tab key and the right arrow key will skip the pink column if it is not on the first row to speed up data entry).
             <table className = "table table-bordered table-hover" >
                 <tbody>
                     {matrixTable}
                 </tbody>
             </table>
+
             <textarea readonly onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.state.matrix)} />
             <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
                  <ParameterInput defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
@@ -156,7 +159,6 @@ class App extends React.Component {
             if (i !== this.state.matrix.length - 2) {
                 result += delim;
             }
-
         }
         return result + end;
 
