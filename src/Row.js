@@ -4,15 +4,16 @@ import Box from './Box.js';
 
 class Row extends React.Component {
     render() {
-        return <tr>{this.props.boxes.map((x, i) => <Box addRows = {this.props.addRows} 
-                                                    addCols = {this.props.addCols}
-                                                    tryToDelete = {this.props.tryToDelete}
-                                                    rows = {this.props.rows}
-                                                    cols = {this.props.cols}
-                                                    updateEntry = {this.props. updateEntry} 
-                                                    num={x} 
-                                                    row = {this.props.row} 
-                                                    col = {i} />)}</tr>
+        return <tr>{this.props.boxes.map((x, i) => 
+            <Box addRows = {this.props.addRows} 
+            addCols = {this.props.addCols}
+            tryToDelete = {this.props.tryToDelete}
+            rows = {this.props.rows}
+            cols = {this.props.cols}
+            updateEntry = {this.props. updateEntry} 
+            num={x} 
+            row = {this.props.row} 
+            col = {i} />)}</tr>
     }
 }
 export default Row;

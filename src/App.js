@@ -6,28 +6,33 @@ class App extends React.Component {
         super(props)
         this.state = {matrix: [["", ""], ["", ""]], sparseVal: "0", start: "{", end: "}", delim: ","}
     }
+    
     render() {
-        var matrixTable = this.state.matrix.map((x, i) => <Row  rows = {this.state.matrix.length} 
-                                                                cols = {this.state.matrix[0].length}
-                                                                tryToDelete = {this.tryToDelete}
-                                                                addRows = {this.addRows} 
-                                                                addCols = {this.addCols} 
-                                                                updateEntry = {this.updateEntry}
-                                                                boxes={x} row = {i} />)
+        var matrixTable = this.state.matrix.map((x, i) => 
+        <Row rows = {this.state.matrix.length} 
+            cols = {this.state.matrix[0].length}
+            tryToDelete = {this.tryToDelete}
+            addRows = {this.addRows} 
+            addCols = {this.addCols} 
+            updateEntry = {this.updateEntry}
+            boxes={x} row = {i} />)
         return (
         <div>
-            Start entering your matrix below. Typing in the red row/column will create a new row or column. Use the arrow keys to navigate in the matrix.
+            Start entering your matrix below. The pink row and column are not part of the matrix, and typing in one of them will create a new row or column. Use the arrow keys to navigate in the matrix.
             <table className = "table table-bordered table-hover" >
                 <tbody>
                     {matrixTable}
                 </tbody>
             </table>
-        <textarea readonly onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.state.matrix)} />
-        <p>Interpret empty elements (excluding red row and red column) as <ParameterInput defaultVal = {0} id={0} updateParameter={this.updateParameter}/></p>
-        <p>Open arrays with  <ParameterInput defaultVal = {"{"} id={1} updateParameter={this.updateParameter}/></p>
-        <p>Close arrays with <ParameterInput defaultVal = {"}"} id={2} updateParameter={this.updateParameter}/></p>
-        <p>Deliminate elements with <ParameterInput defaultVal = {","} id={3} updateParameter={this.updateParameter}/></p>
-
+            <textarea readonly onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.state.matrix)} />
+            <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
+                 <ParameterInput defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
+            <p>Open arrays with &nbsp;
+                 <ParameterInput defaultVal = {"{"} id={"start"} updateParameter={this.updateParameter}/></p>
+            <p>End arrays with &nbsp;
+                 <ParameterInput defaultVal = {"}"} id={"end"} updateParameter={this.updateParameter}/></p>
+            <p>Separate elements with &nbsp;
+                 <ParameterInput defaultVal = {","} id={"delim"} updateParameter={this.updateParameter}/></p>
         </div>)
     }
 
@@ -36,7 +41,7 @@ class App extends React.Component {
     }
 
     tryToDelete = (row, col) => {
-        if (row === this.state.matrix.length - 1|| col === this.state.matrix[0].length - 1) 
+        if (row === this.state.matrix.length - 1 || col === this.state.matrix[0].length - 1) 
             return null;
             
         var temp = this.state.matrix;
@@ -46,24 +51,20 @@ class App extends React.Component {
         // {0,0,0,0}, row
         // {1,1,1,1}}
         //Try to Delete an Empty Row
-        console.log(col)
         for (var i = 0; i < this.state.matrix[0].length; i++) {
             if (this.state.matrix[row][i] !== "") {
                 toDelete = false;
                 break;
             }
-                
         }
         if (toDelete)
             temp.splice(row, 1);
-
-
-                
-       //      col
+    
+        //     col
         //{{1,1,0,1},
         // {1,1,0,1},
         // {1,1,0,1}}
-        var toDelete = true;
+        toDelete = true;
         for (var i = 0; i < this.state.matrix.length; i++) {
             if (this.state.matrix[i][col] !== ""){
                 toDelete = false;
@@ -75,14 +76,9 @@ class App extends React.Component {
             for (var i = 0; i < temp.length; i++) {
                 temp[i].splice(col, 1); //delete cols
             } 
-        
+    
 
-
-
-        
-
-        this.setState({matrix: temp, sparseVal: this.state.sparseVal});        
-
+        this.setState({matrix: temp});        
     }
 
     
@@ -90,7 +86,7 @@ class App extends React.Component {
         var temp = this.state.matrix;
         temp[i][j] = val;
 
-        this.setState({matrix: temp, sparseVal: this.state.sparseVal});        
+        this.setState({matrix: temp});        
     }
     
     addCols = (num) => {
@@ -100,7 +96,7 @@ class App extends React.Component {
                 temp[i].push("")
         }
 
-        this.setState({matrix: temp, sparseVal: this.state.sparseVal});  
+        this.setState({matrix: temp});  
     }
 
     addRows = (num) => {
@@ -114,22 +110,22 @@ class App extends React.Component {
             temp.push(emptyRow)
         }
 
-        this.setState({matrix: temp, sparseVal: this.state.sparseVal});  
+        this.setState({matrix: temp});  
     }
 
     updateParameter = (i, updated) => {
         switch (i) {
-            case 0:
-                this.setState({matrix: this.state.matrix, sparseVal: updated, start: this.state.start, end: this.state.end, delim: this.state.delim});  
+            case "sparse":
+                this.setState({sparseVal: updated});  
                 break;
-            case 1:
-                this.setState({matrix: this.state.matrix, sparseVal: this.state.sparseVal, start: updated, end: this.state.end, delim: this.state.delim});  
+            case "start":
+                this.setState({start: updated});  
                 break;  
-            case 2:
-                this.setState({matrix: this.state.matrix, sparseVal: this.state.sparseVal, start: this.state.start, end: updated, delim: this.state.delim});  
+            case "end":
+                this.setState({end: updated});  
                 break;  
-            case 3:
-                this.setState({matrix: this.state.matrix, sparseVal: this.state.sparseVal, start: this.state.start, end: this.state.end, delim: updated});  
+            case "delim":
+                this.setState({delim: updated});  
                 break;  
             default: break;
   
@@ -151,14 +147,13 @@ class App extends React.Component {
                 else
                     result += this.state.sparseVal;
                     
-                    
                 if (j !== this.state.matrix[0].length - 2) {
                     result += delim;
                 }
             }
             
             result += end;
-            if (i != this.state.matrix.length - 2) {
+            if (i !== this.state.matrix.length - 2) {
                 result += delim;
             }
 
@@ -167,9 +162,6 @@ class App extends React.Component {
 
     }
 }
-
-
-
 
 class ParameterInput extends React.Component {
     render() {
@@ -180,6 +172,5 @@ class ParameterInput extends React.Component {
         this.props.updateParameter(this.props.id, e.target.value)
     }
 }
-
 
 export default App;
