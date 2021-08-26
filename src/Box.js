@@ -59,13 +59,15 @@ class Box extends React.Component {
         } 
         
         else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) { //Right
-            //skip the last col if you aren't on the first row
+            //skip the last col if you aren't on the first row/
+            /*
             if (this.props.col === this.props.cols - 2 && this.props.row !== 0 && this.props.row !== this.props.rows - 1) { 
                 document.getElementById((this.props.row + 1) + ":0").focus();
                 document.getElementById((this.props.row + 1) + ":0").selectionStart = 0;
 
             } 
-            else if (this.props.col !== this.props.cols - 1) { 
+            else */
+            if (this.props.col !== this.props.cols - 1) { 
                 document.getElementById((this.props.row) + ":" + (this.props.col + 1)).focus();
                 document.getElementById((this.props.row) + ":" + (this.props.col + 1)).selectionStart = -1;
 

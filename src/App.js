@@ -4,7 +4,7 @@ import Row from './Row.js';
 class App extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {matrix: [["", ""], ["", ""]], sparseVal: "0", start: "{", end: "}", delim: ","}
+        this.state = {matrix: [["", ""], ["", ""]], sparseVal: "0", start: "{", end: "}", delim: ",", latex: false}
     }
     
     render() {
@@ -20,7 +20,7 @@ class App extends React.Component {
 
         return (
         <div>
-            Start entering your matrix below. The pink row and column are not ignored from the matrix, and typing in one of them will create a new row or column. Use the arrow keys or Tab to quickly navigate the matrix (The Tab key and the right arrow key will skip the pink column if it is not on the first row to speed up data entry).
+            Start entering your matrix below. The pink row and column are not ignored from the matrix, and typing in one of them will create a new row or column. Use the arrow keys or Tab to quickly navigate the matrix.
             <table className = "table table-bordered table-hover" >
                 <tbody>
                     {matrixTable}
@@ -30,12 +30,22 @@ class App extends React.Component {
             <textarea readonly onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.state.matrix)} />
             <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
                  <ParameterInput defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
+            <div class="form-check form-switch">
+                <input class="form-check-input" onChange = {() => {this.setState({latex: !this.state.latex})}} type="checkbox" value="" id="latexToggle" />
+                <label class="form-check-label" for="latexToggle">Format as LaTeX matrix</label>
+            </div>
+            {!this.state.latex ?
+            <div>
             <p>Open arrays with &nbsp;
                  <ParameterInput defaultVal = {"{"} id={"start"} updateParameter={this.updateParameter}/></p>
             <p>End arrays with &nbsp;
                  <ParameterInput defaultVal = {"}"} id={"end"} updateParameter={this.updateParameter}/></p>
             <p>Separate elements with &nbsp;
                  <ParameterInput defaultVal = {","} id={"delim"} updateParameter={this.updateParameter}/></p>
+            </div>
+            : null}
+
+            
         </div>)
     }
 
@@ -136,6 +146,23 @@ class App extends React.Component {
     }
 
     matrixToString() {
+        if (this.state.latex) {
+            var latex = "";
+            for (var i = 0; i < this.state.matrix.length - 1; i++) {
+                for (var j = 0; j < this.state.matrix[0].length - 1; j++) {
+                    if (this.state.matrix[i][j] !== "")
+                        latex += this.state.matrix[i][j];
+                    else
+                        latex += this.state.sparseVal;                    
+                    if (j !== this.state.matrix[0].length - 2)
+                        latex += " & ";
+                    else if (i !== this.state.matrix.length - 2)
+                        latex += " \\\\ \n";
+                }
+            }
+            return latex; 
+        }
+
         var start = this.state.start;
         var end = this.state.end;
         var delim = this.state.delim;
