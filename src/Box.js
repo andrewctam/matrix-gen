@@ -37,7 +37,13 @@ class Box extends React.Component {
     }
     
     handleKeyDown = (e) => {
-        console.log(e.target.selectionStart)
+        if (e.keyCode === 16) {
+            if (this.props.rows === (this.props.row + 1))
+            this.props.addRows(1);
+            if (this.props.cols === (this.props.col + 1))
+            this.props.addCols(1);
+        }
+
         if (e.keyCode === 8 && e.target.value === "") {
            this.props.tryToDelete(this.props.row, this.props.col); 
         }
