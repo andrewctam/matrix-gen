@@ -20,7 +20,7 @@ class App extends React.Component {
 
         return (
         <div>
-            Start entering your matrix below. The pink row and column are not ignored from the matrix, and typing in one of them will create a new row or column. Use the arrow keys or Tab to quickly navigate the matrix.
+            Easily generate matricies for programming or LaTeX. Start entering your matrix below and the resulting 2D array will appear below the matrix. The pink row and column are ignored from the matrix, and typing in one of them will create a new row or column. Use the arrow keys or Tab to quickly navigate the matrix.
             <table className = "table table-bordered table-hover" >
                 <tbody>
                     {matrixTable}
