@@ -1,11 +1,12 @@
 import React from 'react';
 import Row from './Row.js';
-import ParameterInput from './ParameterInput.js';
-
+import ParameterTextInput from './ParameterTextInput.js';
+import ParameterSwitchInput from './ParameterSwitchInput.js';
+import ExportMatrix from "./ExportMatrix.js"
 class MatrixEditor extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {matrix: [["", ""], ["", ""]], sparseVal: "0", start: "{", end: "}", delim: ",", latex: false}
+        this.state = {matrix: [["", ""], ["", ""]], mirror: false, showExport: false, sparseVal: "0"}
     }
     
     render() {
@@ -17,43 +18,41 @@ class MatrixEditor extends React.Component {
             addCols = {this.addCols} 
             updateEntry = {this.updateEntry}
             boxes={x} 
-            row = {i} />)
+            row = {i} 
+            key = {"row" + i}
+            mirror = {this.state.mirror}/>
+            )
 
         return (
         <div className = "matrixEditor">
+            <h1>Enter your matrix below. The pink row and column will be ignored from the output matrix, and typing in one of them will create a new row or column.</h1>
             <table className = "table table-bordered table-hover" >
                 <tbody>
                     {matrixTable}
                 </tbody>
             </table>
-
-            <textarea readonly onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.state.matrix)} />
             <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
-                 <ParameterInput defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
-            <div class="form-check form-switch">
-                <input class="form-check-input" onChange = {() => {this.setState({latex: !this.state.latex})}} type="checkbox" value="" id="latexToggle" />
-                <label class="form-check-label" for="latexToggle">Format as LaTeX matrix</label>
-            </div>
-
-
-            {!this.state.latex ?
-            <div>
-            <p>Open arrays with &nbsp;
-                 <ParameterInput defaultVal = {"{"} id={"start"} updateParameter={this.updateParameter}/></p>
-            <p>End arrays with &nbsp;
-                 <ParameterInput defaultVal = {"}"} id={"end"} updateParameter={this.updateParameter}/></p>
-            <p>Separate elements with &nbsp;
-                 <ParameterInput defaultVal = {","} id={"delim"} updateParameter={this.updateParameter}/></p>
-            </div>
-            : null}
-
+            <ParameterTextInput defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
             
+            <ParameterSwitchInput defaultVal = {false} id={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.updateParameter}/>
+            
+            <button className = "btn btn-secondary" onClick={this.handleClick}>{this.state.showExport ? "Hide" : "Export Matrix"}</button>
+            
+            {this.state.showExport ?
+                <ExportMatrix matrix = {this.state.matrix} sparseVal = {this.state.sparseVal} />
+             : null }   
         </div>)
     }
 
-    handleFocus = (e) => {
-        e.target.select();
+
+
+    handleClick = (e) => {
+        if (this.state.showExport)
+            this.setState({showExport: false});
+        else
+            this.setState({showExport: true});
     }
+
 
     tryToDelete = (row, col) => {
         if (row === this.state.matrix.length - 1 || col === this.state.matrix[0].length - 1) 
@@ -100,7 +99,7 @@ class MatrixEditor extends React.Component {
     updateEntry = (i, j, val) => {
         var temp = this.state.matrix;
         temp[i][j] = val;
-
+        console.log(i + " " + j)
         this.setState({matrix: temp});        
     }
     
@@ -112,36 +111,28 @@ class MatrixEditor extends React.Component {
         }
 
         this.setState({matrix: temp});  
+        return temp;
     }
 
     addRows = (num) => {
-        var emptyRow = [];
-        for (var i = 0; i < this.state.matrix[0].length; i++) {
-            emptyRow.push("");
-        }
-
         var temp = this.state.matrix;
         for (var i = 0; i < num; i++) {
-            temp.push(emptyRow)
+            temp.push(new Array(temp[0].length).fill(""))
         }
-
-        this.setState({matrix: temp});  
+        this.setState({matrix: temp}); 
+        return temp; 
     }
 
     updateParameter = (i, updated) => {
         switch (i) {
             case "sparse":
-                this.setState({sparseVal: updated});  
-                break;
-            case "start":
-                this.setState({start: updated});  
-                break;  
-            case "end":
-                this.setState({end: updated});  
-                break;  
-            case "delim":
-                this.setState({delim: updated});  
-                break;  
+                this.setState({sparseVal: updated})
+            case "mirror":
+                this.setState({mirror: updated});  
+                if (updated)
+                    this.mirrorEntires();
+                break; 
+                
             default: break;
   
         }
@@ -191,6 +182,32 @@ class MatrixEditor extends React.Component {
         }
         return result + end;
 
+    }
+
+    mirrorEntires = () => {
+       
+        var a = this.state.matrix;
+        console.log(a)
+
+        if (this.state.matrix.length > this.state.matrix[0].length) { //more rows than cols {
+            var symmetric = this.addCols(this.state.matrix.length - this.state.matrix[0].length);
+            for (var row = 0; row < symmetric.length; row++) {
+                for (var col = row; col < symmetric.length; col++) {
+                    symmetric[row][col] = symmetric[col][row];
+                }
+            }
+        }
+        else /*if (this.state.matrix.length < this.state.matrix[0].length) */ {
+            console.log(this.state.matrix[0].length - this.state.matrix.length)
+            symmetric = this.addRows(this.state.matrix[0].length - this.state.matrix.length)
+            for (var row = 0; row < symmetric.length; row++) {
+                for (var col = row; col < symmetric.length; col++) {
+                    symmetric[col][row] = symmetric[row][col];
+                }
+            }
+        }
+         
+        this.setState({matrix: symmetric});
     }
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-class ParameterInput extends React.Component {
+class ParameterTextInput extends React.Component {
     render() {
         return <input type="text" defaultValue = {this.props.defaultVal} onChange = {this.handleChange}></input>
     }
@@ -10,4 +10,6 @@ class ParameterInput extends React.Component {
     }
 }
 
-export default ParameterInput;
+
+
+export default ParameterTextInput;

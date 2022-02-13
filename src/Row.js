@@ -13,7 +13,9 @@ class Row extends React.Component {
             updateEntry = {this.props. updateEntry} 
             num ={x} 
             row = {this.props.row} 
-            col = {i} />)}</tr>
+            col = {i}
+            key = {this.props.row + ":" + i}
+            mirror = {this.props.mirror} />)}</tr>
     }
 }
 export default Row;

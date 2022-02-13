@@ -3,31 +3,63 @@ import React from 'react';
 class Box extends React.Component {
     render() {
         if (this.props.cols === (this.props.col + 1) && this.props.rows === (this.props.row + 1))
-            return <td>< input tabIndex = {-1} autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleAddBoth} value={this.props.num} /></td>
+            return <td><input tabIndex = {-1} 
+            autoComplete = "off" 
+            key = {this.props.row + ":" + this.props.col} 
+            id = {this.props.row + ":" + this.props.col} 
+            onKeyDown = {this.handleKeyDown}
+            onChange = {this.handleAddBoth} 
+            value={this.props.num} /></td>
 
         if (this.props.cols === (this.props.col + 1))
-            return <td>< input tabIndex = {this.props.row === 0 ?  "" : -1} autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleAddCol} value={this.props.num} /></td>
+            return <td><input 
+            tabIndex = {this.props.row === 0 ?  "" : -1} 
+            autoComplete = "off" 
+            key = {this.props.row + ":" + this.props.col} 
+            id = {this.props.row + ":" + this.props.col} 
+            onKeyDown = {this.handleKeyDown}
+            onChange = {this.handleAddCol} 
+            value={this.props.num} /></td>
 
         if (this.props.rows === (this.props.row + 1))
-            return <td>< input autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleAddRow} value={this.props.num} /></td>
+            return <td><input autoComplete = "off" 
+            key = {this.props.row + ":" + this.props.col} 
+            id = {this.props.row + ":" + this.props.col} 
+            onKeyDown = {this.handleKeyDown}
+            onChange = {this.handleAddRow} 
+            value={this.props.num} /></td>
 
-        else
-            return <td>< input  autoComplete = "off" key = {this.props.row + ":" + this.props.col} id = {this.props.row + ":" + this.props.col} onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleChange} value={this.props.num} /></td>
+        return <td><input autoComplete = "off" 
+            key = {this.props.row + ":" + this.props.col} 
+            id = {this.props.row + ":" + this.props.col} 
+            onKeyDown = {this.handleKeyDown}
+            onChange = {this.handleChange} 
+            value={this.props.num} 
+            /></td>
     }
 
     handleChange = (e) => {
+        if (this.props.mirror)
+            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
+            
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
+
+
     }
     handleAddRow = (e) => {
         this.props.addRows(1);
+        if (this.props.mirror) {
+            this.props.addCols(1);
+            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
+        }
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
     }
     handleAddCol = (e) => {
         this.props.addCols(1);
+        if (this.props.mirror) {
+            this.props.addRows(1);
+            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
+        }
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
     }
     handleAddBoth = (e) => {
