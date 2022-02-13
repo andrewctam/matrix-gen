@@ -1,7 +1,7 @@
 import React from 'react';
-import Row from './Row.js';
-import ParameterTextInput from './ParameterTextInput.js';
-import ParameterSwitchInput from './ParameterSwitchInput.js';
+import Row from './table/Row.js';
+import ParameterTextInput from '../inputs/ParameterTextInput.js';
+import ParameterSwitchInput from '../inputs/ParameterSwitchInput.js';
 import ExportMatrix from "./ExportMatrix.js"
 class MatrixEditor extends React.Component {
     constructor(props) {

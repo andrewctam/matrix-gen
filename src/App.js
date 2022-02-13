@@ -1,5 +1,5 @@
 import React from 'react';
-import MatrixEditor from './MatrixEditor.js';
+import MatrixEditor from './matrix/MatrixEditor.js';
 
 class App extends React.Component {
 

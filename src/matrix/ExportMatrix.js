@@ -1,6 +1,6 @@
 import React from 'react';
-import ParameterTextInput from './ParameterTextInput.js';
-import ParameterSwitchInput from './ParameterSwitchInput.js';
+import ParameterTextInput from '../inputs/ParameterTextInput.js';
+import ParameterSwitchInput from '../inputs/ParameterSwitchInput.js';
 
 class MatrixEditor extends React.Component {    
     constructor(props) {
