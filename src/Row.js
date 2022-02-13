@@ -10,7 +10,7 @@ class Row extends React.Component {
             tryToDelete = {this.props.tryToDelete}
             rows = {this.props.rows}
             cols = {this.props.cols}
-            updateEntry = {this.props. updateEntry} 
+            updateEntry = {this.props.updateEntry} 
             num ={x} 
             row = {this.props.row} 
             col = {i}

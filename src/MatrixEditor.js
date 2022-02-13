@@ -20,16 +20,13 @@ class MatrixEditor extends React.Component {
             boxes={x} 
             row = {i} 
             key = {"row" + i}
-            mirror = {this.state.mirror}/>
-            )
-
+            mirror = {this.state.mirror}/>)
+            
         return (
         <div className = "matrixEditor">
             <h1>Enter your matrix below. The pink row and column will be ignored from the output matrix, and typing in one of them will create a new row or column.</h1>
             <table className = "table table-bordered table-hover" >
-                <tbody>
-                    {matrixTable}
-                </tbody>
+                <tbody> {matrixTable} </tbody>
             </table>
             <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
             <ParameterTextInput defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
@@ -40,7 +37,7 @@ class MatrixEditor extends React.Component {
             
             {this.state.showExport ?
                 <ExportMatrix matrix = {this.state.matrix} sparseVal = {this.state.sparseVal} />
-             : null }   
+            : null }   
         </div>)
     }
 
@@ -79,27 +76,27 @@ class MatrixEditor extends React.Component {
         // {1,1,0,1},
         // {1,1,0,1}}
         toDelete = true;
-        for (var i = 0; i < this.state.matrix.length; i++) {
-            if (this.state.matrix[i][col] !== ""){
+        for (i = 0; i < this.state.matrix.length; i++) {
+            if (this.state.matrix[i][col] !== "") {
                 toDelete = false;
                 break;
             }
         }
 
-        if (toDelete)
-            for (var i = 0; i < temp.length; i++) {
+        if (toDelete) {
+            for (i = 0; i < temp.length; i++) {
                 temp[i].splice(col, 1); //delete cols
             } 
-    
+        }
 
-        this.setState({matrix: temp});        
+        this.setState({matrix: temp}); 
+    
     }
 
     
     updateEntry = (i, j, val) => {
         var temp = this.state.matrix;
         temp[i][j] = val;
-        console.log(i + " " + j)
         this.setState({matrix: temp});        
     }
     
@@ -127,6 +124,7 @@ class MatrixEditor extends React.Component {
         switch (i) {
             case "sparse":
                 this.setState({sparseVal: updated})
+                break;
             case "mirror":
                 this.setState({mirror: updated});  
                 if (updated)
@@ -138,57 +136,7 @@ class MatrixEditor extends React.Component {
         }
     }
 
-    matrixToString() {
-        if (this.state.latex) {
-            var latex = "";
-            for (var i = 0; i < this.state.matrix.length - 1; i++) {
-                for (var j = 0; j < this.state.matrix[0].length - 1; j++) {
-                    if (this.state.matrix[i][j] !== "")
-                        latex += this.state.matrix[i][j];
-                    else
-                        latex += this.state.sparseVal;                    
-                    if (j !== this.state.matrix[0].length - 2)
-                        latex += " & ";
-                    else if (i !== this.state.matrix.length - 2)
-                        latex += " \\\\ \n";
-                }
-            }
-            return latex; 
-        }
-
-        var start = this.state.start;
-        var end = this.state.end;
-        var delim = this.state.delim;
-        var result = start.toString();
-
-        for (var i = 0; i < this.state.matrix.length - 1; i++) {
-            result += start;
-            
-            for (var j = 0; j < this.state.matrix[0].length - 1; j++) {
-                if (this.state.matrix[i][j] !== "")
-                    result += this.state.matrix[i][j];
-                else
-                    result += this.state.sparseVal;
-                    
-                if (j !== this.state.matrix[0].length - 2) {
-                    result += delim;
-                }
-            }
-            
-            result += end;
-            if (i !== this.state.matrix.length - 2) {
-                result += delim;
-            }
-        }
-        return result + end;
-
-    }
-
     mirrorEntires = () => {
-       
-        var a = this.state.matrix;
-        console.log(a)
-
         if (this.state.matrix.length > this.state.matrix[0].length) { //more rows than cols {
             var symmetric = this.addCols(this.state.matrix.length - this.state.matrix[0].length);
             for (var row = 0; row < symmetric.length; row++) {
@@ -198,10 +146,9 @@ class MatrixEditor extends React.Component {
             }
         }
         else /*if (this.state.matrix.length < this.state.matrix[0].length) */ {
-            console.log(this.state.matrix[0].length - this.state.matrix.length)
             symmetric = this.addRows(this.state.matrix[0].length - this.state.matrix.length)
-            for (var row = 0; row < symmetric.length; row++) {
-                for (var col = row; col < symmetric.length; col++) {
+            for (row = 0; row < symmetric.length; row++) {
+                for (col = row; col < symmetric.length; col++) {
                     symmetric[col][row] = symmetric[row][col];
                 }
             }
