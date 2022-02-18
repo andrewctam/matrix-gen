@@ -1,18 +1,19 @@
 import React from 'react';
 import Row from './table/Row.js';
-import ParameterTextInput from '../inputs/ParameterTextInput.js';
-import ParameterSwitchInput from '../inputs/ParameterSwitchInput.js';
-import ExportMatrix from "./ExportMatrix.js"
+import ParameterTextInput from './inputs/ParameterTextInput.js';
+import ParameterSwitchInput from './inputs/ParameterSwitchInput.js';
+import MatrixExport from "./MatrixExport.js"
+
 class MatrixEditor extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {matrix: [["", ""], ["", ""]], mirror: false, showExport: false, sparseVal: "0"}
+        this.state = {mirror: false, showExport: false, sparseVal: "0"}
     }
     
     render() {
-        var matrixTable = this.state.matrix.map((x, i) => 
-        <Row rows = {this.state.matrix.length} 
-            cols = {this.state.matrix[0].length}
+        var matrixTable = this.props.matrix.map((x, i) => 
+        <Row rows = {this.props.matrix.length} 
+            cols = {this.props.matrix[0].length}
             tryToDelete = {this.tryToDelete}
             addRows = {this.addRows} 
             addCols = {this.addCols} 
@@ -29,14 +30,14 @@ class MatrixEditor extends React.Component {
                 <tbody> {matrixTable} </tbody>
             </table>
             <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
-            <ParameterTextInput defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
+            <ParameterTextInput width = {"30px"} defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
             
             <ParameterSwitchInput defaultVal = {false} id={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.updateParameter}/>
             
-            <button className = "btn btn-secondary" onClick={this.handleClick}>{this.state.showExport ? "Hide" : "Export Matrix"}</button>
+            <button className = "btn btn-secondary" onClick={this.handleClick}>{this.state.showExport ? "Close" : "Export Matrix"}</button>
             
             {this.state.showExport ?
-                <ExportMatrix matrix = {this.state.matrix} sparseVal = {this.state.sparseVal} />
+                <MatrixExport matrix = {this.props.matrix} sparseVal = {this.state.sparseVal} />
             : null }   
         </div>)
     }
@@ -52,18 +53,18 @@ class MatrixEditor extends React.Component {
 
 
     tryToDelete = (row, col) => {
-        if (row === this.state.matrix.length - 1 || col === this.state.matrix[0].length - 1) 
+        if (row === this.props.matrix.length - 1 || col === this.props.matrix[0].length - 1) 
             return null;
             
-        var temp = this.state.matrix;
+        var temp = this.props.matrix;
         var toDelete = true;
         
         //{{1,1,1,1},
         // {0,0,0,0}, row
         // {1,1,1,1}}
         //Try to Delete an Empty Row
-        for (var i = 0; i < this.state.matrix[0].length; i++) {
-            if (this.state.matrix[row][i] !== "") {
+        for (var i = 0; i < this.props.matrix[0].length; i++) {
+            if (this.props.matrix[row][i] !== "") {
                 toDelete = false;
                 break;
             }
@@ -76,8 +77,8 @@ class MatrixEditor extends React.Component {
         // {1,1,0,1},
         // {1,1,0,1}}
         toDelete = true;
-        for (i = 0; i < this.state.matrix.length; i++) {
-            if (this.state.matrix[i][col] !== "") {
+        for (i = 0; i < this.props.matrix.length; i++) {
+            if (this.props.matrix[i][col] !== "") {
                 toDelete = false;
                 break;
             }
@@ -89,34 +90,34 @@ class MatrixEditor extends React.Component {
             } 
         }
 
-        this.setState({matrix: temp}); 
+        this.props.updateMatrix(temp); 
     
     }
 
     
     updateEntry = (i, j, val) => {
-        var temp = this.state.matrix;
+        var temp = this.props.matrix;
         temp[i][j] = val;
-        this.setState({matrix: temp});        
+        this.props.updateMatrix(temp); 
     }
     
     addCols = (num) => {
-        var temp = this.state.matrix;
+        var temp = this.props.matrix;
         for (var i = 0; i < temp.length; i++) {
             for (var j = 0; j < num; j++)
                 temp[i].push("")
         }
 
-        this.setState({matrix: temp});  
+        this.props.updateMatrix(temp); 
         return temp;
     }
 
     addRows = (num) => {
-        var temp = this.state.matrix;
+        var temp = this.props.matrix;
         for (var i = 0; i < num; i++) {
-            temp.push(new Array(temp[0].length).fill(""))
+            temp.push(new Array(temp[0].length).fill(""));
         }
-        this.setState({matrix: temp}); 
+        this.props.updateMatrix(temp); 
         return temp; 
     }
 
@@ -137,16 +138,16 @@ class MatrixEditor extends React.Component {
     }
 
     mirrorEntires = () => {
-        if (this.state.matrix.length > this.state.matrix[0].length) { //more rows than cols {
-            var symmetric = this.addCols(this.state.matrix.length - this.state.matrix[0].length);
+        if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
+            var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length);
             for (var row = 0; row < symmetric.length; row++) {
                 for (var col = row; col < symmetric.length; col++) {
                     symmetric[row][col] = symmetric[col][row];
                 }
             }
         }
-        else /*if (this.state.matrix.length < this.state.matrix[0].length) */ {
-            symmetric = this.addRows(this.state.matrix[0].length - this.state.matrix.length)
+        else /*if (this.props.matrix.length < this.props.matrix[0].length) */ {
+            symmetric = this.addRows(this.props.matrix[0].length - this.props.matrix.length)
             for (row = 0; row < symmetric.length; row++) {
                 for (col = row; col < symmetric.length; col++) {
                     symmetric[col][row] = symmetric[row][col];
@@ -154,7 +155,7 @@ class MatrixEditor extends React.Component {
             }
         }
          
-        this.setState({matrix: symmetric});
+        this.props.updateMatrix(symmetric); 
     }
 }
 

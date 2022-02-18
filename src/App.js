@@ -5,16 +5,20 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {matrix: []}
+        this.state = {matrix: [["", ""], ["", ""]]}
     }
 
 
     render() {
         return (
         <div>
-            <MatrixEditor/>
+            <MatrixEditor matrix = {this.state.matrix} updateMatrix = {this.updateMatrix}/>
         </div>
         )
+    }
+
+    updateMatrix = (updated) => {
+        this.setState({matrix: updated});
     }
 }
 

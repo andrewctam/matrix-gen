@@ -1,6 +1,6 @@
 import React from 'react';
-import ParameterTextInput from '../inputs/ParameterTextInput.js';
-import ParameterSwitchInput from '../inputs/ParameterSwitchInput.js';
+import ParameterTextInput from './inputs/ParameterTextInput.js';
+import ParameterSwitchInput from './inputs/ParameterSwitchInput.js';
 
 class MatrixEditor extends React.Component {    
     constructor(props) {
@@ -18,16 +18,16 @@ class MatrixEditor extends React.Component {
             <div className = "col-sm-10">
                 {this.state.latex ?
                 <p>Environment &nbsp;
-                <ParameterTextInput defaultVal = {"bmatrix"} id={"environment"} updateParameter={this.updateExportParameter}/></p>
+                <ParameterTextInput width = {"100px"} defaultVal = {"bmatrix"} id={"environment"} updateParameter={this.updateExportParameter}/></p>
                 :
 
                 <div>
                 <p>Open arrays with &nbsp;
-                    <ParameterTextInput defaultVal = {"{"} id={"start"} updateParameter={this.updateExportParameter}/></p>
+                    <ParameterTextInput width = {"20px"} defaultVal = {"{"} id={"start"} updateParameter={this.updateExportParameter}/></p>
                 <p>End arrays with &nbsp;
-                    <ParameterTextInput defaultVal = {"}"} id={"end"} updateParameter={this.updateExportParameter}/></p>
+                    <ParameterTextInput width = {"20px"} defaultVal = {"}"} id={"end"} updateParameter={this.updateExportParameter}/></p>
                 <p>Separate elements with &nbsp;
-                    <ParameterTextInput defaultVal = {","} id={"delim"} updateParameter={this.updateExportParameter}/></p>
+                    <ParameterTextInput width = {"20px"} defaultVal = {","} id={"delim"} updateParameter={this.updateExportParameter}/></p>
                 </div>}
             </div>    
         </div>
