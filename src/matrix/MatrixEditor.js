@@ -90,7 +90,7 @@ class MatrixEditor extends React.Component {
             } 
         }
 
-        this.props.updateMatrix(temp); 
+        this.props.updateMatrix(temp, this.props.name); 
     
     }
 
@@ -98,7 +98,7 @@ class MatrixEditor extends React.Component {
     updateEntry = (i, j, val) => {
         var temp = this.props.matrix;
         temp[i][j] = val;
-        this.props.updateMatrix(temp); 
+        this.props.updateMatrix(temp, this.props.name); 
     }
     
     addCols = (num) => {
@@ -108,7 +108,7 @@ class MatrixEditor extends React.Component {
                 temp[i].push("")
         }
 
-        this.props.updateMatrix(temp); 
+        this.props.updateMatrix(temp, this.props.name); 
         return temp;
     }
 
@@ -117,7 +117,7 @@ class MatrixEditor extends React.Component {
         for (var i = 0; i < num; i++) {
             temp.push(new Array(temp[0].length).fill(""));
         }
-        this.props.updateMatrix(temp); 
+        this.props.updateMatrix(temp, this.props.name); 
         return temp; 
     }
 
@@ -155,7 +155,7 @@ class MatrixEditor extends React.Component {
             }
         }
          
-        this.props.updateMatrix(symmetric); 
+        this.props.updateMatrix(symmetric, this.props.name); 
     }
 }
 
