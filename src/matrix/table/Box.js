@@ -39,42 +39,59 @@ class Box extends React.Component {
     }
 
     handleChange = (e) => {
-        if (this.props.mirror)
+        if (this.props.mirror) {
             this.props.updateEntry(this.props.col, this.props.row, e.target.value);
+        }
             
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
 
 
     }
     handleAddRow = (e) => {
-        this.props.addRows(1);
         if (this.props.mirror) {
-            this.props.addCols(1);
+            var max = Math.max(this.props.cols, this.props.rows + 1)
+            this.props.addCols(max - this.props.cols);        
+            this.props.addRows(max - this.props.rows);
             this.props.updateEntry(this.props.col, this.props.row, e.target.value);
         }
+        else {
+            this.props.addRows(1);
+        }
+
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
     }
     handleAddCol = (e) => {
-        this.props.addCols(1);
         if (this.props.mirror) {
-            this.props.addRows(1);
+            var max = Math.max(this.props.cols + 1, this.props.rows)
+            this.props.addCols(max - this.props.cols);        
+            this.props.addRows(max - this.props.rows);
             this.props.updateEntry(this.props.col, this.props.row, e.target.value);
+        } else {
+            this.props.addCols(1);
         }
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
     }
     handleAddBoth = (e) => {
-        this.props.addCols(1);
-        this.props.addRows(1);
+    
+        if (this.props.mirror) {
+            var max = Math.max(this.props.cols + 1, this.props.rows + 1)
+            this.props.addCols(max - this.props.cols);        
+            this.props.addRows(max - this.props.rows);
+            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
+        } else {
+            this.props.addCols(1);
+            this.props.addRows(1);
+        }
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
     }
     
     handleKeyDown = (e) => {
         if (e.keyCode === 16) {
             if (this.props.rows === (this.props.row + 1))
-            this.props.addRows(1);
+                this.props.addRows(1);
             if (this.props.cols === (this.props.col + 1))
-            this.props.addCols(1);
-        }
+                this.props.addCols(1)
+            }
 
         if (e.keyCode === 8 && e.target.value === "") {
            this.props.tryToDelete(this.props.row, this.props.col); 

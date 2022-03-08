@@ -1,17 +1,15 @@
 import React from 'react';
 import Row from './table/Row.js';
-import ParameterTextInput from './inputs/ParameterTextInput.js';
-import ParameterSwitchInput from './inputs/ParameterSwitchInput.js';
 import MatrixExport from "./MatrixExport.js"
 
 class MatrixEditor extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {mirror: false, showExport: false, sparseVal: "0"}
+        this.state = {showExport: false, sparseVal: "0"}
     }
-    
+
     render() {
-        var matrixTable = this.props.matrix.map((x, i) => 
+     var matrixTable = this.props.matrix.map((x, i) => 
         <Row rows = {this.props.matrix.length} 
             cols = {this.props.matrix[0].length}
             tryToDelete = {this.tryToDelete}
@@ -21,19 +19,18 @@ class MatrixEditor extends React.Component {
             boxes={x} 
             row = {i} 
             key = {"row" + i}
-            mirror = {this.state.mirror}/>)
+            mirror = {this.props.mirror}/>)
             
         return (
         <div className = "matrixEditor">
             <table className = "table table-bordered table-hover" >
                 <tbody> {matrixTable} </tbody>
             </table>
-            <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
-            <ParameterTextInput width = {"30px"} defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/>
-            <ParameterSwitchInput defaultVal = {false} id={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.updateParameter}/>
-            </p>
+
             
-            <button className = "btn btn-secondary" onClick={this.handleClick}>{this.state.showExport ? "Close" : "Export Matrix"}</button>
+            <button className = "btn btn-secondary" onClick={this.toggleExport}>{this.state.showExport ? "Close" : "Export Matrix"}</button>
+            <button className = "btn btn-secondary" onClick={this.transpose}>Transpose</button>
+            <button className = "btn btn-secondary" onClick={this.mirrorAll}>Mirror</button>
             
             {this.state.showExport ?
                 <MatrixExport matrix = {this.props.matrix} sparseVal = {this.state.sparseVal} />
@@ -43,7 +40,7 @@ class MatrixEditor extends React.Component {
 
 
 
-    handleClick = (e) => {
+    toggleExport = () => {
         if (this.state.showExport)
             this.setState({showExport: false});
         else
@@ -62,31 +59,35 @@ class MatrixEditor extends React.Component {
         // {0,0,0,0}, row
         // {1,1,1,1}}
         //Try to Delete an Empty Row
-        for (var i = 0; i < this.props.matrix[0].length; i++) {
-            if (this.props.matrix[row][i] !== "") {
-                toDelete = false;
-                break;
+        if (this.props.matrix.length > 2) {
+            for (var i = 0; i < this.props.matrix[0].length; i++) {
+                if (this.props.matrix[row][i] !== "") {
+                    toDelete = false;
+                    break;
+                }
             }
+            if (toDelete)
+                temp.splice(row, 1);
         }
-        if (toDelete)
-            temp.splice(row, 1);
     
         //     col
         //{{1,1,0,1},
         // {1,1,0,1},
         // {1,1,0,1}}
         toDelete = true;
-        for (i = 0; i < this.props.matrix.length; i++) {
-            if (this.props.matrix[i][col] !== "") {
-                toDelete = false;
-                break;
+        if (this.props.matrix[0].length > 2) {
+            for (i = 0; i < this.props.matrix.length; i++) {
+                if (this.props.matrix[i][col] !== "") {
+                    toDelete = false;
+                    break;
+                }
             }
-        }
 
-        if (toDelete) {
-            for (i = 0; i < temp.length; i++) {
-                temp[i].splice(col, 1); //delete cols
-            } 
+            if (toDelete) {
+                for (i = 0; i < temp.length; i++) {
+                    temp[i].splice(col, 1); //delete cols
+                } 
+            }
         }
 
         this.props.updateMatrix(temp, this.props.name); 
@@ -120,23 +121,7 @@ class MatrixEditor extends React.Component {
         return temp; 
     }
 
-    updateParameter = (i, updated) => {
-        switch (i) {
-            case "sparse":
-                this.setState({sparseVal: updated})
-                break;
-            case "mirror":
-                this.setState({mirror: updated});  
-                if (updated)
-                    this.mirrorEntires();
-                break; 
-                
-            default: break;
-  
-        }
-    }
-
-    mirrorEntires = () => {
+    mirrorAll = () => {
         if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
             var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length);
             for (var row = 0; row < symmetric.length; row++) {
@@ -156,8 +141,22 @@ class MatrixEditor extends React.Component {
          
         this.props.updateMatrix(symmetric, this.props.name); 
     }
-}
 
+    transpose = () => {
+        var transposed = Array(this.props.matrix[0].length).fill(0)
+        for (var i = 0; i < transposed.length; i++) {
+            var arr = Array(this.props.matrix.length).fill(0)
+            for (var j = 0; j < arr.length; j++)
+                arr[j] = this.props.matrix[j][i]
+            transposed[i] = arr       
+        }
+
+        this.props.updateMatrix(transposed, this.props.name); 
+    }       
+
+    
+    
+}
 
 
 
