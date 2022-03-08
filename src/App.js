@@ -7,10 +7,9 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            selection: "Untitled", 
-            matrices: {"Untitled": [["", ""], ["", ""]]}   
+            selection: "A", 
+            matrices: {"A": [["", ""], ["", ""]]}   
         }
-        this.copyMatrix("Untitled")
     }
 
 
@@ -29,6 +28,7 @@ class App extends React.Component {
                 <Selectors matrices = {this.state.matrices} 
                     updateSelection = {this.updateSelection} 
                     addMatrix = {this.addMatrix}
+                    renameMatrix = {this.renameMatrix}
                     selection = {this.state.selection}/>
                     
                 {editor} 
@@ -60,26 +60,28 @@ class App extends React.Component {
         return true;
     }
 
-    copyMatrix = (toCopy) => {
+    copyMatrix = (toCopy, name) => {
         var temp = this.state.matrices;
-        var num = 1;
-
-        while ("Copy " + num + " of " + toCopy in temp)
-            num += 1;
-
-
-        temp["Copy " + num + " of " + toCopy] = temp[toCopy].map(function(arr) { return arr.slice(); });
+        temp[name] = temp[toCopy].map(function(arr) { return arr.slice(); });
         this.setState({matrices: temp});
     }
 
     addMatrix = () => {
         var temp = this.state.matrices;
-        var num = 1;
+        var name = "A";
+        var charCode = 65;
 
-        while ("Untitled " + num in temp)
-            num += 1;
+        while (name in temp) {
+            if (name.charAt(name.length - 1) === "Z") {
+                name += "A"
+                charCode = 65;
+            }
+            else
+                name = name.substring(0, name.length - 1) + String.fromCharCode(++charCode);
+        }
 
-        temp["Untitled " + num] = [["", ""], ["", ""]];
+
+        temp[name] = [["", ""], ["", ""]];
         this.setState({matrices: temp});
     }
 

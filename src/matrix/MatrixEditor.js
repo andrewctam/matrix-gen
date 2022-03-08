@@ -25,14 +25,13 @@ class MatrixEditor extends React.Component {
             
         return (
         <div className = "matrixEditor">
-            <h1>Enter your matrix below. The pink row and column will be ignored from the output matrix, and typing in one of them will create a new row or column.</h1>
             <table className = "table table-bordered table-hover" >
                 <tbody> {matrixTable} </tbody>
             </table>
             <p>Interpret empty elements (excluding pink row and pink column) as &nbsp;
-            <ParameterTextInput width = {"30px"} defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/></p>
-            
+            <ParameterTextInput width = {"30px"} defaultVal = {"0"} id={"sparse"} updateParameter={this.updateParameter}/>
             <ParameterSwitchInput defaultVal = {false} id={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.updateParameter}/>
+            </p>
             
             <button className = "btn btn-secondary" onClick={this.handleClick}>{this.state.showExport ? "Close" : "Export Matrix"}</button>
             
