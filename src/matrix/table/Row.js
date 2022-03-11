@@ -16,7 +16,7 @@ class Row extends React.Component {
             col = {i}
             key = {this.props.row + ":" + i}
             mirror = {this.props.mirror}
-            makeSquareMatrix = {this.props.makeSquareMatrix} />)}
+            />)}
             </tr>
     }
 }

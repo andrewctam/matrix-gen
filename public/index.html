@@ -59,6 +59,7 @@
     margin: 0;
     text-align: center;
   }
+
   tr:nth-last-child(1) {
     background-color: rgb(250, 217, 213);
     max-width: 50px;
@@ -67,6 +68,8 @@
     background-color: rgb(250, 217, 213);
     max-height: 50px;;
   }
+
+
 
 
   .output {
@@ -78,7 +81,12 @@
     border: 1px solid black;
     padding: 10px;
   }
-
+  
+  .sizeInfo {
+    width: 25%;
+    float: right; 
+    text-align: right;
+  }
   .list-group {
     max-height: 200px;
     overflow-y: auto;
@@ -95,13 +103,11 @@
   .list-group > button > input {
     border: none;
     background: none;
-    width: 50%;
+    width: 25%;
   }
 
-
-  .sizeInfo {
-    width: 50%;
-    text-align: right;
+  .matrixButtons {
+    margin-right: 10px;
   }
 
 </style>

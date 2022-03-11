@@ -1,18 +1,18 @@
 import React from 'react';
 import MatrixEditor from './matrix/MatrixEditor.js';
-import Selectors from "./Selectors.js"
+import Selectors from "./selectors/Selectors.js"
+
+export const MaxMatrixSize = React.createContext(50);
 
 class App extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             mirror: false,
             sparseVal: "0",
             selection: "A", 
             matrices: {"A": [["", ""], ["", ""]]
-        
         
         }   
         }
@@ -120,30 +120,37 @@ class App extends React.Component {
     }
 
     resizeMatrix = (name, rows, cols) => {
-        var lessRows = Math.min(rows, this.state.matrices[name].length)
-        var lessCols = Math.min(cols, this.state.matrices[name][0].length)
+        if (this.state.matrices[name].length !== rows || this.state.matrices[name][0].length !== cols) {
+            if (rows > 51)
+                rows = 51
+            if (cols > 51)
+                cols = 51
 
-        var resized = Array(rows).fill([])
-        for (var i = 0; i < lessRows; i++) {            
-            var arr = Array(cols).fill("")
-            for (var j = 0; j < lessCols; j++) {
-                arr[j] = this.state.matrices[name][i][j]
+            var lessRows = Math.min(rows, this.state.matrices[name].length)
+            var lessCols = Math.min(cols, this.state.matrices[name][0].length)
+
+            var resized = Array(rows).fill([])
+            for (var i = 0; i < lessRows - 1; i++) {            
+                var arr = Array(cols).fill("")
+                for (var j = 0; j < lessCols - 1; j++) {
+                    arr[j] = this.state.matrices[name][i][j]
+                }
+
+                for (var j = lessCols - 1; j < cols; j++) {
+                    arr[j] = "";
+                }
+                
+                resized[i] = arr;
             }
 
-            for (var j = lessCols; j < cols; j++) {
-                arr[j] = "";
-            }
             
-            resized[i] = arr;
+            for (i = lessRows - 1; i < rows; i++) 
+                resized[i] = Array(cols).fill("");
+
+            console.log(resized)
+            console.log(lessCols)
+            this.updateMatrix(resized, name); 
         }
-
-        
-        for (i = lessRows; i < rows; i++) 
-            resized[i] = Array(cols).fill("");
-
-        console.log(resized)
-        console.log(lessCols)
-        this.updateMatrix(resized, name); 
     }
 
 

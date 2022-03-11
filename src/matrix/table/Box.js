@@ -2,7 +2,9 @@ import React from 'react';
 
 class Box extends React.Component {
     render() {
-        if (this.props.cols === (this.props.col + 1) && this.props.rows === (this.props.row + 1))
+        if (this.props.cols === (this.props.col + 1) && 
+            this.props.rows === (this.props.row + 1))
+            
             return <td><input tabIndex = {-1} 
             autoComplete = "off" 
             key = {this.props.row + ":" + this.props.col} 
