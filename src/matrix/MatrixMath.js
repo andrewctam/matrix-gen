@@ -18,7 +18,7 @@ class MatrixMath extends React.Component {
 
     handleChange = (e) => {
         var updated = e.target.value
-        if (/[a-zA-Z0-9*+\-\s()]?/.test(updated)) {
+        if (/^[a-zA-Z0-9*+\-\s()]*$/.test(updated)) {
             this.setState({expression: updated})
         }   
     }
@@ -40,13 +40,13 @@ class MatrixMath extends React.Component {
         for (var i = 0; i < str.length; i++) {
             char = str.charAt(i);
 
-            if (char == " ") {
+            if (char === " ") {
                 if (i === str.length - 1)
                     output.push(str.substring(start, end + 1))
                 else
                     continue;
             } else if (/[A-Za-z-0-9]/.test(char)) {
-                if (start == -1) {
+                if (start === -1) {
                     start = i
                     end = i
                 }
@@ -57,20 +57,20 @@ class MatrixMath extends React.Component {
                     output.push(str.substring(start, end + 1))
                 }
             } else { 
-                if (start != -1) {
+                if (start !== -1) {
                     output.push(str.substring(start, end + 1))
                     start = -1;
                     end = -1;
                 }
             
-                if (char == "(")
+                if (char === "(")
                     stack.push(char)
-                else if (char == ")") {
-                    while (stack[stack.length - 1] != "(")
+                else if (char === ")") {
+                    while (stack[stack.length - 1] !== "(")
                         output.push(stack.pop())
                     stack.pop();
                 }
-                else if (stack.length == 0 || stack[stack.length - 1] === "(")
+                else if (stack.length === 0 || stack[stack.length - 1] === "(")
                     stack.push(char)
                 else if (this.orderOfOperations(char) > this.orderOfOperations(stack[stack.length - 1]))
                     stack.push(char)

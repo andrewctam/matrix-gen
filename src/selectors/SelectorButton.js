@@ -95,14 +95,14 @@ class SelectorButton extends React.Component {
                 this.props.resizeMatrix(this.props.name, rows + 1, cols + 1);
             } else {
                 alert("Dimensions can not be zero");
-                var rows = this.props.matrices[this.props.name].length - 1
-                var cols = this.props.matrices[this.props.name][0].length - 1
+                rows = this.props.matrices[this.props.name].length - 1
+                cols = this.props.matrices[this.props.name][0].length - 1
 
                 this.setState({displaySize: (rows) + " x " + cols});
             }
         } else {
-            var rows = this.props.matrices[this.props.name].length - 1
-            var cols = this.props.matrices[this.props.name][0].length - 1
+            rows = this.props.matrices[this.props.name].length - 1
+            cols = this.props.matrices[this.props.name][0].length - 1
 
             this.setState({displaySize: (rows) + " x " + cols});
         }

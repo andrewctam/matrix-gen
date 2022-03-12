@@ -12,9 +12,7 @@ class App extends React.Component {
             mirror: false,
             sparseVal: "0",
             selection: "A", 
-            matrices: {"A": [["", ""], ["", ""]]
-        
-            }   
+            matrices: {"A": [["", ""], ["", ""]]}   
         }
     }
 
@@ -41,11 +39,13 @@ class App extends React.Component {
                 <Selectors matrices = {this.state.matrices} 
                     updateSelection = {this.updateSelection} 
                     addMatrix = {this.addMatrix}
+                    deleteMatrix = {this.deleteMatrix}
                     renameMatrix = {this.renameMatrix}
+                    copyMatrix = {this.copyMatrix}
                     selection = {this.state.selection}
                     updateMatrix = {this.updateMatrix}
                     resizeMatrix = {this.resizeMatrix}
-                updateParameter = {this.updateParameter}/>
+                    updateParameter = {this.updateParameter}/>
                     
                 {editor} 
             </div>
@@ -63,6 +63,7 @@ class App extends React.Component {
         this.setState({selection: selected})
     }
 
+
     renameMatrix = (oldName, newName) => {        
         var temp = this.state.matrices;
         if (newName in temp)
@@ -75,9 +76,29 @@ class App extends React.Component {
         return true;
     }
 
-    copyMatrix = (toCopy, name) => {
+    
+    copyMatrix = (toCopy, name = undefined) => {
         var temp = this.state.matrices;
-        temp[name] = temp[toCopy].map(function(arr) { return arr.slice(); });
+        var matrixName;
+        if (name === undefined) {
+            var charCode = 65;
+            matrixName = "A";
+            while (matrixName in temp) {
+                //if (name.charAt(name.length - 1) === "Z") {
+                if (charCode === 90) { 
+                    matrixName += "A"
+                    charCode = 65;
+                }
+                else
+                    matrixName = matrixName.substring(0, matrixName.length - 1) + String.fromCharCode(++charCode);
+            }
+        } else {
+            matrixName = name;
+        }
+
+
+
+        temp[matrixName] = temp[toCopy].map(function(arr) { return arr.slice(); });
         this.setState({matrices: temp});
     }
 
@@ -115,6 +136,12 @@ class App extends React.Component {
 
     }
 
+    deleteMatrix = (del) => {        
+        var temp = this.state.matrices;
+        delete temp[del];
+        this.setState({matrices: temp});
+    }
+
     updateParameter = (i, updated) => {
         switch (i) {
             case "sparse":
@@ -147,7 +174,7 @@ class App extends React.Component {
                     arr[j] = this.state.matrices[name][i][j]
                 }
 
-                for (var j = lessCols - 1; j < cols; j++) {
+                for (j = lessCols - 1; j < cols; j++) {
                     arr[j] = "";
                 }
                 

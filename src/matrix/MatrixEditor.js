@@ -156,7 +156,7 @@ class MatrixEditor extends React.Component {
 
     
     updateEntry = (i, j, val) => {
-        if (i != 50 && j != 50) {
+        if (i !== 50 && j !== 50) {
             var temp = this.props.matrix;
             temp[i][j] = val;
             this.props.updateMatrix(temp, this.props.name); 
