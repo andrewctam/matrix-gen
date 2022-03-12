@@ -14,7 +14,7 @@ class App extends React.Component {
             selection: "A", 
             matrices: {"A": [["", ""], ["", ""]]
         
-        }   
+            }   
         }
     }
 
@@ -24,10 +24,13 @@ class App extends React.Component {
         if (this.state.selection in this.state.matrices)
             var editor = <MatrixEditor
                 matrix = {this.state.matrices[this.state.selection]} 
+                matrices = {this.state.matrices}
                 name = {this.state.selection} 
                 updateMatrix = {this.updateMatrix}
                 updateParameter = {this.updateParameter}
                 mirror = {this.state.mirror}
+                sparseVal = {this.state.sparseVal}
+                addMatrix = {this.addMatrix}
                 />
         else
             editor = null;
@@ -54,7 +57,6 @@ class App extends React.Component {
         temp[key] = updated;
 
         this.setState({matrices: temp});
-        console.log(this.state.matrices)
     }
     
     updateSelection = (selected) => {
@@ -79,28 +81,37 @@ class App extends React.Component {
         this.setState({matrices: temp});
     }
 
-    addMatrix = () => {
+    addMatrix = (matrix = undefined, name = undefined) => {
         var temp = this.state.matrices;
-        var name = "A";
-        var charCode = 65;
-
-        while (name in temp) {
-            //if (name.charAt(name.length - 1) === "Z") {
-            if (charCode === 90) { 
-                name += "A"
-                charCode = 65;
+        var matrixName;
+        if (name === undefined) {
+            var charCode = 65;
+            matrixName = "A";
+            while (matrixName in temp) {
+                //if (name.charAt(name.length - 1) === "Z") {
+                if (charCode === 90) { 
+                    matrixName += "A"
+                    charCode = 65;
+                }
+                else
+                    matrixName = matrixName.substring(0, matrixName.length - 1) + String.fromCharCode(++charCode);
             }
-            else
-                name = name.substring(0, name.length - 1) + String.fromCharCode(++charCode);
+        } else {
+            matrixName = name;
         }
 
-
-        temp[name] = [["", ""], ["", ""]];
+        
+        if (matrix === undefined) {
+            temp[matrixName] = [["", ""], ["", ""]];
+        } else {
+            temp[matrixName] = matrix;
+        }
+        
+        
         this.setState({matrices: temp}, () => {
             var selectors = document.getElementById("selectors");
             selectors.scrollTop = selectors.scrollHeight;
         });
-
 
     }
 
@@ -147,8 +158,7 @@ class App extends React.Component {
             for (i = lessRows - 1; i < rows; i++) 
                 resized[i] = Array(cols).fill("");
 
-            console.log(resized)
-            console.log(lessCols)
+
             this.updateMatrix(resized, name); 
         }
     }

@@ -50,13 +50,13 @@ class Selectors extends React.Component {
             <div class = "col-sm-4">
                 <ul>
                     <li>Click on a Matrix's name to rename it. Valid characters are uppercase and lowercase letters, and underscores.</li>
-                    <li>Type in a pink box Click on a Matrix's dimensions to resize it. The maximum size is 50 x 50.</li>
+                    <li>Click on a Matrix's dimensions to resize it. The maximum size is 50 x 50.</li>
                 </ul>   
             </div>
             <div class = "col-sm-4">
                 <ul>
 
-                    <li>Interpret empty elements (excluding pink boxes) as &nbsp;
+                    <li>Default empty element: &nbsp;
                     <ParameterTextInput width = {"30px"} defaultVal = {"0"} id={"sparse"} updateParameter={this.props.updateParameter}/> </li>
                     <li><ParameterSwitchInput defaultVal = {false} name={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.props.updateParameter}/></li>
                 </ul>   
