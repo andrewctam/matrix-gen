@@ -35,44 +35,47 @@ class MatrixEditor extends React.Component {
         
         return (
         <div className = "matrixEditor">
+            <div className = "options">
+                <button className = "btn btn-secondary matrixButtons" onClick={this.toggleMath}>                
+                    {this.state.showMath ? "Close Math Input" : "Perform Matrix Math"}
+                </button>
+                <button className = "btn btn-secondary matrixButtons" onClick={this.toggleExport}>
+                    {this.state.showExport ? "Close Export" : "Export Matrix"}
+                </button>
+
+                <button className = "btn btn-success matrixButtons" onClick={() => {this.setState({showOptions: !this.state.showOptions})}}>{this.state.showOptions ? "Hide Options" : "Show Options"}</button> 
+                {this.state.showOptions ? 
+                <div>
+                    <button className = "btn btn-success matrixButtons" onClick={this.transpose}>Transpose</button> <br />
+                    <button className = "btn btn-success matrixButtons" onClick={this.mirrorRowsOntoColumns}>Mirror Rows Across Diagonal</button> <br />
+                    <button className = "btn btn-success matrixButtons" onClick={this.mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button> <br />
+                    
+                    <button className = "btn btn-success matrixButtons" onClick={this.randomMatrix}>Random Matrix</button>
+                    <ParameterTextInput id={"randomLow"} updateParameter = {this.updateParameter} defaultVal = {1} width = {"30px"} />{" to "}
+                    <ParameterTextInput id={"randomHigh"} updateParameter = {this.updateParameter} defaultVal = {10} width = {"30px"} />
+                    <br />
+
+                    <button className = "btn btn-success matrixButtons" onClick={this.fillEmpty}>Fill Empty With</button>
+                    <ParameterTextInput id={"fillEmptyVal"} updateParameter = {this.updateParameter} defaultVal = {0} width = {"30px"} />
+                    <br/>
+                    
+                </div> : null}
+
+                
+                {this.state.showExport ?
+                    <MatrixExport matrix = {this.props.matrix} sparseVal = {this.props.sparseVal} />
+                    : null }   
+
+                {this.state.showMath ?
+                    <MatrixMath matrices = {this.props.matrices} matrix = {this.props.matrix} addMatrix = {this.props.addMatrix} sparseVal = {this.props.sparseVal} />
+                    : null }  
+            </div>
+
             <table className = "table table-bordered" >
                 <tbody> {matrixTable} </tbody>
             </table>
-
-            <button className = "btn btn-primary matrixButtons" onClick={() => {this.setState({showOptions: !this.state.showOptions})}}>{this.state.showOptions ? "Hide Options" : "Show Options"}</button> <br />
-            {this.state.showOptions ? 
-            <div>
-                <button className = "btn btn-secondary matrixButtons" onClick={this.transpose}>Transpose</button> <br />
-                <button className = "btn btn-secondary matrixButtons" onClick={this.mirrorRowsOntoColumns}>Mirror Rows Across Diagonal</button> <br />
-                <button className = "btn btn-secondary matrixButtons" onClick={this.mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button> <br />
-                
-                <button className = "btn btn-secondary matrixButtons" onClick={this.randomMatrix}>Random Matrix</button>
-                <ParameterTextInput id={"randomLow"} updateParameter = {this.updateParameter} defaultVal = {1} width = {"30px"} />{" to "}
-                <ParameterTextInput id={"randomHigh"} updateParameter = {this.updateParameter} defaultVal = {10} width = {"30px"} />
-                <br />
-
-                <button className = "btn btn-secondary matrixButtons" onClick={this.fillEmpty}>Fill Empty With</button>
-                <ParameterTextInput id={"fillEmptyVal"} updateParameter = {this.updateParameter} defaultVal = {0} width = {"30px"} />
-                <br/>
-                
-            </div> : null}
-
-            <button className = "btn btn-secondary matrixButtons" onClick={this.toggleMath}>                
-                {this.state.showMath ? "Close Math Input" : "Perform Matrix Math"}
-            </button>
-            <button className = "btn btn-secondary matrixButtons" onClick={this.toggleExport}>
-                {this.state.showExport ? "Close Export" : "Export Matrix"}
-            </button>
-            
-            {this.state.showExport ?
-                <MatrixExport matrix = {this.props.matrix} sparseVal = {this.props.sparseVal} />
-                : null }   
-
-            {this.state.showMath ?
-                <MatrixMath matrices = {this.props.matrices} matrix = {this.props.matrix} addMatrix = {this.props.addMatrix} sparseVal = {this.props.sparseVal} />
-                : null }  
-
             </div>)
+
     }
 
     updateParameter = (i, updated) => {

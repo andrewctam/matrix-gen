@@ -48,18 +48,19 @@ class Selectors extends React.Component {
             updateSelection = {this.props.updateSelection}
             selection = {this.props.selection}/>)
 
-        return  <div class = "row">
-            <div class = "col-sm-4">
-                <div id = "selectors" class="list-group">
-                    {selectors}    
-                </div>
-            </div>
+        return  <div class = "row selectors">
             <div class = "col-sm-4">
                 <ul>
+                    <li>Enter values in the matrix below. The last row and column (in red) are not part of the matrix. Typing in the these red boxes will add a new row or column.</li>
                     <li>Click on a Matrix's name to rename it. Valid characters are uppercase and lowercase letters, and underscores.</li>
-                    <li>Click on a Matrix's dimensions to resize it. The maximum size is 50 x 50.</li>
+                    <li>Click on a Matrix's dimensions to quickly resize it. The maximum size is 50 x 50.</li>
                 </ul>   
             </div>
+                <div class = "col-sm-4">
+                    <div id = "selectors" class="list-group">
+                        {selectors}    
+                    </div>
+                </div>
             <div class = "col-sm-4">
                 <ul>
                     <li>Default empty element: &nbsp;

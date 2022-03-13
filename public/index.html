@@ -19,31 +19,42 @@
 </html>
 
 <style>
-  .container-fluid {
-    padding: 10px;
-  }
-
   body {
     overflow-y: scroll;
+    margin: 0;
+    padding: 0;
+    color: white;
+    background-color: rgb(82, 80, 83);
+  }
+  
+  .parameterTextInput, input {
+    background: white;
+    border-radius: 5px;
+    border: 1px solid black;
   }
   
   h1 {
     font-size: medium;
   }
   table {
-    width: 100%;
+    width:auto !important;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(196, 185, 185);
+
   }
 
   tr {
-    border: 1px solid black;
+    border: 1px solid rgb(0, 0, 0);
     margin: 0;
     padding: 0;
   }
   td {
     padding: 0;
     margin: 0;
-    max-width: 50px
-    
+    width: 50px;
+    background-color: white;
+    border: 1px solid rgb(0, 0, 0);
   }
 
   .table>:not(caption)>*>* {
@@ -62,15 +73,17 @@
     padding: 0;
     margin: 0;
     text-align: center;
+    color: black;
   }
+  
 
   tr:nth-last-child(1) {
-    background-color: rgb(250, 217, 213);
+    background-color: rgb(189, 127, 127);
     max-width: 50px;
   }
   td:nth-last-child(1) {
-    background-color: rgb(250, 217, 213);
-    max-height: 50px;;
+    background-color: rgb(189, 127, 127);
+    max-height: 50px;
   }
 
 
@@ -81,10 +94,19 @@
     margin-bottom: 10px;
   }
 
-  .export {
-    border: 1px solid black;
+  .export, .matrixMath {
+    border-bottom: 1px solid black;
     padding: 10px;
   }
+
+  .mathInput {
+    width: 100%;
+    margin-bottom: 1vh;
+  }
+  .mathEval {
+    width: 100%;
+  }
+  
   
   .sizeInfo {
     width: 25%;
@@ -108,11 +130,29 @@
     border: none;
     background: none;
     width: 25%;
+    
   }
 
   .matrixButtons {
     margin: 5px;
   }
+
+  .matrixEditor {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .selectors {
+    background-color: rgb(48, 50, 51);
+    padding-top: 1%;
+    padding-bottom: 1%;
+    margin-top: 0;
+  }
+
+  .options {
+    padding: 0;
+    margin-bottom: 10px;
+  }
+
 
 
 

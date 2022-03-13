@@ -10,15 +10,28 @@ class MatrixMath extends React.Component {
 
     render() { 
         
-        return <div>
-            <input type="text" value = {this.state.expression} placeholder = {"(A + B) * C"} onChange = {this.handleChange}></input><br />
-            <button class = "btn btn-secondary" onClick={this.calculate}>Calculate</button>
+        return <div className = "row matrixMath">
+            <div className = "col-sm-3">
+                <input type="text" className = "mathInput" value = {this.state.expression} placeholder = {"(A + B) * C"} onChange = {this.handleChange}></input>
+                <br/>
+                <button class = "btn btn-secondary mathEval" onClick={this.calculate}>Evaluate Expression</button>
+            </div>
+
+            <div className = "col-sm-9">
+                <ul>
+                    <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
+                    <li>You can enter matrix names or numbers (for matrix scalar multiplication). Valid operators: * + -</li>
+                    <li>You can use parentheses to specify order of operations. However, use * for multiplication</li>
+                </ul>
+            </div>
+
+
         </div>
     }
 
     handleChange = (e) => {
         var updated = e.target.value
-        if (/^[a-zA-Z0-9*+\-\s()]*$/.test(updated)) {
+        if (/^[a-zA-Z0-9_*+\-\s()]*$/.test(updated)) {
             this.setState({expression: updated})
         }   
     }
@@ -26,7 +39,9 @@ class MatrixMath extends React.Component {
     calculate = (e) => {
         var postfix = this.shuntingYard(this.state.expression);
         console.log(postfix)
-        this.props.addMatrix(this.evaluatePostfix(postfix));
+        var matrix = this.evaluatePostfix(postfix);
+        if (matrix !== null)
+            this.props.addMatrix(matrix)
     }
 
     shuntingYard = (str) => {
@@ -39,13 +54,16 @@ class MatrixMath extends React.Component {
 
         for (var i = 0; i < str.length; i++) {
             char = str.charAt(i);
+        
 
             if (char === " ") {
                 if (i === str.length - 1)
                     output.push(str.substring(start, end + 1))
                 else
                     continue;
-            } else if (/[A-Za-z-0-9]/.test(char)) {
+            } else if (/[0-9]/.test(char))  {
+
+            } else if (/[A-Za-z_]/.test(char)) {
                 if (start === -1) {
                     start = i
                     end = i
@@ -98,6 +116,10 @@ class MatrixMath extends React.Component {
     }
 
     matrixMultiplication = (a, b) => {
+        if (a.length !== b[0].length)
+            return null;
+
+
         var product = []
         for (var i = 0; i < a.length - 1; i++) {
             var row = []
@@ -128,8 +150,13 @@ class MatrixMath extends React.Component {
     }        
     
     matrixAddition = (a, b) => {
+        if (a.length !== b.length || a[0].length !== b[0].length) {
+            return null;
+        }
+
         var matrixSum = []
         var aVal, bVal;
+        
         for (var i = 0; i < a.length - 1; i++) {
             var row = []
             for (var j = 0; j < b[0].length - 1; j++)  {
@@ -154,6 +181,9 @@ class MatrixMath extends React.Component {
     }  
 
     matrixSubtraction = (a, b) => {
+        if (a.length !== b.length || a[0].length !== b[0].length)
+            return null;
+
         var matrixDiff = []
         var aVal, bVal;
         for (var i = 0; i < a.length - 1; i++) {
@@ -184,19 +214,41 @@ class MatrixMath extends React.Component {
 
     evaluatePostfix = (postFix) => {
         var stack = []
-        var a, b;
+        var a, b, result;
             for (var i = 0; i < postFix.length; i++) {
                 switch(postFix[i]) {
                     case "*":
                         b = stack.pop()
                         a = stack.pop()
-                        stack.push(this.matrixMultiplication(a, b))
+                        result = this.matrixMultiplication(a, b)
+                        if (result === null) {
+                            alert("Error in input. Matrices have different rows and column dimensions")
+                            return null
+                        }
+
+                        stack.push(result)
                         break;
                     case "+":
-                        stack.push(this.matrixAddition(stack.pop(), stack.pop()))
+                        b = stack.pop()
+                        a = stack.pop()
+                        result = this.matrixAddition(b, a)
+                        if (result === null) {
+                            alert("Error in input. Matrices have different dimensions")
+                            return null
+                        }
+
+                        stack.push(result)
                         break;
                     case "-":
-                        stack.push(this.matrixSubtraction(stack.pop(), stack.pop()))
+                        b = stack.pop()
+                        a = stack.pop()
+                        result = this.matrixSubtraction(b, a)
+                        if (result === null) {
+                            alert("Error in input. Matrices have different dimensions")
+                            return null
+                        }
+
+                        stack.push(result)
                         break;
                     default:
                         if (postFix[i] in this.props.matrices) {
