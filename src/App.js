@@ -166,12 +166,7 @@ class App extends React.Component {
 
             var lessRows = Math.min(rows, this.state.matrices[name].length)
             var lessCols = Math.min(cols, this.state.matrices[name][0].length)
-            if (lessRows === rows)
-                if (!window.confirm("The new matrix size is smaller and rows will be deleted. Would you like to proceed?")) 
-                    return;
-            if (lessCols === cols)
-                if (!window.confirm("The new matrix size is smaller and columns will be deleted. Would you like to proceed?")) 
-                    return;
+
 
             var resized = Array(rows).fill([])
             for (var i = 0; i < lessRows - 1; i++) {            

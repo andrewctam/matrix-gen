@@ -31,7 +31,7 @@ class MatrixMath extends React.Component {
 
     handleChange = (e) => {
         var updated = e.target.value
-        if (/^[a-zA-Z0-9_*+\-\s()]*$/.test(updated)) {
+        if (/^[a-zA-Z0-9_*^+\-\s()]*$/.test(updated)) {
             this.setState({expression: updated})
         }   
     }
@@ -51,51 +51,86 @@ class MatrixMath extends React.Component {
         var start = -1;
         var end = -1;
         var char;
+        var parsingLetter = false;
+        var parsingNum = false;
+        //ABC123
 
         for (var i = 0; i < str.length; i++) {
             char = str.charAt(i);
         
-
             if (char === " ") {
                 if (i === str.length - 1)
                     output.push(str.substring(start, end + 1))
                 else
                     continue;
             } else if (/[0-9]/.test(char))  {
+                if (parsingLetter) {
+                    output.push(str.substring(start, end + 1))
+                    start = -1
+                    parsingLetter = false;
+                    stack.push("*")
+                } 
+                parsingNum = true;
 
-            } else if (/[A-Za-z_]/.test(char)) {
                 if (start === -1) {
                     start = i
                     end = i
-                }
-                else
+                } else {
                     end++;
-                
+                }
+                    
                 if (i === str.length - 1) {
                     output.push(str.substring(start, end + 1))
                 }
-            } else { 
-                if (start !== -1) {
-                    output.push(str.substring(start, end + 1))
-                    start = -1;
-                    end = -1;
-                }
-            
-                if (char === "(")
-                    stack.push(char)
-                else if (char === ")") {
-                    while (stack[stack.length - 1] !== "(")
-                        output.push(stack.pop())
-                    stack.pop();
-                }
-                else if (stack.length === 0 || stack[stack.length - 1] === "(")
-                    stack.push(char)
-                else if (this.orderOfOperations(char) > this.orderOfOperations(stack[stack.length - 1]))
-                    stack.push(char)
-                else {
-                    while (stack.length > 0 && this.orderOfOperations(char) <= this.orderOfOperations(stack[stack.length - 1]))
-                        output.push(stack.pop())
-                    stack.push(char)
+            } else {
+                if (/[A-Za-z_]/.test(char)) {
+                    if (parsingNum) {
+                        output.push(str.substring(start, end + 1))
+                        start = -1
+                        parsingNum = false;
+                        stack.push("*")
+                    } 
+                    parsingLetter = true;
+                    
+                    if (start === -1) {
+                        start = i
+                        end = i
+                    }
+                    else {
+                        end++;
+                    }
+                        
+                    if (i === str.length - 1) {
+                        output.push(str.substring(start, end + 1))
+                    }
+                } else { 
+                    if (start !== -1) {
+                        output.push(str.substring(start, end + 1))
+                        start = -1;
+                        if (parsingLetter)
+                            parsingLetter = false
+                        if (parsingNum)
+                            parsingNum = false
+                    }
+                
+                    if (char === "(") {
+
+                        stack.push(char)
+                    }
+                    else if (char === ")") {
+                        while (stack[stack.length - 1] !== "(")
+                            output.push(stack.pop())
+                        stack.pop();
+                    }
+                    else if (stack.length === 0 || stack[stack.length - 1] === "(")
+                        stack.push(char)
+                    else if (this.orderOfOperations(char) > this.orderOfOperations(stack[stack.length - 1]))
+                        stack.push(char)
+                    else {
+                        while (stack.length > 0 && this.orderOfOperations(char) <= this.orderOfOperations(stack[stack.length - 1]))
+                            output.push(stack.pop())
+                        stack.push(char)
+                    }
                 }
             }
 
@@ -111,8 +146,27 @@ class MatrixMath extends React.Component {
     orderOfOperations = (operator) => {
         if (operator === "+" || operator === "-")
             return 0
-        if (operator === "*")
+        if (operator === "*" || operator === "^")
             return 1
+    }
+    
+    matrixPower = (a, pow) => {
+        if (typeof(pow) !== "number") {
+            if (typeof(a) !== "object")
+                return null;
+        } else if (typeof(a) === "number") {
+            return Math.pow(a, pow);
+        }
+ 
+        var product = JSON.parse(JSON.stringify(a));
+        for (var i = 0; i < a.length; i++)
+            for (var j = 0; i < a.length; i++)
+               product[i][j] = a[i][j];
+        
+        console.log(product)
+        for (i = 1; i < pow; i++)
+            product = this.matrixMultiplication(product, a);
+        return product
     }
 
     matrixMultiplication = (a, b) => {
@@ -228,6 +282,17 @@ class MatrixMath extends React.Component {
 
                         stack.push(result)
                         break;
+                    case "^":
+                        b = stack.pop()
+                        a = stack.pop()
+                        result = this.matrixPower(a, b)
+                        if (result === null) {
+                            alert("Error in input. Matrices have different rows and column dimensions")
+                            return null
+                        }
+
+                        stack.push(result)
+                        break;
                     case "+":
                         b = stack.pop()
                         a = stack.pop()
@@ -251,7 +316,9 @@ class MatrixMath extends React.Component {
                         stack.push(result)
                         break;
                     default:
-                        if (postFix[i] in this.props.matrices) {
+                        if (/^[0-9]*$/.test(postFix[i]))
+                            stack.push(parseFloat(postFix[i]));
+                        else if (postFix[i] in this.props.matrices) {
                             stack.push(this.props.matrices[postFix[i]]);
                             break;
                         } else {

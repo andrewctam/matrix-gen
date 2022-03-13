@@ -10,7 +10,7 @@ class MatrixEditor extends React.Component {
 
     render() { 
         return <div className = "row export">
-            <textarea readOnly = {true} onClick = {this.handleFocus} className="output" value = {this.matrixToString(this.props.matrix)} />
+            <textarea readOnly = {true} onClick = {this.handleFocus} className="exportOutput" value = {this.matrixToString(this.props.matrix)} />
             <div className = "col-sm-2">
                 <ParameterSwitchInput defaultVal = {false} id={"latex"} text = {"LaTeX Format"} updateParameter={this.updateExportParameter}/>
             </div>
