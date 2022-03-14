@@ -20,7 +20,7 @@ class MatrixMath extends React.Component {
             <div className = "col-sm-9">
                 <ul>
                     <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
-                    <li>You can enter matrix names or numbers (for matrix scalar multiplication). Valid operators: * + -</li>
+                    <li>You can enter matrix names or numbers (for matrix scalar multiplication). Valid operators: * ^ + -</li>
                     <li>You can use parentheses to specify order of operations. However, use * for multiplication</li>
                 </ul>
             </div>
@@ -40,8 +40,11 @@ class MatrixMath extends React.Component {
         var postfix = this.shuntingYard(this.state.expression);
         console.log(postfix)
         var matrix = this.evaluatePostfix(postfix);
+
         if (matrix !== null)
             this.props.addMatrix(matrix)
+        
+
     }
 
     shuntingYard = (str) => {
@@ -139,6 +142,7 @@ class MatrixMath extends React.Component {
 
         while (stack.length > 0)
             output.push(stack.pop())
+
         return output
 
     }
@@ -160,7 +164,7 @@ class MatrixMath extends React.Component {
  
         var product = JSON.parse(JSON.stringify(a));
         for (var i = 0; i < a.length; i++)
-            for (var j = 0; i < a.length; i++)
+            for (var j = 0; j < a.length; j++)
                product[i][j] = a[i][j];
         
         console.log(product)
@@ -170,14 +174,33 @@ class MatrixMath extends React.Component {
     }
 
     matrixMultiplication = (a, b) => {
+        if (typeof(a) === "number" && typeof(b) === "number") {
+            return a * b; //scalar multiplication
+        }
+        else if (typeof(a) === "object" && typeof(b) === "number") {
+            var product = JSON.parse(JSON.stringify(a));
+            for (var i = 0; i < a.length - 1; i++)
+                for (var j = 0; j < a[0].length - 1; j++)
+                product[i][j] = b * a[i][j]; //matrix scalar multiplication
+
+            return product
+        } else if (typeof(a) === "number" && typeof(b) === "object") {
+            var product = JSON.parse(JSON.stringify(b));
+            for (i = 0; i < b.length - 1; i++)
+                for (j = 0; j < b[0].length - 1; j++)
+                product[i][j] = a * b[i][j]; //matrix scalar multiplication
+
+            return product
+        }
+
+
         if (a.length !== b[0].length)
             return null;
 
-
-        var product = []
-        for (var i = 0; i < a.length - 1; i++) {
+        product = []
+        for (i = 0; i < a.length - 1; i++) {
             var row = []
-            for (var j = 0; j < b[0].length - 1; j++)  {
+            for (j = 0; j < b[0].length - 1; j++)  {
                 var sum = 0
                 for (var k = 0; k < b.length - 1; k++) {
                     if (a[i][k] === "")
@@ -269,70 +292,70 @@ class MatrixMath extends React.Component {
     evaluatePostfix = (postFix) => {
         var stack = []
         var a, b, result;
-            for (var i = 0; i < postFix.length; i++) {
-                switch(postFix[i]) {
-                    case "*":
-                        b = stack.pop()
-                        a = stack.pop()
-                        result = this.matrixMultiplication(a, b)
-                        if (result === null) {
-                            alert("Error in input. Matrices have different rows and column dimensions")
-                            return null
-                        }
+        for (var i = 0; i < postFix.length; i++) {
+            switch(postFix[i]) {
+                case "*":
+                    b = stack.pop()
+                    a = stack.pop()
+                    result = this.matrixMultiplication(a, b)
+                    if (result === null) {
+                        alert("Error in input. Matrices have different rows and column dimensions")
+                        return null
+                    }
 
-                        stack.push(result)
+                    stack.push(result)
+                    break;
+                case "^":
+                    b = stack.pop()
+                    a = stack.pop()
+                    result = this.matrixPower(a, b)
+                    if (result === null) {
+                        alert("Error in input. Matrices have different rows and column dimensions")
+                        return null
+                    }
+
+                    stack.push(result)
+                    break;
+                case "+":
+                    b = stack.pop()
+                    a = stack.pop()
+                    result = this.matrixAddition(b, a)
+                    if (result === null) {
+                        alert("Error in input. Matrices have different dimensions")
+                        return null;
+                    }
+
+                    stack.push(result)
+                    break;
+                case "-":
+                    b = stack.pop()
+                    a = stack.pop()
+                    result = this.matrixSubtraction(b, a)
+                    if (result === null) {
+                        alert("Error in input. Matrices have different dimensions")
+                        return null;
+                    }
+
+                    stack.push(result)
+                    break;
+                default:
+                    if (/^[0-9]*$/.test(postFix[i]))
+                        stack.push(parseFloat(postFix[i]));
+                    else if (postFix[i] in this.props.matrices) {
+                        stack.push(this.props.matrices[postFix[i]]);
                         break;
-                    case "^":
-                        b = stack.pop()
-                        a = stack.pop()
-                        result = this.matrixPower(a, b)
-                        if (result === null) {
-                            alert("Error in input. Matrices have different rows and column dimensions")
-                            return null
-                        }
-
-                        stack.push(result)
-                        break;
-                    case "+":
-                        b = stack.pop()
-                        a = stack.pop()
-                        result = this.matrixAddition(b, a)
-                        if (result === null) {
-                            alert("Error in input. Matrices have different dimensions")
-                            return null
-                        }
-
-                        stack.push(result)
-                        break;
-                    case "-":
-                        b = stack.pop()
-                        a = stack.pop()
-                        result = this.matrixSubtraction(b, a)
-                        if (result === null) {
-                            alert("Error in input. Matrices have different dimensions")
-                            return null
-                        }
-
-                        stack.push(result)
-                        break;
-                    default:
-                        if (/^[0-9]*$/.test(postFix[i]))
-                            stack.push(parseFloat(postFix[i]));
-                        else if (postFix[i] in this.props.matrices) {
-                            stack.push(this.props.matrices[postFix[i]]);
-                            break;
-                        } else {
-                            alert(postFix[i] + " does not exist")
-                            return;
-                        }
-
-                }
-            
-
+                    } else {
+                        alert(postFix[i] + " does not exist")
+                        return null;;
+                    }
+            }
         }
 
-        return stack[0]
 
+        if (typeof(stack[0]) === "number")
+            return null;    
+            
+        return stack[0]
     }
 
 

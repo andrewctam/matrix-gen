@@ -6,7 +6,7 @@ import SelectorButton from './SelectorButton';
 class Selectors extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {sort: false};
+        this.state = {sort: true};
     }
     render() {
 

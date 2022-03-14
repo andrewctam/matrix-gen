@@ -62,13 +62,14 @@ class MatrixEditor extends React.Component {
                 </div> : null}
 
                 
+                {this.state.showMath ?
+                    <MatrixMath matrices = {this.props.matrices} matrix = {this.props.matrix} addMatrix = {this.props.addMatrix} sparseVal = {this.props.sparseVal} />
+                    : null } 
+                     
                 {this.state.showExport ?
                     <MatrixExport matrix = {this.props.matrix} sparseVal = {this.props.sparseVal} />
                     : null }   
 
-                {this.state.showMath ?
-                    <MatrixMath matrices = {this.props.matrices} matrix = {this.props.matrix} addMatrix = {this.props.addMatrix} sparseVal = {this.props.sparseVal} />
-                    : null }  
             </div>
 
             <table className = "table table-bordered" >

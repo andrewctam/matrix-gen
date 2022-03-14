@@ -81,17 +81,7 @@ class App extends React.Component {
         var temp = this.state.matrices;
         var matrixName;
         if (name === undefined) {
-            var charCode = 65;
-            matrixName = "A";
-            while (matrixName in temp) {
-                //if (name.charAt(name.length - 1) === "Z") {
-                if (charCode === 90) { 
-                    matrixName += "A"
-                    charCode = 65;
-                }
-                else
-                    matrixName = matrixName.substring(0, matrixName.length - 1) + String.fromCharCode(++charCode);
-            }
+            matrixName = this.generateUniqueName();
         } else {
             matrixName = name;
         }
@@ -102,25 +92,30 @@ class App extends React.Component {
         this.setState({matrices: temp});
     }
 
+    generateUniqueName = () => {
+        var charCode = 65;
+        var matrixName = "A";
+        while (matrixName in this.state.matrices) {
+            //if (name.charAt(name.length - 1) === "Z") {
+            if (charCode === 90) { 
+                matrixName += "A"
+                charCode = 65;
+            }
+            else 
+                matrixName = matrixName.substring(0, matrixName.length - 1) + String.fromCharCode(++charCode);
+        }
+
+        return matrixName
+    }
+
     addMatrix = (matrix = undefined, name = undefined) => {
         var temp = this.state.matrices;
         var matrixName;
         if (name === undefined) {
-            var charCode = 65;
-            matrixName = "A";
-            while (matrixName in temp) {
-                //if (name.charAt(name.length - 1) === "Z") {
-                if (charCode === 90) { 
-                    matrixName += "A"
-                    charCode = 65;
-                }
-                else
-                    matrixName = matrixName.substring(0, matrixName.length - 1) + String.fromCharCode(++charCode);
-            }
+            matrixName = this.generateUniqueName();
         } else {
             matrixName = name;
         }
-
         
         if (matrix === undefined) {
             temp[matrixName] = [["", ""], ["", ""]];
@@ -129,10 +124,12 @@ class App extends React.Component {
         }
         
         
-        this.setState({matrices: temp}, () => {
+        this.setState({matrices: temp, selection: matrixName}, () => {
             var selectors = document.getElementById("selectors");
             selectors.scrollTop = selectors.scrollHeight;
         });
+
+        
 
     }
 
@@ -188,6 +185,14 @@ class App extends React.Component {
 
 
             this.updateMatrix(resized, name); 
+        }
+    }
+
+    deleteMany = () => {
+        var toDelete = window.prompt("Enter matrices to delete: (For example: \"A B C\")").split(" ");
+
+        for (var i = 0; i < toDelete.length; i++) {
+            this.deleteMatrix(toDelete[i]);
         }
     }
 
