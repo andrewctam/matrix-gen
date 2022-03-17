@@ -5,7 +5,7 @@ import ParameterSwitchInput from '../inputs/ParameterSwitchInput.js';
 class MatrixEditor extends React.Component {    
     constructor(props) {
         super(props);
-        this.state = {start: "{", end: "}", delim: ",", latex: false, environment: "bmatrix"};
+        this.state = {start: "{", end: "}", delim: ",", latex: false, environment: "bmatrix", custom: false, exportOption: "{},"};
     }
 
     render() { 
@@ -21,13 +21,46 @@ class MatrixEditor extends React.Component {
                 <ParameterTextInput width = {"100px"} defaultVal = {"bmatrix"} id={"environment"} updateParameter={this.updateExportParameter}/></p>
                 :
 
-                <div>
-                <p>Open arrays with &nbsp;
-                    <ParameterTextInput width = {"20px"} defaultVal = {"{"} id={"start"} updateParameter={this.updateExportParameter}/></p>
-                <p>End arrays with &nbsp;
-                    <ParameterTextInput width = {"20px"} defaultVal = {"}"} id={"end"} updateParameter={this.updateExportParameter}/></p>
-                <p>Separate elements with &nbsp;
-                    <ParameterTextInput width = {"20px"} defaultVal = {","} id={"delim"} updateParameter={this.updateExportParameter}/></p>
+                <div className ="row">
+                <div className = "col-sm-6">
+                    <ul>
+                        Export Setting
+                        <li><button id = "{}," 
+                        onClick = {this.usePreset} 
+                        className = {this.state.exportOption === "{}," ? "btn btn-info" : "btn btn-secondary"}>
+                        {"Curly Braces and Comma { } ,"}
+                        </button></li>
+
+                        <li><button id = "[]," 
+                        onClick = {this.usePreset} 
+                        className = {this.state.exportOption === "[]," ? "btn btn-info" : "btn btn-secondary"}>
+                        {"Square Braces and Comma [ ] ,"}
+                        </button></li>
+
+                        <li><button id = "()," 
+                        onClick = {this.usePreset} 
+                        className = {this.state.exportOption === "()," ? "btn btn-info" : "btn btn-secondary"}>
+                        {"Parentheses and Comma ( ) ,"}
+                        </button></li>
+
+                        <li><button 
+                        onClick = {this.toggleCustom} 
+                        className = {this.state.exportOption === "custom" ? "btn btn-info" : "btn btn-secondary"}>
+                        {"Custom"}
+                        </button></li>
+                    </ul> 
+                </div>
+
+                {this.state.custom ?
+                <div className = "col-sm-6">
+                    <p>Open arrays with &nbsp;
+                        <ParameterTextInput width = {"20px"} id={"start"} updateParameter={this.updateExportParameter}/></p>
+                    <p>End arrays with &nbsp;
+                        <ParameterTextInput width = {"20px"} id={"end"} updateParameter={this.updateExportParameter}/></p>
+                    <p>Separate elements with &nbsp;
+                        <ParameterTextInput width = {"20px"} id={"delim"} updateParameter={this.updateExportParameter}/></p>
+                </div>: null}
+                
                 </div>}
             </div>    
         </div>
@@ -102,10 +135,56 @@ class MatrixEditor extends React.Component {
             case "latex":
                 this.setState({latex: updated});  
                 break; 
+            case "custom":
+                this.setState({custom: updated});  
+                break; 
             default: break;
   
         }
     }
+
+
+    usePreset = (e) => {
+        this.toggleCustom(false);
+        var updated = e.target.id;
+        console.log(updated)
+        switch (updated) {
+            case "{},":
+                this.setState({
+                    start: "{",
+                    end: "}",
+                    delim: ",",
+                    exportOption: "{},"
+                });  
+                break;  
+            case "[],":
+                this.setState({
+                    start: "[",
+                    end: "]",
+                    delim: ",",
+                    exportOption: "[],"
+                });  
+                break;
+            case "(),":
+                this.setState({
+                    start: "(",
+                    end: ")",
+                    delim: ",",
+                    exportOption: "(),"
+                });  
+            break;
+            default: break;
+  
+        }
+    }
+
+    toggleCustom = (option = true) => {
+        this.updateExportParameter("custom", option);
+        this.setState({exportOption: "custom"})
+    }
+
+
+    
 }
 
 

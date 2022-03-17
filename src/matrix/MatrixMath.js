@@ -31,7 +31,7 @@ class MatrixMath extends React.Component {
 
     handleChange = (e) => {
         var updated = e.target.value
-        if (/^[a-zA-Z0-9_*^+\-\s()]*$/.test(updated)) {
+        if (/^[a-zA-Z0-9._*^+\-\s()]*$/.test(updated)) {
             this.setState({expression: updated})
         }   
     }
@@ -66,7 +66,7 @@ class MatrixMath extends React.Component {
                     output.push(str.substring(start, end + 1))
                 else
                     continue;
-            } else if (/[0-9]/.test(char))  {
+            } else if (/[0-9.]/.test(char))  {
                 if (parsingLetter) {
                     output.push(str.substring(start, end + 1))
                     start = -1
