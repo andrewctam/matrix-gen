@@ -185,7 +185,7 @@ class MatrixMath extends React.Component {
 
             return product
         } else if (typeof(a) === "number" && typeof(b) === "object") {
-            var product = JSON.parse(JSON.stringify(b));
+            product = JSON.parse(JSON.stringify(b));
             for (i = 0; i < b.length - 1; i++)
                 for (j = 0; j < b[0].length - 1; j++)
                 product[i][j] = a * b[i][j]; //matrix scalar multiplication

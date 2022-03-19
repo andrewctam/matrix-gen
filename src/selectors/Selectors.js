@@ -38,16 +38,6 @@ class Selectors extends React.Component {
             }
         }
 
-        selectors.push(<AddButton key = " add " addMatrix = {this.props.addMatrix} />)
-        selectors.push(<DuplicateButton key = " duplicate " 
-            copyMatrix = {this.props.copyMatrix}
-            selection = {this.props.selection}/>)
-
-        selectors.push(<DeleteButton key = " delete " 
-            deleteMatrix = {this.props.deleteMatrix} 
-            updateSelection = {this.props.updateSelection}
-            selection = {this.props.selection}/>)
-
         return  <div class = "row selectors">
             <div class = "col-sm-4">
                 <ul>
@@ -60,6 +50,18 @@ class Selectors extends React.Component {
                     <div id = "selectors" class="list-group">
                         {selectors}    
                     </div>
+                    <div id = "selectors" class="list-group">
+                        <AddButton key = " add " addMatrix = {this.props.addMatrix} />
+                        <DuplicateButton key = " duplicate " 
+                        copyMatrix = {this.props.copyMatrix}
+                        selection = {this.props.selection}/>
+                        <DeleteButton key = " delete " 
+                        deleteMatrix = {this.props.deleteMatrix} 
+                        updateSelection = {this.props.updateSelection}
+                        selection = {this.props.selection}/>
+                    </div>
+
+
                 </div>
             <div class = "col-sm-4">
                 <ul>
