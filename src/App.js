@@ -8,12 +8,19 @@ class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            mirror: false,
-            sparseVal: "0",
-            selection: "A", 
-            matrices: {"A": [["", ""], ["", ""]]}   
+        
+        try {
+            this.loadFromLocalStorage();
+        } catch (error) {
+            this.state = {
+                mirror: false,
+                sparseVal: "0",
+                selection: "A", 
+                matrices: {"A": [["", ""], ["", ""]]}   
+            }
         }
+
+
     }
 
 
@@ -37,7 +44,7 @@ class App extends React.Component {
         return (
             <div> 
 
-                <div class = "sticky-top">
+                <div>
                 <Selectors matrices = {this.state.matrices} 
                     updateSelection = {this.updateSelection} 
                     addMatrix = {this.addMatrix}
@@ -47,11 +54,13 @@ class App extends React.Component {
                     selection = {this.state.selection}
                     updateMatrix = {this.updateMatrix}
                     resizeMatrix = {this.resizeMatrix}
-                    updateParameter = {this.updateParameter}/>
-                    </div>
+                    updateParameter = {this.updateParameter}
+                    mirror = {this.state.mirror}
+                    sparseVal = {this.state.sparseVal}
+                    /></div>
 
                     {editor} 
-                <button onClick={this.saveMatricesToLocalStorage}>Save</button>
+                <button className = "btn btn-info" onClick={this.saveToLocalStorage}>Save</button>
 
             </div>
         )
@@ -201,24 +210,77 @@ class App extends React.Component {
         }
     }
 
-    saveMatricesToLocalStorage = () => {
+    saveToLocalStorage = () => {
         var names = "";
         var matrixString = "";
-        for (const [name, matrix] of Object.entries(this.props.matrices)) {
+        for (const [name, matrix] of Object.entries(this.state.matrices)) {
+            matrixString = "";
             names += name + ",";
-            for (var i = 0; i < matrix.length; i++) {                
-                for (var j = 0; j < matrix[0].length; j++)
-                    matrixString += matrix[i][j] + ",";
+            
+            for (var i = 0; i < matrix.length - 1; i++) {                
+                for (var j = 0; j < matrix[0].length - 1; j++) {
+                    matrixString += matrix[i][j];
+                    if (j != matrix[0].length - 2)
+                        matrixString += ","
+                }
 
-                if (i != matrix.length - 1)
+                if (i != matrix.length - 2)
                     matrixString += "]";
             }
                 
+            
             window.localStorage.setItem(name, matrixString);
         }
 
-        window.localStorage.setItem("names", names)
+        window.localStorage.setItem("names;", names.substring(0, names.length - 1))
+        window.localStorage.setItem("mirror;", this.state.mirror ? "1" : "0")
+        window.localStorage.setItem("sparseValue;", this.state.sparseVal)
+
           
+    }
+
+
+    loadFromLocalStorage = () => {
+        var names = localStorage.getItem("names;")
+        names = names.split(",")
+        var matrices = {}
+
+        var matrix;
+        for (const n of names) {
+            matrix = localStorage.getItem(n);
+            matrix = matrix.split("]")
+            for (var i = 0; i < matrix.length; i++) {
+                matrix[i] = matrix[i].split(",")
+                matrix[i].push("");
+            }
+
+            matrix.push(new Array(matrix[0].length).fill(""));
+
+
+        
+            console.log(matrix)
+            matrices[n] = matrix
+        }
+
+
+        console.log(matrices)
+        this.state = {
+            matrices: matrices, 
+            mirror: window.localStorage.getItem("mirror;") === "1",
+            sparseVal: window.localStorage.getItem("sparseValue;"),
+            selection: names[0], 
+
+        };
+
+
+
+
+
+
+
+        
+
+
     }
 
 

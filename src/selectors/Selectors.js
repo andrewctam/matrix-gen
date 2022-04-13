@@ -47,11 +47,11 @@ class Selectors extends React.Component {
                 </ul>   
             </div>
                 <div className = "col-sm-4">
-                    <div id = "selectors" className="list-group list-group-horizontal">
+                    <div id = "selectors" className="list-group">
+                        <AddButton key = " add " addMatrix = {this.props.addMatrix} />
                         <DuplicateButton key = " duplicate " 
                         copyMatrix = {this.props.copyMatrix}
                         selection = {this.props.selection}/>
-                        <AddButton key = " add " addMatrix = {this.props.addMatrix} />
                         <DeleteButton key = " delete " 
                         deleteMatrix = {this.props.deleteMatrix} 
                         updateSelection = {this.props.updateSelection}
@@ -66,9 +66,9 @@ class Selectors extends React.Component {
             <div className = "col-sm-4">
                 <ul>
                     <li>Default empty element: &nbsp;
-                    <ParameterTextInput width = {"30px"} defaultVal = {"0"} id={"sparse"} updateParameter={this.props.updateParameter}/> </li>
+                    <ParameterTextInput width = {"30px"} defaultVal = {this.props.sparseVal} id={"sparse"} updateParameter={this.props.updateParameter}/> </li>
                     (If no value is inputted in an entry, this value will be used)
-                    <li><ParameterSwitchInput defaultVal = {false} id = {"mirror"} name={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.props.updateParameter}/></li>
+                    <li><ParameterSwitchInput defaultVal = {this.props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.props.updateParameter}/></li>
                     (Typing in a box will update the corresponding box across the diagonal)
                 </ul>   
             </div>
