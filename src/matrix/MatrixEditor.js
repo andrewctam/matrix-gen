@@ -1,8 +1,9 @@
 import React from 'react';
-import Row from './table/Row.js';
 import MatrixExport from "./MatrixExport.js"
 import MatrixMath from './MatrixMath.js';
 import ParameterTextInput from '../inputs/ParameterTextInput.js';
+import Table from "./Table.js"
+
 
 class MatrixEditor extends React.Component {
     constructor(props) {
@@ -18,21 +19,7 @@ class MatrixEditor extends React.Component {
         };
     }
 
-    render() {
-
-     var matrixTable = this.props.matrix.map((x, i) => 
-        <Row rows = {this.props.matrix.length} 
-            cols = {this.props.matrix[0].length}
-            tryToDelete = {this.tryToDelete}
-            addRows = {this.addRows} 
-            addCols = {this.addCols} 
-            updateEntry = {this.updateEntry}
-            boxes={x} 
-            row = {i} 
-            key = {"row" + i}
-            mirror = {this.props.mirror}/>)
-            
-        
+    render() {     
         return (
         <div className = "matrixEditor">
             <div className = "options">
@@ -73,7 +60,15 @@ class MatrixEditor extends React.Component {
             </div>
 
             <table className = "table table-bordered" >
-                <tbody> {matrixTable} </tbody>
+                <tbody> 
+                    <Table 
+                    matrix = {this.props.matrix} 
+                    addCols = {this.addCols}
+                    addRows = {this.addRows}
+                    updateEntry = {this.updateEntry}
+                    
+                    /> 
+                </tbody>
             </table>
             </div>)
 
@@ -160,8 +155,21 @@ class MatrixEditor extends React.Component {
 
     
     updateEntry = (i, j, val) => {
-        if (i !== 50 && j !== 50) {
+        if (i < 50 && j < 50) {
             var temp = this.props.matrix;
+            
+            if (this.props.mirror) {
+                if (j >= this.props.matrix.length - 1) {
+                    temp = this.addRows(j - this.props.matrix.length + 2, false)
+                }
+                
+                if (i >= this.props.matrix[0].length - 1) {
+                    temp = this.addCols(i - this.props.matrix[0].length + 2, false)
+                }
+                
+                temp[j][i] = val;
+            }
+
             temp[i][j] = val;
             this.props.updateMatrix(temp, this.props.name); 
         }
@@ -169,42 +177,47 @@ class MatrixEditor extends React.Component {
             alert("Max matrix size reached!");
     }
     
-    addCols = (num) => {
+    addCols = (numToAdd, update = true) => {
         var temp = this.props.matrix;
 
-        if (temp[0].length + num > 51)
-            num = 51 - temp[0].length;
+        if (temp[0].length + numToAdd > 51)
+            numToAdd = 51 - temp[0].length;
 
         for (var i = 0; i < temp.length; i++) {
-            for (var j = 0; j < num; j++)
+            for (var j = 0; j < numToAdd; j++)
                 temp[i].push("");
         }
 
-        this.props.updateMatrix(temp, this.props.name); 
+        if (update)
+            this.props.updateMatrix(temp, this.props.name); 
+
         return temp;
     }
 
-    addRows = (num) => {
+    addRows = (numToAdd, update = true) => {
         var temp = this.props.matrix;
 
-        if (temp.length + num > 51)
-            num = 51 - temp.length;
+        if (temp.length + numToAdd > 51)
+            numToAdd = 51 - temp.length;
 
         
-        for (var i = 0; i < num; i++) {
+        for (var i = 0; i < numToAdd; i++) {
             temp.push(new Array(temp[0].length).fill(""));
         }
-        this.props.updateMatrix(temp, this.props.name); 
+        
+        if (update)
+            this.props.updateMatrix(temp, this.props.name); 
+
         return temp; 
     }
 
     mirrorRowsOntoColumns = () => {        
         if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
-            var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length);
+            var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length, false);
             
         }
         else /*if (this.props.matrix.length < this.props.matrix[0].length) */ {
-            symmetric = this.addRows(this.props.matrix[0].length - this.props.matrix.length)
+            symmetric = this.addRows(this.props.matrix[0].length - this.props.matrix.length, false)
             
         }
    
@@ -219,11 +232,11 @@ class MatrixEditor extends React.Component {
 
     mirrorColumnsOntoRows = () => {        
         if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
-            var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length);
+            var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length, false);
             
         }
         else /*if (this.props.matrix.length < this.props.matrix[0].length) */ {
-            symmetric = this.addRows(this.props.matrix[0].length - this.props.matrix.length);
+            symmetric = this.addRows(this.props.matrix[0].length - this.props.matrix.length, false);
             
         }
 

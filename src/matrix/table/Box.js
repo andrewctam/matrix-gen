@@ -2,88 +2,37 @@ import React from 'react';
 
 class Box extends React.Component {
     render() {
-        if (this.props.cols === (this.props.col + 1) && 
-            this.props.rows === (this.props.row + 1))
-            
-            return <td><input tabIndex = {-1} 
+        var lastRow = this.props.rows === this.props.row + 1;
+        var lastCol = this.props.cols === this.props.col + 1;
+       
+        return <td>
+            <input 
+            tabIndex = {lastCol && this.props.row !== 0 ? -1 : ""} 
             autoComplete = "off" 
             key = {this.props.row + ":" + this.props.col} 
             id = {this.props.row + ":" + this.props.col} 
             onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleAddBoth} 
-            value={this.props.num} /></td>
+            onChange = {(lastRow && lastCol ? this.handleAddBoth :
+                                    lastRow ? this.handleAddRow :
+                                    lastCol ? this.handleAddCol :
+                                              this.handleChange)} 
 
-        if (this.props.cols === (this.props.col + 1))
-            return <td><input 
-            tabIndex = {this.props.row === 0 ?  "" : -1} 
-            autoComplete = "off" 
-            key = {this.props.row + ":" + this.props.col} 
-            id = {this.props.row + ":" + this.props.col} 
-            onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleAddCol} 
-            value={this.props.num} /></td>
-
-        if (this.props.rows === (this.props.row + 1))
-            return <td><input autoComplete = "off" 
-            key = {this.props.row + ":" + this.props.col} 
-            id = {this.props.row + ":" + this.props.col} 
-            onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleAddRow} 
-            value={this.props.num} /></td>
-
-        return <td><input autoComplete = "off" 
-            key = {this.props.row + ":" + this.props.col} 
-            id = {this.props.row + ":" + this.props.col} 
-            onKeyDown = {this.handleKeyDown}
-            onChange = {this.handleChange} 
-            value={this.props.num} 
-            /></td>
-    }
-
-    handleChange = (e) => {
-        if (this.props.mirror) {
-            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-        }
-            
-        this.props.updateEntry(this.props.row, this.props.col, e.target.value);
-
+            value = {this.props.val} />
+        </td>;
 
     }
+
     handleAddRow = (e) => {
-        if (this.props.mirror) {
-            var max = Math.max(this.props.cols, this.props.rows + 1)
-            this.props.addCols(max - this.props.cols);        
-            this.props.addRows(max - this.props.rows);
-            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-        }
-        else {
-            this.props.addRows(1);
-        }
-
-        this.props.updateEntry(this.props.row, this.props.col, e.target.value);
+        this.props.addRow(this.props.row, this.props.col, e.target.value)
     }
     handleAddCol = (e) => {
-        if (this.props.mirror) {
-            var max = Math.max(this.props.cols + 1, this.props.rows)
-            this.props.addCols(max - this.props.cols);        
-            this.props.addRows(max - this.props.rows);
-            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-        } else {
-            this.props.addCols(1);
-        }
-        this.props.updateEntry(this.props.row, this.props.col, e.target.value);
+        this.props.addCol(this.props.row, this.props.col, e.target.value)
     }
     handleAddBoth = (e) => {
-    
-        if (this.props.mirror) {
-            var max = Math.max(this.props.cols + 1, this.props.rows + 1)
-            this.props.addCols(max - this.props.cols);        
-            this.props.addRows(max - this.props.rows);
-            this.props.updateEntry(this.props.col, this.props.row, e.target.value);
-        } else {
-            this.props.addCols(1);
-            this.props.addRows(1);
-        }
+        this.props.addBoth(this.props.row, this.props.col, e.target.value)
+    }
+
+    handleChange = (e) => {    
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);
     }
     
@@ -149,8 +98,8 @@ class Box extends React.Component {
                 document.getElementById(this.props.rows - 1 +  ":" + (this.props.col - 1)).focus();
             }
         }
-        
     }
+        
 
 }
 export default Box;
