@@ -1,5 +1,5 @@
 import React from 'react';
-import MatrixEditor from './matrix/MatrixEditor.js';
+import MatrixEditor from './editor/MatrixEditor.js';
 import Selectors from "./selectors/Selectors.js"
 
 export const MaxMatrixSize = React.createContext(50);
@@ -36,6 +36,8 @@ class App extends React.Component {
 
         return (
             <div> 
+
+                <div class = "sticky-top">
                 <Selectors matrices = {this.state.matrices} 
                     updateSelection = {this.updateSelection} 
                     addMatrix = {this.addMatrix}
@@ -46,8 +48,11 @@ class App extends React.Component {
                     updateMatrix = {this.updateMatrix}
                     resizeMatrix = {this.resizeMatrix}
                     updateParameter = {this.updateParameter}/>
-                    
-                {editor} 
+                    </div>
+
+                    {editor} 
+                <button onClick={this.saveMatricesToLocalStorage}>Save</button>
+
             </div>
         )
     }
@@ -194,6 +199,26 @@ class App extends React.Component {
         for (var i = 0; i < toDelete.length; i++) {
             this.deleteMatrix(toDelete[i]);
         }
+    }
+
+    saveMatricesToLocalStorage = () => {
+        var names = "";
+        var matrixString = "";
+        for (const [name, matrix] of Object.entries(this.props.matrices)) {
+            names += name + ",";
+            for (var i = 0; i < matrix.length; i++) {                
+                for (var j = 0; j < matrix[0].length; j++)
+                    matrixString += matrix[i][j] + ",";
+
+                if (i != matrix.length - 1)
+                    matrixString += "]";
+            }
+                
+            window.localStorage.setItem(name, matrixString);
+        }
+
+        window.localStorage.setItem("names", names)
+          
     }
 
 

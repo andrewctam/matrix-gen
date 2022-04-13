@@ -36,7 +36,7 @@ class MatrixMath extends React.Component {
         }   
     }
 
-    calculate = (e) => {
+    calculate = () => {
         var postfix = this.shuntingYard(this.state.expression);
         console.log(postfix)
         var matrix = this.evaluatePostfix(postfix);

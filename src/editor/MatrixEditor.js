@@ -1,6 +1,6 @@
 import React from 'react';
-import MatrixExport from "./MatrixExport.js"
-import MatrixMath from './MatrixMath.js';
+import MatrixExport from "../matrixTools/MatrixExport.js"
+import MatrixMath from '../matrixTools/MatrixMath.js';
 import ParameterTextInput from '../inputs/ParameterTextInput.js';
 import Table from "./Table.js"
 
@@ -22,7 +22,7 @@ class MatrixEditor extends React.Component {
     render() {     
         return (
         <div className = "matrixEditor">
-            <div className = "options">
+            <div className = "options sticky-bottom" >
                 <button className = "btn btn-secondary matrixButtons" onClick={this.toggleMath}>                
                     {this.state.showMath ? "Close Math Input" : "Perform Matrix Math"}
                 </button>
@@ -66,7 +66,7 @@ class MatrixEditor extends React.Component {
                     addCols = {this.addCols}
                     addRows = {this.addRows}
                     updateEntry = {this.updateEntry}
-                    
+                    tryToDelete = {this.tryToDelete}
                     /> 
                 </tbody>
             </table>

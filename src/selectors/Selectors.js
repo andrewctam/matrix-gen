@@ -38,32 +38,32 @@ class Selectors extends React.Component {
             }
         }
 
-        return  <div class = "row selectors">
-            <div class = "col-sm-4">
+        return  <div className = "row selectors selectors-box">
+            <div className = "col-sm-4 info">
                 <ul>
                     <li>Enter values in the matrix below. The last row and column (in red) are not part of the matrix. Typing in the these red boxes will add a new row or column.</li>
                     <li>Click on a matrix's name to rename it. Valid characters are uppercase and lowercase letters, and underscores.</li>
                     <li>Click on a matrix's dimensions to quickly resize it. The maximum size is 50 x 50.</li>
                 </ul>   
             </div>
-                <div class = "col-sm-4">
-                    <div id = "selectors" class="list-group">
-                        {selectors}    
-                    </div>
-                    <div id = "selectors" class="list-group">
-                        <AddButton key = " add " addMatrix = {this.props.addMatrix} />
+                <div className = "col-sm-4">
+                    <div id = "selectors" className="list-group list-group-horizontal">
                         <DuplicateButton key = " duplicate " 
                         copyMatrix = {this.props.copyMatrix}
                         selection = {this.props.selection}/>
+                        <AddButton key = " add " addMatrix = {this.props.addMatrix} />
                         <DeleteButton key = " delete " 
                         deleteMatrix = {this.props.deleteMatrix} 
                         updateSelection = {this.props.updateSelection}
                         selection = {this.props.selection}/>
                     </div>
+                    <div id = "selectors" className="list-group">
+                        {selectors}    
+                    </div>
 
 
                 </div>
-            <div class = "col-sm-4">
+            <div className = "col-sm-4">
                 <ul>
                     <li>Default empty element: &nbsp;
                     <ParameterTextInput width = {"30px"} defaultVal = {"0"} id={"sparse"} updateParameter={this.props.updateParameter}/> </li>
@@ -82,9 +82,9 @@ class Selectors extends React.Component {
 class AddButton extends React.Component {
     render() {
         return <button type="button" 
-            class={"list-group-item list-group-item-info"}
+            className = {"list-group-item list-group-item-info selector-button"}
             onClick = {this.addMatrix}>
-            New Empty Matrix
+            Create New Empty Matrix
         </button>
     }
 
@@ -96,7 +96,7 @@ class AddButton extends React.Component {
 class DeleteButton extends React.Component {
     render() {
         return <button type="button" 
-            class={"list-group-item list-group-item-danger"}
+            className = {"list-group-item list-group-item-danger selector-button"}
             disabled = {this.props.selection === "0"}
             onClick = {this.deleteMatrix}>
             Delete Matrix {this.props.selection !== "0" ? this.props.selection : ""}
@@ -116,7 +116,7 @@ class DeleteButton extends React.Component {
 class DuplicateButton extends React.Component {
     render() {
         return <button type="button" 
-            class={"list-group-item list-group-item-warning"}
+            className = {"list-group-item list-group-item-warning selector-button"}
             disabled = {this.props.selection === "0"}
             onClick = {this.copyMatrix}>
             Duplicate Matrix {this.props.selection !== "0" ? this.props.selection : ""}

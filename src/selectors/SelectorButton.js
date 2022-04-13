@@ -20,7 +20,7 @@ class SelectorButton extends React.Component {
 
 
         return <button type="button" 
-            class={"list-group-item list-group-item-action" + ((this.props.active) ? " active" : "")}
+            className = {"list-group-item list-group-item-action" + ((this.props.active) ? " active" : "")}
             onClick = {this.updateSelection}>
 
             <input type = "text" value = {this.state.displayName} id = {this.props.name}
@@ -113,11 +113,6 @@ class SelectorButton extends React.Component {
             e.target.blur();
         }
     }
-
-    
-
-
-
 }
 
 export default SelectorButton;
