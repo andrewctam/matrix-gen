@@ -43,7 +43,7 @@ class Table extends React.Component {
             this.props.addRows(1);
         }
 
-        if (row != -1)
+        if (row !== -1)
             this.props.updateEntry(row, col, updated);
     }
 

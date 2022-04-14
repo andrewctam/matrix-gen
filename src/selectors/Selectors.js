@@ -65,11 +65,12 @@ class Selectors extends React.Component {
                 </div>
             <div className = "col-sm-4">
                 <ul>
+                    <li><button className = "btn btn-warning" onClick={this.props.clearMatrices}>Clear Matrices</button></li>
+                    {this.props.autoSave ? null : <li><button className = "btn btn-info" onClick={this.props.saveToLocalStorage}>Save Matrices to Local Storage</button></li>}
+                    <li><ParameterSwitchInput defaultVal = {this.props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Autosave"} updateParameter={this.props.updateParameter}/></li>
+                    <li><ParameterSwitchInput defaultVal = {this.props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs Along Diagonal"} updateParameter={this.props.updateParameter}/></li>
                     <li>Default empty element: &nbsp;
                     <ParameterTextInput width = {"30px"} defaultVal = {this.props.sparseVal} id={"sparse"} updateParameter={this.props.updateParameter}/> </li>
-                    (If no value is inputted in an entry, this value will be used)
-                    <li><ParameterSwitchInput defaultVal = {this.props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror along Diagonal"} updateParameter={this.props.updateParameter}/></li>
-                    (Typing in a box will update the corresponding box across the diagonal)
                 </ul>   
             </div>
         </div>

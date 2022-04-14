@@ -40,7 +40,7 @@ class MatrixEditor extends React.Component {
                     <button className = "btn btn-success matrixButtons" onClick={this.randomMatrix}>Random Matrix</button>
                     <ParameterTextInput id={"randomLow"} updateParameter = {this.updateParameter} defaultVal = {1} width = {"30px"} />{" to "}
                     <ParameterTextInput id={"randomHigh"} updateParameter = {this.updateParameter} defaultVal = {10} width = {"30px"} />
-                    <br />
+                    <br/>
 
                     <button className = "btn btn-success matrixButtons" onClick={this.fillEmpty}>Fill Empty With</button>
                     <ParameterTextInput id={"fillEmptyVal"} updateParameter = {this.updateParameter} defaultVal = {0} width = {"30px"} />

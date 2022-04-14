@@ -22,13 +22,13 @@ class Box extends React.Component {
     }
 
     handleAddRow = (e) => {
-        this.props.addRow(this.props.row, this.props.col, e.target.value)
+        this.props.addRow(this.props.row, this.props.col, e.target.value);
     }
     handleAddCol = (e) => {
-        this.props.addCol(this.props.row, this.props.col, e.target.value)
+        this.props.addCol(this.props.row, this.props.col, e.target.value);
     }
     handleAddBoth = (e) => {
-        this.props.addBoth(this.props.row, this.props.col, e.target.value)
+        this.props.addBoth(this.props.row, this.props.col, e.target.value);
     }
     handleUpdate = (e) => {    
         this.props.updateEntry(this.props.row, this.props.col, e.target.value);

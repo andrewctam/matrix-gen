@@ -13,6 +13,7 @@ class App extends React.Component {
             this.loadFromLocalStorage();
         } catch (error) {
             this.state = {
+                autoSave: false,
                 mirror: false,
                 sparseVal: "0",
                 selection: "A", 
@@ -43,8 +44,6 @@ class App extends React.Component {
 
         return (
             <div> 
-
-                <div>
                 <Selectors matrices = {this.state.matrices} 
                     updateSelection = {this.updateSelection} 
                     addMatrix = {this.addMatrix}
@@ -55,13 +54,15 @@ class App extends React.Component {
                     updateMatrix = {this.updateMatrix}
                     resizeMatrix = {this.resizeMatrix}
                     updateParameter = {this.updateParameter}
+                    saveToLocalStorage = {this.saveToLocalStorage}
+                    clearMatrices = {this.clearMatrices}
+
+                    autoSave = {this.state.autoSave}
                     mirror = {this.state.mirror}
                     sparseVal = {this.state.sparseVal}
-                    /></div>
+                />
 
-                    {editor} 
-                <button className = "btn btn-info" onClick={this.saveToLocalStorage}>Save</button>
-
+                {editor} 
             </div>
         )
     }
@@ -70,7 +71,10 @@ class App extends React.Component {
         var temp = this.state.matrices;
         temp[key] = updated;
 
-        this.setState({matrices: temp});
+        this.setState({matrices: temp}, () => {
+            if (this.state.autoSave)
+            this.saveToLocalStorage();
+        });
     }
     
     updateSelection = (selected) => {
@@ -86,7 +90,11 @@ class App extends React.Component {
         temp[newName] = temp[oldName];
         delete temp[oldName];
 
-        this.setState({matrices: temp});
+        this.setState({matrices: temp}, () => {
+            if (this.state.autoSave)
+            this.saveToLocalStorage();
+        });
+
         return true;
     }
 
@@ -103,7 +111,11 @@ class App extends React.Component {
 
 
         temp[matrixName] = temp[toCopy].map(function(arr) { return arr.slice(); });
-        this.setState({matrices: temp});
+
+        this.setState({matrices: temp}, () => {
+            if (this.state.autoSave)
+                this.saveToLocalStorage();
+        });
     }
 
     generateUniqueName = () => {
@@ -119,7 +131,7 @@ class App extends React.Component {
                 matrixName = matrixName.substring(0, matrixName.length - 1) + String.fromCharCode(++charCode);
         }
 
-        return matrixName
+        return matrixName;
     }
 
     addMatrix = (matrix = undefined, name = undefined) => {
@@ -141,8 +153,12 @@ class App extends React.Component {
         this.setState({matrices: temp, selection: matrixName}, () => {
             var selectors = document.getElementById("selectors");
             selectors.scrollTop = selectors.scrollHeight;
+
+            if (this.state.autoSave)
+                this.saveToLocalStorage();
         });
 
+        
         
 
     }
@@ -150,18 +166,32 @@ class App extends React.Component {
     deleteMatrix = (del) => {        
         var temp = this.state.matrices;
         delete temp[del];
-        this.setState({matrices: temp});
+        this.setState({matrices: temp}, () => {
+            if (this.state.autoSave)
+            this.saveToLocalStorage();
+        });
+
+        
     }
 
     updateParameter = (i, updated) => {
         switch (i) {
             case "sparse":
                 this.setState({sparseVal: updated})
+                if (this.state.autoSave)
+                    window.localStorage.setItem("sparseValue;", updated); 
                 break;
             case "mirror":
                 this.setState({mirror: updated});  
+                if (this.state.autoSave)
+                    window.localStorage.setItem("mirror;", updated ? "1" : "0");
                 break; 
-                
+
+            case "autoSave":
+                this.setState({autoSave: updated});
+
+                if (updated /* === true*/)
+                    this.saveToLocalStorage()
             default: break;
   
         }
@@ -210,6 +240,20 @@ class App extends React.Component {
         }
     }
 
+
+    clearMatrices = () => {
+        if (window.confirm("Clear all matrices?")) {
+            this.setState({ 
+                selection: "", 
+                matrices: {}
+            });
+
+            if (this.state.autoSave)
+                localStorage.clear();
+        }
+
+    }
+
     saveToLocalStorage = () => {
         var names = "";
         var matrixString = "";
@@ -234,10 +278,11 @@ class App extends React.Component {
 
         window.localStorage.setItem("names;", names.substring(0, names.length - 1))
         window.localStorage.setItem("mirror;", this.state.mirror ? "1" : "0")
+        window.localStorage.setItem("autoSave;", this.state.autoSave ? "1" : "0")
         window.localStorage.setItem("sparseValue;", this.state.sparseVal)
-
-          
     }
+
+
 
 
     loadFromLocalStorage = () => {
@@ -266,19 +311,12 @@ class App extends React.Component {
         console.log(matrices)
         this.state = {
             matrices: matrices, 
+            autoSave: window.localStorage.getItem("autoSave;") === "1",
             mirror: window.localStorage.getItem("mirror;") === "1",
             sparseVal: window.localStorage.getItem("sparseValue;"),
             selection: names[0], 
 
         };
-
-
-
-
-
-
-
-        
 
 
     }
