@@ -181,13 +181,7 @@ class MatrixEditor extends React.Component {
     toggleCustom = (option = true) => {
         this.updateExportParameter("custom", option);
         this.setState({exportOption: "custom"})
-    }
-
-
-    
+    }    
 }
-
-
-
 
 export default MatrixEditor;

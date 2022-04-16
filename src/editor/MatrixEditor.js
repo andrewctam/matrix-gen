@@ -9,7 +9,7 @@ class MatrixEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showOptions: false,
+            showActions: false,
             showExport: false, 
             showMath: false, 
             sparseVal: "0", 
@@ -24,19 +24,19 @@ class MatrixEditor extends React.Component {
         <div className = "matrixEditor">
             <div id = "options" className = "options fixed-bottom">
 
-                    {this.state.showOptions ? 
+                    {this.state.showActions ? 
                     <div>
                         <button className = "btn btn-success matrixButtons" onClick={this.transpose}>Transpose</button> <br />
                         <button className = "btn btn-success matrixButtons" onClick={this.mirrorRowsOntoColumns}>Mirror Rows Across Diagonal</button> <br />
                         <button className = "btn btn-success matrixButtons" onClick={this.mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button> <br />
                         
                         <button className = "btn btn-success matrixButtons" onClick={this.randomMatrix}>Random Matrix</button>
-                        <ParameterTextInput id={"randomLow"} updateParameter = {this.updateParameter} defaultVal = {1} width = {"30px"} />{" to "}
-                        <ParameterTextInput id={"randomHigh"} updateParameter = {this.updateParameter} defaultVal = {10} width = {"30px"} />
+                        <ParameterTextInput id={"randomLow"} updateParameter = {this.updateParameter} defaultVal = {this.state.randomLow} width = {"30px"} />{" to "}
+                        <ParameterTextInput id={"randomHigh"} updateParameter = {this.updateParameter} defaultVal = {this.state.randomHigh} width = {"30px"} />
                         <br/>
 
                         <button className = "btn btn-success matrixButtons" onClick={this.fillEmpty}>Fill Empty With</button>
-                        <ParameterTextInput id={"fillEmptyVal"} updateParameter = {this.updateParameter} defaultVal = {0} width = {"30px"} />
+                        <ParameterTextInput id={"fillEmptyVal"} updateParameter = {this.updateParameter} defaultVal = {this.state.fillEmptyVal} width = {"30px"} />
                         <br/>
                         
                     </div> : null}
@@ -46,12 +46,12 @@ class MatrixEditor extends React.Component {
                     : null } 
                      
                 {this.state.showExport ?
-                    <MatrixExport matrix = {this.props.matrix} sparseVal = {this.props.sparseVal} />
+                    <MatrixExport matrix = {this.props.matrix} sparseVal = {this.props.sparseVal}/>
                     : null }   
 
 
                 <div className="options-bottom">
-                    <button className = "btn btn-success matrixButtons" onClick = {this.toggleOptions}> {this.state.showOptions ? "Hide Options" : "Show Options"}</button> 
+                    <button className = "btn btn-success matrixButtons" onClick = {this.toggleActions}> {this.state.showActions ? "Hide Actions" : "Show Actions"}</button> 
 
                     <button className = "btn btn-secondary matrixButtons" onClick={this.toggleMath}>                
                         {this.state.showMath ? "Close Math Input" : "Perform Matrix Math"}
@@ -103,7 +103,7 @@ class MatrixEditor extends React.Component {
                 this.modifyBottomPadding();
             });
         else
-            this.setState({showExport: true, showMath: false, showOptions: false}, () => {
+            this.setState({showExport: true, showMath: false, showActions: false}, () => {
                 this.modifyBottomPadding();
             });
     }
@@ -113,17 +113,17 @@ class MatrixEditor extends React.Component {
                 this.modifyBottomPadding();
             });
         else
-            this.setState({showMath: true, showExport: false, showOptions: false}, () => {
+            this.setState({showMath: true, showExport: false, showActions: false}, () => {
                 this.modifyBottomPadding();
             });
     }
-    toggleOptions = () => {
-        if (this.state.showOptions)
-            this.setState({showOptions: false}, () => {
+    toggleActions = () => {
+        if (this.state.showActions)
+            this.setState({showActions: false}, () => {
                 this.modifyBottomPadding();
             });
         else
-            this.setState({showOptions: true, showMath: false, showExport: false}, () => {
+            this.setState({showActions: true, showMath: false, showExport: false}, () => {
         });
     }
 
@@ -250,7 +250,7 @@ class MatrixEditor extends React.Component {
     }
 
     mirrorRowsOntoColumns = () => {    
-        this.setState({showOptions: false});    
+        this.setState({showActions: false});    
         if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
             var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length, false);
             
@@ -270,7 +270,7 @@ class MatrixEditor extends React.Component {
     }
 
     mirrorColumnsOntoRows = () => {
-        this.setState({showOptions: false});    
+        this.setState({showActions: false});    
         
         if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
             var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length, false);
@@ -291,7 +291,7 @@ class MatrixEditor extends React.Component {
     }
 
     transpose = () => {
-        this.setState({showOptions: false});    
+        this.setState({showActions: false});    
 
         var transposed = Array(this.props.matrix[0].length).fill(0);
         for (var i = 0; i < transposed.length; i++) {
@@ -306,7 +306,7 @@ class MatrixEditor extends React.Component {
 
 
     randomMatrix = () => {
-        this.setState({showOptions: false});    
+        this.setState({showActions: false});    
 
         var temp = this.props.matrix;
         var low = this.state.randomLow
@@ -326,7 +326,7 @@ class MatrixEditor extends React.Component {
     }
 
     fillEmpty = () => {
-        this.setState({showOptions: false});    
+        this.setState({showActions: false});    
 
         var temp = this.props.matrix;
        
