@@ -33,7 +33,6 @@ class Selectors extends React.Component {
                     return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
                 });
     
-                console.log(selectors);
             }
     
 

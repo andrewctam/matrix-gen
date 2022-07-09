@@ -38,7 +38,6 @@ class MatrixMath extends React.Component {
 
     calculate = () => {
         var postfix = this.shuntingYard(this.state.expression);
-        console.log(postfix)
         var matrix = this.evaluatePostfix(postfix);
 
         if (matrix !== null)
@@ -167,7 +166,6 @@ class MatrixMath extends React.Component {
             for (var j = 0; j < a.length; j++)
                product[i][j] = a[i][j];
         
-        console.log(product)
         for (i = 1; i < pow; i++)
             product = this.matrixMultiplication(product, a);
         return product

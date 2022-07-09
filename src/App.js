@@ -28,8 +28,7 @@ class App extends React.Component {
     render() {
 
         if (this.state.selection in this.state.matrices)
-            var editor = 
-            <MatrixEditor
+            var editor = <MatrixEditor
                 matrix = {this.state.matrices[this.state.selection]} 
                 matrices = {this.state.matrices}
                 name = {this.state.selection} 
@@ -38,7 +37,7 @@ class App extends React.Component {
                 mirror = {this.state.mirror}
                 sparseVal = {this.state.sparseVal}
                 addMatrix = {this.addMatrix}
-            />
+                />
         else
             editor = null;
 
@@ -193,7 +192,10 @@ class App extends React.Component {
 
                 if (updated /* === true*/)
                     this.saveToLocalStorage()
-            default: break;
+                break;
+
+            default: 
+                console.log("Invalid?:" + i);
   
         }
     
@@ -265,11 +267,11 @@ class App extends React.Component {
             for (var i = 0; i < matrix.length - 1; i++) {                
                 for (var j = 0; j < matrix[0].length - 1; j++) {
                     matrixString += matrix[i][j];
-                    if (j != matrix[0].length - 2)
+                    if (j !== matrix[0].length - 2)
                         matrixString += ","
                 }
 
-                if (i != matrix.length - 2)
+                if (i !== matrix.length - 2)
                     matrixString += "]";
             }
                 
@@ -304,20 +306,17 @@ class App extends React.Component {
 
 
         
-            console.log(matrix)
             matrices[n] = matrix
         }
 
 
-        console.log(matrices)
-        this.state = {
+        this.setState({
             matrices: matrices, 
             autoSave: window.localStorage.getItem("autoSave;") === "1",
             mirror: window.localStorage.getItem("mirror;") === "1",
             sparseVal: window.localStorage.getItem("sparseValue;"),
             selection: names[0], 
-
-        };
+        });
 
 
     }

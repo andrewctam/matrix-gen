@@ -147,7 +147,6 @@ class MatrixEditor extends React.Component {
     usePreset = (e) => {
         this.toggleCustom(false);
         var updated = e.target.id;
-        console.log(updated)
         switch (updated) {
             case "{},":
                 this.setState({
