@@ -4,6 +4,7 @@ import MatrixMath from '../matrixTools/MatrixMath.js';
 import ParameterTextInput from '../inputs/ParameterTextInput.js';
 import Table from "./Table.js"
 
+import "./MatrixEditor.css";
 
 class MatrixEditor extends React.Component {
     constructor(props) {

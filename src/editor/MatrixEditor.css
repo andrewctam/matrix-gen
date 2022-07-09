@@ -1,0 +1,19 @@
+.matrixButtons {
+  margin: 5px;
+
+}
+
+.matrixEditor {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.options {
+  padding: 0;
+  background-color: rgba(82, 80, 83, 0.315);
+}
+
+.options-bottom {
+  background-color: rgb(82, 80, 83) !important;
+}

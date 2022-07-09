@@ -7,6 +7,7 @@ import AddButton from './buttons/AddButton';
 import DeleteButton from './buttons/DeleteButton';
 import DuplicateButton from './buttons/DuplicateButton';
 
+import "./Selectors.css"
 class Selectors extends React.Component {
     constructor(props) {
         super(props);

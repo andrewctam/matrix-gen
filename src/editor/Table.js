@@ -1,6 +1,8 @@
 import React from 'react';
 import Box from './Box.js';
 
+import "./Table.css";
+
 class Table extends React.Component {
 
     render() {

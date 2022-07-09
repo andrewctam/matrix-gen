@@ -1,0 +1,22 @@
+body {
+    overflow-y: scroll;
+    margin: 0;
+    padding: 0px 0px 48px 0px;
+    color: white;
+    background-color: rgb(82, 80, 83);
+}
+
+input {
+    background: white;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+h1 {
+    font-size: medium;
+}
+
+
+li {
+    margin-bottom: 5px;
+}

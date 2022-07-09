@@ -1,0 +1,34 @@
+
+  .selectors {
+    background-color: rgb(48, 50, 51);
+    padding-top: 1%;
+    padding-bottom: 1%;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+
+.list-group {
+    max-height: 125px;
+    overflow-y: auto;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+  .list-group > .active {
+    color: black;
+    background-color: rgb(169, 179, 179);
+    border-color: rgb(169, 179, 179);
+  }
+
+  .list-group > button > input {
+    border: none;
+    background: none;
+    width: 25%;
+    
+  }
+
+
+  .info {
+    overflow: auto;
+  }
