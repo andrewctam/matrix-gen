@@ -28,7 +28,8 @@ class App extends React.Component {
     render() {
 
         if (this.state.selection in this.state.matrices)
-            var editor = <MatrixEditor
+            var editor = 
+            <MatrixEditor
                 matrix = {this.state.matrices[this.state.selection]} 
                 matrices = {this.state.matrices}
                 name = {this.state.selection} 
@@ -37,7 +38,7 @@ class App extends React.Component {
                 mirror = {this.state.mirror}
                 sparseVal = {this.state.sparseVal}
                 addMatrix = {this.addMatrix}
-                />
+            />
         else
             editor = null;
 

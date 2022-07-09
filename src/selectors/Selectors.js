@@ -1,7 +1,11 @@
 import React from 'react';
 import ParameterSwitchInput from '../inputs/ParameterSwitchInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
-import SelectorButton from './SelectorButton';
+
+import SelectorButton from './buttons/SelectorButton';
+import AddButton from './buttons/AddButton';
+import DeleteButton from './buttons/DeleteButton';
+import DuplicateButton from './buttons/DuplicateButton';
 
 class Selectors extends React.Component {
     constructor(props) {
@@ -11,8 +15,10 @@ class Selectors extends React.Component {
     render() {
 
         var selectors = []
-        for (var matrixName in this.props.matrices)
-            selectors.push(<SelectorButton 
+        
+        for (var matrixName in this.props.matrices) 
+            selectors.push(
+            <SelectorButton 
                 name = {matrixName}
                 key = {matrixName}
                 updateSelection = {this.props.updateSelection}
@@ -20,23 +26,16 @@ class Selectors extends React.Component {
                 resizeMatrix = {this.props.resizeMatrix}
                 active = {this.props.selection === matrixName}
                 matrices = {this.props.matrices}/>
-        )
+            )
 
-        if (this.state.sort) {
-            var current, i, j;
-            for (i = 1; i < selectors.length; i++) {
-                current = selectors[i]
-                if (current.props.name.toUpperCase() < selectors[i - 1].props.name.toUpperCase()) {
-                    for (j = i - 1; j >= 0; j--) {
-                        if (current.props.name < selectors[j].props.name)
-                            selectors[j + 1] = selectors[j]
-                        else
-                            break;
-                    }
-                    selectors[j + 1] = current;
-                }
+            if (this.state.sort) {
+                selectors.sort( (selector1, selector2)  => {
+                    return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
+                });
+    
+                console.log(selectors);
             }
-        }
+    
 
         return  <div className = "row selectors selectors-box">
             <div className = "col-sm-4 info">
@@ -48,14 +47,18 @@ class Selectors extends React.Component {
             </div>
                 <div className = "col-sm-4">
                     <div id = "selectors" className="list-group">
-                        <AddButton key = " add " addMatrix = {this.props.addMatrix} />
-                        <DuplicateButton key = " duplicate " 
-                        copyMatrix = {this.props.copyMatrix}
-                        selection = {this.props.selection}/>
-                        <DeleteButton key = " delete " 
-                        deleteMatrix = {this.props.deleteMatrix} 
-                        updateSelection = {this.props.updateSelection}
-                        selection = {this.props.selection}/>
+                        <AddButton 
+                            key = " add " 
+                            addMatrix = {this.props.addMatrix} />
+                        <DuplicateButton 
+                            key = " duplicate " 
+                            copyMatrix = {this.props.copyMatrix}
+                            selection = {this.props.selection}/>
+                        <DeleteButton 
+                            key = " delete " 
+                            deleteMatrix = {this.props.deleteMatrix} 
+                            updateSelection = {this.props.updateSelection}
+                            selection = {this.props.selection}/>
                     </div>
                     <div id = "selectors" className="list-group">
                         {selectors}    
@@ -79,54 +82,5 @@ class Selectors extends React.Component {
 
 }
 
-
-class AddButton extends React.Component {
-    render() {
-        return <button type="button" 
-            className = {"list-group-item list-group-item-info selector-button"}
-            onClick = {this.addMatrix}>
-            Create New Empty Matrix
-        </button>
-    }
-
-    addMatrix = () => {
-        this.props.addMatrix();   
-    }
-}
-
-class DeleteButton extends React.Component {
-    render() {
-        return <button type="button" 
-            className = {"list-group-item list-group-item-danger selector-button"}
-            disabled = {this.props.selection === "0"}
-            onClick = {this.deleteMatrix}>
-            Delete Matrix {this.props.selection !== "0" ? this.props.selection : ""}
-        </button>
-    }
-
-    deleteMatrix = () => {
-        if (window.confirm("Are you sure you want to delete " + this.props.selection + "?")) {
-            this.props.deleteMatrix(this.props.selection); 
-            this.props.updateSelection("0");
-        }
-    }
-
-    
-}
-
-class DuplicateButton extends React.Component {
-    render() {
-        return <button type="button" 
-            className = {"list-group-item list-group-item-warning selector-button"}
-            disabled = {this.props.selection === "0"}
-            onClick = {this.copyMatrix}>
-            Duplicate Matrix {this.props.selection !== "0" ? this.props.selection : ""}
-        </button>
-    }
-
-    copyMatrix = () => {
-        this.props.copyMatrix(this.props.selection); 
-    }
-}
 
 export default Selectors;
