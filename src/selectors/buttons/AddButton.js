@@ -1,17 +1,19 @@
 import React from 'react';
 
-class AddButton extends React.Component {
-    render() {
-        return <button type="button" 
-            className = {"list-group-item list-group-item-info selector-button"}
-            onClick = {this.addMatrix}>
-            Create New Empty Matrix
-        </button>
+function AddButton(props) {
+    function addMatrix() {
+        props.addMatrix();   
     }
 
-    addMatrix = () => {
-        this.props.addMatrix();   
-    }
+
+    return <button type="button" 
+        className = {"list-group-item list-group-item-info selector-button"}
+        onClick = {addMatrix}>
+        Create New Empty Matrix
+    </button>
+    
+
+    
 }
 
 export default AddButton;

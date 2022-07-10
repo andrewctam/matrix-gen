@@ -1,128 +1,68 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
 import Selectors from "./selectors/Selectors.js"
 
-export const MaxMatrixSize = React.createContext(50);
+function App(props) {
+    const [autoSave, setAutoSave] = useState(false);
+    const [mirror, setMirror] = useState(false);
+    const [sparseVal, setSparseVal] = useState("0");
+    const [selection, setSelection] = useState("A");
+    const [matrices, setMatrices] = useState( {"A": [["", ""], ["", ""]]} );
 
-class App extends React.Component {
+    useEffect( () => {
+        if (autoSave)
+            saveToLocalStorage();    
+    }, [matrices]);
 
-    constructor(props) {
-        super(props);
+    useEffect(() => {
+        loadFromLocalStorage();
+    }, []);
+
+
+    function updateMatrix(updated, key) {
+        var tempObj = {...matrices};
+        tempObj[key] = updated;
+
+        setMatrices(tempObj);
+    }
+    
+    function updateMatrixSelection (selected) {
+        setSelection(selected);
+
+    }
+
+    function renameMatrix(oldName, newName) {     
+        var tempObj = {...matrices};
         
-        try {
-            this.loadFromLocalStorage();
-        } catch (error) {
-            this.state = {
-                autoSave: false,
-                mirror: false,
-                sparseVal: "0",
-                selection: "A", 
-                matrices: {"A": [["", ""], ["", ""]]}   
-            }
-        }
-
-
-    }
-
-
-    render() {
-        if (this.state.selection in this.state.matrices)
-            var editor = <MatrixEditor
-                matrix = {this.state.matrices[this.state.selection]} 
-                matrices = {this.state.matrices}
-                name = {this.state.selection} 
-                updateMatrix = {this.updateMatrix}
-                updateParameter = {this.updateParameter}
-                mirror = {this.state.mirror}
-                sparseVal = {this.state.sparseVal}
-                addMatrix = {this.addMatrix}
-                />
-        else
-            editor = null;
-
-
-        return (
-            <div> 
-                <Selectors matrices = {this.state.matrices} 
-                    updateSelection = {this.updateSelection} 
-                    addMatrix = {this.addMatrix}
-                    deleteMatrix = {this.deleteMatrix}
-                    renameMatrix = {this.renameMatrix}
-                    copyMatrix = {this.copyMatrix}
-                    selection = {this.state.selection}
-                    updateMatrix = {this.updateMatrix}
-                    resizeMatrix = {this.resizeMatrix}
-                    updateParameter = {this.updateParameter}
-                    saveToLocalStorage = {this.saveToLocalStorage}
-                    clearMatrices = {this.clearMatrices}
-
-                    autoSave = {this.state.autoSave}
-                    mirror = {this.state.mirror}
-                    sparseVal = {this.state.sparseVal}
-                />
-
-                {editor} 
-            </div>
-        )
-    }
-    
-    updateMatrix = (updated, key) => {
-        var temp = this.state.matrices;
-        temp[key] = updated;
-
-        this.setState({matrices: temp}, () => {
-            if (this.state.autoSave)
-            this.saveToLocalStorage();
-        });
-
-        console.log(this.state.matrices)
-    }
-    
-    updateSelection = (selected) => {
-        this.setState({selection: selected})
-    }
-
-
-    renameMatrix = (oldName, newName) => {        
-        var temp = this.state.matrices;
-        if (newName in temp)
+        if (newName in tempObj)
             return false;
 
-        temp[newName] = temp[oldName];
-        delete temp[oldName];
+        tempObj[newName] = tempObj[oldName];
+        delete tempObj[oldName];
 
-        this.setState({matrices: temp}, () => {
-            if (this.state.autoSave)
-            this.saveToLocalStorage();
-        });
+        setMatrices(tempObj);
 
         return true;
     }
-
     
-    copyMatrix = (toCopy, name = undefined) => {
-        var temp = this.state.matrices;
+    function copyMatrix(toCopy, name = undefined) {
+        var tempObj = {...matrices};
         var matrixName;
         if (name === undefined) {
-            matrixName = this.generateUniqueName();
+            matrixName = generateUniqueName();
         } else {
             matrixName = name;
         }
 
+        tempObj[matrixName] = tempObj[toCopy].map(function(arr) { return arr.slice(); });
 
-
-        temp[matrixName] = temp[toCopy].map(function(arr) { return arr.slice(); });
-
-        this.setState({matrices: temp}, () => {
-            if (this.state.autoSave)
-                this.saveToLocalStorage();
-        });
+        setMatrices(tempObj);
     }
 
-    generateUniqueName = () => {
+    function generateUniqueName() {
         var charCode = 65;
         var matrixName = "A";
-        while (matrixName in this.state.matrices) {
+        while (matrixName in matrices) {
             //if (name.charAt(name.length - 1) === "Z") {
             if (charCode === 90) { 
                 matrixName += "A"
@@ -135,64 +75,58 @@ class App extends React.Component {
         return matrixName;
     }
 
-    addMatrix = (matrix = undefined, name = undefined) => {
-        var temp = this.state.matrices;
+    function addMatrix(matrix = undefined, name = undefined) {
+        var tempObj = {...matrices};
         var matrixName;
         if (name === undefined) {
-            matrixName = this.generateUniqueName();
+            matrixName = generateUniqueName();
         } else {
             matrixName = name;
         }
         
         if (matrix === undefined) {
-            temp[matrixName] = [["", ""], ["", ""]];
+            tempObj[matrixName] = [["", ""], ["", ""]];
         } else {
-            temp[matrixName] = matrix;
+            tempObj[matrixName] = matrix;
         }
         
-        
+        setMatrices(tempObj);
+        /*
         this.setState({matrices: temp, selection: matrixName}, () => {
             var selectors = document.getElementById("selectors");
             selectors.scrollTop = selectors.scrollHeight;
 
-            if (this.state.autoSave)
+            if (autoSave)
                 this.saveToLocalStorage();
-        });
-
-        
-        
+        });*/
 
     }
 
-    deleteMatrix = (del) => {        
-        var temp = this.state.matrices;
-        delete temp[del];
-        this.setState({matrices: temp}, () => {
-            if (this.state.autoSave)
-            this.saveToLocalStorage();
-        });
+    function deleteMatrix(del) {
+        var tempObj = {...matrices};
 
-        
+        delete tempObj[del];
+        setMatrices(tempObj);
+    
     }
 
-    updateParameter = (i, updated) => {
+    function updateParameter(i, updated) {
         switch (i) {
             case "sparse":
-                this.setState({sparseVal: updated})
-                if (this.state.autoSave)
+                setSparseVal(updated);
+                if (autoSave)
                     window.localStorage.setItem("sparseValue;", updated); 
                 break;
             case "mirror":
-                this.setState({mirror: updated});  
-                if (this.state.autoSave)
+                setMirror(updated);  
+                if (autoSave)
                     window.localStorage.setItem("mirror;", updated ? "1" : "0");
                 break; 
 
             case "autoSave":
-                this.setState({autoSave: updated});
-
+                setAutoSave(updated);
                 if (updated /* === true*/)
-                    this.saveToLocalStorage()
+                    saveToLocalStorage()
                 break;
 
             default: 
@@ -202,22 +136,22 @@ class App extends React.Component {
     
     }
 
-    resizeMatrix = (name, rows, cols) => {
-        if (this.state.matrices[name].length !== rows || this.state.matrices[name][0].length !== cols) {
+    function resizeMatrix(name, rows, cols) {
+        if (matrices[name].length !== rows || matrices[name][0].length !== cols) {
             if (rows > 51)
                 rows = 51
             if (cols > 51)
                 cols = 51
 
-            var lessRows = Math.min(rows, this.state.matrices[name].length)
-            var lessCols = Math.min(cols, this.state.matrices[name][0].length)
+            var lessRows = Math.min(rows, matrices[name].length)
+            var lessCols = Math.min(cols, matrices[name][0].length)
 
 
             var resized = Array(rows).fill([])
             for (var i = 0; i < lessRows - 1; i++) {            
                 var arr = Array(cols).fill("")
                 for (var j = 0; j < lessCols - 1; j++) {
-                    arr[j] = this.state.matrices[name][i][j]
+                    arr[j] = matrices[name][i][j]
                 }
 
                 for (j = lessCols - 1; j < cols; j++) {
@@ -232,36 +166,34 @@ class App extends React.Component {
                 resized[i] = Array(cols).fill("");
 
 
-            this.updateMatrix(resized, name); 
+            updateMatrix(resized, name); 
         }
     }
 
-    deleteMany = () => {
+    function deleteMany() {
         var toDelete = window.prompt("Enter matrices to delete: (For example: \"A B C\")").split(" ");
 
         for (var i = 0; i < toDelete.length; i++) {
-            this.deleteMatrix(toDelete[i]);
+            deleteMatrix(toDelete[i]);
         }
     }
 
 
-    clearMatrices = () => {
+    function clearMatrices() {
         if (window.confirm("Clear all matrices?")) {
-            this.setState({ 
-                selection: "", 
-                matrices: {}
-            });
+            setSelection("");
+            setMatrices({});
 
-            if (this.state.autoSave)
+            if (autoSave)
                 localStorage.clear();
         }
 
     }
 
-    saveToLocalStorage = () => {
+    function saveToLocalStorage() {
         var names = "";
         var matrixString = "";
-        for (const [name, matrix] of Object.entries(this.state.matrices)) {
+        for (const [name, matrix] of Object.entries(matrices)) {
             matrixString = "";
             names += name + ",";
             
@@ -281,47 +213,83 @@ class App extends React.Component {
         }
 
         window.localStorage.setItem("names;", names.substring(0, names.length - 1))
-        window.localStorage.setItem("mirror;", this.state.mirror ? "1" : "0")
-        window.localStorage.setItem("autoSave;", this.state.autoSave ? "1" : "0")
-        window.localStorage.setItem("sparseValue;", this.state.sparseVal)
+        window.localStorage.setItem("mirror;", mirror ? "1" : "0")
+        window.localStorage.setItem("autoSave;", autoSave ? "1" : "0")
+        window.localStorage.setItem("sparseValue;", sparseVal)
     }
 
 
+    function loadFromLocalStorage() {
+        try {
+            var names = localStorage.getItem("names;")
+            names = names.split(",")
+            var loadedMatrices = {}
+
+            var matrix;
+            for (const n of names) {
+                matrix = localStorage.getItem(n);
+                matrix = matrix.split("]")
+                for (var i = 0; i < matrix.length; i++) {
+                    matrix[i] = matrix[i].split(",")
+                    matrix[i].push("");
+                }
+
+                matrix.push(new Array(matrix[0].length).fill(""));
 
 
-    loadFromLocalStorage = () => {
-        var names = localStorage.getItem("names;")
-        names = names.split(",")
-        var matrices = {}
-
-        var matrix;
-        for (const n of names) {
-            matrix = localStorage.getItem(n);
-            matrix = matrix.split("]")
-            for (var i = 0; i < matrix.length; i++) {
-                matrix[i] = matrix[i].split(",")
-                matrix[i].push("");
+            
+                loadedMatrices[n] = matrix;
             }
 
-            matrix.push(new Array(matrix[0].length).fill(""));
-
-
-        
-            matrices[n] = matrix
+            setMatrices(loadedMatrices);
+            setAutoSave(window.localStorage.getItem("autoSave;") === "1");
+            setMirror(window.localStorage.getItem("mirror;") === "1");
+            setSparseVal(window.localStorage.getItem("sparseValue;"));
+            setSelection(names[0]);
+        } catch (error) {
+            setMatrices({"A": [["", ""], ["", ""]]} );
+            setSelection("A");
+            setSparseVal("0");
+            setAutoSave(false);
+            setMirror(false);
         }
-
-
-        this.setState({
-            matrices: matrices, 
-            autoSave: window.localStorage.getItem("autoSave;") === "1",
-            mirror: window.localStorage.getItem("mirror;") === "1",
-            sparseVal: window.localStorage.getItem("sparseValue;"),
-            selection: names[0], 
-        });
-
 
     }
 
+    return (
+        <div> 
+            <Selectors matrices = {matrices} 
+                updateMatrixSelection = {updateMatrixSelection} 
+                addMatrix = {addMatrix}
+                deleteMatrix = {deleteMatrix}
+                renameMatrix = {renameMatrix}
+                copyMatrix = {copyMatrix}
+                selection = {selection}
+                updateMatrix = {updateMatrix}
+                resizeMatrix = {resizeMatrix}
+                updateParameter = {updateParameter}
+                saveToLocalStorage = {saveToLocalStorage}
+                clearMatrices = {clearMatrices}
+
+                autoSave = {autoSave}
+                mirror = {mirror}
+                sparseVal = {sparseVal}
+            />
+
+            {(selection in matrices) ? 
+            <MatrixEditor
+                matrix = {matrices[selection]} 
+                matrices = {matrices}
+                name = {selection} 
+                updateMatrix = {updateMatrix}
+                updateParameter = {updateParameter}
+                mirror = {mirror}
+                sparseVal = {sparseVal}
+                addMatrix = {addMatrix}
+            /> : null
+            } 
+
+        </div>);
 
 }
 

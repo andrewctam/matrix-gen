@@ -13,13 +13,13 @@ class MatrixEditor extends React.Component {
         return <div className = "row export">
             <textarea readOnly = {true} onClick = {this.handleFocus} className="exportOutput" value = {this.matrixToString(this.props.matrix)} />
             <div className = "col-sm-2">
-                <ParameterSwitchInput defaultVal = {false} id={"latex"} text = {"LaTeX Format"} updateParameter={this.updateExportParameter}/>
+                <ParameterSwitchInput isChecked = {false} id={"latex"} text = {"LaTeX Format"} updateParameter={this.updateExportParameter}/>
             </div>
             
             <div className = "col-sm-10">
                 {this.state.latex ?
                 <p>Environment &nbsp;
-                <ParameterTextInput width = {"100px"} defaultVal = {"bmatrix"} id={"environment"} updateParameter={this.updateExportParameter}/></p>
+                <ParameterTextInput width = {"100px"} text = {"bmatrix"} id={"environment"} updateParameter={this.updateExportParameter}/></p>
                 :
 
                 <div className ="row">
@@ -55,11 +55,11 @@ class MatrixEditor extends React.Component {
                 {this.state.custom ?
                 <div className = "col-sm-6">
                     <p>Open arrays with &nbsp;
-                        <ParameterTextInput width = {"20px"} id={"start"} updateParameter={this.updateExportParameter}/></p>
+                        <ParameterTextInput text = {""} width = {"20px"} id={"start"} updateParameter={this.updateExportParameter}/></p>
                     <p>End arrays with &nbsp;
-                        <ParameterTextInput width = {"20px"} id={"end"} updateParameter={this.updateExportParameter}/></p>
+                        <ParameterTextInput text = {""} width = {"20px"} id={"end"} updateParameter={this.updateExportParameter}/></p>
                     <p>Separate elements with &nbsp;
-                        <ParameterTextInput width = {"20px"} id={"delim"} updateParameter={this.updateExportParameter}/></p>
+                        <ParameterTextInput text = {""} width = {"20px"} id={"delim"} updateParameter={this.updateExportParameter}/></p>
                 </div>: null}
                 
                 </div>}

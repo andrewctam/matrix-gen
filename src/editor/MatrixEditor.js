@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MatrixExport from "../matrixTools/MatrixExport.js"
 import MatrixMath from '../matrixTools/MatrixMath.js';
 import ParameterTextInput from '../inputs/ParameterTextInput.js';
@@ -6,89 +6,25 @@ import Table from "./Table.js"
 
 import "./MatrixEditor.css";
 
-class MatrixEditor extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showActions: false,
-            showExport: false, 
-            showMath: false, 
-            sparseVal: "0", 
-            randomLow: 1, 
-            randomHigh: 10,
-            fillEmptyVal: 0
-        };
-    }
-
-    render() {    
-        return (
-        <div className = "matrixEditor">
-            <div id = "options" className = "options fixed-bottom">
-
-                    {this.state.showActions ? 
-                    <div>
-                        <button className = "btn btn-success matrixButtons" onClick={this.transpose}>Transpose</button> <br />
-                        <button className = "btn btn-success matrixButtons" onClick={this.mirrorRowsOntoColumns}>Mirror Rows Across Diagonal</button> <br />
-                        <button className = "btn btn-success matrixButtons" onClick={this.mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button> <br />
-                        
-                        <button className = "btn btn-success matrixButtons" onClick={this.randomMatrix}>Random Matrix</button>
-                        <ParameterTextInput id={"randomLow"} updateParameter = {this.updateParameter} defaultVal = {this.state.randomLow} width = {"30px"} />{" to "}
-                        <ParameterTextInput id={"randomHigh"} updateParameter = {this.updateParameter} defaultVal = {this.state.randomHigh} width = {"30px"} />
-                        <br/>
-
-                        <button className = "btn btn-success matrixButtons" onClick={this.fillEmpty}>Fill Empty With</button>
-                        <ParameterTextInput id={"fillEmptyVal"} updateParameter = {this.updateParameter} defaultVal = {this.state.fillEmptyVal} width = {"30px"} />
-                        <br/>
-                        
-                    </div> : null}
-                
-                {this.state.showMath ?
-                    <MatrixMath matrices = {this.props.matrices} matrix = {this.props.matrix} addMatrix = {this.props.addMatrix} sparseVal = {this.props.sparseVal} />
-                    : null } 
-                     
-                {this.state.showExport ?
-                    <MatrixExport matrix = {this.props.matrix} sparseVal = {this.props.sparseVal}/>
-                    : null }   
+function MatrixEditor(props) {
+    const [showActions, setShowActions] = useState(false);
+    const [showExport, setShowExport] = useState(false);
+    const [showMath, setShowMath] = useState(false);
+    const [randomLow, setRandomLow] = useState(1);
+    const [randomHigh, setRandomHigh] = useState(10);
+    const [fillEmptyVal, setFillEmptyVal] = useState(0);
 
 
-                <div className="options-bottom">
-                    <button className = "btn btn-success matrixButtons" onClick = {this.toggleActions}> {this.state.showActions ? "Hide Actions" : "Show Actions"}</button> 
-
-                    <button className = "btn btn-secondary matrixButtons" onClick={this.toggleMath}>                
-                        {this.state.showMath ? "Close Math Input" : "Perform Matrix Math"}
-                    </button>
-                    <button className = "btn btn-secondary matrixButtons" onClick={this.toggleExport}>
-                        {this.state.showExport ? "Close Export" : "Export Matrix"}
-                    </button>
-                </div>
-
-            </div>
-
-            <table className = "table table-bordered" >
-                <tbody> 
-                    <Table 
-                    matrix = {this.props.matrix} 
-                    addCols = {this.addCols}
-                    addRows = {this.addRows}
-                    updateEntry = {this.updateEntry}
-                    tryToDelete = {this.tryToDelete}
-                    /> 
-                </tbody>
-            </table>
-            </div>)
-
-    }
-
-    updateParameter = (i, updated) => {
+    function updateParameter(i, updated) {
         switch (i) {
             case "randomLow":
-                this.setState({randomLow: parseInt(updated)})
+                setRandomLow(parseInt(updated));
                 break;
             case "randomHigh":
-                this.setState({randomHigh: parseInt(updated)});  
+                setRandomHigh(parseInt(updated));
                 break; 
             case "fillEmptyVal":
-                this.setState({fillEmptyVal: updated});  
+                setFillEmptyVal(updated);
                 break; 
                 
             default: break;
@@ -98,75 +34,76 @@ class MatrixEditor extends React.Component {
     }
 
 
-    toggleExport = () => {
-        if (this.state.showExport) 
-            this.setState({showExport: false}, () => {
-                this.modifyBottomPadding();
-            });
-        else
-            this.setState({showExport: true, showMath: false, showActions: false}, () => {
-                this.modifyBottomPadding();
-            });
+    function toggleExport() {
+        if (showExport) 
+            setShowExport(false);
+        else  {
+            setShowExport(true);
+            setShowMath(false);
+            setShowActions(false);
+
+        }
     }
-    toggleMath = () => {
-        if (this.state.showMath)
-            this.setState({showMath: false}, () => {
-                this.modifyBottomPadding();
-            });
-        else
-            this.setState({showMath: true, showExport: false, showActions: false}, () => {
-                this.modifyBottomPadding();
-            });
-    }
-    toggleActions = () => {
-        if (this.state.showActions)
-            this.setState({showActions: false}, () => {
-                this.modifyBottomPadding();
-            });
-        else
-            this.setState({showActions: true, showMath: false, showExport: false}, () => {
-        });
+    function toggleMath() {
+        if (showMath)
+            setShowMath(false);
+        else  {
+            setShowMath(true);
+            setShowExport(false);
+            setShowActions(false);
+        }
     }
 
-
-    componentDidMount() {
-        window.addEventListener('resize', this.resize);
+    function toggleActions() {
+        if (showActions)
+            setShowActions(false);
+        else  {
+            setShowActions(true);
+            setShowExport(false);
+            setShowMath(false);
+        }
+    
     }
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.resize);
+
+    /*
+    function componentDidMount{
+        window.addEventListener('resize', resize);
+    }
+    function componentWillUnmount{
+        window.removeEventListener('resize', resize);
     }
 
-    resize = () => {
-        this.modifyBottomPadding();
+    function resize() {
+        modifyBottomPadding();
     }
 
-    modifyBottomPadding = () => {
+    function modifyBottomPadding() {
         document.body.style.paddingBottom = document.getElementById("options").clientHeight + "px";
-    }
+    }*/
     
 
 
-    tryToDelete = (row, col) => {
+    function tryToDelete(row, col) {
         //Can not delete the red row/column
-        if (row === this.props.matrix.length - 1 || col === this.props.matrix[0].length - 1) 
+        if (row === props.matrix.length - 1 || col === props.matrix[0].length - 1) 
             return null;
             
-        var temp = this.props.matrix;
+        var tempMatrix = [...props.matrix];
         var toDelete = true;
         
         //{{1,1,1,1},
         // {0,0,0,0}, row
         // {1,1,1,1}}
         //Try to Delete an Empty Row
-        if (this.props.matrix.length > 2) {
-            for (var i = 0; i < this.props.matrix[0].length; i++) {
-                if (this.props.matrix[row][i] !== "") {
+        if (props.matrix.length > 2) {
+            for (var i = 0; i < props.matrix[0].length; i++) {
+                if (props.matrix[row][i] !== "") {
                     toDelete = false;
                     break;
                 }
             }
             if (toDelete)
-                temp.splice(row, 1);
+                tempMatrix.splice(row, 1);
         }
     
         //     col
@@ -174,91 +111,123 @@ class MatrixEditor extends React.Component {
         // {1,1,0,1},
         // {1,1,0,1}}
         toDelete = true;
-        if (this.props.matrix[0].length > 2) {
-            for (i = 0; i < this.props.matrix.length; i++) {
-                if (this.props.matrix[i][col] !== "") {
+        if (props.matrix[0].length > 2) {
+            for (i = 0; i < props.matrix.length; i++) {
+                if (props.matrix[i][col] !== "") {
                     toDelete = false;
                     break;
                 }
             }
 
             if (toDelete) {
-                for (i = 0; i < temp.length; i++) {
-                    temp[i].splice(col, 1); //delete cols
+                for (i = 0; i < tempMatrix.length; i++) {
+                    tempMatrix[i].splice(col, 1); //delete cols
                 } 
             }
         }
 
-        this.props.updateMatrix(temp, this.props.name); 
+        props.updateMatrix(tempMatrix, props.name); 
     
     }
 
     
-    updateEntry = (i, j, val) => {
+    function updateEntry(i, j, val, tempMatrix = [...props.matrix]) {
         if (i < 50 && j < 50) {
-            var temp = this.props.matrix;
             
-            if (this.props.mirror) {
-                if (j >= this.props.matrix.length - 1) {
-                    temp = this.addRows(j - this.props.matrix.length + 2, false)
+            if (props.mirror) {
+                //add enough rows in order to update the correct  j, i
+                if (j >= props.matrix.length - 1) {
+                    tempMatrix = addRows(j - props.matrix.length + 2, false)
                 }
                 
-                if (i >= this.props.matrix[0].length - 1) {
-                    temp = this.addCols(i - this.props.matrix[0].length + 2, false)
+                //add enough cols in order to update the correct  j, i
+                if (i >= props.matrix[0].length - 1) {
+                    tempMatrix = addCols(i - props.matrix[0].length + 2, false)
                 }
                 
-                temp[j][i] = val;
+                tempMatrix[j][i] = val;
             }
 
-            temp[i][j] = val;
-            this.props.updateMatrix(temp, this.props.name); 
-        }
-        else
+            tempMatrix[i][j] = val;
+            props.updateMatrix(tempMatrix, props.name); 
+        } else
             alert("Max matrix size reached!");
     }
     
-    addCols = (numToAdd, update = true) => {
-        var temp = this.props.matrix;
+    function addCols(numToAdd, update = true) {
+        var tempMatrix = [...props.matrix];
 
-        if (temp[0].length + numToAdd > 51)
-            numToAdd = 51 - temp[0].length;
+        if (tempMatrix[0].length + numToAdd > 51)
+            numToAdd = 51 - tempMatrix[0].length;
 
-        for (var i = 0; i < temp.length; i++) {
+        for (var i = 0; i < tempMatrix.length; i++) {
             for (var j = 0; j < numToAdd; j++)
-                temp[i].push("");
+                tempMatrix[i].push("");
         }
 
         if (update)
-            this.props.updateMatrix(temp, this.props.name); 
+            props.updateMatrix(tempMatrix, props.name); 
 
-        return temp;
+        return tempMatrix;
     }
 
-    addRows = (numToAdd, update = true) => {
-        var temp = this.props.matrix;
+    function addRows(numToAdd, update = true) {
+        var tempMatrix = [...props.matrix];
 
-        if (temp.length + numToAdd > 51)
-            numToAdd = 51 - temp.length;
+        if (tempMatrix.length + numToAdd > 51)
+            numToAdd = 51 - tempMatrix.length;
 
         
         for (var i = 0; i < numToAdd; i++) {
-            temp.push(new Array(temp[0].length).fill(""));
+            tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
         }
         
         if (update)
-            this.props.updateMatrix(temp, this.props.name); 
+            props.updateMatrix(tempMatrix, props.name); 
 
-        return temp; 
+
+        return tempMatrix; 
     }
 
-    mirrorRowsOntoColumns = () => {    
-        this.setState({showActions: false});    
-        if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
-            var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length, false);
+    function addRowsAndCols(rowsToAdd, colsToAdd, update = true) {
+        var tempMatrix = [...props.matrix];
+
+        if (tempMatrix.length + rowsToAdd > 51)
+            rowsToAdd = 51 - tempMatrix.length;
+
+        if (tempMatrix[0].length + colsToAdd > 51)
+            colsToAdd = 51 - tempMatrix[0].length;
+
+        
+        for (var i = 0; i < tempMatrix.length; i++) {
+            for (var j = 0; j < colsToAdd; j++)
+                tempMatrix[i].push("");
+        }
+        
+        for (var i = 0; i < rowsToAdd; i++)
+            tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
+
+        console.log("added");
+        console.log(tempMatrix);
+
+        if (update)
+            props.updateMatrix(tempMatrix, props.name); 
+
+       
+
+        return tempMatrix; 
+    }
+
+
+    
+    function mirrorRowsOntoColumns() { 
+        setShowActions(false);
+        if (props.matrix.length > props.matrix[0].length) { //more rows than cols {
+            var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
             
         }
-        else /*if (this.props.matrix.length < this.props.matrix[0].length) */ {
-            symmetric = this.addRows(this.props.matrix[0].length - this.props.matrix.length, false)
+        else /*if (props.matrix.length < props.matrix[0].length) */ {
+            symmetric = addRows(props.matrix[0].length - props.matrix.length, false)
             
         }
    
@@ -268,18 +237,18 @@ class MatrixEditor extends React.Component {
             }
         }
 
-        this.props.updateMatrix(symmetric, this.props.name); 
+        props.updateMatrix(symmetric, props.name); 
     }
 
-    mirrorColumnsOntoRows = () => {
-        this.setState({showActions: false});    
+    function mirrorColumnsOntoRows() {
+        setShowActions(false);
         
-        if (this.props.matrix.length > this.props.matrix[0].length) { //more rows than cols {
-            var symmetric = this.addCols(this.props.matrix.length - this.props.matrix[0].length, false);
+        if (props.matrix.length > props.matrix[0].length) { //more rows than cols {
+            var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
             
         }
-        else /*if (this.props.matrix.length < this.props.matrix[0].length) */ {
-            symmetric = this.addRows(this.props.matrix[0].length - this.props.matrix.length, false);
+        else /*if (props.matrix.length < props.matrix[0].length) */ {
+            symmetric = addRows(props.matrix[0].length - props.matrix.length, false);
             
         }
 
@@ -289,36 +258,38 @@ class MatrixEditor extends React.Component {
             }
         }
     
-        this.props.updateMatrix(symmetric, this.props.name); 
+        props.updateMatrix(symmetric, props.name); 
     }
 
-    transpose = () => {
-        this.setState({showActions: false});    
+    function transpose() {
+        setShowActions(false);
 
-        var transposed = Array(this.props.matrix[0].length).fill(0);
+        var transposed = Array(props.matrix[0].length).fill(0);
         for (var i = 0; i < transposed.length; i++) {
-            var arr = Array(this.props.matrix.length).fill(0)
+            var arr = Array(props.matrix.length).fill(0)
             for (var j = 0; j < arr.length; j++)
-                arr[j] = this.props.matrix[j][i];
+                arr[j] = props.matrix[j][i];
             transposed[i] = arr;       
         }
 
-        this.props.updateMatrix(transposed, this.props.name); 
+        props.updateMatrix(transposed, props.name); 
     }       
 
 
-    randomMatrix = () => {
-        this.setState({showActions: false});    
+    function randomMatrix() {
+        setShowActions(false);
 
-        var temp = this.props.matrix;
-        var low = this.state.randomLow
-        var high = this.state.randomHigh
+        var low = randomLow;
+        var high = randomHigh;
+        
         if (low <= high) {
-            for (var i = 0; i < temp.length - 1; i++)
-                for (var j = 0; j < temp[0].length - 1; j++)
-                    temp[i][j] = Math.floor(Math.random() * (high - low)) + low;
+            var tempMatrix = [...props.matrix];
             
-            this.props.updateMatrix(temp, this.props.name);
+            for (var i = 0; i < tempMatrix.length - 1; i++)
+                for (var j = 0; j < tempMatrix[0].length - 1; j++)
+                    tempMatrix[i][j] = Math.floor(Math.random() * (high - low)) + low;
+            
+            props.updateMatrix(tempMatrix, props.name);
         }
         else {
             alert("Invalid range")
@@ -327,22 +298,81 @@ class MatrixEditor extends React.Component {
 
     }
 
-    fillEmpty = () => {
-        this.setState({showActions: false});    
+    function fillEmpty() {
+        setShowActions(false);
 
-        var temp = this.props.matrix;
+        var tempMatrix = [...props.matrix];
        
-        for (var i = 0; i < temp.length - 1; i++)
-            for (var j = 0; j < temp[0].length - 1; j++) {
-                if (temp[i][j] === "")
-                    temp[i][j] = this.state.fillEmptyVal;
+        for (var i = 0; i < tempMatrix.length - 1; i++)
+            for (var j = 0; j < tempMatrix[0].length - 1; j++) {
+                if (tempMatrix[i][j] === "")
+                    tempMatrix[i][j] = fillEmptyVal;
             }
         
-        this.props.updateMatrix(temp, this.props.name);
+        props.updateMatrix(tempMatrix, props.name);
     }
 
-    
-    
+
+
+
+    return (
+    <div className = "matrixEditor">
+        <div id = "options" className = "options">
+            <div>
+                <button className = "btn btn-success matrixButtons" onClick = {toggleActions}> {showActions ? "Hide Actions" : "Show Actions"}</button> 
+
+                <button className = "btn btn-secondary matrixButtons" onClick={toggleMath}>                
+                    {showMath ? "Close Math Input" : "Perform Matrix Math"}
+                </button>
+                <button className = "btn btn-secondary matrixButtons" onClick={toggleExport}>
+                    {showExport ? "Close Export" : "Export Matrix"}
+                </button>
+            </div>
+
+
+            {showActions ? 
+            <div>
+                <button className = "btn btn-success matrixButtons" onClick={transpose}>Transpose</button> <br />
+                <button className = "btn btn-success matrixButtons" onClick={mirrorRowsOntoColumns}>Mirror Rows Across Diagonal</button> <br />
+                <button className = "btn btn-success matrixButtons" onClick={mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button> <br />
+                
+                <button className = "btn btn-success matrixButtons" onClick={randomMatrix}>Random Matrix</button>
+                <ParameterTextInput id={"randomLow"} updateParameter = {updateParameter} text = {randomLow} width = {"30px"} />{" to "}
+                <ParameterTextInput id={"randomHigh"} updateParameter = {updateParameter} defaultexttVal = {randomHigh} width = {"30px"} />
+                <br/>
+
+                <button className = "btn btn-success matrixButtons" onClick={fillEmpty}>Fill Empty With</button>
+                <ParameterTextInput id={"fillEmptyVal"} updateParameter = {updateParameter} text = {fillEmptyVal} width = {"30px"} />
+                <br/>
+                
+            </div> : null}
+            
+            {showMath ?
+                <MatrixMath matrices = {props.matrices} matrix = {props.matrix} addMatrix = {props.addMatrix} sparseVal = {props.sparseVal} />
+                : null } 
+                    
+            {showExport ?
+                <MatrixExport matrix = {props.matrix} sparseVal = {props.sparseVal}/>
+                : null }   
+
+
+            
+
+        </div>
+
+
+        <Table 
+            mirror = {props.mirror}
+            matrix = {props.matrix} 
+            addCols = {addCols}
+            addRows = {addRows}
+            addRowsAndCols = {addRowsAndCols}
+            updateEntry = {updateEntry}
+            tryToDelete = {tryToDelete}
+        /> 
+
+        </div>)
+
 }
 
 

@@ -1,18 +1,21 @@
 import React from 'react';
 
-class ParameterTextInput extends React.Component {
-    render() {
-        return <input
-            type= "text" 
-            style = {{width: this.props.width}} 
-            defaultValue = {this.props.defaultVal} 
-            onChange = {this.handleChange}>
-        </input>
+function ParameterTextInput(props) {
+    function handleChange(e) {
+        props.updateParameter(props.id, e.target.value);
     }
 
-    handleChange = (e) => {
-        this.props.updateParameter(this.props.id, e.target.value)
-    }
+
+
+    return <input
+        type= "text" 
+        style = {{width: props.width}} 
+        value = {props.text} 
+        onChange = {handleChange}>
+    </input>
+    
+
+    
 }
 
 export default ParameterTextInput;

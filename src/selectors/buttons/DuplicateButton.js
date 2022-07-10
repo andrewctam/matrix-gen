@@ -1,19 +1,21 @@
 import React from 'react';
 
 
-class DuplicateButton extends React.Component {
-    render() {
-        return <button type="button" 
-            className = {"list-group-item list-group-item-warning selector-button"}
-            disabled = {this.props.selection === "0"}
-            onClick = {this.copyMatrix}>
-            Duplicate Matrix {this.props.selection !== "0" ? this.props.selection : ""}
-        </button>
+function DuplicateButton(props) {
+    
+    function copyMatrix() {
+        props.copyMatrix(props.selection); 
     }
 
-    copyMatrix = () => {
-        this.props.copyMatrix(this.props.selection); 
-    }
+    return <button type="button" 
+        className = {"list-group-item list-group-item-warning selector-button"}
+        disabled = {props.selection === "0"}
+        onClick = {copyMatrix}>
+        Duplicate Matrix {props.selection !== "0" ? props.selection : ""}
+    </button>
+
+    
+
 }
 
 export default DuplicateButton;

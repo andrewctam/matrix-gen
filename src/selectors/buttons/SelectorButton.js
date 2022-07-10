@@ -1,119 +1,120 @@
-import React from 'react';
+import React, {useState} from 'react';
 import "./SelectorButton.css";
 
-class SelectorButton extends React.Component {
-    constructor(props) {
-        super(props);
-        var size = (this.props.matrices[this.props.name].length - 1) + " x " +
-            (this.props.matrices[this.props.name][0].length - 1)
+function SelectorButton(props) {
+    const [displaySize, setDisplaySize] = useState( realSize() );
 
-        this.state = {displayName: this.props.name, displaySize: size}
-
-    }
-    render() {
-        if (document.activeElement === document.getElementById("size " + this.props.name)) {
-            var size = this.state.displaySize
-        }
-        else {
-            size = (this.props.matrices[this.props.name].length - 1) + " x " +
-                (this.props.matrices[this.props.name][0].length - 1)
-        }
-
-
-        return <button type="button" 
-            className = {"list-group-item list-group-item-action" + ((this.props.active) ? " active" : "")}
-            onClick = {this.updateSelection}>
-
-            <input type = "text" value = {this.state.displayName} id = {this.props.name}
-            onChange = {this.renameMatrix}
-            onKeyDown = {this.handleKeyDown}
-            onBlur = {this.pushNewName}
-            onFocus = {this.handleFocus}
-            />
-
-            <input className = "sizeInfo" id = {"size " + this.props.name}
-            value = {size} 
-            onChange = {this.resizeMatrix}
-            onBlur = {this.pushNewSize}
-            onFocusCapture = {this.handleFocus}
-            onKeyDown = {this.handleKeyDown}
-            />
-        </button>
-
+    const [displayName, setDisplayName] = useState(props.name);
+    
+    function realSize() {
+        return (props.matrices[props.name].length - 1) + " x " +
+        (props.matrices[props.name][0].length - 1);
     }
 
-    updateSelection = () => {
-        this.props.updateSelection(this.props.name);
+    function updateMatrixSelection() {
+        props.updateMatrixSelection(props.name);
     }
 
-
-    renameMatrix = (e) => {
+    function renameMatrix(e) {
         var updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated)) {
-           this.setState({displayName: updated})
+           setDisplayName(updated);
         }
 
     }
 
-    handleFocus = (e) => {
-        var rows = this.props.matrices[this.props.name].length - 1
-        var cols = this.props.matrices[this.props.name][0].length - 1
+    function handleFocus(e) {
+        var rows = props.matrices[props.name].length - 1
+        var cols = props.matrices[props.name][0].length - 1
 
-        this.setState({displaySize: (rows) + " x " + cols});
+        setDisplaySize((rows) + " x " + cols);
     }
 
-    resizeMatrix = (e) => {
+    function resizeMatrix(e) {
         var updated = e.target.value;
 
         if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) {
-            this.setState({displaySize: updated})
+            setDisplaySize(updated);
         }
     }
 
-    pushNewName = () => {
-        if (this.state.displayName !== this.props.name)
-            if (this.state.displayName === "") {
+    function pushNewName() {
+        if (displayName !== props.name)
+            if (displayName === "") {
                 alert("The name can not be blank!")
-                this.setState({displayName: this.props.name})
-            }
-            else if (this.state.displayName in this.props.matrices) {
-                alert("The name " + this.state.displayName + " already exists!")
+                setDisplayName(props.name);
+            } else if (displayName in props.matrices) {
+                alert("The name " + displayName + " already exists!")
                 
-                this.setState({displayName: this.props.name})
+                setDisplayName(props.name);
             } else {
-                this.props.renameMatrix(this.props.name, this.state.displayName)
-                this.props.updateSelection(this.state.displayName)
+                props.renameMatrix(props.name, displayName)
+                props.updateSelection(displayName)
             }
     }
 
-    pushNewSize = () => {   
-        if (/[0-9]* ?x ?[0-9]*/.test(this.state.displaySize)) {
-            var rows = parseInt(this.state.displaySize.substring(0, this.state.displaySize.indexOf("x")));
-            var cols = parseInt(this.state.displaySize.substring(this.state.displaySize.indexOf("x") + 1));
+    function pushNewSize() { 
+        if (/[0-9]* ?x ?[0-9]*/.test(displaySize)) {
+            var rows = parseInt(displaySize.substring(0, displaySize.indexOf("x")));
+            var cols = parseInt(displaySize.substring(displaySize.indexOf("x") + 1));
             
             if (rows > 0 && cols > 0) {
-                this.setState({displaySize: (rows) + " x " + cols});
-                this.props.resizeMatrix(this.props.name, rows + 1, cols + 1);
+                setDisplaySize((rows) + " x " + cols);
+                
+                props.resizeMatrix(props.name, rows + 1, cols + 1);
+
             } else {
                 alert("Dimensions can not be zero");
-                rows = this.props.matrices[this.props.name].length - 1
-                cols = this.props.matrices[this.props.name][0].length - 1
-
-                this.setState({displaySize: (rows) + " x " + cols});
+                setDisplaySize(realSize());
             }
-        } else {
-            rows = this.props.matrices[this.props.name].length - 1
-            cols = this.props.matrices[this.props.name][0].length - 1
-
-            this.setState({displaySize: (rows) + " x " + cols});
+        } else {         
+            setDisplaySize(realSize());
         }
     }
 
-    handleKeyDown = (e) => {
+    function handleKeyDown(e) {
         if (e.keyCode === 13) {
             e.target.blur();
         }
     }
+
+
+
+    if (document.activeElement === document.getElementById("size " + props.name)) {
+        var size = displaySize
+    } else {
+        size = realSize();
+    }
+
+
+    return <button type="button" 
+        className = {"list-group-item list-group-item-action" + ((props.active) ? " active" : "")}
+        onClick = {updateMatrixSelection}>
+
+        <input 
+        value = {displayName} 
+        id = {props.name}
+        type = "text" 
+        onChange = {renameMatrix}
+        onKeyDown = {handleKeyDown}
+        onBlur = {pushNewName}
+        onFocus = {handleFocus}
+        />
+
+        <input 
+        value = {size} 
+        id = {"size " + props.name}
+        type = "text"
+        className = "sizeInfo" 
+        onChange = {resizeMatrix}
+        onBlur = {pushNewSize}
+        onFocusCapture = {handleFocus}
+        onKeyDown = {handleKeyDown}
+        />
+    </button>
+
+    
+
 }
 
 export default SelectorButton;

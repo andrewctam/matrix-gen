@@ -1,61 +1,58 @@
-import React from 'react';
+import React , {useState}from 'react';
 
-class Box extends React.Component {
-    render() {
-        var lastRow = this.props.rows === this.props.row + 1;
-        var lastCol = this.props.cols === this.props.col + 1;
-       
-        //if one of the rows or cols is the max size (50),
-        //force that last row/col to be a white background
-        //instead of a red background since there isn't a 51st box
-        var lastRowIn50 = this.props.row === 49 && this.props.rows === 51;
-        var lastColIn50 = this.props.col === 49 && this.props.cols === 51;
+function Box(props) {
+    function handleAddRow(e) {
+        props.addRow(props.row, props.col, e.target.value);
+    }
+    function handleAddCol(e) {
+        props.addCol(props.row, props.col, e.target.value);
+    }
+    function handleAddBoth(e) {
+        props.addBoth(props.row, props.col, e.target.value);
+    }
+    function handleUpdate(e) { 
+        props.updateEntry(props.row, props.col, e.target.value);
+    }
+    function handleKeyDown(e) {
+        props.keyDown(props.row, props.col, e);
+    }
 
-        if ((lastRowIn50 && lastColIn50) ||                          //bottom right corner of 50 x 50
-            (lastRowIn50 && this.props.col < this.props.cols - 1) || //bottom row of 50 x m (excluding right most col)
-            (lastColIn50 && this.props.row < this.props.rows - 1)) { //right most col of n x 50 (excluding last row)
-            var forceLastFiftyStyle =  {  
-                "background-color": "rgb(196, 185, 185)",
-                 "max-width": "50px",
-                 "width": "50px",
-                 "max-height": "50px",
-                 "height": "50px" 
-            }
-        } else
-            forceLastFiftyStyle = null;
+    var lastRow = props.rows === props.row + 1;
+    var lastCol = props.cols === props.col + 1;
+   
+    //if one of the rows or cols is the max size (50),
+    //force that last row/col to be a white background
+    //instead of a red background since there isn't a 51st box
+    var lastRowIn50 = props.row === 49 && props.rows === 51;
+    var lastColIn50 = props.col === 49 && props.cols === 51;
 
-        return <td style = {forceLastFiftyStyle}>
-            <input 
+    if ((lastRowIn50 && lastColIn50) ||                //bottom right corner of 50 x 50
+        (lastRowIn50 && props.col < props.cols - 1) || //bottom row of 50 x m (excluding right most col)
+        (lastColIn50 && props.row < props.rows - 1)) { //right most col of n x 50 (excluding last row)
+        var forceLastFiftyStyle =  { 
+            "background-color": "rgb(196, 185, 185)",
+            "max-width": "50px",
+            "width": "50px",
+            "max-height": "50px",
+            "height": "50px" 
+        }
+    } else
+        forceLastFiftyStyle = null;
+
+
+    return <td style = {forceLastFiftyStyle}>
+        <input 
             autoComplete = "off" 
-            id = {this.props.row + ":" + this.props.col} 
-            value = {this.props.val} 
-            tabIndex = {this.props.row !== 0 && lastCol ? -1 : ""} 
-            onChange = {(lastRow && lastCol ? this.handleAddBoth :
-                                    lastRow ? this.handleAddRow :
-                                    lastCol ? this.handleAddCol :
-                                              this.handleUpdate)} 
-            onKeyDown = {this.handleKeyDown}     
-            />
-        </td>;
-
-    }
-
-    handleAddRow = (e) => {
-        this.props.addRow(this.props.row, this.props.col, e.target.value);
-    }
-    handleAddCol = (e) => {
-        this.props.addCol(this.props.row, this.props.col, e.target.value);
-    }
-    handleAddBoth = (e) => {
-        this.props.addBoth(this.props.row, this.props.col, e.target.value);
-    }
-    handleUpdate = (e) => {    
-        this.props.updateEntry(this.props.row, this.props.col, e.target.value);
-    }
-    handleKeyDown = (e) => {
-        this.props.keyDown(this.props.row, this.props.col, e);
-    }
-        
-
+            id = {props.row + ":" + props.col} 
+            value = {props.val} 
+            tabIndex = {props.row !== 0 && lastCol ? -1 : ""} 
+            onChange = {(lastRow && lastCol ? handleAddBoth :
+                                    lastRow ? handleAddRow :
+                                    lastCol ? handleAddCol :
+                                            handleUpdate)} 
+            onKeyDown = {handleKeyDown}     
+        />
+    </td>;
 }
+
 export default Box;
