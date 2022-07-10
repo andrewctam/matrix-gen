@@ -1,117 +1,61 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ParameterTextInput from '../inputs/ParameterTextInput.js';
 import ParameterSwitchInput from '../inputs/ParameterSwitchInput.js';
 import "./MatrixExport.css";
 
-class MatrixEditor extends React.Component {    
-    constructor(props) {
-        super(props);
-        this.state = {start: "{", end: "}", delim: ",", latex: false, environment: "bmatrix", custom: false, exportOption: "{},"};
-    }
+function MatrixEditor(props) {    
+    const [start, setStart] = useState("{");
+    const [end, setEnd] = useState("}");
+    const [delim, setDelim] = useState(",");
+    const [latex, setLatex] = useState(false);
+    const [environment, setEnvironment] = useState("bmatrix");
+    const [custom, setCustom] = useState(false);
+    const [exportOption, setExportOption] = useState("{},");
 
-    render() { 
-        return <div className = "row export">
-            <textarea readOnly = {true} onClick = {this.handleFocus} className="exportOutput" value = {this.matrixToString(this.props.matrix)} />
-            <div className = "col-sm-2">
-                <ParameterSwitchInput isChecked = {false} id={"latex"} text = {"LaTeX Format"} updateParameter={this.updateExportParameter}/>
-            </div>
-            
-            <div className = "col-sm-10">
-                {this.state.latex ?
-                <p>Environment &nbsp;
-                <ParameterTextInput width = {"100px"} text = {"bmatrix"} id={"environment"} updateParameter={this.updateExportParameter}/></p>
-                :
 
-                <div className ="row">
-                <div className = "col-sm-6">
-                    <ul>
-                        Export Setting
-                        <li><button id = "{}," 
-                        onClick = {this.usePreset} 
-                        className = {this.state.exportOption === "{}," ? "btn btn-info" : "btn btn-secondary"}>
-                        {"Curly Braces and Comma { } ,"}
-                        </button></li>
-
-                        <li><button id = "[]," 
-                        onClick = {this.usePreset} 
-                        className = {this.state.exportOption === "[]," ? "btn btn-info" : "btn btn-secondary"}>
-                        {"Square Braces and Comma [ ] ,"}
-                        </button></li>
-
-                        <li><button id = "()," 
-                        onClick = {this.usePreset} 
-                        className = {this.state.exportOption === "()," ? "btn btn-info" : "btn btn-secondary"}>
-                        {"Parentheses and Comma ( ) ,"}
-                        </button></li>
-
-                        <li><button 
-                        onClick = {this.toggleCustom} 
-                        className = {this.state.exportOption === "custom" ? "btn btn-info" : "btn btn-secondary"}>
-                        {"Custom"}
-                        </button></li>
-                    </ul> 
-                </div>
-
-                {this.state.custom ?
-                <div className = "col-sm-6">
-                    <p>Open arrays with &nbsp;
-                        <ParameterTextInput text = {""} width = {"20px"} id={"start"} updateParameter={this.updateExportParameter}/></p>
-                    <p>End arrays with &nbsp;
-                        <ParameterTextInput text = {""} width = {"20px"} id={"end"} updateParameter={this.updateExportParameter}/></p>
-                    <p>Separate elements with &nbsp;
-                        <ParameterTextInput text = {""} width = {"20px"} id={"delim"} updateParameter={this.updateExportParameter}/></p>
-                </div>: null}
-                
-                </div>}
-            </div>    
-        </div>
-    }
-    handleFocus = (e) => {
+    function handleFocus(e) {
         e.target.select();
     }
     
-    matrixToString() {
-        if (this.state.latex) {
-            var result = "\\begin{" + this.state.environment + "}\n";
-            for (var i = 0; i < this.props.matrix.length - 1; i++) {
-                for (var j = 0; j < this.props.matrix[0].length - 1; j++) {
-                    if (this.props.matrix[i][j] === "") {
-                        result += this.props.sparseVal;        
+    function matrixToString() {
+        if (latex) {
+            var result = "\\begin{" + environment + "}\n";
+            for (var i = 0; i < props.matrix.length - 1; i++) {
+                for (var j = 0; j < props.matrix[0].length - 1; j++) {
+                    if (props.matrix[i][j] === "") {
+                        result += props.sparseVal;        
                     } else {
-                        result += this.props.matrix[i][j];
+                        result += props.matrix[i][j];
                     }            
 
-                    if (j !== this.props.matrix[0].length - 2) {
+                    if (j !== props.matrix[0].length - 2) {
                         result += " & ";
-                    } else if (i !== this.props.matrix.length - 2) {
+                    } else if (i !== props.matrix.length - 2) {
                         result += " \\\\ \n";
                     }
                 }
             }
 
-            return result + "\n\\end{" + this.state.environment + "}"; 
+            return result + "\n\\end{" + environment + "}"; 
         }
 
-        var start = this.state.start;
-        var end = this.state.end;
-        var delim = this.state.delim;
         result = start.toString();
 
-        for (i = 0; i < this.props.matrix.length - 1; i++) {
+        for (i = 0; i < props.matrix.length - 1; i++) {
             result += start;
             
-            for (j = 0; j < this.props.matrix[0].length - 1; j++) {
-                if (this.props.matrix[i][j] !== "")
-                    result += this.props.matrix[i][j];
+            for (j = 0; j < props.matrix[0].length - 1; j++) {
+                if (props.matrix[i][j] !== "")
+                    result += props.matrix[i][j];
                 else
-                    result += this.props.sparseVal;
+                    result += props.sparseVal;
                     
-                if (j !== this.props.matrix[0].length - 2) {
+                if (j !== props.matrix[0].length - 2) {
                     result += delim;
                 }
             }
             result += end;
-            if (i !== this.props.matrix.length - 2) {
+            if (i !== props.matrix.length - 2) {
                 result += delim;
             }
         }
@@ -119,25 +63,25 @@ class MatrixEditor extends React.Component {
 
     }
 
-    updateExportParameter = (i, updated) => {
+    function updateExportParameter(i, updated) {
         switch (i) {
             case "environment":
-                this.setState({environment: updated});  
+                setEnvironment(updated);  
                 break;  
             case "start":
-                this.setState({start: updated});  
+                setStart(updated);  
                 break;  
             case "end":
-                this.setState({end: updated});  
+                setEnd(updated);  
                 break;  
             case "delim":
-                this.setState({delim: updated});  
+                setDelim(updated);  
                 break;  
             case "latex":
-                this.setState({latex: updated});  
+                setLatex(updated);  
                 break; 
             case "custom":
-                this.setState({custom: updated});  
+                setCustom(updated);  
                 break; 
             default: break;
   
@@ -145,43 +89,99 @@ class MatrixEditor extends React.Component {
     }
 
 
-    usePreset = (e) => {
-        this.toggleCustom(false);
+    function usePreset(e) {
+        toggleCustom(false);
         var updated = e.target.id;
         switch (updated) {
             case "{},":
-                this.setState({
-                    start: "{",
-                    end: "}",
-                    delim: ",",
-                    exportOption: "{},"
-                });  
+                setStart("{");
+                setEnd("}");
+                setDelim(",");
+                setExportOption("{},");  
                 break;  
             case "[],":
-                this.setState({
-                    start: "[",
-                    end: "]",
-                    delim: ",",
-                    exportOption: "[],"
-                });  
+                setStart("[");
+                setEnd("]");
+                setDelim(",");
+                setExportOption("[],");      
                 break;
             case "(),":
-                this.setState({
-                    start: "(",
-                    end: ")",
-                    delim: ",",
-                    exportOption: "(),"
-                });  
+                setStart("(");
+                setEnd(")");
+                setDelim(",");
+                setExportOption("(),");  
             break;
+            
             default: break;
   
         }
     }
 
-    toggleCustom = (option = true) => {
-        this.updateExportParameter("custom", option);
-        this.setState({exportOption: "custom"})
+    function toggleCustom(option = true) {
+        updateExportParameter("custom", option);
+        
+        setExportOption("custom");
     }    
+
+
+    
+    return <div className = "row export">
+        <textarea readOnly = {true} onClick = {handleFocus} className="exportOutput" value = {matrixToString(props.matrix)} />
+        <div className = "col-sm-2">
+            <ParameterSwitchInput isChecked = {false} id={"latex"} text = {"LaTeX Format"} updateParameter={updateExportParameter}/>
+        </div>
+        
+        <div className = "col-sm-10">
+            {latex ?
+            <p>Environment &nbsp;
+            <ParameterTextInput width = {"100px"} text = {"bmatrix"} id={"environment"} updateParameter={updateExportParameter}/></p>
+            :
+
+            <div className ="row">
+            <div className = "col-sm-6">
+                <ul>
+                    Export Setting
+                    <li><button id = "{}," 
+                    onClick = {usePreset} 
+                    className = {exportOption === "{}," ? "btn btn-info" : "btn btn-secondary"}>
+                    {"Curly Braces and Comma { } ,"}
+                    </button></li>
+
+                    <li><button id = "[]," 
+                    onClick = {usePreset} 
+                    className = {exportOption === "[]," ? "btn btn-info" : "btn btn-secondary"}>
+                    {"Square Braces and Comma [ ] ,"}
+                    </button></li>
+
+                    <li><button id = "()," 
+                    onClick = {usePreset} 
+                    className = {exportOption === "()," ? "btn btn-info" : "btn btn-secondary"}>
+                    {"Parentheses and Comma ( ) ,"}
+                    </button></li>
+
+                    <li><button 
+                    onClick = {toggleCustom} 
+                    className = {exportOption === "custom" ? "btn btn-info" : "btn btn-secondary"}>
+                    {"Custom"}
+                    </button></li>
+                </ul> 
+            </div>
+
+            {custom ?
+            <div className = "col-sm-6">
+                <p>Open arrays with &nbsp;
+                    <ParameterTextInput text = {start} width = {"20px"} id={"start"} updateParameter={updateExportParameter}/></p>
+                <p>End arrays with &nbsp;
+                    <ParameterTextInput text = {end} width = {"20px"} id={"end"} updateParameter={updateExportParameter}/></p>
+                <p>Separate elements with &nbsp;
+                    <ParameterTextInput text = {delim} width = {"20px"} id={"delim"} updateParameter={updateExportParameter}/></p>
+            </div>: null}
+            
+            </div>}
+        </div>    
+    </div>
 }
+
+
 
 export default MatrixEditor;

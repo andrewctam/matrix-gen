@@ -1,53 +1,28 @@
-import React from 'react';
+import React, {useState} from 'react';
 import "./MatrixMath.css";
 
-class MatrixMath extends React.Component {    
-    constructor(props) {
-        super(props);
-        this.state = {
-            expression: ""
-        };
-    }
-
-    render() { 
-        
-        return <div className = "row matrixMath">
-            <div className = "col-sm-3">
-                <input type="text" className = "mathInput" value = {this.state.expression} placeholder = {"(A + B) * C"} onChange = {this.handleChange}></input>
-                <br/>
-                <button class = "btn btn-secondary mathEval" onClick={this.calculate}>Evaluate Expression</button>
-            </div>
-
-            <div className = "col-sm-9">
-                <ul>
-                    <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
-                    <li>You can enter matrix names or numbers (for matrix scalar multiplication). Valid operators: * ^ + -</li>
-                    <li>You can use parentheses to specify order of operations. However, use * for multiplication</li>
-                </ul>
-            </div>
+function MatrixMath(props) {    
+    const[expression, setExpression] = useState("");
 
 
-        </div>
-    }
-
-    handleChange = (e) => {
+    function handleChange(e) {
         var updated = e.target.value
         if (/^[a-zA-Z0-9._*^+\-\s()]*$/.test(updated)) {
-            this.setState({expression: updated})
+            setExpression(updated);
         }   
     }
 
-    calculate = () => {
-        var postfix = this.shuntingYard(this.state.expression);
-        var matrix = this.evaluatePostfix(postfix);
+    function calculate() {
+        var postfix = shuntingYard(expression);
+        var matrix = evaluatePostfix(postfix);
 
         if (matrix !== null)
-            this.props.addMatrix(matrix)
+            props.addMatrix(matrix)
         
 
     }
 
-    shuntingYard = (str) => {
+    function shuntingYard(str) {
         var output = [];
         var stack = [];
         
@@ -127,10 +102,10 @@ class MatrixMath extends React.Component {
                     }
                     else if (stack.length === 0 || stack[stack.length - 1] === "(")
                         stack.push(char)
-                    else if (this.orderOfOperations(char) > this.orderOfOperations(stack[stack.length - 1]))
+                    else if (orderOfOperations(char) > orderOfOperations(stack[stack.length - 1]))
                         stack.push(char)
                     else {
-                        while (stack.length > 0 && this.orderOfOperations(char) <= this.orderOfOperations(stack[stack.length - 1]))
+                        while (stack.length > 0 && orderOfOperations(char) <= orderOfOperations(stack[stack.length - 1]))
                             output.push(stack.pop())
                         stack.push(char)
                     }
@@ -147,14 +122,14 @@ class MatrixMath extends React.Component {
 
     }
 
-    orderOfOperations = (operator) => {
+    function orderOfOperations(operator) {
         if (operator === "+" || operator === "-")
             return 0
         if (operator === "*" || operator === "^")
             return 1
     }
     
-    matrixPower = (a, pow) => {
+    function matrixPower(a, pow) {
         if (typeof(pow) !== "number") {
             if (typeof(a) !== "object")
                 return null;
@@ -168,11 +143,11 @@ class MatrixMath extends React.Component {
                product[i][j] = a[i][j];
         
         for (i = 1; i < pow; i++)
-            product = this.matrixMultiplication(product, a);
+            product = matrixMultiplication(product, a);
         return product
     }
 
-    matrixMultiplication = (a, b) => {
+    function matrixMultiplication(a, b) {
         if (typeof(a) === "number" && typeof(b) === "number") {
             return a * b; //scalar multiplication
         }
@@ -203,13 +178,13 @@ class MatrixMath extends React.Component {
                 var sum = 0
                 for (var k = 0; k < b.length - 1; k++) {
                     if (a[i][k] === "")
-                        var aVal = parseInt(this.props.sparseVal)
+                        var aVal = parseInt(props.sparseVal)
                     else
                         aVal = parseInt(a[i][k])
                          
                          
                     if (b[k][j] === "")
-                        var bVal = parseInt(this.props.sparseVal)
+                        var bVal = parseInt(props.sparseVal)
                     else
                         bVal = parseInt(b[k][j])
 
@@ -225,7 +200,7 @@ class MatrixMath extends React.Component {
         return product
     }        
     
-    matrixAddition = (a, b) => {
+    function matrixAddition(a, b) {
         if (a.length !== b.length || a[0].length !== b[0].length) {
             return null;
         }
@@ -237,12 +212,12 @@ class MatrixMath extends React.Component {
             var row = []
             for (var j = 0; j < b[0].length - 1; j++)  {
                 if (a[i][j] === "")
-                    aVal = parseInt(this.props.sparseVal)
+                    aVal = parseInt(props.sparseVal)
                 else
                     aVal = parseInt(a[i][j])
                          
                 if (b[i][j] === "")
-                    bVal = parseInt(this.props.sparseVal)
+                    bVal = parseInt(props.sparseVal)
                 else
                     bVal = parseInt(b[i][j])
 
@@ -256,7 +231,7 @@ class MatrixMath extends React.Component {
         return matrixSum
     }  
 
-    matrixSubtraction = (a, b) => {
+    function matrixSubtraction(a, b) {
         if (a.length !== b.length || a[0].length !== b[0].length)
             return null;
 
@@ -266,12 +241,12 @@ class MatrixMath extends React.Component {
             var row = []
             for (var j = 0; j < b[0].length - 1; j++)  {
                 if (a[i][j] === "")
-                    aVal = parseInt(this.props.sparseVal)
+                    aVal = parseInt(props.sparseVal)
                 else
                     aVal = parseInt(a[i][j])
                           
                 if (b[i][j] === "")
-                    bVal = parseInt(this.props.sparseVal)
+                    bVal = parseInt(props.sparseVal)
                 else
                     bVal = parseInt(b[i][j])
 
@@ -288,7 +263,7 @@ class MatrixMath extends React.Component {
     }  
 
 
-    evaluatePostfix = (postFix) => {
+    function evaluatePostfix(postFix) {
         var stack = []
         var a, b, result;
         for (var i = 0; i < postFix.length; i++) {
@@ -296,7 +271,7 @@ class MatrixMath extends React.Component {
                 case "*":
                     b = stack.pop()
                     a = stack.pop()
-                    result = this.matrixMultiplication(a, b)
+                    result = matrixMultiplication(a, b)
                     if (result === null) {
                         alert("Error in input. Matrices have different rows and column dimensions")
                         return null
@@ -307,7 +282,7 @@ class MatrixMath extends React.Component {
                 case "^":
                     b = stack.pop()
                     a = stack.pop()
-                    result = this.matrixPower(a, b)
+                    result = matrixPower(a, b)
                     if (result === null) {
                         alert("Error in input. Matrices have different rows and column dimensions")
                         return null
@@ -318,7 +293,7 @@ class MatrixMath extends React.Component {
                 case "+":
                     b = stack.pop()
                     a = stack.pop()
-                    result = this.matrixAddition(b, a)
+                    result = matrixAddition(b, a)
                     if (result === null) {
                         alert("Error in input. Matrices have different dimensions")
                         return null;
@@ -329,7 +304,7 @@ class MatrixMath extends React.Component {
                 case "-":
                     b = stack.pop()
                     a = stack.pop()
-                    result = this.matrixSubtraction(b, a)
+                    result = matrixSubtraction(b, a)
                     if (result === null) {
                         alert("Error in input. Matrices have different dimensions")
                         return null;
@@ -340,8 +315,8 @@ class MatrixMath extends React.Component {
                 default:
                     if (/^[0-9]*$/.test(postFix[i]))
                         stack.push(parseFloat(postFix[i]));
-                    else if (postFix[i] in this.props.matrices) {
-                        stack.push(this.props.matrices[postFix[i]]);
+                    else if (postFix[i] in props.matrices) {
+                        stack.push(props.matrices[postFix[i]]);
                         break;
                     } else {
                         alert(postFix[i] + " does not exist")
@@ -357,6 +332,26 @@ class MatrixMath extends React.Component {
         return stack[0]
     }
 
+
+
+    return <div className = "row matrixMath">
+        <div className = "col-sm-3">
+            <input type="text" className = "mathInput" value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>
+            <br/>
+            <button class = "btn btn-secondary mathEval" onClick={calculate}>Evaluate Expression</button>
+        </div>
+
+        <div className = "col-sm-9">
+            <ul>
+                <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
+                <li>You can enter matrix names or numbers (for matrix scalar multiplication). Valid operators: * ^ + -</li>
+                <li>You can use parentheses to specify order of operations. However, use * for multiplication</li>
+            </ul>
+        </div>
+
+
+    </div>
+    
 
 
 }

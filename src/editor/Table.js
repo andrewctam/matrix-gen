@@ -46,7 +46,7 @@ function Table(props) {
             tempMatrix[col][row] = updated;
 
         } else {
-            var tempMatrix = props.addRowsAndCols(1, 1, false);
+            tempMatrix = props.addRowsAndCols(1, 1, false);
         }
 
         props.updateEntry(row, col, updated, tempMatrix);
