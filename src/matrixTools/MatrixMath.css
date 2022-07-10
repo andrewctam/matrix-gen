@@ -1,8 +1,22 @@
+.matrixMath {
+    width: fit-content;
+    padding: 10px;
+    background-color: rgba(48, 50, 51, 0.49);
+    --bs-gutter-x: 0px;
+  
+  }
+
+
 .mathInput {
     width: 100%;
     margin-bottom: 1vh;
+    color: white;
+}
+
+.mathInput::placeholder {
+    color: rgba(255, 255, 255, 0.518);
 }
 
 .mathEval {
-    width: 100%;
+    width: 100%;    
 }

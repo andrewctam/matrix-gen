@@ -7,9 +7,10 @@ body {
 }
 
 input {
-    background: white;
+    background-color: rgb(96, 93, 96);
     border-radius: 5px;
     border: 1px solid black;
+
 }
 
 h1 {
@@ -20,3 +21,16 @@ h1 {
 li {
     margin-bottom: 5px;
 }
+
+.btn {
+    border: 1px solid black;
+}
+
+.btn-info {
+    background-color: rgb(53, 183, 229);
+}
+
+.btn-warning {
+    background-color: rgb(240, 221, 93);
+}
+

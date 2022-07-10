@@ -344,7 +344,8 @@ function MatrixMath(props) {
         <div className = "col-sm-9">
             <ul>
                 <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
-                <li>You can enter matrix names or numbers (for matrix scalar multiplication). Valid operators: * ^ + -</li>
+                <li>You can enter matrix names or numbers (for matrix scalar multiplication)</li>
+                <li>Valid operators: * ^ + -</li>
                 <li>You can use parentheses to specify order of operations. However, use * for multiplication</li>
             </ul>
         </div>

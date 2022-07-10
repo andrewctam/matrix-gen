@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import MatrixExport from "../matrixTools/MatrixExport.js"
 import MatrixMath from '../matrixTools/MatrixMath.js';
 import ParameterTextInput from '../inputs/ParameterTextInput.js';
+import MatrixActions from '../matrixTools/MatrixActions.js';
 import Table from "./Table.js"
-
 import "./MatrixEditor.css";
 
 function MatrixEditor(props) {
@@ -318,7 +318,7 @@ function MatrixEditor(props) {
     return (
     <div className = "matrixEditor">
         <div id = "options" className = "options">
-            <div>
+            <div className = "options-bar">
                 <button className = "btn btn-success matrixButtons" onClick = {toggleActions}> {showActions ? "Hide Actions" : "Show Actions"}</button> 
 
                 <button className = "btn btn-secondary matrixButtons" onClick={toggleMath}>                
@@ -331,21 +331,17 @@ function MatrixEditor(props) {
 
 
             {showActions ? 
-            <div>
-                <button className = "btn btn-success matrixButtons" onClick={transpose}>Transpose</button> <br />
-                <button className = "btn btn-success matrixButtons" onClick={mirrorRowsOntoColumns}>Mirror Rows Across Diagonal</button> <br />
-                <button className = "btn btn-success matrixButtons" onClick={mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button> <br />
-                
-                <button className = "btn btn-success matrixButtons" onClick={randomMatrix}>Random Matrix</button>
-                <ParameterTextInput id={"randomLow"} updateParameter = {updateParameter} text = {randomLow} width = {"30px"} />{" to "}
-                <ParameterTextInput id={"randomHigh"} updateParameter = {updateParameter} defaultexttVal = {randomHigh} width = {"30px"} />
-                <br/>
-
-                <button className = "btn btn-success matrixButtons" onClick={fillEmpty}>Fill Empty With</button>
-                <ParameterTextInput id={"fillEmptyVal"} updateParameter = {updateParameter} text = {fillEmptyVal} width = {"30px"} />
-                <br/>
-                
-            </div> : null}
+                <MatrixActions 
+                transpose = {transpose}
+                mirrorRowsOntoColumns = {mirrorRowsOntoColumns}
+                mirrorColumnsOntoRows = {mirrorColumnsOntoRows}
+                updateParameter = {updateParameter}
+                fillEmpty = {fillEmpty}
+                fillEmptyVal = {fillEmptyVal}
+                randomMatrix = {randomMatrix}
+                randomHigh = {randomHigh}
+                randomLow = {randomLow}/> 
+                : null}
             
             {showMath ?
                 <MatrixMath matrices = {props.matrices} matrix = {props.matrix} addMatrix = {props.addMatrix} sparseVal = {props.sparseVal} />

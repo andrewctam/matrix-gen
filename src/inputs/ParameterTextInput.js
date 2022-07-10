@@ -6,7 +6,6 @@ function ParameterTextInput(props) {
     }
 
 
-
     return <input
         type= "text" 
         style = {{width: props.width}} 

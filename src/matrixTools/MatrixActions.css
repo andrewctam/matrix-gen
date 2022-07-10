@@ -1,0 +1,48 @@
+.matrixActions {
+    width: fit-content;
+    padding: 10px;
+    background-color: rgba(48, 50, 51, 0.49);
+    --bs-gutter-x: 0px;
+  
+  }
+  
+.inputButtonContainer {
+    width: fit-content;
+    background-color: #198754;
+    padding-right: 5px;
+    padding-left: 0;
+    display: inline-block;
+    
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    
+    border-radius: 0.25rem;
+    border: 1px solid black;
+
+}
+
+.inputButtonContainer > button {
+    background-color: #198754;
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+    margin-right: 5px;
+
+    border-left: none;
+    border-top: none;
+    border-bottom: none;
+    
+}
+
+.inputButtonContainer > input {
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgb(184, 223, 170);
+    vertical-align: middle;
+
+    
+}
+
+
