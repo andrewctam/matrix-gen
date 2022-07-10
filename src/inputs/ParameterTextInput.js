@@ -15,6 +15,4 @@ class ParameterTextInput extends React.Component {
     }
 }
 
-
-
 export default ParameterTextInput;

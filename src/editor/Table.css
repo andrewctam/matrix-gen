@@ -15,6 +15,7 @@ td {
     padding: 0;
     margin: 0;
     width: 50px;
+    height: 50px;
     background-color: white;
     border: 1px solid rgb(0, 0, 0);
 }
@@ -38,12 +39,24 @@ td>input {
 }
 
 
-tr:nth-last-child(1) {
+tr:nth-last-child(1) > td {
     background-color: rgb(189, 127, 127);
-    max-width: 50px;
+    max-height: 25px;
+    height: 25px;
 }
+
 
 td:nth-last-child(1) {
     background-color: rgb(189, 127, 127);
+    max-width: 25px;
+    width: 25px;
+}
+
+.lastInFifty {
+    background-color: rgb(196, 185, 185);
+    max-width: 50px;
+    width: 50px;
     max-height: 50px;
+    height: 50px;
+
 }

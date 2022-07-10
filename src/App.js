@@ -26,7 +26,6 @@ class App extends React.Component {
 
 
     render() {
-
         if (this.state.selection in this.state.matrices)
             var editor = <MatrixEditor
                 matrix = {this.state.matrices[this.state.selection]} 
@@ -75,6 +74,8 @@ class App extends React.Component {
             if (this.state.autoSave)
             this.saveToLocalStorage();
         });
+
+        console.log(this.state.matrices)
     }
     
     updateSelection = (selected) => {

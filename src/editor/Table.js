@@ -9,26 +9,43 @@ class Table extends React.Component {
         var cols = this.props.matrix[0].length;
         var rows = this.props.matrix.length;
 
-        return this.props.matrix.map( (x, i) =>
-            <tr key = {"row" + i}>
-            {
-                x.map( (y, j) => (
-                <Box 
-                    addRow = {this.addRow} 
-                    addCol = {this.addCol}
-                    addBoth = {this.addBoth}
-                    keyDown = {this.keyDown}
-                    updateEntry = {this.props.updateEntry}
+        var tableRows = Array(rows).fill(Array(cols));
+        var eachRow;
 
-                    rows = {rows}
-                    cols = {cols}
-                    row = {i} 
-                    col = {j}
-                    val = {this.props.matrix[i][j]} 
-                    key = {i + ";" + j}
-                />))
+        var limitRows = Math.min(50, rows);
+        var limitCols = Math.min(50, cols);
+
+        
+        for (var i = 0; i < limitRows; i++) {
+            eachRow = Array(cols);
+
+            for (var j = 0; j < limitCols; j++) {   
+              
+ 
+                eachRow[j] = <Box 
+                        addRow = {this.addRow} 
+                        addCol = {this.addCol}
+                        addBoth = {this.addBoth}
+                        keyDown = {this.keyDown}
+                        updateEntry = {this.props.updateEntry}
+
+                        rows = {rows}
+                        cols = {cols}
+                        row = {i} 
+                        col = {j}
+                        val = {this.props.matrix[i][j]} 
+                        key = {i + ";" + j}
+
+
+                        
+
+                    />
             }
-            </tr>);
+
+            tableRows[i] = <tr key = {"row" + i}> {eachRow} </tr>
+        }
+
+        return tableRows;
     }
 
     addRow = (row, col, updated) => {
@@ -83,14 +100,14 @@ class Table extends React.Component {
 
 
     keyDown = (row, col, e) => {
-        if (e.keyCode === 16) {
+        if (e.keyCode === 16) { //shift
             if (this.props.matrix.length === (row + 1))
                 this.props.addRows(1);
             if (this.props.matrix[0].length === (col + 1))
                 this.props.addCols(1);
             }
 
-        if (e.keyCode === 8 && e.target.value === "") {
+        if (e.keyCode === 8 && e.target.value === "") { //delete
            this.props.tryToDelete(row, col); 
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             if (col !== 0) {

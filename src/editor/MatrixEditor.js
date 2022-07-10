@@ -147,7 +147,8 @@ class MatrixEditor extends React.Component {
 
 
     tryToDelete = (row, col) => {
-        if (row !== 50 && col !== 50 && (row === this.props.matrix.length - 1 || col === this.props.matrix[0].length - 1)) 
+        //Can not delete the red row/column
+        if (row === this.props.matrix.length - 1 || col === this.props.matrix[0].length - 1) 
             return null;
             
         var temp = this.props.matrix;
