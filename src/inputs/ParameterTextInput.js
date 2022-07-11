@@ -10,6 +10,7 @@ function ParameterTextInput(props) {
         type= "text" 
         style = {{width: props.width}} 
         value = {props.text} 
+        checked = {props.isChecked}
         onChange = {handleChange}>
     </input>
     

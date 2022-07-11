@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import MatrixExport from "../matrixTools/MatrixExport.js"
 import MatrixMath from '../matrixTools/MatrixMath.js';
-import ParameterTextInput from '../inputs/ParameterTextInput.js';
 import MatrixActions from '../matrixTools/MatrixActions.js';
 import Table from "./Table.js"
 import "./MatrixEditor.css";
@@ -204,7 +203,7 @@ function MatrixEditor(props) {
                 tempMatrix[i].push("");
         }
         
-        for (var i = 0; i < rowsToAdd; i++)
+        for (i = 0; i < rowsToAdd; i++)
             tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
 
         console.log("added");

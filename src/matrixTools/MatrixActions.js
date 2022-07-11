@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import "./MatrixActions.css"
 import ParameterTextInput
  from '../inputs/ParameterTextInput';
@@ -10,7 +10,7 @@ function MatrixActions(props) {
         <button className = "btn btn-success matrixButtons" onClick={props.mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button>
         
         <div className = "inputButtonContainer">
-            <button className = "btn btn-success matrixButtons" onClick={props.randomMatrix}> {"Randomize Matrix - Values from: "}</button>
+            <button className = "btn btn-success matrixButtons" onClick={props.randomMatrix}> {"Randomize Matrix - Integers from: "}</button>
             <ParameterTextInput id={"randomLow"} updateParameter = {props.updateParameter} text = {props.randomLow} width = {"30px"} />{" to "}
             <ParameterTextInput id={"randomHigh"} updateParameter = {props.updateParameter} text = {props.randomHigh} width = {"30px"} />
         </div>

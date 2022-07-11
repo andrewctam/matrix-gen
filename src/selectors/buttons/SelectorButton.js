@@ -95,6 +95,7 @@ function SelectorButton(props) {
         value = {displayName} 
         id = {props.name}
         type = "text" 
+        className = "selectorInput"
         onChange = {renameMatrix}
         onKeyDown = {handleKeyDown}
         onBlur = {pushNewName}
@@ -105,7 +106,7 @@ function SelectorButton(props) {
         value = {size} 
         id = {"size " + props.name}
         type = "text"
-        className = "sizeInfo" 
+        className = "sizeInfo selectorInput" 
         onChange = {resizeMatrix}
         onBlur = {pushNewSize}
         onFocusCapture = {handleFocus}

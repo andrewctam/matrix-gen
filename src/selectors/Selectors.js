@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState} from 'react'; 
 import ParameterSwitchInput from '../inputs/ParameterSwitchInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
 
@@ -9,7 +9,8 @@ import DuplicateButton from './buttons/DuplicateButton';
 
 import "./Selectors.css"
 function Selectors(props) {
-    const [sort, setSort] = useState(true);
+    // eslint-disable-next-line
+    const [sort, setSort] = useState(true); 
 
     var selectors = []
     for (var matrixName in props.matrices) 
@@ -34,7 +35,7 @@ function Selectors(props) {
     return  <div className = "row selectors selectors-box">
         <div className = "col-sm-4 info">
             <ul>
-                <li>Enter values in the matrix below. The last row and column (in red) are not part of the matrix. Typing in the these red boxes will add a new row or column.</li>
+                <li>Enter values in the matrix below. The last row and column (in pink) are not part of the matrix. Typing in the these red boxes will add a new row or column.</li>
                 <li>Click on a matrix's name to rename it. Valid characters are uppercase and lowercase letters, and underscores.</li>
                 <li>Click on a matrix's dimensions to quickly resize it. The maximum size is 50 x 50.</li>
             </ul>   
@@ -62,7 +63,7 @@ function Selectors(props) {
             </div>
         <div className = "col-sm-4">
             <ul>
-                <li><button className = "btn btn-warning" onClick={props.clearMatrices}>Clear Matrices</button></li>
+                <li><button className = "btn btn-warning" onClick={props.deleteAllMatrices}>Delete All Matrices</button></li>
                 {props.autoSave ? null : <li><button className = "btn btn-info" onClick={props.saveToLocalStorage}>Save Matrices to Local Storage</button></li>}
                 <li><ParameterSwitchInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Autosave"} updateParameter={props.updateParameter}/></li>
                 <li><ParameterSwitchInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs Along Diagonal"} updateParameter={props.updateParameter}/></li>

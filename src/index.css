@@ -7,8 +7,9 @@ body {
 }
 
 input {
-    background-color: rgb(96, 93, 96);
+    background-color: rgb(125, 120, 125);
     border-radius: 5px;
+    color: white;
     border: 1px solid black;
 
 }

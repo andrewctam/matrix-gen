@@ -7,12 +7,15 @@ function App(props) {
     const [mirror, setMirror] = useState(false);
     const [sparseVal, setSparseVal] = useState("0");
     const [selection, setSelection] = useState("A");
-    const [matrices, setMatrices] = useState( {"A": [["", ""], ["", ""]]} );
+    const [matrices, setMatrices] = useState( {
+        "A": [["", ""], ["", ""]]
+    });
 
     useEffect( () => {
         if (autoSave)
             saveToLocalStorage();    
-    }, [matrices]);
+
+    }, [matrices, autoSave]);
 
     useEffect(() => {
         loadFromLocalStorage();
@@ -125,8 +128,6 @@ function App(props) {
 
             case "autoSave":
                 setAutoSave(updated);
-                if (updated /* === true*/)
-                    saveToLocalStorage()
                 break;
 
             default: 
@@ -179,8 +180,8 @@ function App(props) {
     }
 
 
-    function clearMatrices() {
-        if (window.confirm("Clear all matrices?")) {
+    function deleteAllMatrices() {
+        if (window.confirm("Delete all matrices?")) {
             setSelection("");
             setMatrices({});
 
@@ -247,7 +248,11 @@ function App(props) {
             setSparseVal(window.localStorage.getItem("sparseValue;"));
             setSelection(names[0]);
         } catch (error) {
-            setMatrices({"A": [["", ""], ["", ""]]} );
+            console.log(error)
+            console.log("Error loading.")
+            setMatrices( {
+                "A": [["", ""], ["", ""]]
+            });;
             setSelection("A");
             setSparseVal("0");
             setAutoSave(false);
@@ -269,7 +274,7 @@ function App(props) {
                 resizeMatrix = {resizeMatrix}
                 updateParameter = {updateParameter}
                 saveToLocalStorage = {saveToLocalStorage}
-                clearMatrices = {clearMatrices}
+                deleteAllMatrices = {deleteAllMatrices}
 
                 autoSave = {autoSave}
                 mirror = {mirror}
