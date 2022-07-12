@@ -63,20 +63,39 @@ function App(props) {
     }
 
     function generateUniqueName() {
-        var charCode = 65;
-        var matrixName = "A";
-        while (matrixName in matrices) {
-            //if (name.charAt(name.length - 1) === "Z") {
-            if (charCode === 90) { 
-                matrixName += "A"
-                charCode = 65;
+        var name = ["A"]; 
+        var pointer = 0;
+        var willExitFromZ = false;
+
+        while (name.join("") in matrices) {
+            while (true) {
+                if (pointer < 0) {
+                    name.push("A");
+                    pointer = name.length - 1;
+                    break;
+                } else if (name[pointer] === "Z") {
+                    name[pointer] = "A";
+                    pointer--;
+                    willExitFromZ = true;
+                } else 
+                    break;
             }
-            else 
-                matrixName = matrixName.substring(0, matrixName.length - 1) + String.fromCharCode(++charCode);
+
+            name[pointer] = String.fromCharCode(name[pointer].charCodeAt(0) + 1);
+
+            if (willExitFromZ) {
+                pointer = name.length - 1;
+                willExitFromZ = false;
+            }
         }
 
-        return matrixName;
+        return name.join("");
+
     }
+    
+
+    
+
 
     function addMatrix(matrix = undefined, name = undefined) {
         var tempObj = {...matrices};
@@ -94,15 +113,6 @@ function App(props) {
         }
         
         setMatrices(tempObj);
-        /*
-        this.setState({matrices: temp, selection: matrixName}, () => {
-            var selectors = document.getElementById("selectors");
-            selectors.scrollTop = selectors.scrollHeight;
-
-            if (autoSave)
-                this.saveToLocalStorage();
-        });*/
-
     }
 
     function deleteMatrix(del) {
@@ -261,6 +271,7 @@ function App(props) {
 
     }
 
+
     return (
         <div> 
             <Selectors matrices = {matrices} 
@@ -293,6 +304,7 @@ function App(props) {
                 addMatrix = {addMatrix}
             /> : null
             } 
+
 
         </div>);
 

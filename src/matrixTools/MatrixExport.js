@@ -56,7 +56,7 @@ function MatrixEditor(props) {
             }
             result += end;
             if (i !== props.matrix.length - 2) {
-                result += delim;
+                result += delim + "\n";
             }
         }
         return result + end;
@@ -128,7 +128,7 @@ function MatrixEditor(props) {
     return <div className = "row export">
         <textarea readOnly = {true} onClick = {handleFocus} className="exportOutput" value = {matrixToString(props.matrix)} />
         <div className = "col-sm-2">
-            <ParameterSwitchInput isChecked = {false} id={"latex"} text = {"LaTeX Format"} updateParameter={updateExportParameter}/>
+            <ParameterSwitchInput isChecked = {latex} id={"latex"} text = {"LaTeX Format"} updateParameter={updateExportParameter}/>
         </div>
         
         <div className = "col-sm-10">
