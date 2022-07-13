@@ -7,9 +7,9 @@ function TextImport(props) {
     const [overwrite, setOverwrite] = useState(true);
     const [newName, setNewName] = useState("");
     const [importFormat, setImportFormat] = useState("spaces");
-    const [settingA, setSettingA] = useState("");
-    const [settingB, setSettingB] = useState("");
-    const [settingC, setSettingC] = useState("");
+    const [settingA, setSettingA] = useState(""); //opening bracket
+    const [settingB, setSettingB] = useState(""); //closing bracket
+    const [settingC, setSettingC] = useState(""); //separator
 
     function updateParameter(i, updated) {
         switch (i) {
@@ -20,6 +20,12 @@ function TextImport(props) {
             case "settingA":
                 setSettingA(updated);
                 break;
+            case "settingB":
+                setSettingB(updated);
+                break;
+            case "settingC":
+                setSettingC(updated);
+                break;
             
         }
     }
@@ -28,7 +34,7 @@ function TextImport(props) {
 
         switch(updated) {
             case "separator":
-                setSettingA(",");
+                setSettingC(",");
                 break;
             case "2DArray":
                 setSettingA("{");
@@ -48,17 +54,50 @@ function TextImport(props) {
 
     }
 
+    function parseText() {
+        var separator = settingC;
+        var text = document.getElementById("importTextArea").value;
+        var matrix = [];
+        
+        if (overwrite)
+            var name = props.currentName;
+        else if (newName === "")
+            name = props.generateUniqueName();
+        else
+            name = newName;
+
+        switch(importFormat) {
+            case "spaces":
+                separator = " ";
+                //then follow separator using a space;
+            case "separator":
+                var rows = text.split("\n");
+                for (var i = 0; i < rows.length; i++) {
+                    matrix.push(rows[i].split(separator));
+                    matrix[i].push("");
+                }
+
+                matrix.push(Array(rows[0].length).fill(""));
+                
+
+                props.addMatrix(matrix, name); //function will also override existing (or non existing) matrices
+                
+                break;
+            
+                
+        }
+    }
 
 
     switch (importFormat) {
         case "spaces":
-            var inputMatrixPlaceholder = ` Following this format, enter your matrix here: \n 1 0 0 0 \n 0 1 0 0 \n 0 0 1 0 \n 0 0 0 1`;
+            var inputMatrixPlaceholder = ` Enter your matrix in this box following the format: \n 1 0 0 0 \n 0 1 0 0 \n 0 0 1 0 \n 0 0 0 1\n Extra characters may lead to an unexpected input`;
             break;
         case "separator":
-            var inputMatrixPlaceholder = ` Following this format, enter your matrix here: \n 1${settingA}0${settingA}0${settingA}0 \n 0${settingA}1${settingA}0${settingA}0 \n 0${settingA}0${settingA}1${settingA}0 \n 0${settingA}0${settingA}0${settingA}1`;
+            var inputMatrixPlaceholder = ` Enter your matrix in this box following the format: \n 1${settingC}0${settingC}0${settingC}0 \n 0${settingC}1${settingC}0${settingC}0 \n 0${settingC}0${settingC}1${settingC}0 \n 0${settingC}0${settingC}0${settingC}1\n Extra characters may lead to an unexpected input`;
             break;
         case "2DArray":
-            var inputMatrixPlaceholder = ` Following this format, enter your matrix here: \n ${settingA}${settingA}1${settingC}0${settingC}0${settingC}0${settingB}${settingC} \n ${settingA}0${settingC}1${settingC}0${settingC}0${settingB}${settingC} \n ${settingA}0${settingC}0${settingC}1${settingC}0${settingB}${settingC} \n ${settingA}0${settingC}0${settingC}0${settingC}1${settingB}${settingB}`;
+            var inputMatrixPlaceholder = ` Enter your matrix in this box following the format: \n ${settingA}${settingA}1${settingC}0${settingC}0${settingC}0${settingB}${settingC} \n ${settingA}0${settingC}1${settingC}0${settingC}0${settingB}${settingC} \n ${settingA}0${settingC}0${settingC}1${settingC}0${settingB}${settingC} \n ${settingA}0${settingC}0${settingC}0${settingC}1${settingB}${settingB}\n Extra characters may lead to an unexpected input`;
             break;
     }
 
@@ -67,7 +106,7 @@ function TextImport(props) {
     }
 
     return <div className = "row importContainer">
-        <textarea className = "importBox" placeholder = {inputMatrixPlaceholder}>
+        <textarea id = "importTextArea" className = "importBox" placeholder = {inputMatrixPlaceholder}>
             
         </textarea>
 
@@ -113,8 +152,9 @@ function TextImport(props) {
 
         <div className = "col-sm-3">
             {importFormat === "separator" ? 
-            <p>Separator: <ParameterTextInput text = {settingA} width = {"10%"} id={"settingA"} updateParameter={updateParameter}/></p>
+            <p>Separator: <ParameterTextInput text = {settingC} width = {"10%"} id={"settingC"} updateParameter={updateParameter}/></p>
             : null }
+            
 
             {importFormat === "2DArray" ? 
             <p>Opening Bracket: <ParameterTextInput text = {settingA} width = {"10%"} id={"settingA"} updateParameter={updateParameter}/></p>
@@ -129,7 +169,7 @@ function TextImport(props) {
 
         </div>
         <div className = "col-sm-3">
-            <button className = "btn btn-success">Import Matrix</button>
+            <button className = "btn btn-success" onClick = {parseText} >Import Matrix</button>
 
         </div>
        

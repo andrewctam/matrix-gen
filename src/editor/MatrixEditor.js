@@ -339,15 +339,15 @@ function MatrixEditor(props) {
     <div className = "matrixEditor">
         <div id = "options" className = "options">
             <div className = "options-bar">
-                <button className = "btn btn-success matrixButtons" onClick = {toggleActions}> {showActions ? "Hide Actions" : "Show Actions"}</button> 
+                <button className = {"btn matrixButtons " + (showActions ? "btn-info" : "btn-secondary" )}  onClick = {toggleActions}> {showActions ? "Hide Actions" : "Show Actions"}</button> 
 
-                <button className = "btn btn-secondary matrixButtons" onClick={toggleMath}>                
+                <button className = {"btn matrixButtons " + (showMath ? "btn-info" : "btn-secondary" )} onClick={toggleMath}>                
                     {showMath ? "Close Math Input" : "Perform Matrix Math"}
                 </button>
-                <button className = "btn btn-secondary matrixButtons" onClick={toggleExport}>
+                <button className = {"btn matrixButtons " + (showExport ? "btn-info" : "btn-secondary" )} onClick={toggleExport}>
                     {showExport ? "Close Export" : "Export Matrix"}
                 </button>
-                <button className = "btn btn-secondary matrixButtons" onClick={toggleImport}>
+                <button className = {"btn matrixButtons " + (showImport ? "btn-info" : "btn-secondary" )} onClick={toggleImport}>
                     {showImport ? "Close Import" : "Import Matrix From Text"}
                 </button>
 
@@ -376,7 +376,7 @@ function MatrixEditor(props) {
                 : null }   
 
             {showImport ? 
-                <TextImport generateUniqueName = {props.generateUniqueName}/> 
+                <TextImport generateUniqueName = {props.generateUniqueName} addMatrix = {props.addMatrix} currentName = {props.name}  /> 
                 : null}
 
 
