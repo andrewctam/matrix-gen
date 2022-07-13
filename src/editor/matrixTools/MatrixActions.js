@@ -19,6 +19,12 @@ function MatrixActions(props) {
         <button className = "btn btn-success matrixButtons" onClick={props.fillEmpty}>{"Fill Empty With: "}</button>
         <ParameterTextInput id={"fillEmptyVal"} updateParameter = {props.updateParameter} text = {props.fillEmptyVal} width = {"30px"} />
         </div>
+
+        <div className = "inputButtonContainer">
+            <button className = "btn btn-success matrixButtons" onClick={props.reshapeMatrix}> {"Reshape To: "}</button>
+            <ParameterTextInput id={"reshapeRows"} updateParameter = {props.updateParameter} text = {props.reshapeRows} width = {"30px"} />{" x "}
+            <ParameterTextInput id={"reshapeCols"} updateParameter = {props.updateParameter} text = {props.reshapeCols} width = {"30px"} />
+        </div>
     
     </div>
 }

@@ -181,6 +181,7 @@ function App(props) {
         }
     }
 
+    
     function deleteMany() {
         var toDelete = window.prompt("Enter matrices to delete: (For example: \"A B C\")").split(" ");
 

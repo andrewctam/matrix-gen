@@ -16,20 +16,37 @@ function MatrixEditor(props) {
     const [showImport, setShowImport] = useState(false);
     const [randomLow, setRandomLow] = useState(1);
     const [randomHigh, setRandomHigh] = useState(10);
-    const [fillEmptyVal, setFillEmptyVal] = useState(0);
+    const [reshapeRows, setReshapeRows] = useState(0);
+    const [reshapeCols, setReshapeCols] = useState(0);
+    const [fillEmptyVal, setFillEmptyVal] = useState("");
 
 
     function updateParameter(i, updated) {
         switch (i) {
             case "randomLow":
+                if (updated === "")
+                    updated = 0; 
                 setRandomLow(parseInt(updated));
                 break;
             case "randomHigh":
+                if (updated === "")
+                    updated = 0; 
                 setRandomHigh(parseInt(updated));
                 break; 
             case "fillEmptyVal":
                 setFillEmptyVal(updated);
                 break; 
+            case "reshapeRows":
+                if (updated === "")
+                    updated = 0; 
+                setReshapeRows(parseInt(updated));
+                break;
+            case "reshapeCols":
+                if (updated === "")
+                    updated = 0; 
+                setReshapeCols(parseInt(updated));
+                break; 
+
                 
             default: break;
   
@@ -318,6 +335,60 @@ function MatrixEditor(props) {
 
     }
 
+
+    function reshapeMatrix() {
+        var currentMatrix = props.matrix;
+        const numElements = (currentMatrix.length - 1) * (currentMatrix[0].length - 1);
+        
+        var rowCount = reshapeRows;
+        var colCount = reshapeCols;
+
+        if (rowCount === NaN && colCount === NaN) {
+            alert("Enter rows and columns to reshape");
+        } else if (rowCount !== NaN) {
+            if (numElements % rowCount !== 0) {
+                alert("Invalid number of rows");
+                return;
+            }
+            
+            colCount = numElements / rowCount;
+        } else if (colCount !== NaN) {
+            if (numElements % colCount !== 0) {
+                alert("Invalid number of columns");
+                return;
+            }
+            
+            rowCount = numElements / colCount;
+        } else {
+            if (numElements !== colCount * rowCount) {
+                alert("Invalid dimensions for matrix")
+                return;
+            }
+        }
+
+
+        var reshaped = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
+
+        var reshapedI = 0;
+        var reshapedJ = 0;
+
+
+        for (var i = 0; i < currentMatrix.length - 1; i++)
+            for (var j = 0; j < currentMatrix[0].length - 1; j++) {
+                reshaped[reshapedI][reshapedJ] = currentMatrix[i][j];
+
+                if (reshapedJ >= reshaped[0].length - 2) {
+                    reshapedJ = 0;
+                    reshapedI++;
+                } else {
+                    reshapedJ++;
+                }
+            }
+
+        props.updateMatrix(reshaped, props.name);
+
+    }
+
     function fillEmpty() {
         setShowActions(false);
 
@@ -363,8 +434,11 @@ function MatrixEditor(props) {
                 fillEmpty = {fillEmpty}
                 fillEmptyVal = {fillEmptyVal}
                 randomMatrix = {randomMatrix}
+                reshapeMatrix = {reshapeMatrix}
                 randomHigh = {randomHigh}
-                randomLow = {randomLow}/> 
+                randomLow = {randomLow} 
+                reshapeRows = {reshapeRows}
+                reshapeCols = {reshapeCols}/>
                 : null}
             
             {showMath ?
