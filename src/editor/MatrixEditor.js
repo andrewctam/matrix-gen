@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
-import MatrixExport from "../matrixTools/MatrixExport.js"
-import MatrixMath from '../matrixTools/MatrixMath.js';
-import MatrixActions from '../matrixTools/MatrixActions.js';
+
 import Table from "./Table.js"
+
+import MatrixExport from "./matrixTools/MatrixExport.js"
+import MatrixMath from './matrixTools/MatrixMath.js';
+import MatrixActions from './matrixTools/MatrixActions.js';
+import TextImport from './matrixTools/TextImport.js';
+
 import "./MatrixEditor.css";
 
 function MatrixEditor(props) {
     const [showActions, setShowActions] = useState(false);
     const [showExport, setShowExport] = useState(false);
     const [showMath, setShowMath] = useState(false);
+    const [showImport, setShowImport] = useState(false);
     const [randomLow, setRandomLow] = useState(1);
     const [randomHigh, setRandomHigh] = useState(10);
     const [fillEmptyVal, setFillEmptyVal] = useState(0);
@@ -40,6 +45,7 @@ function MatrixEditor(props) {
             setShowExport(true);
             setShowMath(false);
             setShowActions(false);
+            setShowImport(false);
 
         }
     }
@@ -50,6 +56,8 @@ function MatrixEditor(props) {
             setShowMath(true);
             setShowExport(false);
             setShowActions(false);
+            setShowImport(false);
+
         }
     }
 
@@ -58,6 +66,19 @@ function MatrixEditor(props) {
             setShowActions(false);
         else  {
             setShowActions(true);
+            setShowExport(false);
+            setShowImport(false);
+            setShowMath(false);
+        }
+    
+    }
+
+    function toggleImport() {
+        if (showImport)
+            setShowImport(false);
+        else  {
+            setShowImport(true);
+            setShowActions(false);
             setShowExport(false);
             setShowMath(false);
         }
@@ -326,6 +347,10 @@ function MatrixEditor(props) {
                 <button className = "btn btn-secondary matrixButtons" onClick={toggleExport}>
                     {showExport ? "Close Export" : "Export Matrix"}
                 </button>
+                <button className = "btn btn-secondary matrixButtons" onClick={toggleImport}>
+                    {showImport ? "Close Import" : "Import Matrix From Text"}
+                </button>
+
             </div>
 
 
@@ -349,6 +374,10 @@ function MatrixEditor(props) {
             {showExport ?
                 <MatrixExport matrix = {props.matrix} sparseVal = {props.sparseVal}/>
                 : null }   
+
+            {showImport ? 
+                <TextImport generateUniqueName = {props.generateUniqueName}/> 
+                : null}
 
 
             

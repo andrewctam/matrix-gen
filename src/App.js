@@ -302,6 +302,7 @@ function App(props) {
                 mirror = {mirror}
                 sparseVal = {sparseVal}
                 addMatrix = {addMatrix}
+                generateUniqueName = {generateUniqueName}
             /> : null
             } 
 

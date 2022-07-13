@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import ParameterTextInput from '../inputs/ParameterTextInput.js';
-import ParameterSwitchInput from '../inputs/ParameterSwitchInput.js';
+import ParameterTextInput from '../../inputs/ParameterTextInput.js';
+import ParameterSwitchInput from '../../inputs/ParameterSwitchInput.js';
 import "./MatrixExport.css";
 
 function MatrixEditor(props) {    

@@ -1,7 +1,7 @@
 import React from 'react';
+import ParameterTextInput from '../../inputs/ParameterTextInput';
+
 import "./MatrixActions.css"
-import ParameterTextInput
- from '../inputs/ParameterTextInput';
 
 function MatrixActions(props) {
     return <div className = "matrixActions">

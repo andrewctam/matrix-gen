@@ -13,7 +13,7 @@ function ParameterSwitchInput(props) {
         <input className = "form-check-input" 
         onChange = {handleChange}
         checked = {props.isChecked} 
-        type = "checkbox" defaultChecked={props.defaultVal} 
+        type = "checkbox" 
         id = {props.name + "Switch"} 
         />
     </div>  
