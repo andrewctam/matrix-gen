@@ -14,10 +14,10 @@ function MatrixEditor(props) {
     const [showExport, setShowExport] = useState(false);
     const [showMath, setShowMath] = useState(false);
     const [showImport, setShowImport] = useState(false);
-    const [randomLow, setRandomLow] = useState(1);
-    const [randomHigh, setRandomHigh] = useState(10);
-    const [reshapeRows, setReshapeRows] = useState(0);
-    const [reshapeCols, setReshapeCols] = useState(0);
+    const [randomLow, setRandomLow] = useState("1");
+    const [randomHigh, setRandomHigh] = useState("10");
+    const [reshapeRows, setReshapeRows] = useState("0");
+    const [reshapeCols, setReshapeCols] = useState("0");
     const [fillEmptyWithThis, setFillEmptyWithThis] = useState("0");
 
 
@@ -27,28 +27,20 @@ function MatrixEditor(props) {
                 setFillEmptyWithThis(updated);
                 break; 
             case "randomLow":
-                var parsed = parseInt(updated);
-                if (parsed === NaN)
-                    parsed = 0;
-                setRandomLow(parsed);
+                if (/^[0-9 \s]*$/.test(updated)) 
+                    setRandomLow(updated);
                 break;
             case "randomHigh":
-                var parsed = parseInt(updated);
-                if (parsed === NaN)
-                    parsed = 0;
-                setRandomHigh(parsed);
+                if (/^[0-9 \s]*$/.test(updated)) 
+                    setRandomHigh(updated);
                 break; 
             case "reshapeRows":
-                var parsed = parseInt(updated);
-                if (parsed === NaN)
-                    parsed = 0;
-                setReshapeRows(parsed);
+                if (/^[0-9 \s]*$/.test(updated)) 
+                    setReshapeRows(updated);
                 break;
             case "reshapeCols":
-                var parsed = parseInt(updated);
-                if (parsed === NaN)
-                    parsed = 0;
-                setReshapeCols(parsed);
+                if (/^[0-9 \s]*$/.test(updated)) 
+                    setReshapeCols(updated);
                 break; 
 
                 
@@ -246,8 +238,6 @@ function MatrixEditor(props) {
 
     
     function mirrorRowsOntoColumns() { 
-        setShowActions(false);
-
         if (props.matrix.length > props.matrix[0].length) { //more rows than cols 
             var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
             
@@ -265,9 +255,7 @@ function MatrixEditor(props) {
         props.setMatrix(symmetric, props.name); 
     }
 
-    function mirrorColumnsOntoRows() {
-        setShowActions(false);
-        
+    function mirrorColumnsOntoRows() {        
         if (props.matrix.length > props.matrix[0].length) { //more rows than cols
             var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
             
@@ -286,8 +274,6 @@ function MatrixEditor(props) {
     }
 
     function transpose() {
-        setShowActions(false);
-
         var transposed = Array(props.matrix[0].length).fill([]);
         
         for (var i = 0; i < transposed.length; i++) {
@@ -302,10 +288,8 @@ function MatrixEditor(props) {
 
 
     function randomMatrix() {
-        setShowActions(false);
-
-        var low = randomLow;
-        var high = randomHigh;
+        var low = parseInt(randomLow);
+        var high = parseInt(randomHigh);
         
         if (low <= high) {
             var tempMatrix = [...props.matrix];
@@ -328,32 +312,36 @@ function MatrixEditor(props) {
         var currentMatrix = props.matrix;
         const numElements = (currentMatrix.length - 1) * (currentMatrix[0].length - 1);
         
-        var rowCount = reshapeRows;
-        var colCount = reshapeCols;
+        var rowCount = parseInt(reshapeRows);
+        var colCount = parseInt(reshapeCols);
 
-        if (rowCount === NaN && colCount === NaN) {
-            alert("Enter rows and columns to reshape");
-        } else if (rowCount !== NaN) {
-            if (numElements % rowCount !== 0) {
-                alert("Invalid number of rows");
+        if (isNaN(rowCount) && isNaN(colCount)) {
+            alert("Enter rows and columns to reshape. The new rows and columns must have the same product as the current rows and columns.");
+        } else if (isNaN(rowCount)) {
+            if (numElements % colCount !== 0) {
+                alert(`Invalid number of columns. ${colCount} is not a multiple of ${numElements}`);
                 return;
+            } else {
+                rowCount = numElements / colCount;
             }
             
             colCount = numElements / rowCount;
-        } else if (colCount !== NaN) {
-            if (numElements % colCount !== 0) {
-                alert("Invalid number of columns");
+        } else if (isNaN(colCount)) {
+            if (numElements % rowCount !== 0) {
+                alert(`Invalid number of rows. ${rowCount} is not a multiple of ${numElements}`);
                 return;
+            } else {
+                colCount = numElements / rowCount;
             }
             
             rowCount = numElements / colCount;
-        } else {
-            if (numElements !== colCount * rowCount) {
-                alert("Invalid dimensions for matrix")
-                return;
-            }
+        } else if (numElements !== colCount * rowCount) {
+            alert(`Invalid dimensions. ${rowCount} * ${colCount} is not equal to ${numElements}`);
+            return;
+            
         }
-
+        console.log(numElements)
+        console.log(colCount * rowCount)
 
         var reshaped = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
 
@@ -378,8 +366,6 @@ function MatrixEditor(props) {
     }
 
     function fillEmpty() {
-        setShowActions(false);
-
         var tempMatrix = [...props.matrix];
        
         for (var i = 0; i < tempMatrix.length - 1; i++)

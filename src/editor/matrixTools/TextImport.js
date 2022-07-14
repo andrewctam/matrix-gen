@@ -190,7 +190,7 @@ function TextImport(props) {
             <ParameterSwitchInput isChecked = {overwrite} id = "overwrite" name = "overwrite" text = {overwrite ? "Overwrite Current Matrix" : "Save as New Matrix"} updateParameter = {updateParameter}/>
 
             {(overwrite ? null : <div>
-                {"New Matrix Name:"}
+                {"New Matrix Name: "}
                 <input className = "importedMatrixName" 
                 placeholder={namePlaceholder} 
                 value = {newName}

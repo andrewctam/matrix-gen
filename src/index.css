@@ -35,3 +35,7 @@ li {
     background-color: rgb(240, 221, 93);
 }
 
+
+li {
+    list-style-type: none;
+}

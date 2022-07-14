@@ -45,11 +45,12 @@ function Selectors(props) {
         }
 
 
-
-        tempSelectors.sort( (selector1, selector2)  => {
-            return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
-        });
-        console.log("updated")
+        if (tempSelectors.length === 0)
+            tempSelectors.push(<div className = "noMatrices">{"No Matrices Found"} </div>);
+        else
+            tempSelectors.sort( (selector1, selector2)  => {
+                return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
+            });
 
         setSelectors(tempSelectors);
     }, [props.matrices, props.selection, searchName, searchSize]);
