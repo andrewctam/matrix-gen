@@ -22,16 +22,34 @@ function App(props) {
     }, []);
 
 
-    function updateMatrix(updated, key) {
-        var tempObj = {...matrices};
-        tempObj[key] = updated;
 
-        setMatrices(tempObj);
-    }
     
-    function updateMatrixSelection (selected) {
+    function updateMatrixSelection(selected) {
         setSelection(selected);
+    }
 
+    function updateParameter(i, updated) {
+        switch (i) {
+            case "sparse":
+                setSparseVal(updated);
+                if (autoSave)
+                    window.localStorage.setItem("sparseValue;", updated); 
+                break;
+            case "mirror":
+                setMirror(updated);  
+                if (autoSave)
+                    window.localStorage.setItem("mirror;", updated ? "1" : "0");
+                break; 
+
+            case "autoSave":
+                setAutoSave(updated);
+                break;
+
+            default: 
+                console.log("Invalid?:" + i);
+  
+        }
+    
     }
 
     function renameMatrix(oldName, newName) {     
@@ -61,6 +79,34 @@ function App(props) {
 
         setMatrices(tempObj);
     }
+
+    function setMatrix(matrix = undefined, name = undefined) {
+        var tempObj = {...matrices};
+        var matrixName;
+        if (name === undefined) {
+            matrixName = generateUniqueName();
+        } else {
+            matrixName = name;
+        }
+        
+        if (matrix === undefined) {
+            tempObj[matrixName] = [["", ""], ["", ""]];
+        } else {
+            tempObj[matrixName] = matrix;
+        }
+        
+        setMatrices(tempObj);
+    }
+
+
+    function deleteMatrix(del) {
+        var tempObj = {...matrices};
+
+        delete tempObj[del];
+        setMatrices(tempObj);
+    
+    }
+
 
     function generateUniqueName() {
         var name = ["A"]; 
@@ -93,61 +139,9 @@ function App(props) {
 
     }
     
-
     
 
-
-    function addMatrix(matrix = undefined, name = undefined) {
-        var tempObj = {...matrices};
-        var matrixName;
-        if (name === undefined) {
-            matrixName = generateUniqueName();
-        } else {
-            matrixName = name;
-        }
-        
-        if (matrix === undefined) {
-            tempObj[matrixName] = [["", ""], ["", ""]];
-        } else {
-            tempObj[matrixName] = matrix;
-        }
-        
-        setMatrices(tempObj);
-    }
-
-    function deleteMatrix(del) {
-        var tempObj = {...matrices};
-
-        delete tempObj[del];
-        setMatrices(tempObj);
-    
-    }
-
-    function updateParameter(i, updated) {
-        switch (i) {
-            case "sparse":
-                setSparseVal(updated);
-                if (autoSave)
-                    window.localStorage.setItem("sparseValue;", updated); 
-                break;
-            case "mirror":
-                setMirror(updated);  
-                if (autoSave)
-                    window.localStorage.setItem("mirror;", updated ? "1" : "0");
-                break; 
-
-            case "autoSave":
-                setAutoSave(updated);
-                break;
-
-            default: 
-                console.log("Invalid?:" + i);
-  
-        }
-    
-    }
-
-    function resizeMatrix(name, rows, cols) {
+    function resizeMatrix(name, rows, cols, update = true) {
         if (matrices[name].length !== rows || matrices[name][0].length !== cols) {
             if (rows > 51)
                 rows = 51
@@ -176,8 +170,10 @@ function App(props) {
             for (i = lessRows - 1; i < rows; i++) 
                 resized[i] = Array(cols).fill("");
 
+            if (update)
+                setMatrix(resized, name); 
 
-            updateMatrix(resized, name); 
+            return resized;
         }
     }
 
@@ -277,12 +273,11 @@ function App(props) {
         <div> 
             <Selectors matrices = {matrices} 
                 updateMatrixSelection = {updateMatrixSelection} 
-                addMatrix = {addMatrix}
+                setMatrix = {setMatrix}
                 deleteMatrix = {deleteMatrix}
                 renameMatrix = {renameMatrix}
                 copyMatrix = {copyMatrix}
                 selection = {selection}
-                updateMatrix = {updateMatrix}
                 resizeMatrix = {resizeMatrix}
                 updateParameter = {updateParameter}
                 saveToLocalStorage = {saveToLocalStorage}
@@ -298,11 +293,10 @@ function App(props) {
                 matrix = {matrices[selection]} 
                 matrices = {matrices}
                 name = {selection} 
-                updateMatrix = {updateMatrix}
                 updateParameter = {updateParameter}
                 mirror = {mirror}
                 sparseVal = {sparseVal}
-                addMatrix = {addMatrix}
+                setMatrix = {setMatrix}
                 generateUniqueName = {generateUniqueName}
             /> : null
             } 

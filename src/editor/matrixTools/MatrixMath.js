@@ -17,7 +17,7 @@ function MatrixMath(props) {
         var matrix = evaluatePostfix(postfix);
 
         if (matrix !== null)
-            props.addMatrix(matrix)
+            props.setMatrix(matrix)
         
 
     }

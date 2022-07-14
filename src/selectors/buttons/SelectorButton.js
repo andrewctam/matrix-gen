@@ -3,7 +3,6 @@ import "./SelectorButton.css";
 
 function SelectorButton(props) {
     const [displaySize, setDisplaySize] = useState( realSize() );
-
     const [displayName, setDisplayName] = useState(props.name);
     
     function realSize() {

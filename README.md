@@ -27,7 +27,7 @@ The Matrix Generator is a web app that allows you to quickly enter matrices, the
 
 ## Matrix Storage ##
 * You can create an unlimited amount of matrices, and you can swap between them by clicking the buttons at the top of the page.
-* All matrices must be given an unique name. The name can only contain uppercase/lowercase letters and underscores. Names will be generated when matrices are created based on previous ones (if A exists, the new matrix is named B, and so on).
+* All matrices must be given an unique name. The name can only contain uppercase/lowercase letters and underscores. Names will be generated when matrices are created based on previous names (if A exists, the new matrix is named B, if Z exists, the new matrix is named AA, and so on).
 * You can rename a matrix by clicking the name and entering a new one.
 * The maximum matrix size is 50x50, and you can quickly resize a matrix by clicking the size, and entering a new size in the format n x m.
 <img src = "./images/resize.png" style = "width: 75%">

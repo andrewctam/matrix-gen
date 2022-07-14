@@ -1,14 +1,14 @@
 import React from 'react';
 
 function AddButton(props) {
-    function addMatrix() {
-        props.addMatrix();   
+    function setMatrix() {
+        props.setMatrix();   
     }
 
 
     return <button type="button" 
         className = {"list-group-item list-group-item-info selector-button"}
-        onClick = {addMatrix}>
+        onClick = {setMatrix}>
         Create New Empty Matrix
     </button>
     

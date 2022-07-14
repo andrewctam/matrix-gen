@@ -1,4 +1,4 @@
-import React, {useState} from 'react'; 
+import React, {useState, useEffect} from 'react'; 
 import ParameterSwitchInput from '../inputs/ParameterSwitchInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
 
@@ -9,42 +9,85 @@ import DuplicateButton from './buttons/DuplicateButton';
 
 import "./Selectors.css"
 function Selectors(props) {
-    // eslint-disable-next-line
-    const [sort, setSort] = useState(true); 
+    const [selectors, setSelectors] = useState([])
+    const [searchName, setSearchName] = useState("");
+    const [searchSize, setSearchSize] = useState("");
 
-    var selectors = []
-    for (var matrixName in props.matrices) 
-        selectors.push(
-        <SelectorButton 
-            name = {matrixName}
-            key = {matrixName}
-            updateMatrixSelection = {props.updateMatrixSelection}
-            renameMatrix = {props.renameMatrix}
-            resizeMatrix = {props.resizeMatrix}
-            active = {props.selection === matrixName}
-            matrices = {props.matrices}/>
-        )
+    useEffect(() => {
+        var tempSelectors = []
 
-        if (sort) {
-            selectors.sort( (selector1, selector2)  => {
-                return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
-            });
+        if (searchSize !== "") {
+            var split = searchSize.split("x");
+            var sizeFilters = [];
+            for (var i = 0; i < split.length; i++) {
+                var temp = parseInt(split[i])
+                if (!isNaN(temp))
+                    sizeFilters.push(temp)
+            }
+
+            console.log(sizeFilters)
         }
-    
 
+
+        for (var matrixName in props.matrices) {
+            if ((searchName === "" || matrixName.startsWith(searchName)) && 
+                (searchSize === "" || verifySize(matrixName, sizeFilters)))
+                tempSelectors.push (
+                    <SelectorButton 
+                        name = {matrixName}
+                        key = {matrixName}
+                        updateMatrixSelection = {props.updateMatrixSelection}
+                        renameMatrix = {props.renameMatrix}
+                        resizeMatrix = {props.resizeMatrix}
+                        active = {props.selection === matrixName}
+                        matrices = {props.matrices}/>
+                    )
+        }
+
+
+
+        tempSelectors.sort( (selector1, selector2)  => {
+            return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
+        });
+        console.log("updated")
+
+        setSelectors(tempSelectors);
+    }, [props.matrices, props.selection, searchName, searchSize]);
+
+    function updateSearchName(e) {
+        const updated = e.target.value;
+        if (/^[A-Za-z_]*$/.test(updated))
+            setSearchName(updated);
+    }
+
+    function updateSearchSize(e) {
+        const updated = e.target.value;
+        if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) 
+            setSearchSize(updated);
+    }
+
+    
+    function verifySize(name, sizeFilters) {
+        const matrix = props.matrices[name];
+        var rows = matrix.length - 1;
+        var cols = matrix[0].length - 1;
+
+        if (sizeFilters.length == 1)
+            return rows === sizeFilters[0] || cols === sizeFilters[0]
+        else
+            return rows === sizeFilters[0] && cols === sizeFilters[1];
+
+
+            
+        
+            
+    }
     return  <div className = "row selectors selectors-box">
         <div className = "col-sm-4 info">
-            <ul>
-                <li>Enter values in the matrix below. The last row and column (in pink) are not part of the matrix. Typing in the these red boxes will add a new row or column.</li>
-                <li>Click on a matrix's name to rename it. Valid characters are uppercase and lowercase letters, and underscores.</li>
-                <li>Click on a matrix's dimensions to quickly resize it. The maximum size is 50 x 50.</li>
-            </ul>   
-        </div>
-            <div className = "col-sm-4">
-                <div id = "selectors" className="list-group">
+            <div id = "selectors" className="list-group">
                     <AddButton 
                         key = " add " 
-                        addMatrix = {props.addMatrix} />
+                        setMatrix = {props.setMatrix} />
                     <DuplicateButton 
                         key = " duplicate " 
                         copyMatrix = {props.copyMatrix}
@@ -54,7 +97,12 @@ function Selectors(props) {
                         deleteMatrix = {props.deleteMatrix} 
                         updateSelection = {props.updateSelection}
                         selection = {props.selection}/>
-                </div>
+                </div> 
+        </div>
+            <div className = "col-sm-4">
+                <input className = "nameSearchBar" onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
+                <input className = "sizeSearchBar" onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
+
                 <div id = "selectors" className="list-group">
                     {selectors}    
                 </div>

@@ -26,6 +26,7 @@ function TextImport(props) {
             case "settingC":
                 setSettingC(updated);
                 break;
+            default: break;
             
         }
     }
@@ -45,7 +46,9 @@ function TextImport(props) {
                 setSettingA("");
                 setSettingB("");
                 setSettingC(" ");
+                break;
 
+            default: break;
         }
         setImportFormat(updated);
 
@@ -80,7 +83,7 @@ function TextImport(props) {
                 }
 
                 matrix.push(Array(rows[0].length).fill(""));
-                props.addMatrix(matrix, name); //function will also override existing (or non existing) matrices
+                props.setMatrix(matrix, name); //function will also override existing (or non existing) matrices
                 
                 break;
                 
@@ -91,7 +94,7 @@ function TextImport(props) {
                     var noBraces = text.substring(firstBrace + 1, lastBrace);
 
                     rows = noBraces.split(separator + "\n");
-                    for (var i = 0; i < rows.length; i++) {
+                    for (i = 0; i < rows.length; i++) {
                         firstBrace = rows[i].indexOf(settingA);
                         lastBrace = rows[i].lastIndexOf(settingB);
 
@@ -101,7 +104,7 @@ function TextImport(props) {
                     }
 
                     matrix.push(Array(rows[0].length).fill(""));
-                    props.addMatrix(matrix, name);
+                    props.setMatrix(matrix, name);
 
                 } catch (error) {
                     alert("Error in input.")
@@ -116,16 +119,16 @@ function TextImport(props) {
                 var rowCount = parseInt(settingA);
                 var colCount = parseInt(settingB);
 
-                if (rowCount === NaN && colCount === NaN) {
+                if (isNaN(rowCount) && isNaN(colCount)) {
                     alert("Enter rows and columns to reshape");
-                } else if (rowCount !== NaN) {
+                } else if (!isNaN(rowCount)) {
                     if (elements.length % rowCount !== 0) {
                         alert("Invalid number of rows");
                         break;
                     }
                     
                     colCount = elements.length / rowCount;
-                } else if (colCount !== NaN) {
+                } else if (!isNaN(colCount)) {
                     if (elements.length % colCount !== 0) {
                         alert("Invalid number of columns");
                         break;
@@ -142,15 +145,17 @@ function TextImport(props) {
 
                 matrix = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill())
 
-                var i = 0;
+                i = 0;
                 for (var j = 0; j < rowCount; j++)
                     for (var k = 0; k < colCount; k++) {
                         matrix[j][k] = elements[i];
                         i++;
                     }
 
-                props.addMatrix(matrix, name);
+                props.setMatrix(matrix, name);
                 break;
+
+            default: break;
 
 
                 
@@ -169,6 +174,7 @@ function TextImport(props) {
         case "reshape":
             inputMatrixPlaceholder = ` Enter your matrix in this box following the format: \n 1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1\n Extra characters may lead to an unexpected input`;
             break;
+        default: break;
     }
 
     if (!overwrite) {

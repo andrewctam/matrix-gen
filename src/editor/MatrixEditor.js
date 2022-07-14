@@ -18,33 +18,37 @@ function MatrixEditor(props) {
     const [randomHigh, setRandomHigh] = useState(10);
     const [reshapeRows, setReshapeRows] = useState(0);
     const [reshapeCols, setReshapeCols] = useState(0);
-    const [fillEmptyVal, setFillEmptyVal] = useState("");
+    const [fillEmptyWithThis, setFillEmptyWithThis] = useState("0");
 
 
     function updateParameter(i, updated) {
         switch (i) {
+            case "fillEmptyWithThis":
+                setFillEmptyWithThis(updated);
+                break; 
             case "randomLow":
-                if (updated === "")
-                    updated = 0; 
-                setRandomLow(parseInt(updated));
+                var parsed = parseInt(updated);
+                if (parsed === NaN)
+                    parsed = 0;
+                setRandomLow(parsed);
                 break;
             case "randomHigh":
-                if (updated === "")
-                    updated = 0; 
-                setRandomHigh(parseInt(updated));
-                break; 
-            case "fillEmptyVal":
-                setFillEmptyVal(updated);
+                var parsed = parseInt(updated);
+                if (parsed === NaN)
+                    parsed = 0;
+                setRandomHigh(parsed);
                 break; 
             case "reshapeRows":
-                if (updated === "")
-                    updated = 0; 
-                setReshapeRows(parseInt(updated));
+                var parsed = parseInt(updated);
+                if (parsed === NaN)
+                    parsed = 0;
+                setReshapeRows(parsed);
                 break;
             case "reshapeCols":
-                if (updated === "")
-                    updated = 0; 
-                setReshapeCols(parseInt(updated));
+                var parsed = parseInt(updated);
+                if (parsed === NaN)
+                    parsed = 0;
+                setReshapeCols(parsed);
                 break; 
 
                 
@@ -102,22 +106,6 @@ function MatrixEditor(props) {
     
     }
 
-    /*
-    function componentDidMount{
-        window.addEventListener('resize', resize);
-    }
-    function componentWillUnmount{
-        window.removeEventListener('resize', resize);
-    }
-
-    function resize() {
-        modifyBottomPadding();
-    }
-
-    function modifyBottomPadding() {
-        document.body.style.paddingBottom = document.getElementById("options").clientHeight + "px";
-    }*/
-    
 
 
     function tryToDelete(row, col) {
@@ -163,14 +151,13 @@ function MatrixEditor(props) {
             }
         }
 
-        props.updateMatrix(tempMatrix, props.name); 
+        props.setMatrix(tempMatrix, props.name); 
     
     }
 
     
     function updateEntry(i, j, val, tempMatrix = [...props.matrix]) {
         if (i < 50 && j < 50) {
-            
             if (props.mirror) {
                 //add enough rows in order to update the correct  j, i
                 if (j >= props.matrix.length - 1) {
@@ -186,24 +173,27 @@ function MatrixEditor(props) {
             }
 
             tempMatrix[i][j] = val;
-            props.updateMatrix(tempMatrix, props.name); 
+            props.setMatrix(tempMatrix, props.name); 
         } else
-            alert("Max matrix size reached!");
+            alert("Max matrix size 50 x 50 reached!");
     }
     
     function addCols(numToAdd, update = true) {
+        //copy matrix
         var tempMatrix = [...props.matrix];
 
+        //mas 50 cols
         if (tempMatrix[0].length + numToAdd > 51)
             numToAdd = 51 - tempMatrix[0].length;
 
         for (var i = 0; i < tempMatrix.length; i++) {
             for (var j = 0; j < numToAdd; j++)
+                //Add ""s to each row
                 tempMatrix[i].push("");
         }
 
         if (update)
-            props.updateMatrix(tempMatrix, props.name); 
+            props.setMatrix(tempMatrix, props.name); 
 
         return tempMatrix;
     }
@@ -211,16 +201,16 @@ function MatrixEditor(props) {
     function addRows(numToAdd, update = true) {
         var tempMatrix = [...props.matrix];
 
+        //max 50 rows
         if (tempMatrix.length + numToAdd > 51)
             numToAdd = 51 - tempMatrix.length;
 
-        
         for (var i = 0; i < numToAdd; i++) {
             tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
         }
         
         if (update)
-            props.updateMatrix(tempMatrix, props.name); 
+            props.setMatrix(tempMatrix, props.name); 
 
 
         return tempMatrix; 
@@ -244,13 +234,11 @@ function MatrixEditor(props) {
         for (i = 0; i < rowsToAdd; i++)
             tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
 
-        console.log("added");
-        console.log(tempMatrix);
 
         if (update)
-            props.updateMatrix(tempMatrix, props.name); 
+            props.setMatrix(tempMatrix, props.name); 
 
-       
+
 
         return tempMatrix; 
     }
@@ -259,14 +247,14 @@ function MatrixEditor(props) {
     
     function mirrorRowsOntoColumns() { 
         setShowActions(false);
-        if (props.matrix.length > props.matrix[0].length) { //more rows than cols {
+
+        if (props.matrix.length > props.matrix[0].length) { //more rows than cols 
             var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
             
-        }
-        else /*if (props.matrix.length < props.matrix[0].length) */ {
-            symmetric = addRows(props.matrix[0].length - props.matrix.length, false)
-            
-        }
+        } else if (props.matrix.length < props.matrix[0].length) {
+            symmetric = addRows(props.matrix[0].length - props.matrix.length, false)  
+        } //else rows == cols
+
    
         for (var row = 0; row < symmetric.length; row++) {
             for (var col = row + 1; col < symmetric.length; col++) {
@@ -274,20 +262,19 @@ function MatrixEditor(props) {
             }
         }
 
-        props.updateMatrix(symmetric, props.name); 
+        props.setMatrix(symmetric, props.name); 
     }
 
     function mirrorColumnsOntoRows() {
         setShowActions(false);
         
-        if (props.matrix.length > props.matrix[0].length) { //more rows than cols {
+        if (props.matrix.length > props.matrix[0].length) { //more rows than cols
             var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
             
-        }
-        else /*if (props.matrix.length < props.matrix[0].length) */ {
+        } else if (props.matrix.length < props.matrix[0].length) {
             symmetric = addRows(props.matrix[0].length - props.matrix.length, false);
             
-        }
+        } //else rows == cols
 
         for (var row = 0; row < symmetric.length; row++) {
             for (var col = row + 1; col < symmetric.length; col++) {
@@ -295,13 +282,14 @@ function MatrixEditor(props) {
             }
         }
     
-        props.updateMatrix(symmetric, props.name); 
+        props.setMatrix(symmetric, props.name); 
     }
 
     function transpose() {
         setShowActions(false);
 
-        var transposed = Array(props.matrix[0].length).fill(0);
+        var transposed = Array(props.matrix[0].length).fill([]);
+        
         for (var i = 0; i < transposed.length; i++) {
             var arr = Array(props.matrix.length).fill(0)
             for (var j = 0; j < arr.length; j++)
@@ -309,7 +297,7 @@ function MatrixEditor(props) {
             transposed[i] = arr;       
         }
 
-        props.updateMatrix(transposed, props.name); 
+        props.setMatrix(transposed, props.name); 
     }       
 
 
@@ -326,7 +314,7 @@ function MatrixEditor(props) {
                 for (var j = 0; j < tempMatrix[0].length - 1; j++)
                     tempMatrix[i][j] = Math.floor(Math.random() * (high - low)) + low;
             
-            props.updateMatrix(tempMatrix, props.name);
+            props.setMatrix(tempMatrix, props.name);
         }
         else {
             alert("Invalid range")
@@ -385,7 +373,7 @@ function MatrixEditor(props) {
                 }
             }
 
-        props.updateMatrix(reshaped, props.name);
+        props.setMatrix(reshaped, props.name);
 
     }
 
@@ -397,10 +385,10 @@ function MatrixEditor(props) {
         for (var i = 0; i < tempMatrix.length - 1; i++)
             for (var j = 0; j < tempMatrix[0].length - 1; j++) {
                 if (tempMatrix[i][j] === "")
-                    tempMatrix[i][j] = fillEmptyVal;
+                    tempMatrix[i][j] = fillEmptyWithThis;
             }
         
-        props.updateMatrix(tempMatrix, props.name);
+        props.setMatrix(tempMatrix, props.name);
     }
 
 
@@ -410,16 +398,17 @@ function MatrixEditor(props) {
     <div className = "matrixEditor">
         <div id = "options" className = "options">
             <div className = "options-bar">
-                <button className = {"btn matrixButtons " + (showActions ? "btn-info" : "btn-secondary" )}  onClick = {toggleActions}> {showActions ? "Hide Actions" : "Show Actions"}</button> 
+                <button id = "toggleActions" className = {"btn matrixButtons " + (showActions ? "btn-info" : "btn-secondary" )}  onClick = {toggleActions}> {showActions ? "Hide Actions" : "Show Actions"}</button> 
 
-                <button className = {"btn matrixButtons " + (showMath ? "btn-info" : "btn-secondary" )} onClick={toggleMath}>                
+                <button id = "toggleMath" className = {"btn matrixButtons " + (showMath ? "btn-info" : "btn-secondary" )} onClick={toggleMath}>                
                     {showMath ? "Close Math Input" : "Perform Matrix Math"}
                 </button>
-                <button className = {"btn matrixButtons " + (showExport ? "btn-info" : "btn-secondary" )} onClick={toggleExport}>
-                    {showExport ? "Close Export" : "Export Matrix"}
-                </button>
-                <button className = {"btn matrixButtons " + (showImport ? "btn-info" : "btn-secondary" )} onClick={toggleImport}>
+                
+                <button id = "toggleImport" className = {"btn matrixButtons " + (showImport ? "btn-info" : "btn-secondary" )} onClick={toggleImport}>
                     {showImport ? "Close Import" : "Import Matrix From Text"}
+                </button>
+                <button id = "toggleExport" className = {"btn matrixButtons " + (showExport ? "btn-info" : "btn-secondary" )} onClick={toggleExport}>
+                    {showExport ? "Close Export" : "Export Matrix"}
                 </button>
 
             </div>
@@ -427,31 +416,40 @@ function MatrixEditor(props) {
 
             {showActions ? 
                 <MatrixActions 
-                transpose = {transpose}
-                mirrorRowsOntoColumns = {mirrorRowsOntoColumns}
-                mirrorColumnsOntoRows = {mirrorColumnsOntoRows}
-                updateParameter = {updateParameter}
-                fillEmpty = {fillEmpty}
-                fillEmptyVal = {fillEmptyVal}
-                randomMatrix = {randomMatrix}
-                reshapeMatrix = {reshapeMatrix}
-                randomHigh = {randomHigh}
-                randomLow = {randomLow} 
-                reshapeRows = {reshapeRows}
-                reshapeCols = {reshapeCols}/>
-                : null}
+                    transpose = {transpose}
+                    mirrorRowsOntoColumns = {mirrorRowsOntoColumns}
+                    mirrorColumnsOntoRows = {mirrorColumnsOntoRows}
+                    updateParameter = {updateParameter}
+                    fillEmpty = {fillEmpty}
+                    fillEmptyWithThis = {fillEmptyWithThis}
+                    randomMatrix = {randomMatrix}
+                    reshapeMatrix = {reshapeMatrix}
+                    randomHigh = {randomHigh}
+                    randomLow = {randomLow} 
+                    reshapeRows = {reshapeRows}
+                    reshapeCols = {reshapeCols}/>
+            : null}
             
             {showMath ?
-                <MatrixMath matrices = {props.matrices} matrix = {props.matrix} addMatrix = {props.addMatrix} sparseVal = {props.sparseVal} />
-                : null } 
+                <MatrixMath 
+                    matrices = {props.matrices}
+                    matrix = {props.matrix}
+                    setMatrix = {props.setMatrix}
+                    sparseVal = {props.sparseVal}/>
+            : null } 
                     
             {showExport ?
-                <MatrixExport matrix = {props.matrix} sparseVal = {props.sparseVal}/>
-                : null }   
+                <MatrixExport 
+                    matrix = {props.matrix}
+                    sparseVal = {props.sparseVal}/>
+            : null }   
 
             {showImport ? 
-                <TextImport generateUniqueName = {props.generateUniqueName} addMatrix = {props.addMatrix} currentName = {props.name}  /> 
-                : null}
+                <TextImport
+                    generateUniqueName = {props.generateUniqueName}
+                    setMatrix = {props.setMatrix}
+                    currentName = {props.name}/> 
+            : null}
 
 
             

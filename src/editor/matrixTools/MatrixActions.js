@@ -17,7 +17,7 @@ function MatrixActions(props) {
 
         <div className = "inputButtonContainer">
         <button className = "btn btn-success matrixButtons" onClick={props.fillEmpty}>{"Fill Empty With: "}</button>
-        <ParameterTextInput id={"fillEmptyVal"} updateParameter = {props.updateParameter} text = {props.fillEmptyVal} width = {"30px"} />
+        <ParameterTextInput id={"fillEmptyWithThis"} updateParameter = {props.updateParameter} text = {props.fillEmptyWithThis} width = {"30px"} />
         </div>
 
         <div className = "inputButtonContainer">
