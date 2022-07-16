@@ -11,7 +11,7 @@ function Box(props) {
         props.addBoth(props.row, props.col, e.target.value);
     }
     function handleUpdate(e) { 
-        props.updateEntry(props.row, props.col, e.target.value);
+        props.updateEntry(props.name, props.row, props.col, e.target.value);
     }
     function handleKeyDown(e) {
         props.keyDown(props.row, props.col, e);

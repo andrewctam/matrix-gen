@@ -10,13 +10,13 @@ function Table(props) {
             var rows = props.matrix.length
             var max = Math.max(rows + 1, cols)
 
-            var tempMatrix = props.addRowsAndCols(max - rows, max - cols, false);
+            var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
             tempMatrix[col][row] = updated;
         } else {
-            tempMatrix = props.addRows(1, false);
+            tempMatrix = props.addRows(props.name, 1, false);
         }
 
-        props.updateEntry(row, col, updated, tempMatrix);
+        props.updateEntry(props.name, row, col, updated, tempMatrix);
     }
 
     function addCol(row, col, updated) {
@@ -26,13 +26,13 @@ function Table(props) {
             var rows = props.matrix.length
             var max = Math.max(rows, cols + 1)
 
-            var tempMatrix = props.addRowsAndCols(max - rows, max - cols, false);
+            var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
             tempMatrix[col][row] = updated;
         } else {
-            tempMatrix = props.addCols(1, false);
+            tempMatrix = props.addCols(props.name, 1, false);
         }
 
-        props.updateEntry(row, col, updated, tempMatrix);
+        props.updateEntry(props.name, row, col, updated, tempMatrix);
     }
 
 
@@ -42,14 +42,14 @@ function Table(props) {
             var rows = props.matrix.length
             var max = Math.max(rows + 1, cols + 1);
 
-            var tempMatrix = props.addRowsAndCols(max - rows, max - cols, false);
+            var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
             tempMatrix[col][row] = updated;
 
         } else {
-            tempMatrix = props.addRowsAndCols(1, 1, false);
+            tempMatrix = props.addRowsAndCols(props.name, 1, 1, false);
         }
 
-        props.updateEntry(row, col, updated, tempMatrix);
+        props.updateEntry(props.name, row, col, updated, tempMatrix);
     }
 
     function keyDown(row, col, e) {
@@ -131,6 +131,7 @@ function Table(props) {
 
         for (var j = 0; j < limitCols; j++) {   
             eachRow[j] = <Box 
+                        name = {props.name}
                         addRow = {addRow} 
                         addCol = {addCol}
                         addBoth = {addBoth}

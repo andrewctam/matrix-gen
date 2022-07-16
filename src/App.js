@@ -11,18 +11,17 @@ function App(props) {
         "A": [["", ""], ["", ""]]
     });
 
+    useEffect(() => {
+        loadFromLocalStorage();
+    }, []);
+
     useEffect( () => {
         if (autoSave)
             saveToLocalStorage();    
 
     }, [matrices, autoSave]);
 
-    useEffect(() => {
-        loadFromLocalStorage();
-    }, []);
-
-
-
+  
     
     function updateMatrixSelection(selected) {
         setSelection(selected);
@@ -198,6 +197,283 @@ function App(props) {
 
     }
 
+    
+    function tryToDelete(name, row, col) {
+        //Can not delete the red row/column
+        if (row === matrices[name].length - 1 || col === matrices[name][0].length - 1) 
+            return null;
+            
+        var tempMatrix = [...matrices[name]];
+        var toDelete = true;
+        
+        //{{1,1,1,1},
+        // {0,0,0,0}, row
+        // {1,1,1,1}}
+        //Try to Delete an Empty Row
+        if (matrices[name].length > 2) {
+            for (var i = 0; i < matrices[name][0].length; i++) {
+                if (matrices[name][row][i] !== "") {
+                    toDelete = false;
+                    break;
+                }
+            }
+            if (toDelete)
+                tempMatrix.splice(row, 1);
+        }
+    
+        //     col
+        //{{1,1,0,1},
+        // {1,1,0,1},
+        // {1,1,0,1}}
+        toDelete = true;
+        if (matrices[name][0].length > 2) {
+            for (i = 0; i < matrices[name].length; i++) {
+                if (matrices[name][i][col] !== "") {
+                    toDelete = false;
+                    break;
+                }
+            }
+
+            if (toDelete) {
+                for (i = 0; i < tempMatrix.length; i++) {
+                    tempMatrix[i].splice(col, 1); //delete cols
+                } 
+            }
+        }
+
+        setMatrix(tempMatrix, name); 
+    
+    }
+
+    
+    function updateEntry(name, i, j, val, tempMatrix = null) {
+        if (tempMatrix === null)
+            tempMatrix = [...matrices[name]]
+
+        if (i < 50 && j < 50) {
+            if (mirror) {
+                //add enough rows in order to update the correct  j, i
+                if (j >= matrices[name].length - 1) {
+                    tempMatrix = addRows(j - matrices[name].length + 2, false)
+                }
+                
+                //add enough cols in order to update the correct  j, i
+                if (i >= matrices[name][0].length - 1) {
+                    tempMatrix = addCols(i - matrices[name][0].length + 2, false)
+                }
+                
+                tempMatrix[j][i] = val;
+            }
+
+            tempMatrix[i][j] = val;
+            setMatrix(tempMatrix, name); 
+        } else
+            alert("Max matrix size 50 x 50 reached!");
+    }
+    
+    function addCols(name, numToAdd, update = true) {
+        //copy matrix
+        var tempMatrix = [...matrices[name]];
+
+        //mas 50 cols
+        if (tempMatrix[0].length + numToAdd > 51)
+            numToAdd = 51 - tempMatrix[0].length;
+
+        for (var i = 0; i < tempMatrix.length; i++) {
+            for (var j = 0; j < numToAdd; j++)
+                //Add ""s to each row
+                tempMatrix[i].push("");
+        }
+
+        if (update)
+            setMatrix(tempMatrix, name); 
+
+        return tempMatrix;
+    }
+
+    function addRows(name, numToAdd, update = true) {
+        var tempMatrix = [...matrices[name]];
+
+        //max 50 rows
+        if (tempMatrix.length + numToAdd > 51)
+            numToAdd = 51 - tempMatrix.length;
+
+        for (var i = 0; i < numToAdd; i++) {
+            tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
+        }
+        
+        if (update)
+            setMatrix(tempMatrix, name); 
+
+        
+        return tempMatrix; 
+    }
+
+    function addRowsAndCols(name, rowsToAdd, colsToAdd, update = true) {
+        var tempMatrix = [...matrices[name]];
+
+        if (tempMatrix.length + rowsToAdd > 51)
+            rowsToAdd = 51 - tempMatrix.length;
+
+        if (tempMatrix[0].length + colsToAdd > 51)
+            colsToAdd = 51 - tempMatrix[0].length;
+
+        
+        for (var i = 0; i < tempMatrix.length; i++) {
+            for (var j = 0; j < colsToAdd; j++)
+                tempMatrix[i].push("");
+        }
+        
+        for (i = 0; i < rowsToAdd; i++)
+            tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
+
+
+        if (update)
+            setMatrix(tempMatrix, name); 
+
+
+
+        return tempMatrix; 
+    }
+
+
+    
+    function mirrorRowsCols(name, mirrorRowsToCols) { 
+
+        if (matrices[name].length > matrices[name][0].length) { //more rows than cols 
+            var symmetric = addCols(matrices[name].length - matrices[name][0].length, false);
+            
+        } else if (matrices[name].length < matrices[name][0].length) {
+            symmetric = addRows(matrices[name][0].length - matrices[name].length, false)  
+        } else //rows == cols
+            symmetric = [...matrices[name]];
+
+   
+        for (var row = 0; row < symmetric.length; row++) {
+            for (var col = row + 1; col < symmetric.length; col++) {
+                if (mirrorRowsToCols)
+                    symmetric[col][row] = symmetric[row][col];
+                else //mirrorColsToRows
+                    symmetric[row][col] = symmetric[col][row];
+
+            }
+        }
+
+        setMatrix(symmetric, name); 
+    }
+
+
+    function transpose(name) {
+        var oldMatrix = matrices[name];
+        var transposed = new Array(oldMatrix[0].length).fill([]);
+
+        for (var i = 0; i < transposed.length; i++) {
+            var arr = new Array(oldMatrix.length).fill(0);
+            for (var j = 0; j < arr.length; j++)
+                arr[j] = oldMatrix[j][i];
+            transposed[i] = arr;       
+        }
+
+        setMatrix(transposed, name); 
+    }       
+
+
+    function randomMatrix(name, randomLow, randomHigh) {        
+        if (randomLow <= randomHigh) {
+            var tempMatrix = [...matrices[name]];
+            
+            for (var i = 0; i < tempMatrix.length - 1; i++)
+                for (var j = 0; j < tempMatrix[0].length - 1; j++)
+                    tempMatrix[i][j] = Math.floor(Math.random() * (randomHigh - randomLow)) + randomLow;
+            
+            setMatrix(tempMatrix, name);
+        }
+        else {
+            alert("Invalid range")
+        }
+        
+
+    }
+
+
+    function reshapeMatrix(name, rowCount, colCount) {
+        var currentMatrix = matrices[name];
+        const numElements = (currentMatrix.length - 1) * (currentMatrix[0].length - 1);
+      
+        if (isNaN(rowCount) && isNaN(colCount)) {
+            alert("Enter rows and columns to reshape. The new rows and columns must have the same product as the current rows and columns.");
+        } else if (isNaN(rowCount)) {
+            if (numElements % colCount !== 0) {
+                alert(`Invalid number of columns. ${colCount} is not a multiple of ${numElements}`);
+                return;
+            } else {
+                rowCount = numElements / colCount;
+            }
+            
+            colCount = numElements / rowCount;
+        } else if (isNaN(colCount)) {
+            if (numElements % rowCount !== 0) {
+                alert(`Invalid number of rows. ${rowCount} is not a multiple of ${numElements}`);
+                return;
+            } else {
+                colCount = numElements / rowCount;
+            }
+            
+            rowCount = numElements / colCount;
+        } else if (numElements !== colCount * rowCount) {
+            alert(`Invalid dimensions. ${rowCount} * ${colCount} is not equal to ${numElements}`);
+            return;
+            
+        }
+
+        var reshaped = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
+
+        var reshapedI = 0;
+        var reshapedJ = 0;
+
+
+        for (var i = 0; i < currentMatrix.length - 1; i++)
+            for (var j = 0; j < currentMatrix[0].length - 1; j++) {
+                reshaped[reshapedI][reshapedJ] = currentMatrix[i][j];
+
+                if (reshapedJ >= reshaped[0].length - 2) {
+                    reshapedJ = 0;
+                    reshapedI++;
+                } else {
+                    reshapedJ++;
+                }
+            }
+
+        setMatrix(reshaped, name);
+
+    }
+
+    function fillEmpty(name, fillEmptyWithThis) {
+        var tempMatrix = [...matrices[name]];
+       
+        for (var i = 0; i < tempMatrix.length - 1; i++)
+            for (var j = 0; j < tempMatrix[0].length - 1; j++) {
+                if (tempMatrix[i][j] === "")
+                    tempMatrix[i][j] = fillEmptyWithThis;
+            }
+        
+        setMatrix(tempMatrix, name);
+    }
+
+    function fillAll(name, fillAllWithThis) {
+        var tempMatrix = [...matrices[name]];
+       
+        for (var i = 0; i < tempMatrix.length - 1; i++)
+            for (var j = 0; j < tempMatrix[0].length - 1; j++) {
+                tempMatrix[i][j] = fillAllWithThis;
+        }
+        
+        setMatrix(tempMatrix, name);
+    }
+
+
+
+
     function saveToLocalStorage() {
         var names = "";
         var matrixString = "";
@@ -298,6 +574,18 @@ function App(props) {
                 sparseVal = {sparseVal}
                 setMatrix = {setMatrix}
                 generateUniqueName = {generateUniqueName}
+
+                fillEmpty = {fillEmpty}
+                reshapeMatrix = {reshapeMatrix}
+                randomMatrix = {randomMatrix}
+                transpose = {transpose}
+                mirrorRowsCols = {mirrorRowsCols}
+                addRowsAndCols = {addRowsAndCols}
+                addRows = {addRows}
+                addCols = {addCols}
+                updateEntry = {updateEntry}
+                tryToDelete = {tryToDelete}
+                fillAll = {fillAll}
             /> : null
             } 
 
