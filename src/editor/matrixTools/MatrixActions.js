@@ -6,8 +6,8 @@ import "./MatrixActions.css"
 function MatrixActions(props) {
     return <div className = "matrixActions">
         <button className = "btn btn-success matrixButtons" onClick={props.transpose}>Transpose</button>
-        <button className = "btn btn-success matrixButtons" onClick={props.mirrorRowsOntoColumns}>Mirror Rows Across Diagonal</button> 
-        <button className = "btn btn-success matrixButtons" onClick={props.mirrorColumnsOntoRows}>Mirror Columns Across Diagonal</button>
+        <button className = "btn btn-success matrixButtons" id = "rowsToCols" onClick={props.mirrorRowsCols}>Mirror Rows Across Diagonal</button> 
+        <button className = "btn btn-success matrixButtons" id = "colsToRows" onClick={props.mirrorRowsCols}>Mirror Columns Across Diagonal</button>
         
         <div className = "inputButtonContainer">
             <button className = "btn btn-success matrixButtons" onClick={props.randomMatrix}> {"Randomize Matrix - Integers from: "}</button>

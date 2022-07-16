@@ -237,53 +237,37 @@ function MatrixEditor(props) {
 
 
     
-    function mirrorRowsOntoColumns() { 
+    function mirrorRowsCols(e) { 
+        const mirrorRowsToCols = e.target.id === "rowsToCols"; //takes id from button to determine if rows or cols to mirror
+
         if (props.matrix.length > props.matrix[0].length) { //more rows than cols 
             var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
             
         } else if (props.matrix.length < props.matrix[0].length) {
             symmetric = addRows(props.matrix[0].length - props.matrix.length, false)  
-        } //else rows == cols
+        } else //rows == cols
+            symmetric = [...props.matrix];
 
    
         for (var row = 0; row < symmetric.length; row++) {
             for (var col = row + 1; col < symmetric.length; col++) {
-                symmetric[col][row] = symmetric[row][col];
+                if (mirrorRowsToCols)
+                    symmetric[col][row] = symmetric[row][col];
+                else //mirrorColsToRows
+                    symmetric[row][col] = symmetric[col][row];
+
             }
         }
 
         props.setMatrix(symmetric, props.name); 
     }
 
-    function mirrorColumnsOntoRows() {        
-        if (props.matrix.length > props.matrix[0].length) { //more rows than cols
-            var symmetric = addCols(props.matrix.length - props.matrix[0].length, false);
-            
-        } else if (props.matrix.length < props.matrix[0].length) {
-            symmetric = addRows(props.matrix[0].length - props.matrix.length, false);
-            
-        } //else rows == cols
-
-        for (var row = 0; row < symmetric.length; row++) {
-            for (var col = row + 1; col < symmetric.length; col++) {
-                symmetric[row][col] = symmetric[col][row];
-            }
-        }
-    
-        props.setMatrix(symmetric, props.name); 
-    }
 
     function transpose() {
-        var transposed = Array(props.matrix[0].length).fill([]);
-        
-        for (var i = 0; i < transposed.length; i++) {
-            var arr = Array(props.matrix.length).fill(0)
-            for (var j = 0; j < arr.length; j++)
-                arr[j] = props.matrix[j][i];
-            transposed[i] = arr;       
-        }
+        var rows = props.matrix.length - 1;
+        var cols = props.matrix[0].length - 1;
 
-        props.setMatrix(transposed, props.name); 
+        reshapeMatrix(cols, rows);
     }       
 
 
@@ -308,13 +292,10 @@ function MatrixEditor(props) {
     }
 
 
-    function reshapeMatrix() {
+    function reshapeMatrix(rowCount = parseInt(reshapeRows), colCount = parseInt(reshapeCols)) {
         var currentMatrix = props.matrix;
         const numElements = (currentMatrix.length - 1) * (currentMatrix[0].length - 1);
-        
-        var rowCount = parseInt(reshapeRows);
-        var colCount = parseInt(reshapeCols);
-
+      
         if (isNaN(rowCount) && isNaN(colCount)) {
             alert("Enter rows and columns to reshape. The new rows and columns must have the same product as the current rows and columns.");
         } else if (isNaN(rowCount)) {
@@ -403,8 +384,7 @@ function MatrixEditor(props) {
             {showActions ? 
                 <MatrixActions 
                     transpose = {transpose}
-                    mirrorRowsOntoColumns = {mirrorRowsOntoColumns}
-                    mirrorColumnsOntoRows = {mirrorColumnsOntoRows}
+                    mirrorRowsCols = {mirrorRowsCols}
                     updateParameter = {updateParameter}
                     fillEmpty = {fillEmpty}
                     fillEmptyWithThis = {fillEmptyWithThis}
