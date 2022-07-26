@@ -7,12 +7,14 @@ import AddButton from './buttons/AddButton';
 import DeleteButton from './buttons/DeleteButton';
 import DuplicateButton from './buttons/DuplicateButton';
 
-import "./Selectors.css"
-function Selectors(props) {
-    const [selectors, setSelectors] = useState([])
+import "./Navigation.css"
+
+function Navigation(props) {
+    const [selectors, setSelectors] = useState([]);
     const [searchName, setSearchName] = useState("");
     const [searchSize, setSearchSize] = useState("");
-
+    const [showSettings, setShowSettings] = useState(false);
+    
     useEffect(() => {
         var tempSelectors = []
 
@@ -77,13 +79,12 @@ function Selectors(props) {
             return rows === sizeFilters[0] || cols === sizeFilters[0]
         else
             return rows === sizeFilters[0] && cols === sizeFilters[1];
-
-
-            
-        
             
     }
-    return  <div className = "row selectors selectors-box">
+
+
+
+    return  <div className = "row navigateBar">
         <div className = "col-sm-4 info">
             <div id = "selectors" className="list-group">
                     <AddButton 
@@ -111,14 +112,40 @@ function Selectors(props) {
 
             </div>
         <div className = "col-sm-4">
-            <ul>
-                <li><button className = "btn btn-warning" onClick={props.deleteAllMatrices}>Delete All Matrices</button></li>
-                {props.autoSave ? null : <li><button className = "btn btn-info" onClick={props.saveToLocalStorage}>Save Matrices to Local Storage</button></li>}
+            
+
+            
+
+            <button 
+                className = {"btn " + (showSettings ? "btn-info" : "btn-secondary")}
+                onClick={() => {setShowSettings(!showSettings)}}>
+
+                {showSettings ? "Hide Settings" : "Show Settings"}
+            </button>
+
+            {props.autoSave ? null : 
+            <button 
+                className = "btn btn-secondary" 
+                onClick={() => {props.saveToLocalStorage(); alert("Matrices saved to local browser storage.");}}>
+                {"Save Matrices"}
+            </button>}
+            
+            <button 
+                className = "btn btn-danger" 
+                onClick={props.deleteAllMatrices}>
+                {"Delete All Matrices"}
+            </button>
+            
+
+            {showSettings ? 
+            <div>               
                 <li><ParameterSwitchInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Autosave"} updateParameter={props.updateParameter}/></li>
                 <li><ParameterSwitchInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs Along Diagonal"} updateParameter={props.updateParameter}/></li>
                 <li>Default empty element: &nbsp;
                 <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/> </li>
-            </ul>   
+            </div>  : null}
+
+
         </div>
     </div>
 
@@ -127,4 +154,4 @@ function Selectors(props) {
 }
 
 
-export default Selectors;
+export default Navigation;

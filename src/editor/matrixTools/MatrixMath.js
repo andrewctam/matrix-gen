@@ -167,6 +167,7 @@ function MatrixMath(props) {
             return product
         }
 
+        //matrix multiplication
 
         if (a.length !== b[0].length)
             return null;

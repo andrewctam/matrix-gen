@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
-import Selectors from "./selectors/Selectors.js"
+import Navigation from "./navigation/Navigation.js"
 
 function App(props) {
-    const [autoSave, setAutoSave] = useState(false);
-    const [mirror, setMirror] = useState(false);
-    const [sparseVal, setSparseVal] = useState("0");
-    const [selection, setSelection] = useState("A");
     const [matrices, setMatrices] = useState( {
         "A": [["", ""], ["", ""]]
     });
 
+    const [selection, setSelection] = useState("A");
+    const [sparseVal, setSparseVal] = useState("0");
+    
+    const [mirror, setMirror] = useState(false);
+    const [autoSave, setAutoSave] = useState(false);
+
+    
     useEffect(() => {
         loadFromLocalStorage();
     }, []);
@@ -547,21 +550,24 @@ function App(props) {
 
     return (
         <div> 
-            <Selectors matrices = {matrices} 
+            <Navigation 
+                matrices = {matrices} 
+                autoSave = {autoSave}
+                mirror = {mirror}
+                selection = {selection}
+                sparseVal = {sparseVal}
+
                 updateMatrixSelection = {updateMatrixSelection} 
                 setMatrix = {setMatrix}
                 deleteMatrix = {deleteMatrix}
                 renameMatrix = {renameMatrix}
                 copyMatrix = {copyMatrix}
-                selection = {selection}
                 resizeMatrix = {resizeMatrix}
                 updateParameter = {updateParameter}
                 saveToLocalStorage = {saveToLocalStorage}
                 deleteAllMatrices = {deleteAllMatrices}
 
-                autoSave = {autoSave}
-                mirror = {mirror}
-                sparseVal = {sparseVal}
+                
             />
 
             {(selection in matrices) ? 
@@ -569,9 +575,10 @@ function App(props) {
                 matrix = {matrices[selection]} 
                 matrices = {matrices}
                 name = {selection} 
-                updateParameter = {updateParameter}
                 mirror = {mirror}
                 sparseVal = {sparseVal}
+                updateParameter = {updateParameter}
+                
                 setMatrix = {setMatrix}
                 generateUniqueName = {generateUniqueName}
 
