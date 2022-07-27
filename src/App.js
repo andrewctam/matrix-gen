@@ -118,7 +118,7 @@ function App(props) {
         while (name.join("") in matrices) {
             while (true) {
                 if (pointer < 0) {
-                    name.push("A");
+                    name.push("@"); //'A" - 1
                     pointer = name.length - 1;
                     break;
                 } else if (name[pointer] === "Z") {

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "./TextImport.css";
-import ParameterSwitchInput from "../../inputs/ParameterSwitchInput";
+import ParameterBoxInput from "../../inputs/ParameterBoxInput";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
 
 function TextImport(props) {
@@ -187,10 +187,10 @@ function TextImport(props) {
         </textarea>
 
         <div className = "col-sm-3">
-            <ParameterSwitchInput isChecked = {overwrite} id = "overwrite" name = "overwrite" text = {overwrite ? "Overwrite Current Matrix" : "Save as New Matrix"} updateParameter = {updateParameter}/>
+            <ParameterBoxInput isChecked = {overwrite} id = "overwrite" name = "overwrite" text = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
 
             {(overwrite ? null : <div>
-                {"New Matrix Name: "}
+                {"Save as New Matrix: "}
                 <input className = "importedMatrixName" 
                 placeholder={namePlaceholder} 
                 value = {newName}

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput.js';
-import ParameterSwitchInput from '../../inputs/ParameterSwitchInput.js';
+import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import "./MatrixExport.css";
 
 function MatrixEditor(props) {    
@@ -128,7 +128,7 @@ function MatrixEditor(props) {
     return <div className = "row export">
         <textarea readOnly = {true} onClick = {handleFocus} className="exportOutput" value = {matrixToString(props.matrix)} />
         <div className = "col-sm-2">
-            <ParameterSwitchInput isChecked = {latex} id={"latex"} text = {"LaTeX Format"} updateParameter={updateExportParameter}/>
+            <ParameterBoxInput isChecked = {latex} id={"latex"} text = {"LaTeX Format"} updateParameter={updateExportParameter}/>
         </div>
         
         <div className = "col-sm-10">

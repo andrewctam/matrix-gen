@@ -47,25 +47,25 @@ function MatrixEditor(props) {
                 <button id = "toggleActions" 
                     className = {"btn matrixButtons " + (showActions ? "btn-info" : "btn-secondary")} 
                     onClick = {toggleShown}> 
-                    {showActions ? "Hide Actions" : "Show Actions"}
+                    {showActions ? "Close" : "Matrix Actions"}
                 </button> 
 
                 <button id = "toggleMath" 
                     className = {"btn matrixButtons " + (showMath ? "btn-info" : "btn-secondary")}
                     onClick={toggleShown}>                
-                    {showMath ? "Close Math Input" : "Perform Matrix Math"}
+                    {showMath ? "Close" : "Perform Matrix Math"}
                 </button>
                 
                 <button id = "toggleImport" 
                     className = {"btn matrixButtons " + (showImport ? "btn-info" : "btn-secondary")}
                     onClick={toggleShown}>
-                    {showImport ? "Close Import" : "Import Matrix From Text"}
+                    {showImport ? "Close" : "Import Matrix From Text"}
                 </button>
 
                 <button id = "toggleExport" 
                     className = {"btn matrixButtons " + (showExport ? "btn-info" : "btn-secondary")} 
                     onClick={toggleShown}>
-                    {showExport ? "Close Export" : "Export Matrix"}
+                    {showExport ? "Close" : "Export Matrix"}
                 </button>
 
             </div>

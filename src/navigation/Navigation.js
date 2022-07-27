@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'; 
-import ParameterSwitchInput from '../inputs/ParameterSwitchInput';
+import ParameterBoxInput from '../inputs/ParameterBoxInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
 
 import SelectorButton from './buttons/SelectorButton';
@@ -139,9 +139,9 @@ function Navigation(props) {
 
             {showSettings ? 
             <div>               
-                <li><ParameterSwitchInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Autosave"} updateParameter={props.updateParameter}/></li>
-                <li><ParameterSwitchInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs Along Diagonal"} updateParameter={props.updateParameter}/></li>
-                <li>Default empty element: &nbsp;
+                <li><ParameterBoxInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Auto Save"} updateParameter={props.updateParameter}/></li>
+                <li><ParameterBoxInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs"} updateParameter={props.updateParameter}/></li>
+                <li>Empty Element: &nbsp;
                 <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/> </li>
             </div>  : null}
 

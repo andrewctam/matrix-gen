@@ -44,3 +44,8 @@ li {
     list-style-type: none;
 }
 
+.form-check-input {
+    margin-left: 6px;
+}
+
+
