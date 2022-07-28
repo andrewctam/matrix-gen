@@ -133,8 +133,8 @@ function MatrixEditor(props) {
         
         <div className = "col-sm-10">
             {latex ?
-            <p>Environment &nbsp;
-            <ParameterTextInput width = {"100px"} text = {"bmatrix"} id={"environment"} updateParameter={updateExportParameter}/></p>
+            <div>Environment &nbsp;
+            <ParameterTextInput width = {"100px"} text = {"bmatrix"} id={"environment"} updateParameter={updateExportParameter}/></div>
             :
 
             <div className ="row">
@@ -169,12 +169,12 @@ function MatrixEditor(props) {
 
             {custom ?
             <div className = "col-sm-6">
-                <p>Open arrays with &nbsp;
-                    <ParameterTextInput text = {start} width = {"20px"} id={"start"} updateParameter={updateExportParameter}/></p>
-                <p>End arrays with &nbsp;
-                    <ParameterTextInput text = {end} width = {"20px"} id={"end"} updateParameter={updateExportParameter}/></p>
-                <p>Separate elements with &nbsp;
-                    <ParameterTextInput text = {delim} width = {"20px"} id={"delim"} updateParameter={updateExportParameter}/></p>
+                <div>Open arrays with &nbsp;
+                    <ParameterTextInput text = {start} width = {"20px"} id={"start"} updateParameter={updateExportParameter}/></div>
+                <div>End arrays with &nbsp;
+                    <ParameterTextInput text = {end} width = {"20px"} id={"end"} updateParameter={updateExportParameter}/></div>
+                <div>Separate elements with &nbsp;
+                    <ParameterTextInput text = {delim} width = {"20px"} id={"delim"} updateParameter={updateExportParameter}/></div>
             </div>: null}
             
             </div>}

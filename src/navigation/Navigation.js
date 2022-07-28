@@ -139,10 +139,9 @@ function Navigation(props) {
 
             {showSettings ? 
             <div>               
-                <li><ParameterBoxInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Auto Save"} updateParameter={props.updateParameter}/></li>
-                <li><ParameterBoxInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs"} updateParameter={props.updateParameter}/></li>
-                <li>Empty Element: &nbsp;
-                <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/> </li>
+                <ParameterBoxInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Auto Save"} updateParameter={props.updateParameter}/>
+                <ParameterBoxInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs"} updateParameter={props.updateParameter}/>
+                {"Empty Element:"} <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/>
             </div>  : null}
 
 

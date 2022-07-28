@@ -11,7 +11,10 @@ input {
     border-radius: 5px;
     color: white;
     border: 1px solid black;
+}
 
+input::placeholder {
+    color: rgba(255, 255, 255, 0.524);
 }
 
 h1 {

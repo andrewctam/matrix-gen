@@ -22,3 +22,7 @@
 .importBox::placeholder, .importedMatrixName::placeholder {
     color: rgba(255, 255, 255, 0.5);
 }
+
+.wsWarning {
+    color: rgb(238, 144, 144);
+}
