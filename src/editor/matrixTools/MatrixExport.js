@@ -11,6 +11,7 @@ function MatrixEditor(props) {
     const [environment, setEnvironment] = useState("bmatrix");
     const [custom, setCustom] = useState(false);
     const [exportOption, setExportOption] = useState("{},");
+    const [newLines, setNewLines] = useState(true);
 
 
     function handleFocus(e) {
@@ -39,6 +40,8 @@ function MatrixEditor(props) {
             return result + "\n\\end{" + environment + "}"; 
         }
 
+
+
         result = start.toString();
 
         for (i = 0; i < props.matrix.length - 1; i++) {
@@ -55,10 +58,16 @@ function MatrixEditor(props) {
                 }
             }
             result += end;
+
             if (i !== props.matrix.length - 2) {
-                result += delim + "\n";
+                if (newLines)
+                    result += delim + "\n";
+                else
+                    result += delim;
+
             }
         }
+        console.log(result);
         return result + end;
 
     }
@@ -83,6 +92,11 @@ function MatrixEditor(props) {
             case "custom":
                 setCustom(updated);  
                 break; 
+            case "newLines":
+                setNewLines(updated);
+                break;
+                
+                
             default: break;
   
         }
@@ -167,16 +181,18 @@ function MatrixEditor(props) {
                 </ul> 
             </div>
 
-            {custom ?
             <div className = "col-sm-6">
-                <div>Open arrays with &nbsp;
-                    <ParameterTextInput text = {start} width = {"20px"} id={"start"} updateParameter={updateExportParameter}/></div>
-                <div>End arrays with &nbsp;
-                    <ParameterTextInput text = {end} width = {"20px"} id={"end"} updateParameter={updateExportParameter}/></div>
-                <div>Separate elements with &nbsp;
-                    <ParameterTextInput text = {delim} width = {"20px"} id={"delim"} updateParameter={updateExportParameter}/></div>
-            </div>: null}
-            
+                <ParameterBoxInput isChecked = {newLines} id={"newLines"} text = {"Add New Lines"} updateParameter={updateExportParameter}/>
+
+                {custom ? <div>
+                    <div>Open arrays with &nbsp;
+                        <ParameterTextInput text = {start} width = {"5%"} id={"start"} updateParameter={updateExportParameter}/></div>
+                    <div>End arrays with &nbsp;
+                        <ParameterTextInput text = {end} width = {"5%"} id={"end"} updateParameter={updateExportParameter}/></div>
+                    <div>Separate elements with &nbsp;
+                        <ParameterTextInput text = {delim} width = {"5%"} id={"delim"} updateParameter={updateExportParameter}/></div>
+                </div> : null}
+            </div>
             </div>}
         </div>    
     </div>

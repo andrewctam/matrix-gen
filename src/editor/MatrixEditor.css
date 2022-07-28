@@ -21,3 +21,15 @@
   padding: 5px;
   background-color: rgba(48, 50, 51, 0.49);
 }
+
+.bigMatrixInfo {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2vh;
+  font-size: large;
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(48, 50, 51, 0.49);
+  border-radius: 10px;
+}

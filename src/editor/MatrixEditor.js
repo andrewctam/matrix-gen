@@ -39,6 +39,8 @@ function MatrixEditor(props) {
         }
     }
 
+    var showTable = (props.matrix.length <= 51 && props.matrix[0].length <= 51);
+
     return (
     <div className = "matrixEditor">
         <div id = "options" className = "options">
@@ -107,16 +109,22 @@ function MatrixEditor(props) {
         </div>
 
 
-        <Table 
-            mirror = {props.mirror}
-            name = {props.name}
-            matrix = {props.matrix} 
-            addCols = {props.addCols}
-            addRows = {props.addRows}
-            addRowsAndCols = {props.addRowsAndCols}
-            updateEntry = {props.updateEntry}
-            tryToDelete = {props.tryToDelete}
-        /> 
+        {showTable ? 
+            <Table 
+                mirror = {props.mirror}
+                name = {props.name}
+                matrix = {props.matrix} 
+                addCols = {props.addCols}
+                addRows = {props.addRows}
+                addRowsAndCols = {props.addRowsAndCols}
+                updateEntry = {props.updateEntry}
+                tryToDelete = {props.tryToDelete}
+            /> 
+            : <div className = "bigMatrixInfo">
+                Matrices larger than 50 x 50 are too big to be displayed<br/>
+                Use Import Matrix From Text or Matrix Actions to edit the matrix<br/>
+                Use Export Matrix to view the matrix
+            </div>}
 
     </div>)
 

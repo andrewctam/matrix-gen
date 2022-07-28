@@ -12,5 +12,11 @@
   background-color: rgb(125, 120, 125);
   color: white;
   padding: 2px;
+  
+  overflow-wrap: normal;
+  overflow-x: auto;
+  overflow-y: auto;
+  white-space: pre;
+;
 
 }

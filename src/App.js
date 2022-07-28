@@ -145,11 +145,6 @@ function App(props) {
 
     function resizeMatrix(name, rows, cols, update = true) {
         if (matrices[name].length !== rows || matrices[name][0].length !== cols) {
-            if (rows > 51)
-                rows = 51
-            if (cols > 51)
-                cols = 51
-
             var lessRows = Math.min(rows, matrices[name].length)
             var lessCols = Math.min(cols, matrices[name][0].length)
 
@@ -253,8 +248,7 @@ function App(props) {
         if (tempMatrix === null)
             tempMatrix = [...matrices[name]]
 
-        if (i < 50 && j < 50) {
-            if (mirror) {
+        if (mirror) {
                 //add enough rows in order to update the correct  j, i
                 if (j >= matrices[name].length - 1) {
                     tempMatrix = addRows(j - matrices[name].length + 2, false)
@@ -266,21 +260,17 @@ function App(props) {
                 }
                 
                 tempMatrix[j][i] = val;
-            }
+        }
 
-            tempMatrix[i][j] = val;
-            setMatrix(tempMatrix, name); 
-        } else
-            alert("Max matrix size 50 x 50 reached!");
+        tempMatrix[i][j] = val;
+        setMatrix(tempMatrix, name); 
+         
     }
     
     function addCols(name, numToAdd, update = true) {
         //copy matrix
         var tempMatrix = [...matrices[name]];
 
-        //mas 50 cols
-        if (tempMatrix[0].length + numToAdd > 51)
-            numToAdd = 51 - tempMatrix[0].length;
 
         for (var i = 0; i < tempMatrix.length; i++) {
             for (var j = 0; j < numToAdd; j++)
@@ -297,9 +287,6 @@ function App(props) {
     function addRows(name, numToAdd, update = true) {
         var tempMatrix = [...matrices[name]];
 
-        //max 50 rows
-        if (tempMatrix.length + numToAdd > 51)
-            numToAdd = 51 - tempMatrix.length;
 
         for (var i = 0; i < numToAdd; i++) {
             tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
@@ -315,13 +302,6 @@ function App(props) {
     function addRowsAndCols(name, rowsToAdd, colsToAdd, update = true) {
         var tempMatrix = [...matrices[name]];
 
-        if (tempMatrix.length + rowsToAdd > 51)
-            rowsToAdd = 51 - tempMatrix.length;
-
-        if (tempMatrix[0].length + colsToAdd > 51)
-            colsToAdd = 51 - tempMatrix[0].length;
-
-        
         for (var i = 0; i < tempMatrix.length; i++) {
             for (var j = 0; j < colsToAdd; j++)
                 tempMatrix[i].push("");
@@ -546,7 +526,7 @@ function App(props) {
         }
 
     }
-
+    console.log(matrices)
 
     return (
         <div> 
