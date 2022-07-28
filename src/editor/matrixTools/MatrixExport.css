@@ -1,4 +1,4 @@
-.export {
+.exportContainer {
   width: 100%;
   padding: 10px;
   background-color: rgba(48, 50, 51, 0.49);
@@ -6,7 +6,7 @@
 
 }
 
-.exportOutput {
+.exportTextArea {
   width: 100%;
   margin-bottom: 10px;
   background-color: rgb(125, 120, 125);
@@ -17,6 +17,6 @@
   overflow-x: auto;
   overflow-y: auto;
   white-space: pre;
-;
+
 
 }

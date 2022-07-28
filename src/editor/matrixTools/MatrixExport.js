@@ -4,23 +4,27 @@ import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import "./MatrixExport.css";
 
 function MatrixEditor(props) {    
+    const [exportOption, setExportOption] = useState("arrays");
+
+
     const [start, setStart] = useState("{");
     const [end, setEnd] = useState("}");
     const [delim, setDelim] = useState(",");
-    const [latex, setLatex] = useState(false);
-    const [environment, setEnvironment] = useState("bmatrix");
-    const [custom, setCustom] = useState(false);
-    const [exportOption, setExportOption] = useState("{},");
     const [newLines, setNewLines] = useState(true);
 
+    const [environment, setEnvironment] = useState("bmatrix");
+
+    
 
     function handleFocus(e) {
         e.target.select();
     }
     
     function matrixToString() {
-        if (latex) {
-            var result = "\\begin{" + environment + "}\n";
+        switch (exportOption) {
+
+        case "latex":
+            var result = environment !== "" ? `\\begin{${environment}}\n` : "";
             for (var i = 0; i < props.matrix.length - 1; i++) {
                 for (var j = 0; j < props.matrix[0].length - 1; j++) {
                     if (props.matrix[i][j] === "") {
@@ -32,51 +36,52 @@ function MatrixEditor(props) {
                     if (j !== props.matrix[0].length - 2) {
                         result += " & ";
                     } else if (i !== props.matrix.length - 2) {
-                        result += " \\\\ \n";
+                        if (newLines)
+                            result += " \\\\ \n";
+                        else
+                        result += " \\\\ ";
                     }
                 }
             }
 
-            return result + "\n\\end{" + environment + "}"; 
-        }
-
-
-
-        result = start.toString();
-
-        for (i = 0; i < props.matrix.length - 1; i++) {
-            result += start;
             
-            for (j = 0; j < props.matrix[0].length - 1; j++) {
-                if (props.matrix[i][j] !== "")
-                    result += props.matrix[i][j];
-                else
-                    result += props.sparseVal;
-                    
-                if (j !== props.matrix[0].length - 2) {
-                    result += delim;
+            return result + (environment !== "" ? `\n\\end{${environment}"}` : ""); 
+        
+
+        case "arrays":
+            result = start.toString();
+
+            for (i = 0; i < props.matrix.length - 1; i++) {
+                result += start;
+                
+                for (j = 0; j < props.matrix[0].length - 1; j++) {
+                    if (props.matrix[i][j] !== "")
+                        result += props.matrix[i][j];
+                    else
+                        result += props.sparseVal;
+                        
+                    if (j !== props.matrix[0].length - 2) {
+                        result += delim;
+                    }
+                }
+                result += end;
+
+                if (i !== props.matrix.length - 2) {
+                    if (newLines)
+                        result += delim + "\n";
+                    else
+                        result += delim;
+
                 }
             }
-            result += end;
-
-            if (i !== props.matrix.length - 2) {
-                if (newLines)
-                    result += delim + "\n";
-                else
-                    result += delim;
-
-            }
+            console.log(result);
+            return result + end;
         }
-        console.log(result);
-        return result + end;
 
     }
 
     function updateExportParameter(i, updated) {
-        switch (i) {
-            case "environment":
-                setEnvironment(updated);  
-                break;  
+        switch (i) { 
             case "start":
                 setStart(updated);  
                 break;  
@@ -85,15 +90,12 @@ function MatrixEditor(props) {
                 break;  
             case "delim":
                 setDelim(updated);  
-                break;  
-            case "latex":
-                setLatex(updated);  
-                break; 
-            case "custom":
-                setCustom(updated);  
-                break; 
+                break;   
             case "newLines":
                 setNewLines(updated);
+                break;
+            case "environment":
+                setEnvironment(updated);
                 break;
                 
                 
@@ -103,88 +105,86 @@ function MatrixEditor(props) {
     }
 
 
-    function usePreset(e) {
-        toggleCustom(false);
+    function updateExportOption(e) {
         var updated = e.target.id;
         switch (updated) {
-            case "{},":
-                setStart("{");
-                setEnd("}");
-                setDelim(",");
-                setExportOption("{},");  
-                break;  
-            case "[],":
+            case "arrays":
                 setStart("[");
                 setEnd("]");
                 setDelim(",");
-                setExportOption("[],");      
+                setExportOption("arrays");
                 break;
-            case "(),":
-                setStart("(");
-                setEnd(")");
-                setDelim(",");
-                setExportOption("(),");  
-            break;
+            case "latex":
+                setEnvironment("bmatrix");
+                setExportOption("latex");
+                break;
             
             default: break;
   
         }
     }
 
-    function toggleCustom(option = true) {
-        updateExportParameter("custom", option);
-        
-        setExportOption("custom");
-    }    
+    function presets(e) {
+        let updated = e.target.id;
+        switch(updated) {
+            case "{},":
+                setStart("{");
+                setEnd("}");
+                setDelim(",");
+                break;  
+            case "[],":
+                setStart("[");
+                setEnd("]");
+                setDelim(",");
+                break;
+            case "(),":
+                setStart("(");
+                setEnd(")");
+                setDelim(",");
+                break;
 
+            case "spaces":
+                setStart("");
+                setEnd("");
+                setDelim(" ");
+                break;
 
+            default: break;
+        }
+
+    }
+
+  
     
-    return <div className = "row export">
-        <textarea readOnly = {true} onClick = {handleFocus} className="exportOutput" value = {matrixToString(props.matrix)} />
-        <div className = "col-sm-2">
-            <ParameterBoxInput isChecked = {latex} id={"latex"} text = {"LaTeX Format"} updateParameter={updateExportParameter}/>
-        </div>
+    return <div className = "row exportContainer">
+        <textarea readOnly = {true} onClick = {handleFocus} className="exportTextArea" value = {matrixToString(props.matrix)} />
+
         
-        <div className = "col-sm-10">
-            {latex ?
-            <div>Environment &nbsp;
-            <ParameterTextInput width = {"100px"} text = {"bmatrix"} id={"environment"} updateParameter={updateExportParameter}/></div>
-            :
-
-            <div className ="row">
-            <div className = "col-sm-6">
+        <div className = "row">
+            <div className = "col-sm-4">
                 <ul>
-                    Export Setting
-                    <li><button id = "{}," 
-                    onClick = {usePreset} 
-                    className = {exportOption === "{}," ? "btn btn-info" : "btn btn-secondary"}>
-                    {"Curly Braces and Comma { } ,"}
-                    </button></li>
+                    {"Export Format"}
+                    <li><button id = "arrays"
+                        onClick = {updateExportOption} 
+                        className = {exportOption === "arrays" ? "btn btn-info" : "btn btn-secondary"}>
+                        {"2D Arrays"}
+                        </button>
+                    </li>
 
-                    <li><button id = "[]," 
-                    onClick = {usePreset} 
-                    className = {exportOption === "[]," ? "btn btn-info" : "btn btn-secondary"}>
-                    {"Square Braces and Comma [ ] ,"}
-                    </button></li>
+                    <li><button id = "latex" 
+                        onClick = {updateExportOption} 
+                        className = {exportOption === "latex" ? "btn btn-info" : "btn btn-secondary"}>
+                        {"LaTeX Format"}
+                        </button>
+                    </li>
 
-                    <li><button id = "()," 
-                    onClick = {usePreset} 
-                    className = {exportOption === "()," ? "btn btn-info" : "btn btn-secondary"}>
-                    {"Parentheses and Comma ( ) ,"}
-                    </button></li>
-
-                    <li><button 
-                    onClick = {toggleCustom} 
-                    className = {exportOption === "custom" ? "btn btn-info" : "btn btn-secondary"}>
-                    {"Custom"}
-                    </button></li>
                 </ul> 
             </div>
 
-            <div className = "col-sm-6">
+            <div className = "col-sm-4">
                 <ParameterBoxInput isChecked = {newLines} id={"newLines"} text = {"Add New Lines"} updateParameter={updateExportParameter}/>
 
-                {custom ? <div>
+                {exportOption === "arrays" ? <div>
                     <div>Open arrays with &nbsp;
                         <ParameterTextInput text = {start} width = {"5%"} id={"start"} updateParameter={updateExportParameter}/></div>
                     <div>End arrays with &nbsp;
@@ -192,8 +192,45 @@ function MatrixEditor(props) {
                     <div>Separate elements with &nbsp;
                         <ParameterTextInput text = {delim} width = {"5%"} id={"delim"} updateParameter={updateExportParameter}/></div>
                 </div> : null}
+
+                {exportOption === "latex" ? <div>Environment &nbsp;
+                    <ParameterTextInput width = {"15%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>
+                : null}
             </div>
-            </div>}
+
+            <div className = "col-sm-4">
+                {exportOption === "arrays" ? 
+                    
+                    <ul>
+                        Quick Options: 
+                        <li><button id = "[]," 
+                            onClick = {presets} 
+                            className = "btn btn-secondary">
+                        {"Square Braces [ ] ,"}
+                        </button></li>
+
+                        <li><button id = "{}," 
+                            onClick = {presets} 
+                            className = "btn btn-secondary">
+                        {"Curly Braces { } ,"}
+                        </button></li>
+
+                        <li><button id = "()," 
+                            onClick = {presets} 
+                            className = "btn btn-secondary">
+                        {"Parentheses ( ) ,"}
+                        </button></li>
+
+                        <li><button id = "spaces" 
+                            onClick = {presets} 
+                            className = "btn btn-secondary">
+                        {"Spaces"}
+                        </button></li>
+
+                    </ul>
+                : null}
+
+            </div>
         </div>    
     </div>
 }
