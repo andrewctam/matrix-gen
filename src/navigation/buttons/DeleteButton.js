@@ -4,7 +4,7 @@ function DeleteButton(props) {
     function deleteMatrix() {
         if (window.confirm("Are you sure you want to delete " + props.selection + "?")) {
             props.deleteMatrix(props.selection); 
-            props.updateSelection("0");
+            props.updateMatrixSelection("0");
         }
     }
 

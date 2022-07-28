@@ -339,15 +339,15 @@ function MatrixMath(props) {
         <div className = "col-sm-3">
             <input type="text" className = "mathInput" value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>
             <br/>
-            <button class = "btn btn-secondary mathEval" onClick={calculate}>Evaluate Expression</button>
+            <button className = "btn btn-secondary mathEval" onClick={calculate}>Evaluate Expression</button>
         </div>
 
         <div className = "col-sm-9">
-            <ul>
+            <ul className = "mathInfo">
                 <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
                 <li>You can enter matrix names or numbers (for matrix scalar multiplication)</li>
                 <li>Valid operators: * ^ + -</li>
-                <li>You can use parentheses to specify order of operations. However, use * for multiplication</li>
+                <li>You can use parentheses to specify order of operations.</li>
             </ul>
         </div>
 

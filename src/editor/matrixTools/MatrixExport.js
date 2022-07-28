@@ -14,7 +14,6 @@ function MatrixEditor(props) {
 
     const [environment, setEnvironment] = useState("bmatrix");
 
-    
 
     function handleFocus(e) {
         e.target.select();
@@ -37,7 +36,7 @@ function MatrixEditor(props) {
                         result += " & ";
                     } else if (i !== props.matrix.length - 2) {
                         if (newLines)
-                            result += " \\\\ \n";
+                            result += " \\\\\n";
                         else
                         result += " \\\\ ";
                     }
@@ -45,7 +44,7 @@ function MatrixEditor(props) {
             }
 
             
-            return result + (environment !== "" ? `\n\\end{${environment}"}` : ""); 
+            return result + (environment !== "" ? `\n\\end{${environment}}` : ""); 
         
 
         case "arrays":
@@ -74,7 +73,6 @@ function MatrixEditor(props) {
 
                 }
             }
-            console.log(result);
             return result + end;
         }
 
@@ -161,7 +159,7 @@ function MatrixEditor(props) {
 
         
         <div className = "row">
-            <div className = "col-sm-4">
+            <div className = "col-sm-3">
                 <ul>
                     {"Export Format"}
                     <li><button id = "arrays"
@@ -181,24 +179,24 @@ function MatrixEditor(props) {
                 </ul> 
             </div>
 
-            <div className = "col-sm-4">
+            <div className = "col-sm-3">
                 <ParameterBoxInput isChecked = {newLines} id={"newLines"} text = {"Add New Lines"} updateParameter={updateExportParameter}/>
 
                 {exportOption === "arrays" ? <div>
                     <div>Open arrays with &nbsp;
-                        <ParameterTextInput text = {start} width = {"5%"} id={"start"} updateParameter={updateExportParameter}/></div>
+                        <ParameterTextInput text = {start} width = {"10%"} id={"start"} updateParameter={updateExportParameter}/></div>
                     <div>End arrays with &nbsp;
-                        <ParameterTextInput text = {end} width = {"5%"} id={"end"} updateParameter={updateExportParameter}/></div>
+                        <ParameterTextInput text = {end} width = {"10%"} id={"end"} updateParameter={updateExportParameter}/></div>
                     <div>Separate elements with &nbsp;
-                        <ParameterTextInput text = {delim} width = {"5%"} id={"delim"} updateParameter={updateExportParameter}/></div>
+                        <ParameterTextInput text = {delim} width = {"10%"} id={"delim"} updateParameter={updateExportParameter}/></div>
                 </div> : null}
 
                 {exportOption === "latex" ? <div>Environment &nbsp;
-                    <ParameterTextInput width = {"15%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>
+                    <ParameterTextInput width = {"25%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>
                 : null}
             </div>
 
-            <div className = "col-sm-4">
+            <div className = "col-sm-6">
                 {exportOption === "arrays" ? 
                     
                     <ul>

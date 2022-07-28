@@ -26,8 +26,6 @@ function Navigation(props) {
                 if (!isNaN(temp))
                     sizeFilters.push(temp)
             }
-
-            console.log(sizeFilters)
         }
 
 
@@ -48,7 +46,7 @@ function Navigation(props) {
 
 
         if (tempSelectors.length === 0)
-            tempSelectors.push(<div className = "noMatrices">{"No Matrices Found"} </div>);
+            tempSelectors.push(<div className = "noMatrices">{"No Matrices Found"}</div>);
         else
             tempSelectors.sort( (selector1, selector2)  => {
                 return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
@@ -75,9 +73,9 @@ function Navigation(props) {
         var rows = matrix.length - 1;
         var cols = matrix[0].length - 1;
 
-        if (sizeFilters.length == 1)
+        if (sizeFilters.length == 1) //only a number entered
             return rows === sizeFilters[0] || cols === sizeFilters[0]
-        else
+        else //n x m entered
             return rows === sizeFilters[0] && cols === sizeFilters[1];
             
     }
@@ -88,16 +86,16 @@ function Navigation(props) {
         <div className = "col-sm-4 info">
             <div id = "selectors" className="list-group">
                     <AddButton 
-                        key = " add " 
+                        key = "addButton" 
                         setMatrix = {props.setMatrix} />
                     <DuplicateButton 
-                        key = " duplicate " 
+                        key = "duplicateButton" 
                         copyMatrix = {props.copyMatrix}
                         selection = {props.selection}/>
                     <DeleteButton 
-                        key = " delete " 
+                        key = "deleteButton" 
                         deleteMatrix = {props.deleteMatrix} 
-                        updateSelection = {props.updateSelection}
+                        updateMatrixSelection = {props.updateMatrixSelection}
                         selection = {props.selection}/>
                 </div> 
         </div>
@@ -113,9 +111,6 @@ function Navigation(props) {
             </div>
         <div className = "col-sm-4">
             
-
-            
-
             <button 
                 className = {"btn " + (showSettings ? "btn-info" : "btn-secondary")}
                 onClick={() => {setShowSettings(!showSettings)}}>
@@ -136,6 +131,7 @@ function Navigation(props) {
                 {"Delete All Matrices"}
             </button>
             
+
 
             {showSettings ? 
             <div>               

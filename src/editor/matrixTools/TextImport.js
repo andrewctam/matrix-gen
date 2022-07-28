@@ -59,7 +59,7 @@ function TextImport(props) {
             case "separator":
                 var updatedDisplayWarning = settingC.includes(" ") || settingD === "\n" || settingD.includes(" ");
                 break;
-            case "2DArray":
+            case "2DArrays":
                 updatedDisplayWarning = settingA.includes(" ") || settingB.includes(" ") || settingC.includes(" ");
                 break;
             case "reshape":
@@ -84,7 +84,7 @@ function TextImport(props) {
                 setSettingC(" ");
                 setSettingD("\n");
                 break;
-            case "2DArray":
+            case "2DArrays":
                 setSettingA("{");
                 setSettingB("}");
                 setSettingC(",");
@@ -143,7 +143,7 @@ function TextImport(props) {
                 
                 break;
                 
-            case "2DArray":
+            case "2DArrays":
                 if (!ignoreWhitespace) //if we have not already removed new lines before 
                     text = text.replaceAll("\n", "");
 
@@ -158,7 +158,6 @@ function TextImport(props) {
                     var braceSeparator = new RegExp(settingB + ".*?" + separator + ".*?" + settingA); 
                     
                     rows = noBraces.split(braceSeparator);
-                    console.log(rows)
                     for (i = 0; i < rows.length; i++) {
                         matrix.push(rows[i].split(separator));
                         matrix[i].push(" ");
@@ -226,7 +225,7 @@ function TextImport(props) {
         case "separator":
             var inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n1${settingC}0${settingC}0${settingC}0${settingD}0${settingC}1${settingC}0${settingC}0${settingD}0${settingC}0${settingC}1${settingC}0${settingD}0${settingC}0${settingC}0${settingC}1\nExtra characters may lead to an unexpected input`;
             break;
-        case "2DArray":
+        case "2DArrays":
             inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n${settingA}${settingA}1${settingC}0${settingC}0${settingC}0${settingB}${settingC}\n${settingA}0${settingC}1${settingC}0${settingC}0${settingB}${settingC}\n${settingA}0${settingC}0${settingC}1${settingC}0${settingB}${settingC}\n${settingA}0${settingC}0${settingC}0${settingC}1${settingB}${settingB}\nExtra characters may lead to an unexpected input`;
             break;
         case "reshape":
@@ -269,10 +268,10 @@ function TextImport(props) {
                     {"Separators"}
                     </button></li>
 
-                    <li><button id = "2DArray" 
+                    <li><button id = "2DArrays" 
                     onClick = {updateImportFormat} 
-                    className = {importFormat === "2DArray" ? "btn btn-info" : "btn btn-secondary"}>
-                    {"2D Array"}
+                    className = {importFormat === "2DArrays" ? "btn btn-info" : "btn btn-secondary"}>
+                    {"2D Arrays"}
                     </button></li>
 
                     <li><button id = "reshape" 
@@ -297,7 +296,7 @@ function TextImport(props) {
             : null }
             
 
-            {importFormat === "2DArray" ? 
+            {importFormat === "2DArrays" ? 
             <div>
                 <div>Opening Bracket: <ParameterTextInput text = {settingA} width = {"10%"} id={"settingA"} updateParameter={updateParameter}/></div>
                 <div>Closing Bracket: <ParameterTextInput text = {settingB} width = {"10%"} id={"settingB"} updateParameter={updateParameter}/></div>
