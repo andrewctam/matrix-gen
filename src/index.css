@@ -17,9 +17,6 @@ input::placeholder {
     color: rgba(255, 255, 255, 0.524);
 }
 
-h1 {
-    font-size: medium;
-}
 
 
 .btn {
@@ -50,6 +47,13 @@ li {
 
 .form-check-input {
     margin-left: 6px;
+}
+
+
+.centeredCol {
+    margin-left: auto;
+    margin-right: auto;
+
 }
 
 

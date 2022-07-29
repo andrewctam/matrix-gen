@@ -7,6 +7,7 @@ import AddButton from './buttons/AddButton';
 import DeleteButton from './buttons/DeleteButton';
 import DuplicateButton from './buttons/DuplicateButton';
 
+import Tutorial from './Tutorial';
 import "./Navigation.css"
 
 function Navigation(props) {
@@ -14,7 +15,20 @@ function Navigation(props) {
     const [searchName, setSearchName] = useState("");
     const [searchSize, setSearchSize] = useState("");
     const [showSettings, setShowSettings] = useState(false);
-    
+    const [showTutorial, setShowTutorial] = useState(false);
+
+    useEffect(() => {
+        if (window.localStorage.getItem("firstVisit;") === null) {
+            setShowTutorial(true);
+            window.localStorage.setItem("firstVisit;", "0");
+        }
+    }, []) 
+
+    useEffect(() => {
+        document.getElementById("selectors").scrollTop = document.getElementById("selectors").scrollHeight;
+        console.log(document.getElementById("selectors").scrollHeight);
+    }, [selectors])
+
     useEffect(() => {
         var tempSelectors = []
 
@@ -80,9 +94,16 @@ function Navigation(props) {
             
     }
 
-
+    function closeTutorial() {
+        setShowTutorial(false);
+    }
 
     return  <div className = "row navigateBar">
+
+{showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
+
+
+
         <div className = "col-sm-4 info">
             <div id = "selectors" className="list-group">
                     <AddButton 
@@ -99,18 +120,17 @@ function Navigation(props) {
                         selection = {props.selection}/>
                 </div> 
         </div>
-            <div className = "col-sm-4">
-                <input className = "nameSearchBar" onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
-                <input className = "sizeSearchBar" onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
 
-                <div id = "selectors" className="list-group">
-                    {selectors}    
-                </div>
-
-
-            </div>
         <div className = "col-sm-4">
-            
+            <input className = "nameSearchBar" onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
+            <input className = "sizeSearchBar" onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
+
+            <div id = "selectors" className="list-group">
+                {selectors}    
+            </div>
+        </div>
+
+        <div className = "col-sm-4">
             <button 
                 className = {"btn " + (showSettings ? "btn-info" : "btn-secondary")}
                 onClick={() => {setShowSettings(!showSettings)}}>
@@ -130,6 +150,14 @@ function Navigation(props) {
                 onClick={props.deleteAllMatrices}>
                 {"Delete All Matrices"}
             </button>
+
+            
+            {!showTutorial ? 
+            <button 
+                className = "btn btn-secondary" 
+                onClick={() => {setShowTutorial(!showTutorial)}}>
+                {"Show Tutorial"}
+            </button> : null}
             
 
 
@@ -138,10 +166,13 @@ function Navigation(props) {
                 <ParameterBoxInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Auto Save"} updateParameter={props.updateParameter}/>
                 <ParameterBoxInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs"} updateParameter={props.updateParameter}/>
                 {"Empty Element:"} <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/>
-            </div>  : null}
+            </div> : null}
 
 
         </div>
+
+
+
     </div>
 
 

@@ -240,53 +240,36 @@ function TextImport(props) {
     }
 
     return <div className = "row importContainer">
-        <textarea id = "importTextArea" className = "importBox" placeholder = {inputMatrixPlaceholder}>
-            
-        </textarea>
+        <textarea id = "importTextArea" className = "importBox" placeholder = {inputMatrixPlaceholder}></textarea>
 
-        <div className = "col-sm-3">
-            <ParameterBoxInput isChecked = {overwrite} id = "overwrite" name = "overwrite" text = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
-
-            {(overwrite ? null : <div>
-                {"Save as New Matrix: "}
-                <input className = "importedMatrixName" 
-                placeholder={namePlaceholder} 
-                value = {newName}
-                onChange={updateNewMatrixName} />
-            </div>
-            )}
-
-        </div>
-
-        <div className = "col-sm-3">
+        <div className = "col-sm-4">
             <ul>
-                    {"Import Format"}
-                    
-                    <li><button id = "separator" 
-                    onClick = {updateImportFormat} 
-                    className = {importFormat === "separator" ? "btn btn-info" : "btn btn-secondary"}>
-                    {"Separators"}
-                    </button></li>
+                {"Import Format"}
+                
+                <li><button id = "separator" 
+                onClick = {updateImportFormat} 
+                className = {importFormat === "separator" ? "btn btn-info" : "btn btn-secondary"}>
+                {"Separators"}
+                </button></li>
 
-                    <li><button id = "2DArrays" 
-                    onClick = {updateImportFormat} 
-                    className = {importFormat === "2DArrays" ? "btn btn-info" : "btn btn-secondary"}>
-                    {"2D Arrays"}
-                    </button></li>
+                <li><button id = "2DArrays" 
+                onClick = {updateImportFormat} 
+                className = {importFormat === "2DArrays" ? "btn btn-info" : "btn btn-secondary"}>
+                {"2D Arrays"}
+                </button></li>
 
-                    <li><button id = "reshape" 
-                    onClick = {updateImportFormat} 
-                    className = {importFormat === "reshape" ? "btn btn-info" : "btn btn-secondary"}>
-                    {"Reshape From One Line"}
-                    </button></li>
+                <li><button id = "reshape" 
+                onClick = {updateImportFormat} 
+                className = {importFormat === "reshape" ? "btn btn-info" : "btn btn-secondary"}>
+                {"Reshape From One Line"}
+                </button></li>
                    
                 </ul> 
         </div>
 
-        <div className = "col-sm-3">
+        <div className = "col-sm-4">
             <ParameterBoxInput isChecked = {ignoreWhitespace} id = "ignoreWhiteSpace" name = "ignoreWhiteSpace" text = {"Ignore White Space"} updateParameter = {updateParameter}/>
 
-            
 
             {importFormat === "separator" ? 
             <div>
@@ -313,18 +296,26 @@ function TextImport(props) {
 
             {ignoreWhitespace && displayWarning ? <div class = "wsWarning">{"WARNING: One of your parameters contains whitespaces"}</div> : null}
 
+        </div>
 
+        <div className = "col-sm-4">
+            <ParameterBoxInput isChecked = {overwrite} id = "overwrite" name = "overwrite" text = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
 
+            {(overwrite ? null : <div>
+                {"Save as New Matrix: "}
+                <input className = "importedMatrixName" 
+                placeholder={namePlaceholder} 
+                value = {newName}
+                onChange={updateNewMatrixName} />
+            </div>
+            )}
 
-
-
+        <button className = "btn btn-success" onClick = {parseText} >Import Matrix</button>
 
 
         </div>
-        <div className = "col-sm-3">
-            <button className = "btn btn-success" onClick = {parseText} >Import Matrix</button>
 
-        </div>
+       
        
     </div>
 }

@@ -157,9 +157,7 @@ function MatrixEditor(props) {
     return <div className = "row exportContainer">
         <textarea readOnly = {true} onClick = {handleFocus} className="exportTextArea" value = {matrixToString(props.matrix)} />
 
-        
-        <div className = "row">
-            <div className = "col-sm-3">
+            <div className = "col-sm-4">
                 <ul>
                     {"Export Format"}
                     <li><button id = "arrays"
@@ -179,7 +177,7 @@ function MatrixEditor(props) {
                 </ul> 
             </div>
 
-            <div className = "col-sm-3">
+            <div className = "col-sm-4">
                 <ParameterBoxInput isChecked = {newLines} id={"newLines"} text = {"Add New Lines"} updateParameter={updateExportParameter}/>
 
                 {exportOption === "arrays" ? <div>
@@ -196,9 +194,8 @@ function MatrixEditor(props) {
                 : null}
             </div>
 
-            <div className = "col-sm-6">
+            <div className = "col-sm-4">
                 {exportOption === "arrays" ? 
-                    
                     <ul>
                         Quick Options: 
                         <li><button id = "[]," 
@@ -229,8 +226,7 @@ function MatrixEditor(props) {
                 : null}
 
             </div>
-        </div>    
-    </div>
+    </div>    
 }
 
 

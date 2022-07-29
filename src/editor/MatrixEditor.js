@@ -55,7 +55,7 @@ function MatrixEditor(props) {
                 <button id = "toggleMath" 
                     className = {"btn matrixButtons " + (showMath ? "btn-info" : "btn-secondary")}
                     onClick={toggleShown}>                
-                    {showMath ? "Close" : "Perform Matrix Math"}
+                    {showMath ? "Close" : "Matrix Math"}
                 </button>
                 
                 <button id = "toggleImport" 
