@@ -4,6 +4,8 @@ import Box from './Box.js';
 import "./Table.css";
 
 function Table(props) {
+
+    //add Row/Col/Both and update matrix[row][col]
     function addRow(row, col, updated) {
         if (props.mirror) {
             var cols = props.matrix[0].length;
@@ -54,14 +56,14 @@ function Table(props) {
 
     function keyDown(row, col, e) {
         if (e.keyCode === 16) { //shift
-            if (props.matrix.length === (row + 1))
-                props.addRows(1);
-            if (props.matrix[0].length === (col + 1))
-                props.addCols(1);
-            }
-
-        if (e.keyCode === 8 && e.target.value === "") { //delete
-           props.tryToDelete(row, col); 
+            if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1))
+                props.addRowsAndCols(props.name, 1, 1)
+            else if (props.matrix.length === (row + 1))
+                props.addRows(props.name, 1);
+            else if (props.matrix[0].length === (col + 1))
+                props.addCols(props.name, 1);
+        } else if (e.keyCode === 8 && e.target.value === "") { //delete
+           props.tryToDelete(props.name, row, col); 
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             if (col !== 0) {
                 document.getElementById((row) + ":" + (col - 1)).focus();

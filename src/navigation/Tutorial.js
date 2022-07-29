@@ -62,6 +62,7 @@ function Tutorial(props) {
                         <li>The Separators format expects elements to be separated by a common character, and rows to be separated by a common character. By default, a space separates elements and new lines separate rows.</li>
                         <li>The 2D Array format expects elements to be formatted in brackets and separated by a common character.</li>
                         <li>Reshape From One Line takes all of the elements separated by a common character and reshapes it into the specified dimensions. The number of elements must be equal to the product of the dimensions</li>
+                        <li>The LaTeX format follows LaTeX's matrix syntax. Do not include the environment.</li>
                         <li>The Ignore Whitespace option will remove all whitespace before parsing your input. If you use spaces or new lines for your elements or for your settings, then this will incorrectly parse the text.</li>
 
                     </ul>
