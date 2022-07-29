@@ -77,7 +77,6 @@ function TextImport(props) {
     function updateImportFormat(e) {
         var updated = e.target.id;    
 
-        
 
         switch(updated) {
             case "separator":
@@ -94,7 +93,8 @@ function TextImport(props) {
                 setSettingA("1");
                 setSettingB("1");
                 setSettingC(" ");
-
+                break;
+            case "latex":
                 break;
 
             default: break;
@@ -215,6 +215,19 @@ function TextImport(props) {
                 props.setMatrix(matrix, name);
                 break;
 
+            case "latex":
+                text = text.replace(/\s/g,"")
+                var rows = text.split("\\\\");
+                for (var i = 0; i < rows.length; i++) {
+                    matrix.push(rows[i].split("&"));
+                    matrix[i].push("");
+                }
+
+                matrix.push(Array(rows[0].length).fill(""));
+                props.setMatrix(matrix, name); //function will also override existing (or non existing) matrices
+                
+                break;
+
             default: break;
         }
 
@@ -229,7 +242,10 @@ function TextImport(props) {
             inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n${settingA}${settingA}1${settingC}0${settingC}0${settingC}0${settingB}${settingC}\n${settingA}0${settingC}1${settingC}0${settingC}0${settingB}${settingC}\n${settingA}0${settingC}0${settingC}1${settingC}0${settingB}${settingC}\n${settingA}0${settingC}0${settingC}0${settingC}1${settingB}${settingB}\nExtra characters may lead to an unexpected input`;
             break;
         case "reshape":
-            inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n 1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1\nExtra characters may lead to an unexpected input`;
+            inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1\nExtra characters may lead to an unexpected input`;
+            break;
+        case "latex":
+            inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n1 & 0 & 0 & 0 \\\\\n0 & 1 & 0 & 0 \\\\\n0 & 0 & 1 & 0 \\\\\n0 & 0 & 0 & 1\nExtra characters may lead to an unexpected input`;
             break;
         default: break;
     }
@@ -258,18 +274,27 @@ function TextImport(props) {
                 {"2D Arrays"}
                 </button></li>
 
+                <li><button id = "latex" 
+                onClick = {updateImportFormat} 
+                className = {importFormat === "latex" ? "btn btn-info" : "btn btn-secondary"}>
+                {"LaTeX"}
+                </button></li>
+                   
+
                 <li><button id = "reshape" 
                 onClick = {updateImportFormat} 
                 className = {importFormat === "reshape" ? "btn btn-info" : "btn btn-secondary"}>
                 {"Reshape From One Line"}
                 </button></li>
-                   
+
+                
                 </ul> 
         </div>
 
         <div className = "col-sm-4">
+            {importFormat !== "latex" ? 
             <ParameterBoxInput isChecked = {ignoreWhitespace} id = "ignoreWhiteSpace" name = "ignoreWhiteSpace" text = {"Ignore White Space"} updateParameter = {updateParameter}/>
-
+            : null}
 
             {importFormat === "separator" ? 
             <div>
