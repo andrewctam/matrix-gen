@@ -188,7 +188,7 @@ function App(props) {
 
 
     function deleteAllMatrices() {
-        if (selection !== "0" && window.confirm("Delete all matrices?")) {
+        if (window.confirm("Delete all matrices?")) {
             setSelection("0");
             setMatrices({});
 
@@ -252,17 +252,17 @@ function App(props) {
             tempMatrix = [...matrices[name]]
 
         if (mirror) {
-                //add enough rows in order to update the correct  j, i
-                if (j >= matrices[name].length - 1) {
-                    tempMatrix = addRows(j - matrices[name].length + 2, false)
-                }
-                
-                //add enough cols in order to update the correct  j, i
-                if (i >= matrices[name][0].length - 1) {
-                    tempMatrix = addCols(i - matrices[name][0].length + 2, false)
-                }
-                
-                tempMatrix[j][i] = val;
+            //add enough rows/cols in order to update the correct  j, i
+
+            if (i >= matrices[name][0].length - 1 && j >= matrices[name].length - 1) {
+                tempMatrix = addRowsAndCols(selection, j - matrices[name].length + 2, i - matrices[name][0].length + 2, false)
+            } else if (j >= matrices[name].length - 1) {
+                tempMatrix = addRows(selection, j - matrices[name].length + 2, false)
+            } else  if (i >= matrices[name][0].length - 1) {
+                tempMatrix = addCols(selection, i - matrices[name][0].length + 2, false)
+            }
+            
+            tempMatrix[j][i] = val;
         }
 
         tempMatrix[i][j] = val;

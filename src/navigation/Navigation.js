@@ -129,10 +129,10 @@ function Navigation(props) {
                         }}/>
                     : null}
 
-                    {props.selection !== "0" ?
+                    {Object.keys(props.matrices).length > 0 ?
                     <MenuButton 
                         text = {"Delete All Matrices"}
-                        buttonStyle = {"danger"}
+                        buttonStyle = {"danger"} 
                         action = {props.deleteAllMatrices}
                     />
                     : null}
@@ -163,8 +163,10 @@ function Navigation(props) {
                 <MenuButton 
                     text = {"Save Matrices"}
                     buttonStyle = {"success"}
-                    action = {() => {props.saveToLocalStorage(); alert("Matrices saved to local browser storage.");}} 
-                />
+                    action = {() => {
+                        props.saveToLocalStorage();
+                        alert("Matrices saved to local browser storage.");
+                    }}/>
                 }
                
                 <MenuButton 

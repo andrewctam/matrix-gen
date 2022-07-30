@@ -130,8 +130,8 @@ function MatrixEditor(props) {
         var updated = e.target.id;
         switch (updated) {
             case "arrays":
-                setStart("[");
-                setEnd("]");
+                setStart("{");
+                setEnd("}");
                 setDelim(",");
                 setExportOption("arrays");
                 break;
