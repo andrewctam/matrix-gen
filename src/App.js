@@ -21,7 +21,7 @@ function App(props) {
     useEffect( () => {
         if (autoSave)
             saveToLocalStorage();    
-
+    // eslint-disable-next-line
     }, [matrices, autoSave]);
 
   
@@ -69,17 +69,19 @@ function App(props) {
     }
     
     function copyMatrix(toCopy, name = undefined) {
-        var tempObj = {...matrices};
-        var matrixName;
-        if (name === undefined) {
-            matrixName = generateUniqueName();
-        } else {
-            matrixName = name;
+        if (toCopy !== "0") {
+            var tempObj = {...matrices};
+            var matrixName;
+            if (name === undefined) {
+                matrixName = generateUniqueName();
+            } else {
+                matrixName = name;
+            }
+
+            tempObj[matrixName] = tempObj[toCopy].map(function(arr) { return arr.slice(); });
+
+            setMatrices(tempObj);
         }
-
-        tempObj[matrixName] = tempObj[toCopy].map(function(arr) { return arr.slice(); });
-
-        setMatrices(tempObj);
     }
 
     function setMatrix(matrix = undefined, name = undefined) {
@@ -101,11 +103,11 @@ function App(props) {
     }
 
 
-    function deleteMatrix(del) {
+    function deleteMatrix(name) {
         var tempObj = {...matrices};
-
-        delete tempObj[del];
+        delete tempObj[name];
         setMatrices(tempObj);
+        
     
     }
 
@@ -174,7 +176,7 @@ function App(props) {
         }
     }
 
-    
+    /*
     function deleteMany() {
         var toDelete = window.prompt("Enter matrices to delete: (For example: \"A B C\")").split(" ");
 
@@ -182,11 +184,12 @@ function App(props) {
             deleteMatrix(toDelete[i]);
         }
     }
+    */
 
 
     function deleteAllMatrices() {
-        if (window.confirm("Delete all matrices?")) {
-            setSelection("");
+        if (selection !== "0" && window.confirm("Delete all matrices?")) {
+            setSelection("0");
             setMatrices({});
 
             if (autoSave)

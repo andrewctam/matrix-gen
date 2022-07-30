@@ -2,12 +2,10 @@ import React, {useState, useEffect} from 'react';
 import ParameterBoxInput from '../inputs/ParameterBoxInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
 
-import SelectorButton from './buttons/SelectorButton';
-import AddButton from './buttons/AddButton';
-import DeleteButton from './buttons/DeleteButton';
-import DuplicateButton from './buttons/DuplicateButton';
-
 import Tutorial from './Tutorial';
+import SelectorButton from './buttons/SelectorButton';
+import MenuButton from './buttons/MenuButton';
+
 import "./Navigation.css"
 
 function Navigation(props) {
@@ -23,11 +21,12 @@ function Navigation(props) {
             window.localStorage.setItem("firstVisit;", "0");
         }
     }, []) 
-
+    /*
     useEffect(() => {
         document.getElementById("selectors").scrollTop = document.getElementById("selectors").scrollHeight;
         console.log(document.getElementById("selectors").scrollHeight);
     }, [selectors])
+    */
 
     useEffect(() => {
         var tempSelectors = []
@@ -67,6 +66,7 @@ function Navigation(props) {
             });
 
         setSelectors(tempSelectors);
+    // eslint-disable-next-line
     }, [props.matrices, props.selection, searchName, searchSize]);
 
     function updateSearchName(e) {
@@ -87,7 +87,7 @@ function Navigation(props) {
         var rows = matrix.length - 1;
         var cols = matrix[0].length - 1;
 
-        if (sizeFilters.length == 1) //only a number entered
+        if (sizeFilters.length === 1) //only a number entered
             return rows === sizeFilters[0] || cols === sizeFilters[0]
         else //n x m entered
             return rows === sizeFilters[0] && cols === sizeFilters[1];
@@ -99,25 +99,45 @@ function Navigation(props) {
     }
 
     return  <div className = "row navigateBar">
-
-{showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
-
-
+        {showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
 
         <div className = "col-sm-4 info">
             <div id = "selectors" className="list-group">
-                    <AddButton 
+                    <MenuButton
                         key = "addButton" 
-                        setMatrix = {props.setMatrix} />
-                    <DuplicateButton 
+                        text = {"Create New Empty Matrix"}
+                        buttonStyle = {"info"}
+                        action = {() => {props.setMatrix()}} />
+                    {props.selection !== "0" ?
+                    <MenuButton 
                         key = "duplicateButton" 
-                        copyMatrix = {props.copyMatrix}
-                        selection = {props.selection}/>
-                    <DeleteButton 
+                        buttonStyle = {"warning"}
+                        text = {`Duplicate Matrix ${props.selection}`}
+                        action = {() => {props.copyMatrix(props.selection)}} />
+                    : null}
+
+                    {props.selection !== "0" ?
+                    <MenuButton 
                         key = "deleteButton" 
-                        deleteMatrix = {props.deleteMatrix} 
-                        updateMatrixSelection = {props.updateMatrixSelection}
-                        selection = {props.selection}/>
+                        buttonStyle = {"danger"}
+                        text = {`Delete Matrix ${props.selection}`}
+                        action = {() => {
+                            if (props.selection !== "0" && window.confirm("Are you sure you want to delete " + props.selection + "?")) {
+                                props.deleteMatrix(props.selection); 
+                                props.updateMatrixSelection("0");
+                            }
+                        }}/>
+                    : null}
+
+                    {props.selection !== "0" ?
+                    <MenuButton 
+                        text = {"Delete All Matrices"}
+                        buttonStyle = {"danger"}
+                        action = {props.deleteAllMatrices}
+                    />
+                    : null}
+
+                    
                 </div> 
         </div>
 
@@ -130,58 +150,44 @@ function Navigation(props) {
             </div>
         </div>
 
-        <div className = "col-sm-4">
-            
-            <div>
-                {props.autoSave ? null : 
-                <button 
-                    className = "btn btn-secondary" 
-                    onClick={() => {props.saveToLocalStorage(); alert("Matrices saved to local browser storage.");}}>
-                    {"Save Matrices"}
-                </button>}
-                
-                <button 
-                    className = "btn btn-danger" 
-                    onClick={props.deleteAllMatrices}>
-                    {"Delete All Matrices"}
-                </button>
-            </div>
-
-
-            <div>
-                <button 
-                    className = {"btn " + (showSettings ? "btn-info" : "btn-secondary")}
-                    onClick={() => {setShowSettings(!showSettings)}}>
-
-                    {showSettings ? "Hide" : "Settings"}
-                </button>
-
+        <div className = "col-sm-4 info">
+            <div id = "selectors" className="list-group">
                 {!showTutorial ? 
-                <button 
-                    className = "btn btn-secondary" 
-                    onClick={() => {setShowTutorial(!showTutorial)}}>
-                    {"Show Tutorial"}
-                </button> : null}
+                <MenuButton 
+                    text = {"Show Tutorial"}
+                    buttonStyle = {"info"}
+                    action = {() => {setShowTutorial(true)}}
+                />: null}
+                
+                {props.autoSave ? null : 
+                <MenuButton 
+                    text = {"Save Matrices"}
+                    buttonStyle = {"success"}
+                    action = {() => {props.saveToLocalStorage(); alert("Matrices saved to local browser storage.");}} 
+                />
+                }
+               
+                <MenuButton 
+                    text = {showSettings ? "Hide Settings" : "Settings"}
+                    buttonStyle = {"primary"}
+                    action = {() => {setShowSettings(!showSettings)}}
+                />
                 
             </div>
 
 
             {showSettings ? 
-            <div>               
+            <div className = "settingsMenu">               
                 <ParameterBoxInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Auto Save"} updateParameter={props.updateParameter}/>
                 <ParameterBoxInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs"} updateParameter={props.updateParameter}/>
                 {"Empty Element:"} <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/>
             </div> : null}
-
 
         </div>
 
 
 
     </div>
-
-
-
 }
 
 

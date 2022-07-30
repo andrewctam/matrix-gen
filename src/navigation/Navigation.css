@@ -8,9 +8,8 @@
     
   }
 
-
 .list-group {
-    max-height: 125px;
+    max-height: 175px;
     overflow-y: auto;
     width: 100%;
     margin-bottom: 10px;
@@ -28,7 +27,6 @@
   width: 25%;
   
 }
-
 
 .info {
   overflow: auto;
@@ -69,4 +67,12 @@
   color: black;
   border-radius: 5px;
 
+}
+
+.settingsMenu {
+  background-color: rgb(88, 91, 96);
+  border-radius: 15px;
+  width: 95%;
+  margin: 2.5%;
+  padding: 10px;
 }

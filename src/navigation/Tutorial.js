@@ -39,6 +39,7 @@ function Tutorial(props) {
                     <li>Mirroring your matrix will copy elements (i, j) over the diagonal to (j, i). Mirroring Rows will copy the elements above the diagonal onto those below the diagonal. Mirroring Columns does the opposite.</li>
                     <li>Fill Empty With will replace all empty boxes with the inputted element.</li>
                     <li>Fill All With will replace all boxes with the inputted element.</li>
+                    <li>Fill Diagonal with replace all entires (i, i) with the inputted element.</li>
                     <li>Randomize Matrix will replace all entries with a random integer between the specified range inclusive.</li>
                     <li>Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy's reshape. The product of the new dimensions must be equal to the product of the old dimensions.</li>
                 </ul>
@@ -62,7 +63,7 @@ function Tutorial(props) {
                         <li>The Separators format expects elements to be separated by a common character, and rows to be separated by a common character. By default, a space separates elements and new lines separate rows.</li>
                         <li>The 2D Array format expects elements to be formatted in brackets and separated by a common character.</li>
                         <li>Reshape From One Line takes all of the elements separated by a common character and reshapes it into the specified dimensions. The number of elements must be equal to the product of the dimensions</li>
-                        <li>The LaTeX format follows LaTeX's matrix syntax. Do not include the environment.</li>
+                        <li>The LaTeX format follows LaTeX's matrix syntax. Do not include the environment. You can choose if you want to automatically remove escapes from these characters: {"&%$#_{}~^\\"}</li>
                         <li>The Ignore Whitespace option will remove all whitespace before parsing your input. If you use spaces or new lines for your elements or for your settings, then this will incorrectly parse the text.</li>
 
                     </ul>
@@ -74,7 +75,7 @@ function Tutorial(props) {
                         <ul className = "tutorialList">
                         <li>The output will appear in the large text box for you to copy it.</li>
                         <li>The 2D Arrays option will export the matrix in row major order. The quick options will allow you to quickly change the settings preset values.</li>
-                        <li>The LaTeX option exports the matrix following LaTeX syntax.</li>
+                        <li>The LaTeX option exports the matrix following LaTeX syntax. You can choose if you want to automatically add escapes for these characters: {"&%$#_{}~^\\"}</li>
                     </ul>
                 </div>
                 break;
