@@ -13,7 +13,7 @@ function TextImport(props) {
     const [newName, setNewName] = useState("");
     const [importFormat, setImportFormat] = useState("separator");
     const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
-
+    const [removeEscape, setRemoveEscape] = useState(true);
     const [settingA, setSettingA] = useState(""); //opening bracket, numRows
     const [settingB, setSettingB] = useState(""); //closing bracket, numCols
     const [settingC, setSettingC] = useState(" "); //separator
@@ -45,7 +45,10 @@ function TextImport(props) {
             case "ignoreWhiteSpace":
                 setIgnoreWhitespace(updated);
                 break;
-                
+            case "removeEscape":
+                setRemoveEscape(updated);
+                break;    
+            
             default: break;
         }
 
@@ -219,11 +222,36 @@ function TextImport(props) {
                 text = text.replace(/\s/g,"")
                 var rows = text.split("\\\\");
                 for (var i = 0; i < rows.length; i++) {
-                    matrix.push(rows[i].split("&"));
+                    matrix.push(rows[i].split(/(?<!\\)&/));
                     matrix[i].push("");
                 }
 
+
+                
+
                 matrix.push(Array(rows[0].length).fill(""));
+
+                if (removeEscape) {
+                    var regex = /(\$\\sim\$)|(\\textasciicircum{})|(\\textbackslash{})|(\\[&%$#_{}])/g;
+
+                    for (var i = 0; i < matrix.length - 1; i++)
+                        for (var j = 0; j < matrix[0].length - 1; j++) {
+                            matrix[i][j] = matrix[i][j].replaceAll(regex, (s) => {
+                            switch(s) {
+                                case "\\&": case "\\%": case "\\$": case "\\#": case "\\_": case "\\{": case "\\}":
+                                    return s.substring(1);
+                                case "$\\sim$":
+                                    return "~";
+                                case "\\textasciicircum{}":
+                                    return "^";
+                                case "\\textbackslash{}":
+                                    return "\\";
+                                default:
+                                    return s;
+                            }
+                        });
+                    }
+                }
                 props.setMatrix(matrix, name); //function will also override existing (or non existing) matrices
                 
                 break;
@@ -294,7 +322,9 @@ function TextImport(props) {
         <div className = "col-sm-4">
             {importFormat !== "latex" ? 
             <ParameterBoxInput isChecked = {ignoreWhitespace} id = "ignoreWhiteSpace" name = "ignoreWhiteSpace" text = {"Ignore White Space"} updateParameter = {updateParameter}/>
-            : null}
+            :             
+            <ParameterBoxInput isChecked = {removeEscape} id = "removeEscape" name = "removeEscape" text = {"Remove Escapes For: &%$#_{}~^\\"} updateParameter = {updateParameter}/>
+            }
 
             {importFormat === "separator" ? 
             <div>

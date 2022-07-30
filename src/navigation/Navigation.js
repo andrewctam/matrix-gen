@@ -131,34 +131,39 @@ function Navigation(props) {
         </div>
 
         <div className = "col-sm-4">
-            <button 
-                className = {"btn " + (showSettings ? "btn-info" : "btn-secondary")}
-                onClick={() => {setShowSettings(!showSettings)}}>
-
-                {showSettings ? "Hide Settings" : "Show Settings"}
-            </button>
-
-            {props.autoSave ? null : 
-            <button 
-                className = "btn btn-secondary" 
-                onClick={() => {props.saveToLocalStorage(); alert("Matrices saved to local browser storage.");}}>
-                {"Save Matrices"}
-            </button>}
             
-            <button 
-                className = "btn btn-danger" 
-                onClick={props.deleteAllMatrices}>
-                {"Delete All Matrices"}
-            </button>
+            <div>
+                {props.autoSave ? null : 
+                <button 
+                    className = "btn btn-secondary" 
+                    onClick={() => {props.saveToLocalStorage(); alert("Matrices saved to local browser storage.");}}>
+                    {"Save Matrices"}
+                </button>}
+                
+                <button 
+                    className = "btn btn-danger" 
+                    onClick={props.deleteAllMatrices}>
+                    {"Delete All Matrices"}
+                </button>
+            </div>
 
-            
-            {!showTutorial ? 
-            <button 
-                className = "btn btn-secondary" 
-                onClick={() => {setShowTutorial(!showTutorial)}}>
-                {"Show Tutorial"}
-            </button> : null}
-            
+
+            <div>
+                <button 
+                    className = {"btn " + (showSettings ? "btn-info" : "btn-secondary")}
+                    onClick={() => {setShowSettings(!showSettings)}}>
+
+                    {showSettings ? "Hide" : "Settings"}
+                </button>
+
+                {!showTutorial ? 
+                <button 
+                    className = "btn btn-secondary" 
+                    onClick={() => {setShowTutorial(!showTutorial)}}>
+                    {"Show Tutorial"}
+                </button> : null}
+                
+            </div>
 
 
             {showSettings ? 

@@ -80,6 +80,7 @@ function MatrixEditor(props) {
                     mirrorRowsCols = {props.mirrorRowsCols}
                     fillEmpty = {props.fillEmpty}
                     fillAll = {props.fillAll}
+                    fillDiagonal = {props.fillDiagonal}
                     randomMatrix = {props.randomMatrix}
                     reshapeMatrix = {props.reshapeMatrix}/>
             : null}

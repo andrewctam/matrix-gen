@@ -13,7 +13,7 @@ function MatrixEditor(props) {
     const [newLines, setNewLines] = useState(true);
 
     const [environment, setEnvironment] = useState("bmatrix");
-
+    const [latexEscape, setLatexEscape] = useState(true);
 
     function handleFocus(e) {
         e.target.select();
@@ -29,7 +29,27 @@ function MatrixEditor(props) {
                     if (props.matrix[i][j] === "") {
                         result += props.sparseVal;        
                     } else {
-                        result += props.matrix[i][j];
+                        var text = props.matrix[i][j];
+                        if (latexEscape) {
+                            //&%$#_{}  ~^\
+                            text = text.replaceAll(/[&%$#_{}~^\\]/g, (s) => {
+                                switch(s) {
+                                    case "&": case "%": case "$": case "#": case "_": case "{": case "}":
+                                        return "\\" + s;
+                                    case "~":
+                                        return "$\\sim$";
+                                    case "^":
+                                        return "\\textasciicircum{}";
+                                    case "\\":
+                                        return "\\textbackslash{}";
+                                    default:
+                                        return s;
+                                }
+                            });
+                        }
+
+
+                        result += text;
                     }            
 
                     if (j !== props.matrix[0].length - 2) {
@@ -94,6 +114,9 @@ function MatrixEditor(props) {
                 break;
             case "environment":
                 setEnvironment(updated);
+                break;
+            case "latexEscape":
+                setLatexEscape(updated)
                 break;
                 
                 
@@ -189,8 +212,13 @@ function MatrixEditor(props) {
                         <ParameterTextInput text = {delim} width = {"10%"} id={"delim"} updateParameter={updateExportParameter}/></div>
                 </div> : null}
 
-                {exportOption === "latex" ? <div>Environment &nbsp;
+                {exportOption === "latex" ? <div>
+                    <ParameterBoxInput isChecked = {latexEscape} id={"latexEscape"} text = {"Add Escapes For: &%$#_{}~^\\"} updateParameter={updateExportParameter}/>
+
+                    <div>Environment &nbsp;
                     <ParameterTextInput width = {"25%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>
+
+                </div>
                 : null}
             </div>
 

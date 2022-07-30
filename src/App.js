@@ -454,6 +454,18 @@ function App(props) {
         setMatrix(tempMatrix, name);
     }
 
+    function fillDiagonal(name, fillDiagonalWithThis) {
+        var tempMatrix = [...matrices[name]];
+       
+        var smaller = Math.min(tempMatrix.length - 1,tempMatrix[0].length - 1);
+
+        for (var i = 0; i < smaller; i++)
+            tempMatrix[i][i] = fillDiagonalWithThis;
+        
+        
+        setMatrix(tempMatrix, name);
+    }
+
 
 
 
@@ -573,6 +585,7 @@ function App(props) {
                 updateEntry = {updateEntry}
                 tryToDelete = {tryToDelete}
                 fillAll = {fillAll}
+                fillDiagonal = {fillDiagonal}
             /> : null
             } 
 

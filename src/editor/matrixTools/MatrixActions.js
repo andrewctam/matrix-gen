@@ -10,6 +10,8 @@ function MatrixActions(props) {
     const [reshapeCols, setReshapeCols] = useState("");
     const [fillEmptyWithThis, setFillEmptyWithThis] = useState("0");
     const [fillAllWithThis, setFillAllWithThis] = useState("");
+    const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
+    
 
 
     function updateParameter(i, updated) {
@@ -19,6 +21,9 @@ function MatrixActions(props) {
                 break; 
             case "fillAllWithThis":
                 setFillAllWithThis(updated);
+                break; 
+            case "fillDiagonalWithThis":
+                setFillDiagonalWithThis(updated);
                 break; 
             case "randomLow":
                 if (/^[0-9 \s]*$/.test(updated)) 
@@ -94,6 +99,21 @@ function MatrixActions(props) {
                 text = {fillAllWithThis} 
                 width = {"40px"} />
         </div>
+
+        <div className = "inputButtonContainer">
+            <button 
+                className = "btn btn-success matrixButtons" 
+                onClick={() => {props.fillDiagonal(props.name,fillDiagonalWithThis)}}>
+                {"Fill Diagonal With: "}
+            </button>
+            <ParameterTextInput 
+                id={"fillDiagonalWithThis"} 
+                updateParameter = {updateParameter} 
+                text = {fillDiagonalWithThis} 
+                width = {"40px"} />
+        </div>
+
+
 
         <div className = "inputButtonContainer">
             <button
