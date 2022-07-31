@@ -26,11 +26,11 @@ function MatrixActions(props) {
                 setFillDiagonalWithThis(updated);
                 break; 
             case "randomLow":
-                if (/^[0-9 \s]*$/.test(updated)) 
+                if (/^-?[0-9 \s]*$/.test(updated)) 
                     setRandomLow(updated);
                 break;
             case "randomHigh":
-                if (/^[0-9 \s]*$/.test(updated)) 
+                if (/^-?[0-9 \s]*$/.test(updated)) 
                     setRandomHigh(updated);
                 break; 
             case "reshapeRows":
@@ -119,7 +119,7 @@ function MatrixActions(props) {
             <button
                 className = "btn btn-success matrixButtons"
                 onClick={() => {props.randomMatrix(props.name, parseInt(randomLow), parseInt(randomHigh))}}> 
-                {"Randomize Matrix - Integers from: "}
+                {"Randomize Elements: "}
             </button>
             <ParameterTextInput 
                 id={"randomLow"} 

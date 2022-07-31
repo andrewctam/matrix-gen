@@ -86,20 +86,19 @@ function App(props) {
 
     function setMatrix(matrix = undefined, name = undefined) {
         var tempObj = {...matrices};
-        var matrixName;
         if (name === undefined) {
-            matrixName = generateUniqueName();
-        } else {
-            matrixName = name;
+            name = generateUniqueName();
         }
         
         if (matrix === undefined) {
-            tempObj[matrixName] = [["", ""], ["", ""]];
+            tempObj[name] = [["", ""], ["", ""]];
         } else {
-            tempObj[matrixName] = matrix;
+            tempObj[name] = matrix;
         }
         
         setMatrices(tempObj);
+
+        return name;
     }
 
 
@@ -347,6 +346,7 @@ function App(props) {
 
         setMatrix(symmetric, name); 
     }
+    
 
 
     function transpose(name) {

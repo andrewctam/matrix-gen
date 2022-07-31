@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useLayoutEffect, useState} from "react";
 import "./Tutorial.css";
 function Tutorial(props) {
     const [selected, setSelected] = useState("editor");
     const [specificTutorial, setSpecificTutorial] = useState(null)
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         var inside = null;
-
         switch(selected) {
             case "editor":
                 inside = <div>
@@ -40,7 +39,7 @@ function Tutorial(props) {
                     <li>Fill Empty With will replace all empty boxes with the inputted element.</li>
                     <li>Fill All With will replace all boxes with the inputted element.</li>
                     <li>Fill Diagonal with replace all entires (i, i) with the inputted element.</li>
-                    <li>Randomize Matrix will replace all entries with a random integer between the specified range inclusive.</li>
+                    <li>Randomize Elements will replace all entries with a random integer between the specified range inclusive.</li>
                     <li>Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy's reshape. The product of the new dimensions must be equal to the product of the old dimensions.</li>
                 </ul>
             </div>
@@ -92,7 +91,6 @@ function Tutorial(props) {
             onClick={() => {props.setSelected(props.name)}}>
             {props.text}
         </button>
-        
     }
 
     return <div className = "tutorial">
@@ -107,7 +105,7 @@ function Tutorial(props) {
             It features an interactive table to quickly modify your matrices, quick actions such as transpose 
             to modify the entire matrix, and export options to quickly save your matrix as plain text. 
             You can also import matrices from text. The app has numerous uses, such as quickly creating LaTeX matrices, 
-            creating random matrices of arbitrary size doing matrix math, etc. Click the buttons below to see how to 
+            creating random matrices of arbitrary size, doing matrix math, etc. Click the buttons below to see how to 
             use the specific parts of this app:
         </p>
 

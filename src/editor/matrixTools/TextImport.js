@@ -14,10 +14,17 @@ function TextImport(props) {
     const [importFormat, setImportFormat] = useState("separator");
     const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
     const [removeEscape, setRemoveEscape] = useState(true);
+    const [escapeMap, setEscapeMap] = useState({
+        "^":"\\char94",
+        "~":"\\char126",
+        "\\":"\\char92"
+    })
+
     const [settingA, setSettingA] = useState(""); //opening bracket, numRows
     const [settingB, setSettingB] = useState(""); //closing bracket, numCols
     const [settingC, setSettingC] = useState(" "); //separator
     const [settingD, setSettingD] = useState("\n"); //new line separator
+    
 
     useEffect(updatedDisplayWarning, [settingA, settingB, settingC, settingD, importFormat]);
 
@@ -47,7 +54,17 @@ function TextImport(props) {
                 break;
             case "removeEscape":
                 setRemoveEscape(updated);
-                break;    
+                break;  
+                
+
+            case "^": 
+            case "~": 
+            case "\\": 
+                    var tempObj = {...escapeMap};
+                    tempObj[i] = updated;
+                    setEscapeMap(tempObj);
+                    break;
+                
             
             default: break;
         }
@@ -158,7 +175,7 @@ function TextImport(props) {
 
 
                     //  finds },{ and removes random characters in between
-                    var braceSeparator = new RegExp(settingB + ".*?" + separator + ".*?" + settingA); 
+                    var braceSeparator = new RegExp(`${settingB}".*?"${separator}".*?"${settingA}`); 
                     
                     rows = noBraces.split(braceSeparator);
                     for (i = 0; i < rows.length; i++) {
@@ -219,37 +236,36 @@ function TextImport(props) {
                 break;
 
             case "latex":
-                text = text.replace(/\s/g,"")
-                var rows = text.split("\\\\");
-                for (var i = 0; i < rows.length; i++) {
+                rows = text.split("\\\\");
+
+                for (i = 0; i < rows.length; i++) {
+                    rows[i] = rows[i].replace(" ","")
                     matrix.push(rows[i].split(/(?<!\\)&/));
                     matrix[i].push("");
                 }
 
 
-                
-
                 matrix.push(Array(rows[0].length).fill(""));
 
                 if (removeEscape) {
-                    var regex = /(\$\\sim\$)|(\\textasciicircum{})|(\\textbackslash{})|(\\[&%$#_{}])/g;
-
-                    for (var i = 0; i < matrix.length - 1; i++)
-                        for (var j = 0; j < matrix[0].length - 1; j++) {
+                    var regex = new RegExp(`(${escapeMap["\\"].replaceAll("\\", "\\\\")})|(${escapeMap["~"].replaceAll("\\", "\\\\")})|(${escapeMap["^"].replaceAll("\\", "\\\\")})|(\\\\[&%$#_{}])`, 'g');
+                    console.log(regex)
+                    for (i = 0; i < matrix.length - 1; i++)
+                        for (j = 0; j < matrix[0].length - 1; j++) {
                             matrix[i][j] = matrix[i][j].replaceAll(regex, (s) => {
-                            switch(s) {
-                                case "\\&": case "\\%": case "\\$": case "\\#": case "\\_": case "\\{": case "\\}":
-                                    return s.substring(1);
-                                case "$\\sim$":
-                                    return "~";
-                                case "\\textasciicircum{}":
-                                    return "^";
-                                case "\\textbackslash{}":
-                                    return "\\";
-                                default:
-                                    return s;
-                            }
-                        });
+                                switch(s) {
+                                    case "\\&": case "\\%": case "\\$": case "\\#": case "\\_": case "\\{": case "\\}":
+                                        return s.substring(1);
+                                    case escapeMap["~"]:
+                                        return "~";
+                                    case escapeMap["^"]:
+                                        return "^";
+                                    case escapeMap["\\"]:
+                                        return "\\";
+                                    default:
+                                        return s;
+                                }
+                            });
                     }
                 }
                 props.setMatrix(matrix, name); //function will also override existing (or non existing) matrices
@@ -305,7 +321,7 @@ function TextImport(props) {
                 <li><button id = "latex" 
                 onClick = {updateImportFormat} 
                 className = {importFormat === "latex" ? "btn btn-info" : "btn btn-secondary"}>
-                {"LaTeX"}
+                {"LaTeX Format"}
                 </button></li>
                    
 
@@ -320,10 +336,17 @@ function TextImport(props) {
         </div>
 
         <div className = "col-sm-4">
-            {importFormat !== "latex" ? 
-            <ParameterBoxInput isChecked = {ignoreWhitespace} id = "ignoreWhiteSpace" name = "ignoreWhiteSpace" text = {"Ignore White Space"} updateParameter = {updateParameter}/>
-            :             
-            <ParameterBoxInput isChecked = {removeEscape} id = "removeEscape" name = "removeEscape" text = {"Remove Escapes For: &%$#_{}~^\\"} updateParameter = {updateParameter}/>
+            {importFormat === "latex" ? 
+            <div>
+                <ParameterBoxInput isChecked = {removeEscape} id = "removeEscape" name = "removeEscape" text = {"Remove Escapes For: #$%&_{}^~\\"} updateParameter = {updateParameter}/>
+                {removeEscape ? <div>
+                    <div>Replace <ParameterTextInput text = {escapeMap["^"]} width = {"20%"} id={"^"} updateParameter={updateParameter}/> with ^</div>
+                    <div>Replace <ParameterTextInput text = {escapeMap["~"]} width = {"20%"} id={"~"} updateParameter={updateParameter}/> with ~</div>
+                    <div>Replace <ParameterTextInput text = {escapeMap["\\"]} width = {"20%"} id={"\\"} updateParameter={updateParameter}/> with \</div>
+                </div> : null}
+            </div> 
+            
+            : <ParameterBoxInput isChecked = {ignoreWhitespace} id = "ignoreWhiteSpace" name = "ignoreWhiteSpace" text = {"Ignore White Space"} updateParameter = {updateParameter}/>
             }
 
             {importFormat === "separator" ? 

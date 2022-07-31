@@ -98,6 +98,9 @@ function Navigation(props) {
         setShowTutorial(false);
     }
 
+
+
+    
     return  <div className = "row navigateBar">
         {showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
 
@@ -107,7 +110,11 @@ function Navigation(props) {
                         key = "addButton" 
                         text = {"Create New Empty Matrix"}
                         buttonStyle = {"info"}
-                        action = {() => {props.setMatrix()}} />
+                        action = {() => {
+                            var newName = props.setMatrix();
+                            props.updateMatrixSelection(newName);
+                            }} />
+
                     {props.selection !== "0" ?
                     <MenuButton 
                         key = "duplicateButton" 

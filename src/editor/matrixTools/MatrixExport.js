@@ -15,6 +15,12 @@ function MatrixEditor(props) {
     const [environment, setEnvironment] = useState("bmatrix");
     const [latexEscape, setLatexEscape] = useState(true);
 
+    const [escapeMap, setEscapeMap] = useState({
+        "^":"\\char94",
+        "~":"\\char126",
+        "\\":"\\char92"
+    })
+
     function handleFocus(e) {
         e.target.select();
     }
@@ -37,11 +43,10 @@ function MatrixEditor(props) {
                                     case "&": case "%": case "$": case "#": case "_": case "{": case "}":
                                         return "\\" + s;
                                     case "~":
-                                        return "$\\sim$";
                                     case "^":
-                                        return "\\textasciicircum{}";
                                     case "\\":
-                                        return "\\textbackslash{}";
+                                        return escapeMap[s];
+                                        
                                     default:
                                         return s;
                                 }
@@ -118,6 +123,15 @@ function MatrixEditor(props) {
             case "latexEscape":
                 setLatexEscape(updated)
                 break;
+
+            case "^": 
+            case "~": 
+            case "\\": 
+                var tempObj = {...escapeMap};
+                tempObj[i] = updated;
+                setEscapeMap(tempObj);
+                break;
+                
                 
                 
             default: break;
@@ -213,8 +227,8 @@ function MatrixEditor(props) {
                 </div> : null}
 
                 {exportOption === "latex" ? <div>
-                    <ParameterBoxInput isChecked = {latexEscape} id={"latexEscape"} text = {"Add Escapes For: &%$#_{}~^\\"} updateParameter={updateExportParameter}/>
-
+                    <ParameterBoxInput isChecked = {latexEscape} id={"latexEscape"} text = {"Add Escapes For: #$%&_{}^~\\"} updateParameter={updateExportParameter}/>
+                
                     <div>Environment &nbsp;
                     <ParameterTextInput width = {"25%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>
 
@@ -252,6 +266,12 @@ function MatrixEditor(props) {
 
                     </ul>
                 : null}
+
+                {latexEscape && exportOption === "latex" ? <div>
+                    <div>Replace ^ with <ParameterTextInput text = {escapeMap["^"]} width = {"20%"} id={"^"} updateParameter={updateExportParameter}/></div>
+                    <div>Replace ~ with <ParameterTextInput text = {escapeMap["~"]} width = {"20%"} id={"~"} updateParameter={updateExportParameter}/></div>
+                    <div>Replace \ with <ParameterTextInput text = {escapeMap["\\"]} width = {"20%"} id={"\\"} updateParameter={updateExportParameter}/></div>
+                </div> : null}
 
             </div>
     </div>    
