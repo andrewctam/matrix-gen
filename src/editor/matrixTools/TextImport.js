@@ -132,6 +132,15 @@ function TextImport(props) {
 
     }
 
+    function regexEscape(str) {
+        switch(str) { //escapes for regex
+            case ".": case "+": case "*": case "?": case "^": case "$": case "(": case ")": case "[": case "]": case "{": case "}": case "|": case "\\":
+                return "\\" + str;
+            default: return str;
+        }
+
+        
+    }
     function parseText() {
         var separator = settingC;
         var text = document.getElementById("importTextArea").value;
@@ -175,7 +184,7 @@ function TextImport(props) {
 
 
                     //  finds },{ and removes random characters in between
-                    var braceSeparator = new RegExp(`${settingB}".*?"${separator}".*?"${settingA}`); 
+                    var braceSeparator = new RegExp(`${regexEscape(settingB)}.*?${regexEscape(separator)}.*?${regexEscape(settingA)}`, 'g'); 
                     
                     rows = noBraces.split(braceSeparator);
                     for (i = 0; i < rows.length; i++) {
@@ -187,6 +196,7 @@ function TextImport(props) {
                     props.setMatrix(matrix, name);
 
                 } catch (error) {
+                    console.log(error); 
                     alert("Error in input.")
                 }
 
