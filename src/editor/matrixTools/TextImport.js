@@ -132,12 +132,15 @@ function TextImport(props) {
 
     }
 
-    function regexEscape(str) {
+    function addRegexEscape(str) {
         switch(str) { //escapes for regex
-            case ".": case "+": case "*": case "?": case "^": case "$": case "(": case ")": case "[": case "]": case "{": case "}": case "|": case "\\":
+            case ".": case "+": case "*": case "?": case "^": case "$": case "(": case ")": case "[": case "]": case "{": case "}": case "|":
                 return "\\" + str;
-            default: return str;
+
+            default: break;
         }
+
+        return str.replaceAll("\\", "\\\\");
 
         
     }
@@ -184,7 +187,7 @@ function TextImport(props) {
 
 
                     //  finds },{ and removes random characters in between
-                    var braceSeparator = new RegExp(`${regexEscape(settingB)}.*?${regexEscape(separator)}.*?${regexEscape(settingA)}`, 'g'); 
+                    var braceSeparator = new RegExp(`${addRegexEscape(settingB)}.*?${addRegexEscape(separator)}.*?${addRegexEscape(settingA)}`, 'g'); 
                     
                     rows = noBraces.split(braceSeparator);
                     for (i = 0; i < rows.length; i++) {
@@ -247,18 +250,24 @@ function TextImport(props) {
 
             case "latex":
                 rows = text.split("\\\\");
-
+                
                 for (i = 0; i < rows.length; i++) {
-                    rows[i] = rows[i].replace(" ","")
+                    rows[i] = rows[i].replaceAll(" ","")
+                    
                     matrix.push(rows[i].split(/(?<!\\)&/));
                     matrix[i].push("");
                 }
 
 
-                matrix.push(Array(rows[0].length).fill(""));
-
+                matrix.push(Array(matrix[0].length).fill(""));
+                
                 if (removeEscape) {
-                    var regex = new RegExp(`(${escapeMap["\\"].replaceAll("\\", "\\\\")})|(${escapeMap["~"].replaceAll("\\", "\\\\")})|(${escapeMap["^"].replaceAll("\\", "\\\\")})|(\\\\[&%$#_{}])`, 'g');
+
+                    const tild = addRegexEscape(escapeMap["\\"]); //replace with tilde
+                    const back = addRegexEscape(escapeMap["~"]); //replace with backslash
+                    const circ = addRegexEscape(escapeMap["^"]); //replace with circumflex
+
+                    var regex = new RegExp(`${tild}|${back}|${circ}|\\\\[&%$#_{}]`, 'g');
                     console.log(regex)
                     for (i = 0; i < matrix.length - 1; i++)
                         for (j = 0; j < matrix[0].length - 1; j++) {
