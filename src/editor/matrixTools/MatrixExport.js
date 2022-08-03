@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput.js';
 import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import "./MatrixExport.css";
+import ListButton from './ListButton.js';
 
-function MatrixEditor(props) {    
-    const [exportOption, setExportOption] = useState("arrays");
+function MatrixExport(props) {    
+    const [exportOption, setExportOption] = useState("2D Arrays");
 
 
     const [start, setStart] = useState("{");
@@ -28,7 +29,7 @@ function MatrixEditor(props) {
     function matrixToString() {
         switch (exportOption) {
 
-        case "latex":
+        case "LaTeX":
             var result = environment !== "" ? `\\begin{${environment}}\n` : "";
             for (var i = 0; i < props.matrix.length - 1; i++) {
                 for (var j = 0; j < props.matrix[0].length - 1; j++) {
@@ -72,7 +73,7 @@ function MatrixEditor(props) {
             return result + (environment !== "" ? `\n\\end{${environment}}` : ""); 
         
 
-        case "arrays":
+        case "2D Arrays":
             result = start.toString();
 
             for (i = 0; i < props.matrix.length - 1; i++) {
@@ -103,8 +104,8 @@ function MatrixEditor(props) {
 
     }
 
-    function updateExportParameter(i, updated) {
-        switch (i) { 
+    function updateExportParameter(parameterName, updated) {
+        switch (parameterName) { 
             case "start":
                 setStart(updated);  
                 break;  
@@ -128,7 +129,7 @@ function MatrixEditor(props) {
             case "~": 
             case "\\": 
                 var tempObj = {...escapeMap};
-                tempObj[i] = updated;
+                tempObj[parameterName] = updated;
                 setEscapeMap(tempObj);
                 break;
                 
@@ -143,15 +144,15 @@ function MatrixEditor(props) {
     function updateExportOption(e) {
         var updated = e.target.id;
         switch (updated) {
-            case "arrays":
+            case "2D Arrays":
                 setStart("{");
                 setEnd("}");
                 setDelim(",");
-                setExportOption("arrays");
+                setExportOption("2D Arrays");
                 break;
-            case "latex":
+            case "LaTeX":
                 setEnvironment("bmatrix");
-                setExportOption("latex");
+                setExportOption("LaTeX");
                 break;
             
             default: break;
@@ -197,27 +198,25 @@ function MatrixEditor(props) {
             <div className = "col-sm-4">
                 <ul>
                     {"Export Format"}
-                    <li><button id = "arrays"
-                        onClick = {updateExportOption} 
-                        className = {exportOption === "arrays" ? "btn btn-info" : "btn btn-secondary"}>
-                        {"2D Arrays"}
-                        </button>
-                    </li>
 
-                    <li><button id = "latex" 
-                        onClick = {updateExportOption} 
-                        className = {exportOption === "latex" ? "btn btn-info" : "btn btn-secondary"}>
-                        {"LaTeX Format"}
-                        </button>
-                    </li>
+                    <ListButton
+                        name = {"2D Arrays"}
+                        action = {updateExportOption}
+                        active = {exportOption === "2D Arrays"}
+                    />
 
+                    <ListButton
+                        name = {"LaTeX"}
+                        action = {updateExportOption}
+                        active = {exportOption === "LaTeX"}
+                    />
                 </ul> 
             </div>
 
             <div className = "col-sm-4">
                 <ParameterBoxInput isChecked = {newLines} id={"newLines"} text = {"Add New Lines"} updateParameter={updateExportParameter}/>
 
-                {exportOption === "arrays" ? <div>
+                {exportOption === "2D Arrays" ? <div>
                     <div>Open arrays with &nbsp;
                         <ParameterTextInput text = {start} width = {"10%"} id={"start"} updateParameter={updateExportParameter}/></div>
                     <div>End arrays with &nbsp;
@@ -226,7 +225,7 @@ function MatrixEditor(props) {
                         <ParameterTextInput text = {delim} width = {"10%"} id={"delim"} updateParameter={updateExportParameter}/></div>
                 </div> : null}
 
-                {exportOption === "latex" ? <div>
+                {exportOption === "LaTeX" ? <div>
                     <ParameterBoxInput isChecked = {latexEscape} id={"latexEscape"} text = {"Add Escapes For: #$%&_{}^~\\"} updateParameter={updateExportParameter}/>
                 
                     <div>Environment &nbsp;
@@ -237,7 +236,7 @@ function MatrixEditor(props) {
             </div>
 
             <div className = "col-sm-4">
-                {exportOption === "arrays" ? 
+                {exportOption === "2D Arrays" ? 
                     <ul>
                         Quick Options: 
                         <li><button id = "[]," 
@@ -267,7 +266,7 @@ function MatrixEditor(props) {
                     </ul>
                 : null}
 
-                {latexEscape && exportOption === "latex" ? <div>
+                {latexEscape && exportOption === "LaTeX" ? <div>
                     <div>Replace ^ with <ParameterTextInput text = {escapeMap["^"]} width = {"20%"} id={"^"} updateParameter={updateExportParameter}/></div>
                     <div>Replace ~ with <ParameterTextInput text = {escapeMap["~"]} width = {"20%"} id={"~"} updateParameter={updateExportParameter}/></div>
                     <div>Replace \ with <ParameterTextInput text = {escapeMap["\\"]} width = {"20%"} id={"\\"} updateParameter={updateExportParameter}/></div>
@@ -279,4 +278,4 @@ function MatrixEditor(props) {
 
 
 
-export default MatrixEditor;
+export default MatrixExport;

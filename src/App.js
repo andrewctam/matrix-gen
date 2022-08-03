@@ -30,8 +30,8 @@ function App(props) {
         setSelection(selected);
     }
 
-    function updateParameter(i, updated) {
-        switch (i) {
+    function updateParameter(parameterName, updated) {
+        switch (parameterName) {
             case "sparse":
                 setSparseVal(updated);
                 window.localStorage.setItem("sparseValue;", updated); 
@@ -49,7 +49,7 @@ function App(props) {
                 break;
 
             default: 
-                console.log("Invalid?:" + i);
+                console.log("Invalid?:" + parameterName);
   
         }
     
@@ -327,10 +327,10 @@ function App(props) {
     function mirrorRowsCols(name, mirrorRowsToCols) { 
 
         if (matrices[name].length > matrices[name][0].length) { //more rows than cols 
-            var symmetric = addCols(matrices[name].length - matrices[name][0].length, false);
+            var symmetric = addCols(name, matrices[name].length - matrices[name][0].length, false);
             
         } else if (matrices[name].length < matrices[name][0].length) {
-            symmetric = addRows(matrices[name][0].length - matrices[name].length, false)  
+            symmetric = addRows(name, matrices[name][0].length - matrices[name].length, false)  
         } else //rows == cols
             symmetric = [...matrices[name]];
 

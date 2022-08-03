@@ -41,16 +41,16 @@ function MatrixEditor(props) {
         setShowMath(false);
 
         switch (e.target.id) {
-            case "toggleActions":
+            case "Matrix Actions":
                 setShowActions(!showActions);
                 break;
-            case "toggleMath":
+            case "Matrix Math":
                 setShowMath(!showMath);
                 break;
-            case "toggleImport":
+            case "Import Matrix From Text":
                 setShowImport(!showImport);
                 break;
-            case "toggleExport":
+            case "Export Matrix":
                 setShowExport(!showExport);
                 break;
 
@@ -58,7 +58,18 @@ function MatrixEditor(props) {
         }
     }
 
-    function updateBoxesSelected(x1, y1, x2, y2) {
+    function updateBoxesSelected(x1, y1, x2, y2, clear = false) {
+        if (clear) {
+            setBoxesSelected({
+                "startX" : -1,
+                'startY' : -1,
+                "endX" : -1,
+                "endY" : -1,
+                "quadrant": 1
+            });
+            return;
+        }
+
         if (!props.selectable) 
             return; 
             
@@ -94,35 +105,36 @@ function MatrixEditor(props) {
 
 
     var showTable = (props.matrix.length <= 51 && props.matrix[0].length <= 51);
-    console.log("renger")
+
+
     return (
     <div className = "matrixEditor" onMouseUp = {() => {if (mouseDown) setMouseDown(false)}} >
         <div id = "options" className = "options" >
             <div className = "options-bar">
 
-                <button id = "toggleActions" 
-                    className = {"btn matrixButtons " + (showActions ? "btn-info" : "btn-secondary")} 
-                    onClick = {toggleShown}> 
-                    {showActions ? "Close" : "Matrix Actions"}
-                </button> 
-
-                <button id = "toggleMath" 
-                    className = {"btn matrixButtons " + (showMath ? "btn-info" : "btn-secondary")}
-                    onClick={toggleShown}>                
-                    {showMath ? "Close" : "Matrix Math"}
-                </button>
+                <ToggleButton 
+                    name = "Matrix Actions" 
+                    active = {showActions}
+                    action = {toggleShown}
+                />
                 
-                <button id = "toggleImport" 
-                    className = {"btn matrixButtons " + (showImport ? "btn-info" : "btn-secondary")}
-                    onClick={toggleShown}>
-                    {showImport ? "Close" : "Import Matrix From Text"}
-                </button>
+                <ToggleButton 
+                    name = "Matrix Math" 
+                    active = {showMath}
+                    action = {toggleShown}
+                />
 
-                <button id = "toggleExport" 
-                    className = {"btn matrixButtons " + (showExport ? "btn-info" : "btn-secondary")} 
-                    onClick={toggleShown}>
-                    {showExport ? "Close" : "Export Matrix"}
-                </button>
+                <ToggleButton 
+                    name = "Export Matrix" 
+                    active = {showExport}
+                    action = {toggleShown}
+                />
+
+                <ToggleButton 
+                    name = "Import Matrix From Text" 
+                    active = {showImport}
+                    action = {toggleShown}
+                />
 
             </div>
 
@@ -204,6 +216,13 @@ function MatrixEditor(props) {
 
 }
 
+function ToggleButton(props) {
+    return <button id = {props.name} 
+            className = {"btn matrixButtons " + (props.active ? "btn-info" : "btn-secondary")} 
+            onClick = {props.action}>
+            {props.active ? "Close" : props.name}
+        </button>
 
+}
 
 export default MatrixEditor;

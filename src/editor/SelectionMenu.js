@@ -1,19 +1,18 @@
 import React, {useState} from "react";
 import "./SelectionMenu.css"
+import TextActionButton from "./matrixTools/TextActionButton";
 
 function SelectionMenu(props) {
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
 
-    function updateName(e) {
-        var updated = e.target.value;
-
+    function updateName(parameterName, updated) {
         if (/^[A-Za-z_]*$/.test(updated))
-            switch(e.target.id) {
-                case "splice":
+            switch(parameterName) {
+                case "Save Selection as New Matrix: ":
                     setSpliceName(updated);
                     break;
-                case "paste":
+                case "Paste Another Matrix Into Selection: ":
                     setPasteName(updated);
                     break;
                 default: break;
@@ -45,7 +44,7 @@ function SelectionMenu(props) {
 
 
 
-    var name = props.generateUniqueName();
+    var generatedName = props.generateUniqueName();
 
     return <div className = "selectionSettings">
             <div>
@@ -60,55 +59,42 @@ function SelectionMenu(props) {
             <div>{"End: Row " + (props.boxesSelected["endX"] + " Column " + props.boxesSelected["endY"])}</div>
 
 
-                <input className = "editSelected" 
+            <input className = "editSelected" 
                 onChange = {handleChange} 
                 onKeyDown = {handleKeyDown}
                 placeholder="Type Here to Edit All Selected Boxes"/>
 
-            <div className = "buttonTextInput selectionButton">
-                <button 
-                    className = {"btn matrixButtons btn-primary"} 
-                    onClick = {() => {
-                        props.spliceMatrix(props.name, 
-                                            props.boxesSelected["startX"], 
-                                            props.boxesSelected["startY"], 
-                                            props.boxesSelected["endX"], 
-                                            props.boxesSelected["endY"],
-                                            spliceName)}}> 
-                    {"Save Selection as New Matrix: "}
-                </button> 
-                
-                
-                <input 
-                    id = "splice"
-                    onChange = {updateName}
-                    value = {spliceName}
-                    placeholder = {name} />
-                
-            </div>
 
-            <div className = "buttonTextInput selectionButton">
-                <button 
-                    className = {"btn matrixButtons btn-primary"} 
-                    onClick = {() => {
-                        props.pasteMatrix(props.name, pasteName, 
-                                        props.boxesSelected["startX"], 
-                                        props.boxesSelected["startY"], 
-                                        props.boxesSelected["endX"], 
-                                        props.boxesSelected["endY"])}}> 
-                    {"Paste Another Matrix Into Selection: "}
-                </button> 
+            <TextActionButton 
+                name = {"Save Selection as New Matrix: "}
+                action = {() => {props.spliceMatrix(props.name, 
+                                                    props.boxesSelected["startX"], 
+                                                    props.boxesSelected["startY"], 
+                                                    props.boxesSelected["endX"], 
+                                                    props.boxesSelected["endY"],
+                                                    spliceName)}
+                }
                 
-                
-                <input 
-                    id = "paste"
-                    onChange = {updateName}
-                    value = {pasteName} />
-            </div>
+                updateParameter = {updateName}
+                width = {"75px"}
+                value = {spliceName}
+                placeholder = {generatedName}
+            />
 
-
-          
-
+            <TextActionButton 
+                name = {"Paste Another Matrix Into Selection: "}
+                action = {() => {props.pasteMatrix(props.name, pasteName, 
+                    props.boxesSelected["startX"], 
+                    props.boxesSelected["startY"], 
+                    props.boxesSelected["endX"], 
+                    props.boxesSelected["endY"])}
+                }
+                    
+                updateParameter = {updateName}
+                width = {"75px"}
+                value = {pasteName}
+            />
+                          
     </div>
 }
 

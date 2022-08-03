@@ -6,7 +6,7 @@
   
   }
   
-.buttonTextInput {
+.textActionButton {
     width: fit-content;
     background-color: #3b79a5;
     padding-right: 5px;
@@ -23,7 +23,7 @@
 
 }
 
-.buttonTextInput > button {
+.textActionButton > button {
     background-color: 3b79a5;
     margin-top: 0;
     margin-left: 0;
@@ -36,7 +36,7 @@
     
 }
 
-.buttonTextInput > input {
+.textActionButton > input {
     padding-top: 0;
     padding-bottom: 0;
     background-color: #73bcf0;
@@ -44,7 +44,7 @@
     vertical-align: middle;
 }
 
-.selectionButton > input::placeholder {
+.textActionButton > input::placeholder {
     color: rgba(0, 0, 0, 0.5);
 }
 

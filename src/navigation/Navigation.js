@@ -152,9 +152,7 @@ function Navigation(props) {
             <input className = "nameSearchBar" onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
             <input className = "sizeSearchBar" onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
 
-            <div id = "selectors" className="list-group">
-                {selectors}    
-            </div>
+            <div id = "selectors" className="list-group"> {selectors} </div>
         </div>
 
         <div className = "col-sm-4 info">

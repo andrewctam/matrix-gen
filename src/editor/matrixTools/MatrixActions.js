@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput';
-
 import "./MatrixActions.css"
+
+import TextActionButton from './TextActionButton';
+import TwoTextActionButton from './TwoTextActionButton';
 
 function MatrixActions(props) {
     const [randomLow, setRandomLow] = useState("1");
@@ -14,15 +16,15 @@ function MatrixActions(props) {
     
 
 
-    function updateParameter(i, updated) {
-        switch (i) {
-            case "fillEmptyWithThis":
+    function updateParameter(parameterName, updated) {
+        switch (parameterName) {
+            case "Fill Empty With: ":
                 setFillEmptyWithThis(updated);
                 break; 
-            case "fillAllWithThis":
+            case "Fill All With: ":
                 setFillAllWithThis(updated);
                 break; 
-            case "fillDiagonalWithThis":
+            case "Fill Diagonal With: ":
                 setFillDiagonalWithThis(updated);
                 break; 
             case "randomLow":
@@ -51,108 +53,83 @@ function MatrixActions(props) {
 
 
     return <div className = "matrixActions">
-        <button 
-            className = "btn btn-primary matrixButtons" 
-            onClick={() => {props.transpose(props.name)}}>
-            {"Transpose"}
-        </button>
-        
-        <button 
-            className = "btn btn-primary matrixButtons"
+
+        <BasicActionButton 
+            action = {() => {props.transpose(props.name)}}
+            name = {"Transpose"}
+        />
+        <BasicActionButton 
             id = "rowsToCols"
-            onClick={() => {props.mirrorRowsCols(props.name, true)}}>
-            {"Mirror Rows Across Diagonal"}
-        </button> 
-
-        <button 
-            className = "btn btn-primary matrixButtons"
+            action={() => {props.mirrorRowsCols(props.name, true)}}
+            name = {"Mirror Rows Across Diagonal"}
+        />
+        <BasicActionButton 
             id = "colsToRows"
-            onClick={() => {props.mirrorRowsCols(props.name, false)}}>
-            {"Mirror Columns Across Diagonal"}
-        </button>
+            action={() => {props.mirrorRowsCols(props.name, false)}}
+            name = {"Mirror Columns Across Diagonal"}
+        />
+
         
         
+        <TextActionButton 
+            name = "Fill Empty With: "
+            action = {() => {props.fillEmpty(props.name, fillEmptyWithThis)}}
+            updateParameter = {updateParameter}
+            width = {"40px"}
+            value = {fillEmptyWithThis}
+        />
 
-        <div className = "buttonTextInput">
-            <button 
-                className = "btn btn-primary matrixButtons" 
-                onClick={() => {props.fillEmpty(props.name,fillEmptyWithThis)}}>
-                {"Fill Empty With: "}
-            </button>
+        <TextActionButton 
+            name = "Fill All With: "
+            action = {() => {props.fillAll(props.name, fillAllWithThis)}}
+            updateParameter = {updateParameter}
+            width = {"40px"}
+            value = {fillAllWithThis}
+        />
 
-            <ParameterTextInput 
-                id={"fillEmptyWithThis"} 
-                updateParameter = {updateParameter} 
-                text = {fillEmptyWithThis} 
-                width = {"40px"} />
-        </div>
+        <TextActionButton 
+            name = "Fill Diagonal With: "
+            action = {() => {props.fillDiagonal(props.name, fillDiagonalWithThis)}}
+            updateParameter = {updateParameter}
+            width = {"40px"}
+            value = {fillDiagonalWithThis}
+        />
 
-        <div className = "buttonTextInput">
-            <button 
-                className = "btn btn-primary matrixButtons" 
-                onClick={() => {props.fillAll(props.name,fillAllWithThis)}}>
-                {"Fill All With: "}
-            </button>
-            <ParameterTextInput 
-                id={"fillAllWithThis"} 
-                updateParameter = {updateParameter} 
-                text = {fillAllWithThis} 
-                width = {"40px"} />
-        </div>
+        <TwoTextActionButton 
+            name = "Randomize Elements: "
+            action = {() => {props.randomMatrix(props.name, parseInt(randomLow), parseInt(randomHigh))}}
+            updateParameter = {updateParameter}
+            id1 = {"randomLow"}
+            id2 = {"randomHigh"}
+            value1 = {randomLow}
+            value2 = {randomHigh}
+            separator = {" to "}
+            width = {"40px"}
+        />
 
-        <div className = "buttonTextInput">
-            <button 
-                className = "btn btn-primary matrixButtons" 
-                onClick={() => {props.fillDiagonal(props.name,fillDiagonalWithThis)}}>
-                {"Fill Diagonal With: "}
-            </button>
-            <ParameterTextInput 
-                id={"fillDiagonalWithThis"} 
-                updateParameter = {updateParameter} 
-                text = {fillDiagonalWithThis} 
-                width = {"40px"} />
-        </div>
+        <TwoTextActionButton 
+            name = "Reshape To: "
+            action = {() => {props.reshapeMatrix(props.name, parseInt(reshapeRows), parseInt(reshapeCols))}}
+            updateParameter = {updateParameter}
+            id1 = {"reshapeRows"}
+            id2 = {"reshapeCols"}
+            value1 = {reshapeRows}
+            value2 = {reshapeCols}
+            separator = {" x "}
+            width = {"40px"}
+        />
 
-
-
-        <div className = "buttonTextInput">
-            <button
-                className = "btn btn-primary matrixButtons"
-                onClick={() => {props.randomMatrix(props.name, parseInt(randomLow), parseInt(randomHigh))}}> 
-                {"Randomize Elements: "}
-            </button>
-            <ParameterTextInput 
-                id={"randomLow"} 
-                updateParameter = {updateParameter} 
-                text = {randomLow} 
-                width = {"40px"} /> 
-            {" to "}
-            <ParameterTextInput 
-                id={"randomHigh"} 
-                updateParameter = {updateParameter} 
-                text = {randomHigh} 
-                width = {"40px"} />
-        </div>
-
-        <div className = "buttonTextInput">
-            <button 
-                className = "btn btn-primary matrixButtons" 
-                onClick={() => {props.reshapeMatrix(props.name, parseInt(reshapeRows), parseInt(reshapeCols))}}> 
-                {"Reshape To: "}
-            </button>
-            <ParameterTextInput 
-                id={"reshapeRows"} 
-                updateParameter = {updateParameter} 
-                text = {reshapeRows} 
-                width = {"40px"} />
-            {" x "}
-            <ParameterTextInput 
-                id={"reshapeCols"} 
-                updateParameter = {updateParameter} 
-                text = {reshapeCols} 
-                width = {"40px"} />
-        </div>
-    
     </div>
 }
+
+function BasicActionButton(props) {
+    return  <button 
+            className = "btn btn-primary matrixButtons" 
+            onClick={props.action}>
+            {props.name}
+        </button>
+}
+
+
+
 export default MatrixActions;

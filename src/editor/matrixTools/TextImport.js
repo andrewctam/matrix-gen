@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import "./TextImport.css";
 import ParameterBoxInput from "../../inputs/ParameterBoxInput";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
-
+import ListButton from "./ListButton";
 /*
 allow large matrix entry with text input
  */
@@ -11,7 +11,7 @@ function TextImport(props) {
     const [displayWarning, setDisplayWarning] = useState(true);
 
     const [newName, setNewName] = useState("");
-    const [importFormat, setImportFormat] = useState("separator");
+    const [importFormat, setImportFormat] = useState("Separator");
     const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
     const [removeEscape, setRemoveEscape] = useState(true);
     const [escapeMap, setEscapeMap] = useState({
@@ -28,8 +28,8 @@ function TextImport(props) {
 
     useEffect(updatedDisplayWarning, [settingA, settingB, settingC, settingD, importFormat]);
 
-    function updateParameter(i, updated) {
-        switch (i) {
+    function updateParameter(parameterName, updated) {
+        switch (parameterName) {
             case "overwrite":
                 setOverwrite(updated);
                 setNewName("");
@@ -61,7 +61,7 @@ function TextImport(props) {
             case "~": 
             case "\\": 
                     var tempObj = {...escapeMap};
-                    tempObj[i] = updated;
+                    tempObj[parameterName] = updated;
                     setEscapeMap(tempObj);
                     break;
                 
@@ -76,13 +76,13 @@ function TextImport(props) {
 
     function updatedDisplayWarning() {
         switch(importFormat) {
-            case "separator":
+            case "Separator":
                 var updatedDisplayWarning = settingC.includes(" ") || settingD === "\n" || settingD.includes(" ");
                 break;
-            case "2DArrays":
+            case "2D Arrays":
                 updatedDisplayWarning = settingA.includes(" ") || settingB.includes(" ") || settingC.includes(" ");
                 break;
-            case "reshape":
+            case "Reshape From One Line":
                 updatedDisplayWarning = settingA.includes(" ") || settingB.includes(" ") || settingC.includes(" ");
                 break;
 
@@ -99,22 +99,22 @@ function TextImport(props) {
 
 
         switch(updated) {
-            case "separator":
+            case "Separator":
                 setSettingC(" ");
                 setSettingD("\n");
                 break;
-            case "2DArrays":
+            case "2D Arrays":
                 setSettingA("{");
                 setSettingB("}");
                 setSettingC(",");
 
                 break;
-            case "reshape":
+            case "Reshape From One Line":
                 setSettingA("1");
                 setSettingB("1");
                 setSettingC(" ");
                 break;
-            case "latex":
+            case "LaTeX":
                 break;
 
             default: break;
@@ -161,7 +161,7 @@ function TextImport(props) {
             name = newName;
 
         switch(importFormat) {
-            case "separator":
+            case "Separator":
                 var rowSeparator = settingD;
 
                 var rows = text.split(rowSeparator);
@@ -175,7 +175,7 @@ function TextImport(props) {
                 
                 break;
                 
-            case "2DArrays":
+            case "2D Arrays":
                 if (!ignoreWhitespace) //if we have not already removed new lines before 
                     text = text.replaceAll("\n", "");
 
@@ -207,7 +207,7 @@ function TextImport(props) {
                 
             
         
-            case "reshape":
+            case "Reshape From One Line":
                 var elements = text.split(separator);
                 var rowCount = parseInt(settingA);
                 var colCount = parseInt(settingB);
@@ -248,13 +248,13 @@ function TextImport(props) {
                 props.setMatrix(matrix, name);
                 break;
 
-            case "latex":
+            case "LaTeX":
                 rows = text.split("\\\\");
                 
                 for (i = 0; i < rows.length; i++) {
                     rows[i] = rows[i].replaceAll(" ","")
                     
-                    matrix.push(rows[i].split(/(?<!\\)&/));
+                    matrix.push(rows[i].split("&"));
                     matrix[i].push("");
                 }
 
@@ -298,16 +298,16 @@ function TextImport(props) {
 
 
     switch (importFormat) {
-        case "separator":
+        case "Separator":
             var inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n1${settingC}0${settingC}0${settingC}0${settingD}0${settingC}1${settingC}0${settingC}0${settingD}0${settingC}0${settingC}1${settingC}0${settingD}0${settingC}0${settingC}0${settingC}1\nExtra characters may lead to an unexpected input`;
             break;
-        case "2DArrays":
+        case "2D Arrays":
             inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n${settingA}${settingA}1${settingC}0${settingC}0${settingC}0${settingB}${settingC}\n${settingA}0${settingC}1${settingC}0${settingC}0${settingB}${settingC}\n${settingA}0${settingC}0${settingC}1${settingC}0${settingB}${settingC}\n${settingA}0${settingC}0${settingC}0${settingC}1${settingB}${settingB}\nExtra characters may lead to an unexpected input`;
             break;
-        case "reshape":
+        case "Reshape From One Line":
             inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1${settingC}0${settingC}0${settingC}0${settingC}0${settingC}1\nExtra characters may lead to an unexpected input`;
             break;
-        case "latex":
+        case "LaTeX":
             inputMatrixPlaceholder = `Enter your matrix in this box following the format: \n1 & 0 & 0 & 0 \\\\\n0 & 1 & 0 & 0 \\\\\n0 & 0 & 1 & 0 \\\\\n0 & 0 & 0 & 1\nExtra characters may lead to an unexpected input`;
             break;
         default: break;
@@ -325,37 +325,33 @@ function TextImport(props) {
             <ul>
                 {"Import Format"}
                 
-                <li><button id = "separator" 
-                onClick = {updateImportFormat} 
-                className = {importFormat === "separator" ? "btn btn-info" : "btn btn-secondary"}>
-                {"Separators"}
-                </button></li>
+                <ListButton
+                    name = {"Separator"}
+                    action = {updateImportFormat}
+                    active = {importFormat === "Separator"}
+                />
 
-                <li><button id = "2DArrays" 
-                onClick = {updateImportFormat} 
-                className = {importFormat === "2DArrays" ? "btn btn-info" : "btn btn-secondary"}>
-                {"2D Arrays"}
-                </button></li>
+                <ListButton
+                    name = {"2D Arrays"}
+                    action = {updateImportFormat}
+                    active = {importFormat === "2D Arrays"}
+                />
 
-                <li><button id = "latex" 
-                onClick = {updateImportFormat} 
-                className = {importFormat === "latex" ? "btn btn-info" : "btn btn-secondary"}>
-                {"LaTeX Format"}
-                </button></li>
-                   
-
-                <li><button id = "reshape" 
-                onClick = {updateImportFormat} 
-                className = {importFormat === "reshape" ? "btn btn-info" : "btn btn-secondary"}>
-                {"Reshape From One Line"}
-                </button></li>
-
-                
+                <ListButton
+                    name = {"LaTeX"}
+                    action = {updateImportFormat}
+                    active = {importFormat === "LaTeX"}
+                />
+                <ListButton
+                    name = {"Reshape From One Line"}
+                    action = {updateImportFormat}
+                    active = {importFormat === "Reshape From One Line"}
+                />
                 </ul> 
         </div>
 
         <div className = "col-sm-4">
-            {importFormat === "latex" ? 
+            {importFormat === "LaTeX" ? 
             <div>
                 <ParameterBoxInput isChecked = {removeEscape} id = "removeEscape" name = "removeEscape" text = {"Remove Escapes For: #$%&_{}^~\\"} updateParameter = {updateParameter}/>
                 {removeEscape ? <div>
@@ -368,7 +364,7 @@ function TextImport(props) {
             : <ParameterBoxInput isChecked = {ignoreWhitespace} id = "ignoreWhiteSpace" name = "ignoreWhiteSpace" text = {"Ignore White Space"} updateParameter = {updateParameter}/>
             }
 
-            {importFormat === "separator" ? 
+            {importFormat === "Separator" ? 
             <div>
                 <div>Element Separator: <ParameterTextInput text = {settingC} width = {"10%"} id={"settingC"} updateParameter={updateParameter}/></div>
                 <div>Row Separator: <ParameterTextInput text = {settingD} placeholder = "\n" width = {"10%"} id={"settingD"} updateParameter={updateParameter}/></div>
@@ -376,14 +372,14 @@ function TextImport(props) {
             : null }
             
 
-            {importFormat === "2DArrays" ? 
+            {importFormat === "2D Arrays" ? 
             <div>
                 <div>Opening Bracket: <ParameterTextInput text = {settingA} width = {"10%"} id={"settingA"} updateParameter={updateParameter}/></div>
                 <div>Closing Bracket: <ParameterTextInput text = {settingB} width = {"10%"} id={"settingB"} updateParameter={updateParameter}/></div>
                 <div>Separator: <ParameterTextInput text = {settingC} width = {"10%"} id={"settingC"} updateParameter={updateParameter}/></div>
             </div> : null }
 
-            {importFormat === "reshape" ? 
+            {importFormat === "Reshape From One Line" ? 
             <div>
                 <div>Rows: <ParameterTextInput text = {settingA} width = {"10%"} id={"settingA"} updateParameter={updateParameter}/></div>
                 <div>Columns: <ParameterTextInput text = {settingB} width = {"10%"} id={"settingB"} updateParameter={updateParameter}/></div>
