@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Table from "./Table.js"
 
@@ -6,14 +6,30 @@ import MatrixExport from "./matrixTools/MatrixExport.js"
 import MatrixMath from './matrixTools/MatrixMath.js';
 import MatrixActions from './matrixTools/MatrixActions.js';
 import TextImport from './matrixTools/TextImport.js';
+import SelectionMenu from './SelectionMenu.js';
 
 import "./MatrixEditor.css";
 
 function MatrixEditor(props) {
+    const [boxesSelected, setBoxesSelected] = useState({
+        "startX" : -1,
+        'startY' : -1,
+        "endX" : -1,
+        "endY" : -1,
+        "quadrant": 1
+    });
+    
     const [showActions, setShowActions] = useState(false);
     const [showExport, setShowExport] = useState(false);
     const [showMath, setShowMath] = useState(false);
     const [showImport, setShowImport] = useState(false);
+    useEffect(() => {setBoxesSelected({
+        "startX" : -1,
+        'startY' : -1,
+        "endX" : -1,
+        "endY" : -1,
+        "quadrant": 1
+    })}, [props.name]);
 
     function toggleShown(e) {
         setShowImport(false);
@@ -39,11 +55,46 @@ function MatrixEditor(props) {
         }
     }
 
+    function updateBoxesSelected(x1, y1, x2, y2) {
+        if (!props.selectable) 
+            return; 
+            
+        if (x1 === -1 || y1 === -1) {
+            x1 = boxesSelected["startX"];
+            y1 = boxesSelected["startY"];
+        }
+
+        else if (x2 === -1 || y2 === -1) {
+            x2 = boxesSelected["endX"];
+            y2 = boxesSelected["endY"];
+        }
+        
+        
+        if (x1 <= x2) { //treat start as the origin
+            if (y1 <= y2)
+                var quadrant = 1;
+            else    
+                quadrant = 4;
+        } else if (y1 <= y2) { // x1 > x2
+            quadrant = 2;
+        } else
+            quadrant = 3;
+
+        setBoxesSelected({
+            "startX" : x1,
+            'startY' : y1,
+            "endX" : x2,
+            "endY" : y2,
+            "quadrant" : quadrant
+        });
+    }
+
+
     var showTable = (props.matrix.length <= 51 && props.matrix[0].length <= 51);
 
     return (
-    <div className = "matrixEditor">
-        <div id = "options" className = "options">
+    <div className = "matrixEditor" >
+        <div id = "options" className = "options" >
             <div className = "options-bar">
 
                 <button id = "toggleActions" 
@@ -112,6 +163,7 @@ function MatrixEditor(props) {
 
         {showTable ? 
             <Table 
+            onClick={ () => {   setBoxesSelected({ "startX" : -1, 'startY' : -1, "endX" : -1, "endY" : -1,"quadrant": 1}); } }
                 mirror = {props.mirror}
                 name = {props.name}
                 matrix = {props.matrix} 
@@ -120,12 +172,27 @@ function MatrixEditor(props) {
                 addRowsAndCols = {props.addRowsAndCols}
                 updateEntry = {props.updateEntry}
                 tryToDelete = {props.tryToDelete}
+                selectable = {props.selectable}
+
+                boxesSelected = {boxesSelected}
+                updateBoxesSelected = {updateBoxesSelected}
             /> 
             : <div className = "bigMatrixInfo">
                 Matrices larger than 50 x 50 are too big to be displayed<br/>
                 Use Import Matrix From Text or Matrix Actions to edit the matrix<br/>
                 Use Export Matrix to view the matrix
             </div>}
+
+            { props.selectable && (boxesSelected["startX"] !== boxesSelected["endX"] || boxesSelected["startY"] !== boxesSelected["endY"]) ? 
+               <SelectionMenu 
+                    boxesSelected = {boxesSelected} 
+                    generateUniqueName = {props.generateUniqueName}
+                    spliceMatrix = {props.spliceMatrix}
+                    pasteMatrix = {props.pasteMatrix}
+                    name = {props.name}
+                    
+               />: null
+            }
 
     </div>)
 

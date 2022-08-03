@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from './Box.js';
 
 import "./Table.css";
 
 function Table(props) {
+    const [mouseDown, setMouseDown] = useState(false);
+
 
     //add Row/Col/Both and update matrix[row][col]
     function addRow(row, col, updated) {
@@ -117,6 +119,27 @@ function Table(props) {
         }
     }
 
+    function inSelection(x, y) {
+        switch(props.boxesSelected["quadrant"]) {
+            case -1:
+                return false;
+
+            case 1:
+                return props.boxesSelected["startX"] <= x && x <= props.boxesSelected["endX"] &&
+                       props.boxesSelected["startY"] <= y && y <= props.boxesSelected["endY"];
+            case 2:
+                return props.boxesSelected["endX"] <= x && x <= props.boxesSelected["startX"] &&
+                       props.boxesSelected["startY"] <= y && y <= props.boxesSelected["endY"];
+            case 3:
+                return props.boxesSelected["endX"] <= x && x <= props.boxesSelected["startX"] &&
+                       props.boxesSelected["endY"] <= y && y <= props.boxesSelected["startY"];
+            case 4:
+                return props.boxesSelected["startX"] <= x && x <= props.boxesSelected["endX"] &&
+                       props.boxesSelected["endY"] <= y && y <= props.boxesSelected["startY"];
+
+            default: return false;
+        }
+    }
 
     var cols = props.matrix[0].length;
     var rows = props.matrix.length;
@@ -137,8 +160,10 @@ function Table(props) {
                         addRow = {addRow} 
                         addCol = {addCol}
                         addBoth = {addBoth}
-                        keyDown = {keyDown}
                         updateEntry = {props.updateEntry}
+                        
+                        keyDown = {keyDown}
+                        updateBoxesSelected = {props.updateBoxesSelected}
 
                         rows = {rows}
                         cols = {cols}
@@ -146,6 +171,10 @@ function Table(props) {
                         col = {j}
                         val = {props.matrix[i][j]} 
                         key = {i + ";" + j}
+
+                        boxSelected = {props.selectable ? inSelection(i, j) : false}
+                        setMouseDown = {setMouseDown}
+                        mouseDown = {mouseDown} 
                 />
         }
 

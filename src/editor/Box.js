@@ -17,6 +17,19 @@ function Box(props) {
         props.keyDown(props.row, props.col, e);
     }
 
+
+    function handleMouseDown(e) {
+        if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
+            props.setMouseDown(true);
+            props.updateBoxesSelected(props.row, props.col, props.row, props.col);
+        }
+    }
+
+    function handleEnter(e) {
+        if (props.mouseDown && props.rows !== props.row + 1 && props.cols !== props.col + 1)
+            props.updateBoxesSelected(-1, -1, props.row, props.col);
+    }
+
     var lastRow = props.rows === props.row + 1;
     var lastCol = props.cols === props.col + 1;
    
@@ -27,20 +40,28 @@ function Box(props) {
     var lastColIn50 = props.col === 49 && props.cols === 51;
 
     if ((lastRowIn50 && lastColIn50) ||                //bottom right corner of 50 x 50
-        (lastRowIn50 && props.col < props.cols - 1) || //bottom row of 50 x m (excluding right most col)
-        (lastColIn50 && props.row < props.rows - 1)) { //right most col of n x 50 (excluding last row)
-        var forceLastFiftyStyle =  { 
-            "background-color": "rgb(196, 185, 185)",
-            "max-width": "50px",
+            (lastRowIn50 && props.col < props.cols - 1) || //bottom row of 50 x m (excluding right most col)
+            (lastColIn50 && props.row < props.rows - 1)) { //right most col of n x 50 (excluding last row)
+        var specialStyle =  { 
+            "backgroundColor": "rgb(196, 185, 185)",
+            "maxWidth": "50px",
             "width": "50px",
-            "max-height": "50px",
+            "maxHeight": "50px",
             "height": "50px" 
         }
-    } else
-        forceLastFiftyStyle = null;
+    } else if (props.boxSelected && !lastRow && !lastCol)
+        specialStyle =  { 
+            "backgroundColor": "rgb(183, 212, 216)",
+            "maxWidth": "50px",
+            "width": "50px",
+            "maxHeight": "50px",
+            "height": "50px" 
+        } 
+    else
+        specialStyle = null;
 
 
-    return <td style = {forceLastFiftyStyle}>
+    return <td style = {specialStyle}>
         <input 
             autoComplete = "off" 
             id = {props.row + ":" + props.col} 
@@ -49,8 +70,13 @@ function Box(props) {
             onChange = {(lastRow && lastCol ? handleAddBoth :
                                     lastRow ? handleAddRow :
                                     lastCol ? handleAddCol :
-                                            handleUpdate)} 
-            onKeyDown = {handleKeyDown}     
+                                              handleUpdate)} 
+            onKeyDown = {handleKeyDown} 
+            onMouseDown = {handleMouseDown}    
+            onFocus = {() => {props.updateBoxesSelected(props.row, props.col, props.row, props.col);}}
+            onMouseEnter = {handleEnter}
+            onMouseUp = {() => {props.setMouseDown(false)}}
+            
         />
     </td>;
 }

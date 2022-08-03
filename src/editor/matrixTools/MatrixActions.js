@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import ParameterBoxInput from '../../inputs/ParameterBoxInput';
 import ParameterTextInput from '../../inputs/ParameterTextInput';
 
 import "./MatrixActions.css"
@@ -52,20 +53,20 @@ function MatrixActions(props) {
 
     return <div className = "matrixActions">
         <button 
-            className = "btn btn-success matrixButtons" 
+            className = "btn btn-primary matrixButtons" 
             onClick={() => {props.transpose(props.name)}}>
             {"Transpose"}
         </button>
         
         <button 
-            className = "btn btn-success matrixButtons"
+            className = "btn btn-primary matrixButtons"
             id = "rowsToCols"
             onClick={() => {props.mirrorRowsCols(props.name, true)}}>
             {"Mirror Rows Across Diagonal"}
         </button> 
 
         <button 
-            className = "btn btn-success matrixButtons"
+            className = "btn btn-primary matrixButtons"
             id = "colsToRows"
             onClick={() => {props.mirrorRowsCols(props.name, false)}}>
             {"Mirror Columns Across Diagonal"}
@@ -73,9 +74,9 @@ function MatrixActions(props) {
         
         
 
-        <div className = "inputButtonContainer">
+        <div className = "buttonTextInput">
             <button 
-                className = "btn btn-success matrixButtons" 
+                className = "btn btn-primary matrixButtons" 
                 onClick={() => {props.fillEmpty(props.name,fillEmptyWithThis)}}>
                 {"Fill Empty With: "}
             </button>
@@ -87,9 +88,9 @@ function MatrixActions(props) {
                 width = {"40px"} />
         </div>
 
-        <div className = "inputButtonContainer">
+        <div className = "buttonTextInput">
             <button 
-                className = "btn btn-success matrixButtons" 
+                className = "btn btn-primary matrixButtons" 
                 onClick={() => {props.fillAll(props.name,fillAllWithThis)}}>
                 {"Fill All With: "}
             </button>
@@ -100,9 +101,9 @@ function MatrixActions(props) {
                 width = {"40px"} />
         </div>
 
-        <div className = "inputButtonContainer">
+        <div className = "buttonTextInput">
             <button 
-                className = "btn btn-success matrixButtons" 
+                className = "btn btn-primary matrixButtons" 
                 onClick={() => {props.fillDiagonal(props.name,fillDiagonalWithThis)}}>
                 {"Fill Diagonal With: "}
             </button>
@@ -115,9 +116,9 @@ function MatrixActions(props) {
 
 
 
-        <div className = "inputButtonContainer">
+        <div className = "buttonTextInput">
             <button
-                className = "btn btn-success matrixButtons"
+                className = "btn btn-primary matrixButtons"
                 onClick={() => {props.randomMatrix(props.name, parseInt(randomLow), parseInt(randomHigh))}}> 
                 {"Randomize Elements: "}
             </button>
@@ -134,9 +135,9 @@ function MatrixActions(props) {
                 width = {"40px"} />
         </div>
 
-        <div className = "inputButtonContainer">
+        <div className = "buttonTextInput">
             <button 
-                className = "btn btn-success matrixButtons" 
+                className = "btn btn-primary matrixButtons" 
                 onClick={() => {props.reshapeMatrix(props.name, parseInt(reshapeRows), parseInt(reshapeCols))}}> 
                 {"Reshape To: "}
             </button>

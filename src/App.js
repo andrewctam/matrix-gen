@@ -12,7 +12,7 @@ function App(props) {
     
     const [mirror, setMirror] = useState(false);
     const [autoSave, setAutoSave] = useState(false);
-
+    const [selectable, setSelectable] = useState(true);
     
     useEffect(() => {
         loadFromLocalStorage();
@@ -34,15 +34,16 @@ function App(props) {
         switch (i) {
             case "sparse":
                 setSparseVal(updated);
-                if (autoSave)
-                    window.localStorage.setItem("sparseValue;", updated); 
+                window.localStorage.setItem("sparseValue;", updated); 
                 break;
             case "mirror":
                 setMirror(updated);  
-                if (autoSave)
-                    window.localStorage.setItem("mirror;", updated ? "1" : "0");
+                window.localStorage.setItem("mirror;", updated ? "1" : "0");
                 break; 
-
+            case "selectable":
+                setSelectable(updated);
+                window.localStorage.setItem("selectable;", updated ? "1" : "0");
+                break;
             case "autoSave":
                 setAutoSave(updated);
                 break;
@@ -469,7 +470,70 @@ function App(props) {
         setMatrix(tempMatrix, name);
     }
 
+    function spliceMatrix(name, x1, y1, x2, y2, newName = "") {
+        if (newName == "")
+            newName = generateUniqueName();
 
+
+        if (x1 > x2) {
+            var temp = x1;
+            x1 = x2;
+            x2 = temp;
+        }
+
+        if (y1 > y2) {
+            temp = y1;
+            y1 = y2;
+            y2 = y1;
+        }
+
+
+        var spliced = Array(x2 - x1 + 2).fill().map(()=>Array(y2 - y1 + 2).fill(""))
+        var matrix = matrices[name];
+
+        for (var i = x1; i <= x2; i++)
+            for (var j = y1; j <= y2; j++)
+                spliced[i - x1][j - y1] = matrix[i][j];
+
+        setMatrix(spliced, newName);
+    }
+
+    function pasteMatrix(name, splice, x1, y1, x2, y2,) {
+        if (splice === "") {
+            alert("Pasted matrix name is empty");
+            return;
+        }
+
+        if (x1 > x2) {
+            var temp = x1;
+            x1 = x2;
+            x2 = temp;
+        }
+
+        if (y1 > y2) {
+            temp = y1;
+            y1 = y2;
+            y2 = y1;
+        }
+
+
+        var matrix = [...matrices[name]];
+        var copyMatrix = matrices[splice];
+
+        if (x2 - x1 + 2 !== copyMatrix.length || y2 - y1 + 2 !== copyMatrix[0].length) {
+            alert("Error: selection dimensions and pasted matrix dimensions must match.")
+            return;
+        }
+        
+        for (var i = x1; i <= x2; i++)
+            for (var j = y1; j <= y2; j++)
+                matrix[i][j] = copyMatrix[i - x1][j - y1];
+            
+
+        
+
+        setMatrix(matrix, name);
+    }
 
 
     function saveToLocalStorage() {
@@ -497,6 +561,7 @@ function App(props) {
         window.localStorage.setItem("names;", names.substring(0, names.length - 1))
         window.localStorage.setItem("mirror;", mirror ? "1" : "0")
         window.localStorage.setItem("autoSave;", autoSave ? "1" : "0")
+        window.localStorage.setItem("selectable;", selectable ? "1" : "0");
         window.localStorage.setItem("sparseValue;", sparseVal)
     }
 
@@ -526,6 +591,7 @@ function App(props) {
             setMatrices(loadedMatrices);
             setAutoSave(window.localStorage.getItem("autoSave;") === "1");
             setMirror(window.localStorage.getItem("mirror;") === "1");
+            setSelectable(window.localStorage.getItem("selectable;") === "1");
             setSparseVal(window.localStorage.getItem("sparseValue;"));
             setSelection(names[0]);
         } catch (error) {
@@ -551,6 +617,7 @@ function App(props) {
                 mirror = {mirror}
                 selection = {selection}
                 sparseVal = {sparseVal}
+                selectable = {selectable}
 
                 updateMatrixSelection = {updateMatrixSelection} 
                 setMatrix = {setMatrix}
@@ -589,6 +656,10 @@ function App(props) {
                 tryToDelete = {tryToDelete}
                 fillAll = {fillAll}
                 fillDiagonal = {fillDiagonal}
+
+                spliceMatrix = {spliceMatrix}
+                pasteMatrix = {pasteMatrix}
+                selectable = {selectable}
             /> : null
             } 
 

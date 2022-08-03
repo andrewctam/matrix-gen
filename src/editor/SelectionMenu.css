@@ -1,0 +1,18 @@
+
+.selectionSettings {
+    background-color: rgb(66, 65, 68);
+    border-radius: 15px;
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-top: 1vh;
+    padding: 10px;
+    text-align: center;
+  }
+
+
+
+.selectionButton > input {
+    width: 75px;
+  }
+  
