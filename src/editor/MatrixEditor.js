@@ -18,11 +18,14 @@ function MatrixEditor(props) {
         "endY" : -1,
         "quadrant": 1
     });
+    const [mouseDown, setMouseDown] = useState(false);
+
     
     const [showActions, setShowActions] = useState(false);
     const [showExport, setShowExport] = useState(false);
     const [showMath, setShowMath] = useState(false);
     const [showImport, setShowImport] = useState(false);
+
     useEffect(() => {setBoxesSelected({
         "startX" : -1,
         'startY' : -1,
@@ -91,9 +94,9 @@ function MatrixEditor(props) {
 
 
     var showTable = (props.matrix.length <= 51 && props.matrix[0].length <= 51);
-
+    console.log("renger")
     return (
-    <div className = "matrixEditor" >
+    <div className = "matrixEditor" onMouseUp = {() => {if (mouseDown) setMouseDown(false)}} >
         <div id = "options" className = "options" >
             <div className = "options-bar">
 
@@ -162,8 +165,7 @@ function MatrixEditor(props) {
 
 
         {showTable ? 
-            <Table 
-            onClick={ () => {   setBoxesSelected({ "startX" : -1, 'startY' : -1, "endX" : -1, "endY" : -1,"quadrant": 1}); } }
+            <Table                 
                 mirror = {props.mirror}
                 name = {props.name}
                 matrix = {props.matrix} 
@@ -176,6 +178,8 @@ function MatrixEditor(props) {
 
                 boxesSelected = {boxesSelected}
                 updateBoxesSelected = {updateBoxesSelected}
+                mouseDown = {mouseDown}
+                setMouseDown = {setMouseDown}
             /> 
             : <div className = "bigMatrixInfo">
                 Matrices larger than 50 x 50 are too big to be displayed<br/>
@@ -187,9 +191,11 @@ function MatrixEditor(props) {
                <SelectionMenu 
                     boxesSelected = {boxesSelected} 
                     generateUniqueName = {props.generateUniqueName}
+                    editSelection = {props.editSelection}
                     spliceMatrix = {props.spliceMatrix}
                     pasteMatrix = {props.pasteMatrix}
                     name = {props.name}
+                   
                     
                />: null
             }

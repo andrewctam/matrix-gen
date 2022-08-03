@@ -470,10 +470,35 @@ function App(props) {
         setMatrix(tempMatrix, name);
     }
 
-    function spliceMatrix(name, x1, y1, x2, y2, newName = "") {
-        if (newName == "")
-            newName = generateUniqueName();
+    function editSelection(name, text, x1, y1, x2, y2) {
+        if (x1 > x2) {
+            var temp = x1;
+            x1 = x2;
+            x2 = temp;
+        }
 
+        if (y1 > y2) {
+            temp = y1;
+            y1 = y2;
+            y2 = temp;
+        }
+
+        var matrix = [...matrices[name]];
+        console.log(x1 + " " + x2)
+        console.log(y1 + " " + y2)
+        for (var i = x1; i <= x2; i++)
+            for (var j = y1; j <= y2; j++)
+                if (text === 8)
+                    matrix[i][j] = matrix[i][j].substring(0, matrix[i][j].length - 1);
+                else
+                    matrix[i][j] += text;
+
+        setMatrix(matrix, name);
+    }
+
+    function spliceMatrix(name, x1, y1, x2, y2, newName = "") {
+        if (newName === "")
+            newName = generateUniqueName();
 
         if (x1 > x2) {
             var temp = x1;
@@ -484,7 +509,7 @@ function App(props) {
         if (y1 > y2) {
             temp = y1;
             y1 = y2;
-            y2 = y1;
+            y2 = temp;
         }
 
 
@@ -513,7 +538,7 @@ function App(props) {
         if (y1 > y2) {
             temp = y1;
             y1 = y2;
-            y2 = y1;
+            y2 = temp;
         }
 
 
@@ -659,6 +684,7 @@ function App(props) {
 
                 spliceMatrix = {spliceMatrix}
                 pasteMatrix = {pasteMatrix}
+                editSelection = {editSelection}
                 selectable = {selectable}
             /> : null
             } 

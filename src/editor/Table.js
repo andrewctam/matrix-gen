@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Box from './Box.js';
-
 import "./Table.css";
 
 function Table(props) {
-    const [mouseDown, setMouseDown] = useState(false);
 
 
     //add Row/Col/Both and update matrix[row][col]
@@ -173,15 +171,15 @@ function Table(props) {
                         key = {i + ";" + j}
 
                         boxSelected = {props.selectable ? inSelection(i, j) : false}
-                        setMouseDown = {setMouseDown}
-                        mouseDown = {mouseDown} 
+                        setMouseDown = {props.setMouseDown}
+                        mouseDown = {props.mouseDown} 
                 />
         }
 
         tableRows[i] = <tr key = {"row" + i}>{eachRow}</tr>
     }
 
-    return <table className = "table table-bordered" >
+    return <table className = "table table-bordered"  >
         <tbody>{tableRows}</tbody>
     </table>
 

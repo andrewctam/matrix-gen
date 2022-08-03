@@ -39,25 +39,25 @@ function Box(props) {
     var lastRowIn50 = props.row === 49 && props.rows === 51;
     var lastColIn50 = props.col === 49 && props.cols === 51;
 
-    if ((lastRowIn50 && lastColIn50) ||                //bottom right corner of 50 x 50
+    if (props.boxSelected && (!lastRow || lastRowIn50) && (!lastCol || lastColIn50))
+        var specialStyle =  { 
+            "backgroundColor": "rgb(183, 212, 216)",
+            "maxWidth": "50px",
+            "width": "50px",
+            "maxHeight": "50px",
+            "height": "50px" 
+        }  
+    else if ((lastRowIn50 && lastColIn50) ||                //bottom right corner of 50 x 50
             (lastRowIn50 && props.col < props.cols - 1) || //bottom row of 50 x m (excluding right most col)
             (lastColIn50 && props.row < props.rows - 1)) { //right most col of n x 50 (excluding last row)
-        var specialStyle =  { 
+            specialStyle =  { 
             "backgroundColor": "rgb(196, 185, 185)",
             "maxWidth": "50px",
             "width": "50px",
             "maxHeight": "50px",
             "height": "50px" 
         }
-    } else if (props.boxSelected && !lastRow && !lastCol)
-        specialStyle =  { 
-            "backgroundColor": "rgb(183, 212, 216)",
-            "maxWidth": "50px",
-            "width": "50px",
-            "maxHeight": "50px",
-            "height": "50px" 
-        } 
-    else
+    } else
         specialStyle = null;
 
 
@@ -70,13 +70,13 @@ function Box(props) {
             onChange = {(lastRow && lastCol ? handleAddBoth :
                                     lastRow ? handleAddRow :
                                     lastCol ? handleAddCol :
-                                              handleUpdate)} 
-            onKeyDown = {handleKeyDown} 
-            onMouseDown = {handleMouseDown}    
-            onFocus = {() => {props.updateBoxesSelected(props.row, props.col, props.row, props.col);}}
+                       
+                                    handleUpdate)} 
+            onKeyDown = {handleKeyDown}
+
+            onFocus = {handleMouseDown}
             onMouseEnter = {handleEnter}
             onMouseUp = {() => {props.setMouseDown(false)}}
-            
         />
     </td>;
 }

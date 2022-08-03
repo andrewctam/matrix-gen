@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import ParameterBoxInput from '../../inputs/ParameterBoxInput';
 import ParameterTextInput from '../../inputs/ParameterTextInput';
 
 import "./MatrixActions.css"

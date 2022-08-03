@@ -19,10 +19,35 @@ function SelectionMenu(props) {
                 default: break;
             }
     }
+    
+    function handleChange(e) {
+        props.editSelection(props.name, 
+                            e.target.value,
+                            props.boxesSelected["startX"], 
+                            props.boxesSelected["startY"], 
+                            props.boxesSelected["endX"], 
+                            props.boxesSelected["endY"]);
+
+        e.target.value = "";
+    }
+
+    function handleKeyDown(e) {
+        if (e.keyCode === 8) {
+            props.editSelection(props.name, 
+                8,
+                props.boxesSelected["startX"], 
+                props.boxesSelected["startY"], 
+                props.boxesSelected["endX"], 
+                props.boxesSelected["endY"],
+                );
+        }
+    }
+
+
 
     var name = props.generateUniqueName();
 
-    return <div className = "selectionSettings fixed-bottom">
+    return <div className = "selectionSettings">
             <div>
                 {"Selection Size: " + 
                 (Math.abs(props.boxesSelected["startX"] - props.boxesSelected["endX"]) + 1)
@@ -30,21 +55,17 @@ function SelectionMenu(props) {
                 (Math.abs(props.boxesSelected["startY"] - props.boxesSelected["endY"]) + 1)} 
             </div>
 
-            <div>
-                {"Start: Row " + 
-                (props.boxesSelected["startX"] + " Column " + props.boxesSelected["startY"])}
-            
-            </div>
+            <div>{"Start: Row " + (props.boxesSelected["startX"] + " Column " + props.boxesSelected["startY"])}</div>
 
-            <div>
-                {"End: Row " + 
-                (props.boxesSelected["endX"] + " Column " + props.boxesSelected["endY"])}
-            
-            </div>
+            <div>{"End: Row " + (props.boxesSelected["endX"] + " Column " + props.boxesSelected["endY"])}</div>
 
+
+                <input className = "editSelected" 
+                onChange = {handleChange} 
+                onKeyDown = {handleKeyDown}
+                placeholder="Type Here to Edit All Selected Boxes"/>
 
             <div className = "buttonTextInput selectionButton">
-
                 <button 
                     className = {"btn matrixButtons btn-primary"} 
                     onClick = {() => {
@@ -65,7 +86,6 @@ function SelectionMenu(props) {
                     placeholder = {name} />
                 
             </div>
-                <br />
 
             <div className = "buttonTextInput selectionButton">
                 <button 
@@ -86,6 +106,8 @@ function SelectionMenu(props) {
                     value = {pasteName} />
             </div>
 
+
+          
 
     </div>
 }

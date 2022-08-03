@@ -16,3 +16,16 @@
     width: 75px;
   }
   
+.editSelected {
+  width: 50%;
+  background-color: rgb(215, 206, 206);
+  margin: 1vh;
+  padding: 5px;
+  
+}
+
+.editSelected::placeholder {
+  color: black;
+  text-align: center;
+  
+}
