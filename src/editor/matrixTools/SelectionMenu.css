@@ -1,0 +1,26 @@
+
+.selectionSettings {
+    background-color: rgba(48, 50, 51, 0.49);
+    width: 100%;
+    text-align: center;
+    --bs-gutter-x: 0px;
+    padding: 1vh;
+
+  }
+
+  
+.editSelected {
+  width: 25%;
+  background-color: rgb(215, 206, 206);
+  margin: 1vh;
+  padding: 5px;
+  color: rgb(215, 206, 206);
+  
+}
+
+.editSelected::placeholder {
+  color: black;
+  text-align: center; 
+}
+
+

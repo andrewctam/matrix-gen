@@ -14,7 +14,6 @@ function Tutorial(props) {
                         <li>Typing in a white box will update the corresponding entry. </li>
                         <li>Typing in a red box will add a row/column to the matrix. They are not part of the matrix until you type in them.</li>
                         <li>You can delete empty rows/columns with Backspace. The entire row/column must be empty.</li>
-                        <li>You can drag your mouse over boxes to select a sub matrix. Then, you can edit all the elements in the selection, save the selection to another matrix, or paste another matrix of the same size into the selection. Selection can also be disabled in the settings.</li>
                         <li>Empty boxes will be filled with a sparse value when exporting or doing math. You can edit this value in the settings.</li>
                         <li>If you want to mirror your inputs, you can enable this in the settings. Typing in box (i, j) will also edit in box (j, i).</li>
                     </ul>
@@ -52,6 +51,18 @@ function Tutorial(props) {
                         <li>Enter a math expression using the name of matrices and these operators (+, -, *, ^)</li>
                         <li>The answer will be saved as a new matrix.</li>
                         <li>Multiplication can be scalar or matrix multiplication. For example, 2 * A would multiply each element by 2, and A * A would do matrix multiplication.</li>
+                    </ul>
+                </div>
+                break;
+            case "selection":
+                inside = <div>
+                    You can drag your mouse over boxes to select a sub matrix. Then, you can edit all the elements in the selection, save the selection to another matrix, or paste another matrix of the same size into the selection.
+                    <ul className = "tutorialList">
+                        <li>You can enable/disable selection in the settings.</li>
+                        <li>Drag your mouse over boxes to select them.</li>
+                        <li>Type in the box to edit all selected boxes. You can type characters or use backspace.</li>
+                        <li>You can save the selected matrix as a new matrix. If no name is provided, a unique name is automatically generated.</li>
+                        <li>You can paste another matrix into the selection by entering its name. The matrix and selection must have the same dimensions.</li>
                     </ul>
                 </div>
                 break;
@@ -114,6 +125,7 @@ function Tutorial(props) {
         <TutorialButton text = "Saving Matrices" name = "saving" setSelected = {setSelected} selected = {selected} />
         <TutorialButton text = "Matrix Actions" name = "actions" setSelected = {setSelected} selected = {selected} />
         <TutorialButton text = "Matrix Math" name = "math" setSelected = {setSelected} selected = {selected} />
+        <TutorialButton text = "Selection" name = "selection" setSelected = {setSelected} selected = {selected} />
         <TutorialButton text = "Importing From Text" name = "importing" setSelected = {setSelected} selected = {selected} />
         <TutorialButton text = "Export Matrix" name = "exporting" setSelected = {setSelected} selected = {selected} />
 

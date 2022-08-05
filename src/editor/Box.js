@@ -17,7 +17,11 @@ function Box(props) {
         props.keyDown(props.row, props.col, e);
     }
 
-
+    function handleMouseDown() {
+        if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
+            props.setMouseDown(true)
+        } 
+    }
     function handleFocus(e) {
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             props.updateBoxesSelected(props.row, props.col, props.row, props.col);
@@ -73,12 +77,11 @@ function Box(props) {
                                     lastCol ? handleAddCol :
                        
                                     handleUpdate)} 
+
             onKeyDown = {handleKeyDown}
-
-
             onFocus = {handleFocus}
             onMouseEnter = {handleEnter}
-            onMouseDown = {() => {props.setMouseDown(true)}}
+            onMouseDown = {handleMouseDown}
             onMouseUp = {() => {props.setMouseDown(false)}}
         />
     </td>;

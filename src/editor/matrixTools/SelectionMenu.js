@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "./SelectionMenu.css"
-import TextActionButton from "./matrixTools/TextActionButton";
+import TextActionButton from "./TextActionButton";
 
 function SelectionMenu(props) {
     const [spliceName, setSpliceName] = useState("");
@@ -47,6 +47,10 @@ function SelectionMenu(props) {
     var generatedName = props.generateUniqueName();
 
     return <div className = "selectionSettings">
+        {props.boxesSelected["quadrant"] === -1 ? 
+        <div>No Boxes Selected</div>
+        :
+        <div>
             <div>
                 {"Selection Size: " + 
                 (Math.abs(props.boxesSelected["startX"] - props.boxesSelected["endX"]) + 1)
@@ -54,15 +58,14 @@ function SelectionMenu(props) {
                 (Math.abs(props.boxesSelected["startY"] - props.boxesSelected["endY"]) + 1)} 
             </div>
 
-            <div>{"Start: Row " + (props.boxesSelected["startX"] + " Column " + props.boxesSelected["startY"])}</div>
+            <div>{"Start: Row " + (props.boxesSelected["startX"] + " Column " + props.boxesSelected["startY"])}</div> 
 
             <div>{"End: Row " + (props.boxesSelected["endX"] + " Column " + props.boxesSelected["endY"])}</div>
-
 
             <input className = "editSelected" 
                 onChange = {handleChange} 
                 onKeyDown = {handleKeyDown}
-                placeholder="Type Here to Edit All Selected Boxes"/>
+                placeholder="Type Here to Edit All Selected Boxes"/> <br />
 
 
             <TextActionButton 
@@ -79,7 +82,7 @@ function SelectionMenu(props) {
                 width = {"75px"}
                 value = {spliceName}
                 placeholder = {generatedName}
-            />
+            /> 
 
             <TextActionButton 
                 name = {"Paste Another Matrix Into Selection: "}
@@ -93,9 +96,19 @@ function SelectionMenu(props) {
                 updateParameter = {updateName}
                 width = {"75px"}
                 value = {pasteName}
-            />
-                          
+            /> <br />
+            </div> 
+        }
+
+
+        
     </div>
+
+            
+
+
+
+            
 }
 
 export default SelectionMenu;

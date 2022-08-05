@@ -28,78 +28,78 @@ function MatrixExport(props) {
     
     function matrixToString() {
         switch (exportOption) {
+            case "LaTeX":
+                var result = environment !== "" ? `\\begin{${environment}}\n` : "";
+                for (var i = 0; i < props.matrix.length - 1; i++) {
+                    for (var j = 0; j < props.matrix[0].length - 1; j++) {
+                        if (props.matrix[i][j] === "") {
+                            result += props.sparseVal;        
+                        } else {
+                            var text = props.matrix[i][j];
+                            if (latexEscape) {
+                                //&%$#_{}  ~^\
+                                text = text.replaceAll(/[&%$#_{}~^\\]/g, (s) => {
+                                    switch(s) {
+                                        case "&": case "%": case "$": case "#": case "_": case "{": case "}":
+                                            return "\\" + s;
+                                        case "~":
+                                        case "^":
+                                        case "\\":
+                                            return escapeMap[s];
+                                            
+                                        default:
+                                            return s;
+                                    }
+                                });
+                            }
 
-        case "LaTeX":
-            var result = environment !== "" ? `\\begin{${environment}}\n` : "";
-            for (var i = 0; i < props.matrix.length - 1; i++) {
-                for (var j = 0; j < props.matrix[0].length - 1; j++) {
-                    if (props.matrix[i][j] === "") {
-                        result += props.sparseVal;        
-                    } else {
-                        var text = props.matrix[i][j];
-                        if (latexEscape) {
-                            //&%$#_{}  ~^\
-                            text = text.replaceAll(/[&%$#_{}~^\\]/g, (s) => {
-                                switch(s) {
-                                    case "&": case "%": case "$": case "#": case "_": case "{": case "}":
-                                        return "\\" + s;
-                                    case "~":
-                                    case "^":
-                                    case "\\":
-                                        return escapeMap[s];
-                                        
-                                    default:
-                                        return s;
-                                }
-                            });
+
+                            result += text;
+                        }            
+
+                        if (j !== props.matrix[0].length - 2) {
+                            result += " & ";
+                        } else if (i !== props.matrix.length - 2) {
+                            if (newLines)
+                                result += " \\\\\n";
+                            else
+                            result += " \\\\ ";
                         }
-
-
-                        result += text;
-                    }            
-
-                    if (j !== props.matrix[0].length - 2) {
-                        result += " & ";
-                    } else if (i !== props.matrix.length - 2) {
-                        if (newLines)
-                            result += " \\\\\n";
-                        else
-                        result += " \\\\ ";
                     }
                 }
-            }
-
-            
-            return result + (environment !== "" ? `\n\\end{${environment}}` : ""); 
-        
-
-        case "2D Arrays":
-            result = start.toString();
-
-            for (i = 0; i < props.matrix.length - 1; i++) {
-                result += start;
                 
-                for (j = 0; j < props.matrix[0].length - 1; j++) {
-                    if (props.matrix[i][j] !== "")
-                        result += props.matrix[i][j];
-                    else
-                        result += props.sparseVal;
-                        
-                    if (j !== props.matrix[0].length - 2) {
-                        result += delim;
+                return result + (environment !== "" ? `\n\\end{${environment}}` : ""); 
+            
+
+            case "2D Arrays":
+                result = start.toString();
+
+                for (i = 0; i < props.matrix.length - 1; i++) {
+                    result += start;
+                    
+                    for (j = 0; j < props.matrix[0].length - 1; j++) {
+                        if (props.matrix[i][j] !== "")
+                            result += props.matrix[i][j];
+                        else
+                            result += props.sparseVal;
+                            
+                        if (j !== props.matrix[0].length - 2) {
+                            result += delim;
+                        }
+                    }
+                    result += end;
+
+                    if (i !== props.matrix.length - 2) {
+                        if (newLines)
+                            result += delim + "\n";
+                        else
+                            result += delim;
+
                     }
                 }
-                result += end;
+                return result + end;
 
-                if (i !== props.matrix.length - 2) {
-                    if (newLines)
-                        result += delim + "\n";
-                    else
-                        result += delim;
-
-                }
-            }
-            return result + end;
+            default: return "";
         }
 
     }

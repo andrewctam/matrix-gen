@@ -6,7 +6,7 @@ import MatrixExport from "./matrixTools/MatrixExport.js"
 import MatrixMath from './matrixTools/MatrixMath.js';
 import MatrixActions from './matrixTools/MatrixActions.js';
 import TextImport from './matrixTools/TextImport.js';
-import SelectionMenu from './SelectionMenu.js';
+import SelectionMenu from './matrixTools/SelectionMenu.js';
 
 import "./MatrixEditor.css";
 
@@ -16,7 +16,7 @@ function MatrixEditor(props) {
         'startY' : -1,
         "endX" : -1,
         "endY" : -1,
-        "quadrant": 1
+        "quadrant": -1
     });
     const [mouseDown, setMouseDown] = useState(false);
 
@@ -25,13 +25,14 @@ function MatrixEditor(props) {
     const [showExport, setShowExport] = useState(false);
     const [showMath, setShowMath] = useState(false);
     const [showImport, setShowImport] = useState(false);
+    const [showSelectionMenu, setShowSelectionMenu] = useState(false);
 
     useEffect(() => {setBoxesSelected({
         "startX" : -1,
         'startY' : -1,
         "endX" : -1,
         "endY" : -1,
-        "quadrant": 1
+        "quadrant": -1
     })}, [props.name]);
 
     function toggleShown(e) {
@@ -39,6 +40,7 @@ function MatrixEditor(props) {
         setShowActions(false);
         setShowExport(false);
         setShowMath(false);
+        setShowSelectionMenu(false);
 
         switch (e.target.id) {
             case "Matrix Actions":
@@ -53,6 +55,9 @@ function MatrixEditor(props) {
             case "Export Matrix":
                 setShowExport(!showExport);
                 break;
+            case "Selection Settings":
+                setShowSelectionMenu(!showSelectionMenu);
+                break;
 
             default: break;
         }
@@ -65,7 +70,7 @@ function MatrixEditor(props) {
                 'startY' : -1,
                 "endX" : -1,
                 "endY" : -1,
-                "quadrant": 1
+                "quadrant": -1
             });
             return;
         }
@@ -73,15 +78,15 @@ function MatrixEditor(props) {
         if (!props.selectable) 
             return; 
             
-        if (x1 === -1 || y1 === -1) {
+        if (x1 === -1)
             x1 = boxesSelected["startX"];
+        if (y1 === -1)
             y1 = boxesSelected["startY"];
-        }
-
-        else if (x2 === -1 || y2 === -1) {
+        if (x2 === -1)
             x2 = boxesSelected["endX"];
+        if (y2 === -1) 
             y2 = boxesSelected["endY"];
-        }
+        
         
         
         if (x1 <= x2) { //treat start as the origin
@@ -123,6 +128,12 @@ function MatrixEditor(props) {
                     active = {showMath}
                     action = {toggleShown}
                 />
+                {props.selectable ? 
+                <ToggleButton 
+                    name = "Selection Settings" 
+                    active = {showSelectionMenu}
+                    action = {toggleShown}
+                /> : null}
 
                 <ToggleButton 
                     name = "Export Matrix" 
@@ -135,6 +146,8 @@ function MatrixEditor(props) {
                     active = {showImport}
                     action = {toggleShown}
                 />
+
+              
 
             </div>
 
@@ -158,6 +171,20 @@ function MatrixEditor(props) {
                     setMatrix = {props.setMatrix}
                     sparseVal = {props.sparseVal}/>
             : null } 
+
+            { props.selectable && showSelectionMenu  ? 
+               <SelectionMenu 
+                    boxesSelected = {boxesSelected} 
+                    generateUniqueName = {props.generateUniqueName}
+                    editSelection = {props.editSelection}
+                    spliceMatrix = {props.spliceMatrix}
+                    pasteMatrix = {props.pasteMatrix}
+                    name = {props.name}
+                    updateBoxesSelected = {updateBoxesSelected}
+                    
+               />: null
+            }
+
 
             {showImport ? 
                 <TextImport
@@ -199,18 +226,7 @@ function MatrixEditor(props) {
                 Use Export Matrix to view the matrix
             </div>}
 
-            { props.selectable && (boxesSelected["startX"] !== boxesSelected["endX"] || boxesSelected["startY"] !== boxesSelected["endY"]) ? 
-               <SelectionMenu 
-                    boxesSelected = {boxesSelected} 
-                    generateUniqueName = {props.generateUniqueName}
-                    editSelection = {props.editSelection}
-                    spliceMatrix = {props.spliceMatrix}
-                    pasteMatrix = {props.pasteMatrix}
-                    name = {props.name}
-                   
-                    
-               />: null
-            }
+            
 
     </div>)
 

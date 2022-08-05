@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import ParameterTextInput from '../../inputs/ParameterTextInput';
-import "./MatrixActions.css"
 
 import TextActionButton from './TextActionButton';
 import TwoTextActionButton from './TwoTextActionButton';
 
+import "./MatrixActions.css"
 function MatrixActions(props) {
     const [randomLow, setRandomLow] = useState("1");
     const [randomHigh, setRandomHigh] = useState("10");
