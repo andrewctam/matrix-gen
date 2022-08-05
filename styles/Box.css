@@ -1,0 +1,25 @@
+.box:nth-last-child(1) {
+    background-color: rgb(188, 146, 146);
+    max-width: 30px;
+    width: 30px;
+}
+
+.box>input {
+    width: 100%;
+    height: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    color: black;
+}
+
+.box {
+    padding: 0;
+    margin: 0;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border: 1px solid rgb(0, 0, 0);
+}
