@@ -6,6 +6,8 @@ import Tutorial from './Tutorial';
 import SelectorButton from './buttons/SelectorButton';
 import MenuButton from './buttons/MenuButton';
 
+import styles from "./Navigation.module.css";
+
 function Navigation(props) {
     const [selectors, setSelectors] = useState([]);
     const [searchName, setSearchName] = useState("");
@@ -57,7 +59,7 @@ function Navigation(props) {
 
 
         if (tempSelectors.length === 0)
-            tempSelectors.push(<div className = "noMatrices">{"No Matrices Found"}</div>);
+            tempSelectors.push(<div className = {styles.noMatrices}>{"No Matrices Found"}</div>);
         else
             tempSelectors.sort( (selector1, selector2)  => {
                 return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
@@ -99,10 +101,10 @@ function Navigation(props) {
 
 
     
-    return  <div className = "row navigateBar">
+    return  <div className = {"row " + styles.navigateBar}>
         {showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
 
-        <div className = "col-sm-4 info">
+        <div className = {"col-sm-4 " + styles.info}>
             <div id = "selectors" className="list-group">
                     <MenuButton
                         key = "addButton" 
@@ -147,13 +149,13 @@ function Navigation(props) {
         </div>
 
         <div className = "col-sm-4">
-            <input className = "nameSearchBar" onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
-            <input className = "sizeSearchBar" onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
+            <input className = {styles.nameSearchBar} onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
+            <input className = {styles.sizeSearchBar} onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
 
             <div id = "selectors" className="list-group"> {selectors} </div>
         </div>
 
-        <div className = "col-sm-4 info">
+        <div className = {"col-sm-4 " + styles.info}>
             <div id = "selectors" className="list-group">
                 {!showTutorial ? 
                 <MenuButton 
@@ -182,7 +184,7 @@ function Navigation(props) {
 
 
             {showSettings ? 
-            <div className = "settingsMenu">               
+            <div className = {styles.settingsMenu}>               
                 <ParameterBoxInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Auto Save"} updateParameter={props.updateParameter}/>
                 <ParameterBoxInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs"} updateParameter={props.updateParameter}/>
                 <ParameterBoxInput isChecked = {props.selectable} id = {"selectable"} name={"mirror"} text = {"Enable Selection"} updateParameter={props.updateParameter}/>

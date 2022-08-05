@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import TextActionButton from './TextActionButton';
 import TwoTextActionButton from './TwoTextActionButton';
 
+import styles from "./MatrixActions.module.css"
+
 function MatrixActions(props) {
     const [randomLow, setRandomLow] = useState("1");
     const [randomHigh, setRandomHigh] = useState("10");
@@ -50,7 +52,7 @@ function MatrixActions(props) {
     }
 
 
-    return <div className = "matrixActions">
+    return <div className = {styles.matrixActionsContainer}>
 
         <BasicActionButton 
             action = {() => {props.transpose(props.name)}}
@@ -122,7 +124,7 @@ function MatrixActions(props) {
 
 function BasicActionButton(props) {
     return  <button 
-            className = "btn btn-primary matrixButtons" 
+            className = "btn btn-primary" 
             onClick={props.action}>
             {props.name}
         </button>

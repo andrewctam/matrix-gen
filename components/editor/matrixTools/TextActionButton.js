@@ -1,10 +1,11 @@
 import React from "react";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
+import styles from "./TextActionButton.module.css"
 
 function TextActionButton(props) {
-    return <div className = "textActionButton">
+    return <div className = {styles.textActionButton}>
         <button 
-            className = "btn btn-primary matrixButtons" 
+            className = "btn btn-primary" 
             onClick = {props.action}>
             {props.name}
         </button>

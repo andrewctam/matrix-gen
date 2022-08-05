@@ -8,6 +8,7 @@ import MatrixActions from './matrixTools/MatrixActions.js';
 import TextImport from './matrixTools/TextImport.js';
 import SelectionMenu from './matrixTools/SelectionMenu.js';
 
+import styles from "./MatrixEditor.module.css"
 
 function MatrixEditor(props) {
     const [boxesSelected, setBoxesSelected] = useState({
@@ -112,118 +113,112 @@ function MatrixEditor(props) {
 
 
     return (
-    <div className = "matrixEditor" onMouseUp = {() => {if (mouseDown) setMouseDown(false)}} >
-        <div id = "options" className = "options" >
-            <div className = "options-bar">
-
-                <ToggleButton 
-                    name = "Matrix Actions" 
-                    active = {showActions}
-                    action = {toggleShown}
-                />
-                
-                <ToggleButton 
-                    name = "Matrix Math" 
-                    active = {showMath}
-                    action = {toggleShown}
-                />
-                {props.selectable ? 
-                <ToggleButton 
-                    name = "Selection Settings" 
-                    active = {showSelectionMenu}
-                    action = {toggleShown}
-                /> : null}
-
-                <ToggleButton 
-                    name = "Export Matrix" 
-                    active = {showExport}
-                    action = {toggleShown}
-                />
-
-                <ToggleButton 
-                    name = "Import Matrix From Text" 
-                    active = {showImport}
-                    action = {toggleShown}
-                />
-
-              
-
-            </div>
-
-
-            {showActions ? 
-                <MatrixActions 
-                    name = {props.name}
-                    transpose = {props.transpose}
-                    mirrorRowsCols = {props.mirrorRowsCols}
-                    fillEmpty = {props.fillEmpty}
-                    fillAll = {props.fillAll}
-                    fillDiagonal = {props.fillDiagonal}
-                    randomMatrix = {props.randomMatrix}
-                    reshapeMatrix = {props.reshapeMatrix}/>
-            : null}
+    <div className = {styles.matrixEditor} onMouseUp = {() => {if (mouseDown) setMouseDown(false)}} >
+        <div className = {styles.options-bar}>
+            <ToggleButton 
+                name = "Matrix Actions" 
+                active = {showActions}
+                action = {toggleShown}
+            />
             
-            {showMath ?
-                <MatrixMath 
-                    matrices = {props.matrices}
-                    matrix = {props.matrix}
-                    setMatrix = {props.setMatrix}
-                    sparseVal = {props.sparseVal}/>
-            : null } 
+            <ToggleButton 
+                name = "Matrix Math" 
+                active = {showMath}
+                action = {toggleShown}
+            />
+            {props.selectable ? 
+            <ToggleButton 
+                name = "Selection Settings" 
+                active = {showSelectionMenu}
+                action = {toggleShown}
+            /> : null}
 
-            { props.selectable && showSelectionMenu  ? 
-               <SelectionMenu 
-                    boxesSelected = {boxesSelected} 
-                    generateUniqueName = {props.generateUniqueName}
-                    editSelection = {props.editSelection}
-                    spliceMatrix = {props.spliceMatrix}
-                    pasteMatrix = {props.pasteMatrix}
-                    name = {props.name}
-                    updateBoxesSelected = {updateBoxesSelected}
-                    
-               />: null
-            }
+            <ToggleButton 
+                name = "Export Matrix" 
+                active = {showExport}
+                action = {toggleShown}
+            />
 
-
-            {showImport ? 
-                <TextImport
-                    generateUniqueName = {props.generateUniqueName}
-                    setMatrix = {props.setMatrix}
-                    currentName = {props.name}/> 
-            : null}
-
-            {showExport ?
-                <MatrixExport 
-                    matrix = {props.matrix}
-                    sparseVal = {props.sparseVal}/>
-            : null }   
-
-            
+            <ToggleButton 
+                name = "Import Matrix From Text" 
+                active = {showImport}
+                action = {toggleShown}
+            />
         </div>
 
 
-        {showTable ? 
-            <Table                 
-                mirror = {props.mirror}
+        {showActions ? 
+            <MatrixActions 
                 name = {props.name}
-                matrix = {props.matrix} 
-                addCols = {props.addCols}
-                addRows = {props.addRows}
-                addRowsAndCols = {props.addRowsAndCols}
-                updateEntry = {props.updateEntry}
-                tryToDelete = {props.tryToDelete}
-                selectable = {props.selectable}
+                transpose = {props.transpose}
+                mirrorRowsCols = {props.mirrorRowsCols}
+                fillEmpty = {props.fillEmpty}
+                fillAll = {props.fillAll}
+                fillDiagonal = {props.fillDiagonal}
+                randomMatrix = {props.randomMatrix}
+                reshapeMatrix = {props.reshapeMatrix}/>
+        : null}
+        
+        {showMath ?
+            <MatrixMath 
+                matrices = {props.matrices}
+                matrix = {props.matrix}
+                setMatrix = {props.setMatrix}
+                sparseVal = {props.sparseVal}/>
+        : null } 
 
-                boxesSelected = {boxesSelected}
+        { props.selectable && showSelectionMenu  ? 
+            <SelectionMenu 
+                boxesSelected = {boxesSelected} 
+                generateUniqueName = {props.generateUniqueName}
+                editSelection = {props.editSelection}
+                spliceMatrix = {props.spliceMatrix}
+                pasteMatrix = {props.pasteMatrix}
+                name = {props.name}
                 updateBoxesSelected = {updateBoxesSelected}
-                mouseDown = {mouseDown}
-                setMouseDown = {setMouseDown}
-            /> 
-            : <div className = "bigMatrixInfo">
-                Matrices larger than 50 x 50 are too big to be displayed<br/>
-                Use Import Matrix From Text or Matrix Actions to edit the matrix<br/>
-                Use Export Matrix to view the matrix
-            </div>}
+                
+            />: null
+        }
+
+
+        {showImport ? 
+            <TextImport
+                generateUniqueName = {props.generateUniqueName}
+                setMatrix = {props.setMatrix}
+                currentName = {props.name}/> 
+        : null}
+
+        {showExport ?
+            <MatrixExport 
+                matrix = {props.matrix}
+                sparseVal = {props.sparseVal}/>
+        : null }   
+
+        
+
+
+    {showTable ? 
+        <Table                 
+            mirror = {props.mirror}
+            name = {props.name}
+            matrix = {props.matrix} 
+            addCols = {props.addCols}
+            addRows = {props.addRows}
+            addRowsAndCols = {props.addRowsAndCols}
+            updateEntry = {props.updateEntry}
+            tryToDelete = {props.tryToDelete}
+            selectable = {props.selectable}
+
+            boxesSelected = {boxesSelected}
+            updateBoxesSelected = {updateBoxesSelected}
+            mouseDown = {mouseDown}
+            setMouseDown = {setMouseDown}
+        /> 
+        : <div className = {styles.bigMatrixInfo}>
+            Matrices larger than 50 x 50 are too big to be displayed<br/>
+            Use Import Matrix From Text or Matrix Actions to edit the matrix<br/>
+            Use Export Matrix to view the matrix
+        </div>}
 
             
 
@@ -233,7 +228,7 @@ function MatrixEditor(props) {
 
 function ToggleButton(props) {
     return <button id = {props.name} 
-            className = {"btn matrixButtons " + (props.active ? "btn-info" : "btn-secondary")} 
+            className = {"btn " + (props.active ? "btn-info" : "btn-secondary")} 
             onClick = {props.action}>
             {props.active ? "Close" : props.name}
         </button>

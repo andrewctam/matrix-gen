@@ -3,6 +3,8 @@ import ParameterTextInput from '../../inputs/ParameterTextInput.js';
 import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import ListButton from './ListButton.js';
 
+import styles from "./MatrixExport.module.css"
+
 function MatrixExport(props) {    
     const [exportOption, setExportOption] = useState("2D Arrays");
 
@@ -162,23 +164,23 @@ function MatrixExport(props) {
     function presets(e) {
         let updated = e.target.id;
         switch(updated) {
-            case "{},":
+            case "Square Braces [ ] ,":
                 setStart("{");
                 setEnd("}");
                 setDelim(",");
                 break;  
-            case "[],":
+            case "Curly Braces { } ,":
                 setStart("[");
                 setEnd("]");
                 setDelim(",");
                 break;
-            case "(),":
+            case "Parentheses ( ) ,":
                 setStart("(");
                 setEnd(")");
                 setDelim(",");
                 break;
 
-            case "spaces":
+            case "Spaces":
                 setStart("");
                 setEnd("");
                 setDelim(" ");
@@ -191,8 +193,8 @@ function MatrixExport(props) {
 
   
     
-    return <div className = "row exportContainer">
-        <textarea readOnly = {true} onClick = {handleFocus} className="exportTextArea" value = {matrixToString(props.matrix)} />
+    return <div className = {"row " + styles.exportContainer}>
+        <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
 
             <div className = "col-sm-4">
                 <ul>
@@ -237,31 +239,24 @@ function MatrixExport(props) {
             <div className = "col-sm-4">
                 {exportOption === "2D Arrays" ? 
                     <ul>
-                        Quick Options: 
-                        <li><button id = "[]," 
-                            onClick = {presets} 
-                            className = "btn btn-secondary">
-                        {"Square Braces [ ] ,"}
-                        </button></li>
+                        {"Quick Options:"}
 
-                        <li><button id = "{}," 
-                            onClick = {presets} 
-                            className = "btn btn-secondary">
-                        {"Curly Braces { } ,"}
-                        </button></li>
-
-                        <li><button id = "()," 
-                            onClick = {presets} 
-                            className = "btn btn-secondary">
-                        {"Parentheses ( ) ,"}
-                        </button></li>
-
-                        <li><button id = "spaces" 
-                            onClick = {presets} 
-                            className = "btn btn-secondary">
-                        {"Spaces"}
-                        </button></li>
-
+                        <ListButton
+                            name = {"Square Braces [ ] ,"}
+                            action = {presets}
+                            active = {false}/>
+                        <ListButton
+                            name = {"Curly Braces { } ,"}
+                            action = {presets}
+                            active = {false}/>
+                        <ListButton
+                            name = {"Parentheses ( ) ,"}
+                            action = {presets}
+                            active = {false}/>
+                        <ListButton
+                            name = {"Spaces"}
+                            action = {presets}
+                            active = {false}/>
                     </ul>
                 : null}
 

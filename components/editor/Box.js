@@ -1,5 +1,5 @@
 import React from 'react';
-
+import styles from "./Box.module.css"
 function Box(props) {
     function handleAddRow(e) {
         props.addRow(props.row, props.col, e.target.value);
@@ -66,7 +66,7 @@ function Box(props) {
         specialStyle = null;
 
 
-    return <td style = {specialStyle} className = "box">
+    return <td style = {specialStyle} className = {styles.box}>
         <input 
             autoComplete = "off" 
             id = {props.row + ":" + props.col} 

@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from './Box.js'; 
 
+import styles from "./Table.module.css"
 
 function Table(props) {
 
@@ -176,10 +177,10 @@ function Table(props) {
                 />
         }
 
-        tableRows[i] = <tr key = {"row" + i} className = "tableRow">{eachRow}</tr>
+        tableRows[i] = <tr key = {"row" + i} className = {styles.tableRow}> {eachRow} </tr>
     }
 
-    return <table className = "table table-bordered matrixTable"  >
+    return <table className = {"table table-bordered " + styles.matrixTable}>
         <tbody>{tableRows}</tbody>
     </table>
 

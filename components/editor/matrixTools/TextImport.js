@@ -3,6 +3,8 @@ import ParameterBoxInput from "../../inputs/ParameterBoxInput";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
 import ListButton from "./ListButton";
 
+import styles from "./TextImport.module.css"
+
 function TextImport(props) {
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);
@@ -315,8 +317,8 @@ function TextImport(props) {
         var namePlaceholder = props.generateUniqueName();
     }
 
-    return <div className = "row importContainer">
-        <textarea id = "importTextArea" className = "importBox" placeholder = {inputMatrixPlaceholder}></textarea>
+    return <div className = {"row " + styles.importContainer}>
+        <textarea id = "importTextArea" className = {styles.importTextArea} placeholder = {inputMatrixPlaceholder}></textarea>
 
         <div className = "col-sm-4">
             <ul>
@@ -344,7 +346,7 @@ function TextImport(props) {
                     action = {updateImportFormat}
                     active = {importFormat === "Reshape From One Line"}
                 />
-                </ul> 
+            </ul> 
         </div>
 
         <div className = "col-sm-4">
@@ -384,23 +386,28 @@ function TextImport(props) {
             </div> : null }
     
 
-            {ignoreWhitespace && displayWarning ? <div className = "wsWarning">{"WARNING: One of your parameters contains whitespaces"}</div> : null}
+            {ignoreWhitespace && displayWarning ? 
+                <div className = {styles.wsWarning}>{"WARNING: One of your parameters contains whitespaces"}</div> 
+            : null}
 
         </div>
 
         <div className = "col-sm-4">
             <ParameterBoxInput isChecked = {overwrite} id = "overwrite" name = "overwrite" text = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
 
-            {(overwrite ? null : <div>
+            {(overwrite ? null : 
+            <div>
                 {"Save as New Matrix: "}
-                <input className = "importedMatrixName" 
+                <input className = {styles.importedMatrixName} 
                 placeholder={namePlaceholder} 
                 value = {newName}
                 onChange={updateNewMatrixName} />
             </div>
             )}
 
-        <button className = "btn btn-success" onClick = {parseText} >Import Matrix</button>
+            <button className = "btn btn-success" onClick = {parseText}>
+                {"Import Matrix"}
+            </button>
 
 
         </div>

@@ -1,11 +1,4 @@
-.matrixActions {
-    width: fit-content;
-    padding: 10px;
-    background-color: rgba(48, 50, 51, 0.49);
-    --bs-gutter-x: 0px;
-  
-  }
-  
+
 .textActionButton {
     width: fit-content;
     background-color: #3b79a5;
@@ -33,7 +26,6 @@
     border-left: none;
     border-top: none;
     border-bottom: none;
-    
 }
 
 .textActionButton > input {
@@ -48,7 +40,5 @@
     color: rgba(0, 0, 0, 0.5);
 }
 
-.btn-primary {
-    background-color: #3b79a5;
-}
+
 

@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import TextActionButton from "./TextActionButton";
+import styles from "./SelectionMenu.module.css"
 
 function SelectionMenu(props) {
     const [spliceName, setSpliceName] = useState("");
@@ -45,11 +46,9 @@ function SelectionMenu(props) {
 
     var generatedName = props.generateUniqueName();
 
-    return <div className = "selectionSettings">
-        {props.boxesSelected["quadrant"] === -1 ? 
-        <div>No Boxes Selected</div>
-        :
-        <div>
+    return <div className = {styles.selectionSettingsContainer}>
+        {props.boxesSelected["quadrant"] === -1 ? <div>No Boxes Selected</div>
+        : <div>
             <div>
                 {"Selection Size: " + 
                 (Math.abs(props.boxesSelected["startX"] - props.boxesSelected["endX"]) + 1)
@@ -61,7 +60,7 @@ function SelectionMenu(props) {
 
             <div>{"End: Row " + (props.boxesSelected["endX"] + " Column " + props.boxesSelected["endY"])}</div>
 
-            <input className = "editSelected" 
+            <input className = {styles.editSelectedInput}
                 onChange = {handleChange} 
                 onKeyDown = {handleKeyDown}
                 placeholder="Type Here to Edit All Selected Boxes"/> <br />
@@ -96,18 +95,11 @@ function SelectionMenu(props) {
                 width = {"75px"}
                 value = {pasteName}
             /> <br />
-            </div> 
-        }
 
-
+        </div> }
         
     </div>
-
-            
-
-
-
-            
+           
 }
 
 export default SelectionMenu;

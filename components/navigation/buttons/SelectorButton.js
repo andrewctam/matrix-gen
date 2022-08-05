@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 
+import styles from "./SelectorButton.module.css"
+
 function SelectorButton(props) {
     const [displaySize, setDisplaySize] = useState( realSize() );
     const [displayName, setDisplayName] = useState(props.name);
@@ -93,7 +95,7 @@ function SelectorButton(props) {
         value = {displayName} 
         id = {props.name}
         type = "text" 
-        className = "selectorInput"
+        className = {styles.selectorInput}
         onChange = {renameMatrix}
         onKeyDown = {handleKeyDown}
         onBlur = {pushNewName}
@@ -104,7 +106,7 @@ function SelectorButton(props) {
         value = {size} 
         id = {"size " + props.name}
         type = "text"
-        className = "sizeInfo selectorInput" 
+        className = {styles.selectorInput + " " + styles.sizeInfo}
         onChange = {resizeMatrix}
         onBlur = {pushNewSize}
         onFocusCapture = {handleFocus}

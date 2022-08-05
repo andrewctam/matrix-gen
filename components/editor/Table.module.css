@@ -1,4 +1,3 @@
-
 .matrixTable {
     width: auto !important;
     margin-top: 10px ;
@@ -13,15 +12,12 @@
     padding: 0;
 }
 
-
 .table>:not(caption)>*>* {
     padding: 0;
     margin: 0;
     height: 50px;
 
 }
-
-
 
 .tableRow:nth-last-child(1) > td {
     background-color: rgb(188, 146, 146);

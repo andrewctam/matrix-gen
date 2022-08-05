@@ -1,5 +1,5 @@
 
-.selectionSettings {
+.selectionSettingsContainer {
     background-color: rgba(48, 50, 51, 0.49);
     width: 100%;
     text-align: center;
@@ -8,8 +8,7 @@
 
   }
 
-  
-.editSelected {
+.editSelectedInput {
   width: 25%;
   background-color: rgb(215, 206, 206);
   margin: 1vh;

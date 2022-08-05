@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import styles from "./MatrixMath.module.css"
 
 function MatrixMath(props) {    
     const[expression, setExpression] = useState("");
@@ -334,15 +335,16 @@ function MatrixMath(props) {
 
 
 
-    return <div className = "row matrixMath">
+    return <div className = {"row " + styles.matrixMathContainer}>
+        
         <div className = "col-sm-3">
-            <input type="text" className = "mathInput" value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>
+            <input type="text" className = {styles.mathInput} value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>
             <br/>
-            <button className = "btn btn-secondary mathEval" onClick={calculate}>Evaluate Expression</button>
+            <button className = {"btn btn-secondary " + styles.mathEvalButton} onClick={calculate}>Evaluate Expression</button>
         </div>
 
         <div className = "col-sm-9">
-            <ul className = "mathInfo">
+            <ul className = {styles.mathInfo}>
                 <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
                 <li>You can enter matrix names or numbers (for matrix scalar multiplication)</li>
                 <li>Valid operators: * ^ + -</li>

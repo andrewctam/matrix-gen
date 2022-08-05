@@ -8,26 +8,6 @@
     
   }
 
-.list-group {
-    max-height: 175px;
-    overflow-y: auto;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.list-group > .active {
-  color: black;
-  background-color: rgb(169, 179, 179);
-  border-color: rgb(169, 179, 179);
-}
-
-.list-group > button > input {
-  border: none;
-  background: none;
-  width: 25%;
-  
-}
-
 .info {
   overflow: auto;
 }
@@ -47,8 +27,6 @@
   border-radius: 3px;
   padding: 5px;
 }
-
-
 
 .nameSearchBar::placeholder, .sizeSearchBar::placeholder {
   color: rgba(255, 255, 255, 0.8);
@@ -76,3 +54,6 @@
   margin: 2.5%;
   padding: 10px;
 }
+
+
+
