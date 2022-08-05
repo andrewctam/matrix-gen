@@ -114,7 +114,7 @@ function MatrixEditor(props) {
 
     return (
     <div className = {styles.matrixEditor} onMouseUp = {() => {if (mouseDown) setMouseDown(false)}} >
-        <div className = {styles.options-bar}>
+        <div className = {styles.optionsBar}>
             <ToggleButton 
                 name = "Matrix Actions" 
                 active = {showActions}
