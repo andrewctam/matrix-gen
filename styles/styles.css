@@ -35,32 +35,46 @@ li {
     margin-bottom: 5px;
 }
 
-.btn {
-    border: 1px solid black;
-    margin: 5px;
-}
-
-.btn:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.btn-primary {
-    background-color: #3b79a5;
-}
-
-.btn-info {
-    background-color: rgb(53, 183, 229);
-}
-
-.btn-warning {
-    background-color: rgb(240, 221, 93);
-}
-
-
 .form-check-input {
     margin-left: 6px;
 }
+
+.btn {
+    border: 1px solid black;
+    margin: 5px;
+    
+}
+
+.btn:focus, .btn:active, .btn:hover {
+    outline: none;
+    box-shadow: none;
+    text-decoration: none;
+    transition: none;
+}
+
+
+.btn-primary, .btn-primary:hover, .btn-primary.active {
+    background-color: rgb(185, 207, 221);
+    border-color: black;
+    color: black;
+}
+
+.btn-info, .btn-info:hover, .btn-info.active {
+    background-color: rgb(112, 199, 231);
+    border-color: black;
+}
+
+.btn-secondary, .btn-secondary:hover, .btn-secondary.active  {
+    background-color: rgb(82, 82, 77);
+    border-color: black;
+
+}
+.btn-danger, .btn-danger:hover, .btn-danger.active {
+    background-color: rgb(240, 162, 162);
+    border-color: black;
+    color: black;
+}
+
 
 .list-group {
     max-height: 175px;
@@ -71,8 +85,8 @@ li {
 
 .list-group > .active {
     color: black;
-    background-color: rgb(169, 179, 179);
-    border-color: rgb(169, 179, 179);
+    background-color: rgb(185, 225, 225);
+    border-color: rgb(185, 225, 225);
 }
 
 .list-group > button > input {
@@ -80,4 +94,40 @@ li {
     background: none;
     width: 25%;
 }
+
+.list-group-item {
+    width: 95%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    color: black;
+}
+
+.list-group-item-primary {
+    background-color: rgb(207, 210, 226);
+}
+
+.list-group-item-secondary {
+    background-color: rgb(219, 222, 235);
+}
+
+
+.list-group-item-success {
+    background-color: rgb(201, 226, 195);
+}
+
+.list-group-item-warning {
+    background-color: rgb(250, 237, 193);
+}
+
+.list-group-item-danger {
+    background-color: rgb(247, 185, 185);
+}
+
+.list-group-item-bigDanger {
+    background-color: rgb(234, 165, 165);
+}
+
+
+
+
 

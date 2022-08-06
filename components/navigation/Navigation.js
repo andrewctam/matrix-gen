@@ -5,15 +5,19 @@ import ParameterTextInput from '../inputs/ParameterTextInput';
 import Tutorial from './Tutorial';
 import SelectorButton from './buttons/SelectorButton';
 import MenuButton from './buttons/MenuButton';
-
+import TextActionButton from "../editor/matrixTools/TextActionButton"
 import styles from "./Navigation.module.css";
 
 function Navigation(props) {
     const [selectors, setSelectors] = useState([]);
     const [searchName, setSearchName] = useState("");
     const [searchSize, setSearchSize] = useState("");
+    
     const [showSettings, setShowSettings] = useState(false);
+    const [showPresets, setShowPresets] = useState(false);
     const [showTutorial, setShowTutorial] = useState(false);
+
+    const [identitySize, setIdentitySize] = useState(3);
 
     useEffect(() => {
         if (window.localStorage.getItem("firstVisit;") === null) {
@@ -69,6 +73,16 @@ function Navigation(props) {
     // eslint-disable-next-line
     }, [props.matrices, props.selection, searchName, searchSize]);
 
+    function updatePresetParameter(parameterName, updated) {
+        switch(parameterName) {
+            case "Identity Matrix ":
+                if (/^-?[0-9 \s]*$/.test(updated)) 
+                    setIdentitySize(updated);
+                    break;
+
+            default: break;
+        }
+    }
     function updateSearchName(e) {
         const updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated))
@@ -139,7 +153,7 @@ function Navigation(props) {
                     {Object.keys(props.matrices).length > 0 ?
                     <MenuButton 
                         text = {"Delete All Matrices"}
-                        buttonStyle = {"danger"} 
+                        buttonStyle = {"bigDanger"} 
                         action = {props.deleteAllMatrices}
                     />
                     : null}
@@ -175,13 +189,32 @@ function Navigation(props) {
                 }
                
                 <MenuButton 
-                    text = {showSettings ? "Hide Settings" : "Settings"}
+                    text = {showPresets ? "Hide Presets" : "Preset Matrices"}
                     buttonStyle = {"primary"}
+                    action = {() => {setShowPresets(!showPresets)}}
+                />
+
+                <MenuButton 
+                    text = {showSettings ? "Hide Settings" : "Settings"}
+                    buttonStyle = {"secondary"}
                     action = {() => {setShowSettings(!showSettings)}}
                 />
+
+           
                 
             </div>
-
+            
+            {showPresets ? 
+            <div className = {styles.settingsMenu}>               
+                <TextActionButton 
+                 name = "Identity Matrix "
+                 action = {() => {props.createIdentity(parseInt(identitySize))}}
+                 updateParameter = {updatePresetParameter}
+                 width = {"40px"}
+                 value = {identitySize}
+                 />
+            </div> : null}
+            
 
             {showSettings ? 
             <div className = {styles.settingsMenu}>               
@@ -190,6 +223,8 @@ function Navigation(props) {
                 <ParameterBoxInput isChecked = {props.selectable} id = {"selectable"} name={"mirror"} text = {"Enable Selection"} updateParameter={props.updateParameter}/>
                 {"Empty Element:"} <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/>
             </div> : null}
+
+            
 
         </div>
 

@@ -111,7 +111,7 @@ function Tutorial(props) {
         <button 
             className = {"btn btn-danger "  + styles.closeTutorial} 
             onClick={props.closeTutorial}>
-            {"Close Tutorial"}
+            {"Close"}
         </button>
         
         <h1>Matrix Generator</h1>

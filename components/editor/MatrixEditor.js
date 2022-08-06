@@ -230,7 +230,7 @@ function ToggleButton(props) {
     return <button id = {props.name} 
             className = {"btn " + (props.active ? "btn-info" : "btn-secondary")} 
             onClick = {props.action}>
-            {props.active ? "Close" : props.name}
+            {props.name}
         </button>
 
 }

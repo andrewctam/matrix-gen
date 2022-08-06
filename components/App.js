@@ -470,6 +470,23 @@ function App(props) {
         setMatrix(tempMatrix, name);
     }
 
+    function createIdentity(size, name = null) {
+        if (name === null)
+            name = generateUniqueName();
+
+        if (size === null || isNaN(size) || size <= 0)
+            return;
+            
+        var matrix = Array(size + 1).fill().map(()=>Array(size + 1).fill(""))
+
+        for (var i = 0; i < size; i++)
+            matrix[i][i] = 1;
+        
+        
+        setMatrix(matrix, name);
+    }
+    
+
     function editSelection(name, text, x1, y1, x2, y2) {
         if (x1 > x2) {
             var temp = x1;
@@ -653,6 +670,8 @@ function App(props) {
                 updateParameter = {updateParameter}
                 saveToLocalStorage = {saveToLocalStorage}
                 deleteAllMatrices = {deleteAllMatrices}
+
+                createIdentity = {createIdentity}
 
                 
             />
