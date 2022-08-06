@@ -24,3 +24,8 @@
     list-style-type:disc;
     padding-inline-start: 40px;
 }
+
+.tutorialButton {
+    margin-left: 2px;
+    margin-right: 2px;
+}

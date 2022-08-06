@@ -66,7 +66,7 @@ function Box(props) {
         specialStyle = null;
 
 
-    return <td style = {specialStyle} className = {styles.box}>
+    return <td className = {styles.box} style = {specialStyle} >
         <input 
             autoComplete = "off" 
             id = {props.row + ":" + props.col} 

@@ -101,7 +101,7 @@ function Tutorial(props) {
 
     function TutorialButton(props) {
         return  <button 
-            className = {"btn btn-" + (props.selected === props.name ? "dark" : "light")}
+            className = {styles.tutorialButton + " btn btn-" + (props.selected === props.name ? "dark" : "light")}
             onClick={() => {props.setSelected(props.name)}}>
             {props.text}
         </button>

@@ -19,7 +19,7 @@
 }
 
 
-.importBox::placeholder, .importedMatrixName::placeholder {
+.importTextArea::placeholder, .importedMatrixName::placeholder {
     color: rgba(255, 255, 255, 0.5);
 }
 

@@ -17,7 +17,7 @@
   
 }
 
-.editSelected::placeholder {
+.editSelectedInput::placeholder {
   color: black;
   text-align: center; 
 }
