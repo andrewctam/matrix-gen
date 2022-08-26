@@ -53,28 +53,33 @@ li {
 }
 
 
-.btn-primary, .btn-primary:hover, .btn-primary.active {
-    background-color: rgb(185, 207, 221);
+.btn-primary, .btn-primary:hover, .btn-primary:active {
+    background-color: rgb(185, 207, 221) !important;
     border-color: black;
-    color: black;
+    color: black !important;
 }
 
-.btn-info, .btn-info:hover, .btn-info.active {
-    background-color: rgb(112, 199, 231);
+.btn-info, .btn-info:hover, .btn-info:active {
+    background-color: rgb(112, 199, 231) !important;
     border-color: black;
 }
 
-.btn-secondary, .btn-secondary:hover, .btn-secondary.active  {
-    background-color: rgb(82, 82, 77);
+.btn-secondary, .btn-secondary:hover, .btn-secondary:active  {
+    background-color: rgb(82, 82, 77) !important;
     border-color: black;
 
 }
-.btn-danger, .btn-danger:hover, .btn-danger.active {
-    background-color: rgb(240, 162, 162);
+.btn-danger, .btn-danger:hover, .btn-danger:active {
+    background-color: rgb(240, 162, 162) !important;
     border-color: black;
-    color: black;
+    color: black !important;
 }
 
+.btn-success, .btn-success:hover, .btn-success:active {
+    background-color: rgb(89, 181, 77) !important;
+    border-color: black;
+    color: black !important;
+}
 
 .list-group {
     max-height: 175px;
