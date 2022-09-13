@@ -109,7 +109,7 @@ function MatrixEditor(props) {
     }
 
 
-    var showTable = (props.matrix.length <= 51 && props.matrix[0].length <= 51);
+    const showTable = (props.matrix.length <= 51 && props.matrix[0].length <= 51);
 
 
     return (

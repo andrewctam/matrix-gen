@@ -16,7 +16,7 @@ function SelectorButton(props) {
     }
 
     function renameMatrix(e) {
-        var updated = e.target.value;
+        const updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated)) {
            setDisplayName(updated);
         }
@@ -24,14 +24,14 @@ function SelectorButton(props) {
     }
 
     function handleFocus(e) {
-        var rows = props.matrices[props.name].length - 1
-        var cols = props.matrices[props.name][0].length - 1
+        const rows = props.matrices[props.name].length - 1
+        const cols = props.matrices[props.name][0].length - 1
 
         setDisplaySize((rows) + " x " + cols);
     }
 
     function resizeMatrix(e) {
-        var updated = e.target.value;
+        const updated = e.target.value;
 
         if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) {
             setDisplaySize(updated);
@@ -49,14 +49,14 @@ function SelectorButton(props) {
                 setDisplayName(props.name);
             } else {
                 props.renameMatrix(props.name, displayName)
-                props.updateSelection(displayName)
+                props.updateMatrixSelection(displayName)
             }
     }
 
     function pushNewSize() { 
         if (/[0-9]* ?x ?[0-9]*/.test(displaySize)) {
-            var rows = parseInt(displaySize.substring(0, displaySize.indexOf("x")));
-            var cols = parseInt(displaySize.substring(displaySize.indexOf("x") + 1));
+            const rows = parseInt(displaySize.substring(0, displaySize.indexOf("x")));
+            const cols = parseInt(displaySize.substring(displaySize.indexOf("x") + 1));
             
             if (rows > 0 && cols > 0) {
                 setDisplaySize((rows) + " x " + cols);

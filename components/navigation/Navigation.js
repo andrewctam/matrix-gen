@@ -33,20 +33,20 @@ function Navigation(props) {
     */
 
     useEffect(() => {
-        var tempSelectors = []
+        const tempSelectors = []
 
+        const sizeFilters = [];
+        const split = searchSize.split("x");
         if (searchSize !== "") {
-            var split = searchSize.split("x");
-            var sizeFilters = [];
-            for (var i = 0; i < split.length; i++) {
-                var temp = parseInt(split[i])
+            for (let i = 0; i < split.length; i++) {
+                const temp = parseInt(split[i])
                 if (!isNaN(temp))
                     sizeFilters.push(temp)
             }
         }
 
 
-        for (var matrixName in props.matrices) {
+        for (const matrixName in props.matrices) {
             if ((searchName === "" || matrixName.startsWith(searchName)) && 
                 (searchSize === "" || verifySize(matrixName, sizeFilters)))
                 tempSelectors.push (
@@ -98,8 +98,8 @@ function Navigation(props) {
     
     function verifySize(name, sizeFilters) {
         const matrix = props.matrices[name];
-        var rows = matrix.length - 1;
-        var cols = matrix[0].length - 1;
+        const rows = matrix.length - 1;
+        const cols = matrix[0].length - 1;
 
         if (sizeFilters.length === 1) //only a number entered
             return rows === sizeFilters[0] || cols === sizeFilters[0]

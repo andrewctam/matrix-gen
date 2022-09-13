@@ -59,7 +59,7 @@ function TextImport(props) {
             case "^": 
             case "~": 
             case "\\": 
-                    var tempObj = {...escapeMap};
+                    const tempObj = {...escapeMap};
                     tempObj[parameterName] = updated;
                     setEscapeMap(tempObj);
                     break;
@@ -94,7 +94,7 @@ function TextImport(props) {
 
 
     function updateImportFormat(e) {
-        var updated = e.target.id;    
+        const updated = e.target.id;    
 
 
         switch(updated) {
@@ -124,7 +124,7 @@ function TextImport(props) {
     }
 
     function updateNewMatrixName(e) {
-        var updated = e.target.value;
+        const updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated)) {
            setNewName(updated);
         }
@@ -144,7 +144,7 @@ function TextImport(props) {
         
     }
     function parseText() {
-        var separator = settingC;
+        const separator = settingC;
         var text = document.getElementById("importTextArea").value;
         var matrix = [];
 
@@ -161,10 +161,10 @@ function TextImport(props) {
 
         switch(importFormat) {
             case "Separator":
-                var rowSeparator = settingD;
+                const rowSeparator = settingD;
 
                 var rows = text.split(rowSeparator);
-                for (var i = 0; i < rows.length; i++) {
+                for (let i = 0; i < rows.length; i++) {
                     matrix.push(rows[i].split(separator));
                     matrix[i].push("");
                 }
@@ -180,16 +180,16 @@ function TextImport(props) {
 
                 try {
                     
-                    var firstBrace = text.indexOf(settingA) + 1; //remove {{
-                    var lastBrace = text.lastIndexOf(settingB) - 1; //remove {{
-                    var noBraces = text.substring(firstBrace + 1, lastBrace);
+                    const firstBrace = text.indexOf(settingA) + 1; //remove {{
+                    const lastBrace = text.lastIndexOf(settingB) - 1; //remove {{
+                    const noBraces = text.substring(firstBrace + 1, lastBrace);
 
 
                     //  finds },{ and removes random characters in between
-                    var braceSeparator = new RegExp(`${addRegexEscape(settingB)}.*?${addRegexEscape(separator)}.*?${addRegexEscape(settingA)}`, 'g'); 
+                    const braceSeparator = new RegExp(`${addRegexEscape(settingB)}.*?${addRegexEscape(separator)}.*?${addRegexEscape(settingA)}`, 'g'); 
                     
                     rows = noBraces.split(braceSeparator);
-                    for (i = 0; i < rows.length; i++) {
+                    for (let i = 0; i < rows.length; i++) {
                         matrix.push(rows[i].split(separator));
                         matrix[i].push(" ");
                     }
@@ -207,7 +207,7 @@ function TextImport(props) {
             
         
             case "Reshape From One Line":
-                var elements = text.split(separator);
+                const elements = text.split(separator);
                 var rowCount = parseInt(settingA);
                 var colCount = parseInt(settingB);
 
@@ -237,9 +237,9 @@ function TextImport(props) {
 
                 matrix = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill())
 
-                i = 0;
-                for (var j = 0; j < rowCount; j++)
-                    for (var k = 0; k < colCount; k++) {
+                let i = 0;
+                for (let j = 0; j < rowCount; j++)
+                    for (let k = 0; k < colCount; k++) {
                         matrix[j][k] = elements[i];
                         i++;
                     }
@@ -250,7 +250,7 @@ function TextImport(props) {
             case "LaTeX":
                 rows = text.split("\\\\");
                 
-                for (i = 0; i < rows.length; i++) {
+                for (let i = 0; i < rows.length; i++) {
                     rows[i] = rows[i].replaceAll(" ","")
                     
                     matrix.push(rows[i].split("&"));
@@ -266,10 +266,10 @@ function TextImport(props) {
                     const back = addRegexEscape(escapeMap["~"]); //replace with backslash
                     const circ = addRegexEscape(escapeMap["^"]); //replace with circumflex
 
-                    var regex = new RegExp(`${tild}|${back}|${circ}|\\\\[&%$#_{}]`, 'g');
+                    const regex = new RegExp(`${tild}|${back}|${circ}|\\\\[&%$#_{}]`, 'g');
                     console.log(regex)
-                    for (i = 0; i < matrix.length - 1; i++)
-                        for (j = 0; j < matrix[0].length - 1; j++) {
+                    for (let i = 0; i < matrix.length - 1; i++)
+                        for (let j = 0; j < matrix[0].length - 1; j++) {
                             matrix[i][j] = matrix[i][j].replaceAll(regex, (s) => {
                                 switch(s) {
                                     case "\\&": case "\\%": case "\\$": case "\\#": case "\\_": case "\\{": case "\\}":

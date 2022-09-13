@@ -31,8 +31,9 @@ function MatrixExport(props) {
         switch (exportOption) {
             case "LaTeX":
                 var result = environment !== "" ? `\\begin{${environment}}\n` : "";
-                for (var i = 0; i < props.matrix.length - 1; i++) {
-                    for (var j = 0; j < props.matrix[0].length - 1; j++) {
+
+                for (let i = 0; i < props.matrix.length - 1; i++) {
+                    for (let j = 0; j < props.matrix[0].length - 1; j++) {
                         if (props.matrix[i][j] === "") {
                             result += props.sparseVal;        
                         } else {
@@ -75,10 +76,10 @@ function MatrixExport(props) {
             case "2D Arrays":
                 result = start.toString();
 
-                for (i = 0; i < props.matrix.length - 1; i++) {
+                for (let i = 0; i < props.matrix.length - 1; i++) {
                     result += start;
                     
-                    for (j = 0; j < props.matrix[0].length - 1; j++) {
+                    for (let j = 0; j < props.matrix[0].length - 1; j++) {
                         if (props.matrix[i][j] !== "")
                             result += props.matrix[i][j];
                         else
@@ -129,7 +130,7 @@ function MatrixExport(props) {
             case "^": 
             case "~": 
             case "\\": 
-                var tempObj = {...escapeMap};
+                const tempObj = {...escapeMap};
                 tempObj[parameterName] = updated;
                 setEscapeMap(tempObj);
                 break;
@@ -143,7 +144,7 @@ function MatrixExport(props) {
 
 
     function updateExportOption(e) {
-        var updated = e.target.id;
+        const updated = e.target.id;
         switch (updated) {
             case "2D Arrays":
                 setStart("{");
@@ -162,7 +163,7 @@ function MatrixExport(props) {
     }
 
     function presets(e) {
-        let updated = e.target.id;
+        const updated = e.target.id;
         switch(updated) {
             case "Square Braces [ ] ,":
                 setStart("{");

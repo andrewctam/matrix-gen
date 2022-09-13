@@ -56,7 +56,7 @@ function App(props) {
     }
 
     function renameMatrix(oldName, newName) {     
-        var tempObj = {...matrices};
+        const tempObj = {...matrices};
         
         if (newName in tempObj)
             return false;
@@ -71,10 +71,9 @@ function App(props) {
     
     function copyMatrix(toCopy, name = undefined) {
         if (toCopy !== "0") {
-            var tempObj = {...matrices};
-            var matrixName;
+            const tempObj = {...matrices};
             if (name === undefined) {
-                matrixName = generateUniqueName();
+                var matrixName = generateUniqueName();
             } else {
                 matrixName = name;
             }
@@ -86,7 +85,7 @@ function App(props) {
     }
 
     function setMatrix(matrix = undefined, name = undefined) {
-        var tempObj = {...matrices};
+        const tempObj = {...matrices};
         if (name === undefined) {
             name = generateUniqueName();
         }
@@ -104,18 +103,16 @@ function App(props) {
 
 
     function deleteMatrix(name) {
-        var tempObj = {...matrices};
+        const tempObj = {...matrices};
         delete tempObj[name];
         setMatrices(tempObj);
-        
-    
     }
 
 
     function generateUniqueName() {
-        var name = ["A"]; 
-        var pointer = 0;
+        const name = ["A"]; 
         var willExitFromZ = false;
+        var pointer = 0;
 
         while (name.join("") in matrices) {
             while (true) {
@@ -147,18 +144,18 @@ function App(props) {
 
     function resizeMatrix(name, rows, cols, update = true) {
         if (matrices[name].length !== rows || matrices[name][0].length !== cols) {
-            var lessRows = Math.min(rows, matrices[name].length)
-            var lessCols = Math.min(cols, matrices[name][0].length)
+            const lessRows = Math.min(rows, matrices[name].length)
+            const lessCols = Math.min(cols, matrices[name][0].length)
 
 
-            var resized = Array(rows).fill([])
-            for (var i = 0; i < lessRows - 1; i++) {            
-                var arr = Array(cols).fill("")
-                for (var j = 0; j < lessCols - 1; j++) {
+            const resized = Array(rows).fill([])
+            for (let i = 0; i < lessRows - 1; i++) {            
+                const arr = Array(cols).fill("")
+                for (let j = 0; j < lessCols - 1; j++) {
                     arr[j] = matrices[name][i][j]
                 }
 
-                for (j = lessCols - 1; j < cols; j++) {
+                for (let j = lessCols - 1; j < cols; j++) {
                     arr[j] = "";
                 }
                 
@@ -166,7 +163,7 @@ function App(props) {
             }
 
             
-            for (i = lessRows - 1; i < rows; i++) 
+            for (let i = lessRows - 1; i < rows; i++) 
                 resized[i] = Array(cols).fill("");
 
             if (update)
@@ -204,7 +201,7 @@ function App(props) {
         if (row === matrices[name].length - 1 || col === matrices[name][0].length - 1) 
             return null;
             
-        var tempMatrix = [...matrices[name]];
+        const tempMatrix = [...matrices[name]];
         var toDelete = true;
         
         //{{1,1,1,1},
@@ -212,7 +209,7 @@ function App(props) {
         // {1,1,1,1}}
         //Try to Delete an Empty Row
         if (matrices[name].length > 2) {
-            for (var i = 0; i < matrices[name][0].length; i++) {
+            for (let i = 0; i < matrices[name][0].length; i++) {
                 if (matrices[name][row][i] !== "") {
                     toDelete = false;
                     break;
@@ -228,7 +225,7 @@ function App(props) {
         // {1,1,0,1}}
         toDelete = true;
         if (matrices[name][0].length > 2) {
-            for (i = 0; i < matrices[name].length; i++) {
+            for (let i = 0; i < matrices[name].length; i++) {
                 if (matrices[name][i][col] !== "") {
                     toDelete = false;
                     break;
@@ -236,7 +233,7 @@ function App(props) {
             }
 
             if (toDelete) {
-                for (i = 0; i < tempMatrix.length; i++) {
+                for (let i = 0; i < tempMatrix.length; i++) {
                     tempMatrix[i].splice(col, 1); //delete cols
                 } 
             }
@@ -272,11 +269,11 @@ function App(props) {
     
     function addCols(name, numToAdd, update = true) {
         //copy matrix
-        var tempMatrix = [...matrices[name]];
+        const tempMatrix = [...matrices[name]];
 
 
-        for (var i = 0; i < tempMatrix.length; i++) {
-            for (var j = 0; j < numToAdd; j++)
+        for (let i = 0; i < tempMatrix.length; i++) {
+            for (let j = 0; j < numToAdd; j++)
                 //Add ""s to each row
                 tempMatrix[i].push("");
         }
@@ -288,10 +285,10 @@ function App(props) {
     }
 
     function addRows(name, numToAdd, update = true) {
-        var tempMatrix = [...matrices[name]];
+        const tempMatrix = [...matrices[name]];
 
 
-        for (var i = 0; i < numToAdd; i++) {
+        for (let i = 0; i < numToAdd; i++) {
             tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
         }
         
@@ -303,14 +300,14 @@ function App(props) {
     }
 
     function addRowsAndCols(name, rowsToAdd, colsToAdd, update = true) {
-        var tempMatrix = [...matrices[name]];
+        const tempMatrix = [...matrices[name]];
 
-        for (var i = 0; i < tempMatrix.length; i++) {
-            for (var j = 0; j < colsToAdd; j++)
+        for (let i = 0; i < tempMatrix.length; i++) {
+            for (let j = 0; j < colsToAdd; j++)
                 tempMatrix[i].push("");
         }
         
-        for (i = 0; i < rowsToAdd; i++)
+        for (let i = 0; i < rowsToAdd; i++)
             tempMatrix.push(new Array(tempMatrix[0].length).fill(""));
 
 
@@ -335,8 +332,8 @@ function App(props) {
             symmetric = [...matrices[name]];
 
    
-        for (var row = 0; row < symmetric.length; row++) {
-            for (var col = row + 1; col < symmetric.length; col++) {
+        for (let row = 0; row < symmetric.length; row++) {
+            for (let col = row + 1; col < symmetric.length; col++) {
                 if (mirrorRowsToCols)
                     symmetric[col][row] = symmetric[row][col];
                 else //mirrorColsToRows
@@ -351,12 +348,12 @@ function App(props) {
 
 
     function transpose(name) {
-        var oldMatrix = matrices[name];
-        var transposed = new Array(oldMatrix[0].length).fill([]);
+        const oldMatrix = matrices[name];
+        const transposed = new Array(oldMatrix[0].length).fill([]);
 
-        for (var i = 0; i < transposed.length; i++) {
-            var arr = new Array(oldMatrix.length).fill(0);
-            for (var j = 0; j < arr.length; j++)
+        for (let i = 0; i < transposed.length; i++) {
+            const arr = new Array(oldMatrix.length).fill(0);
+            for (let j = 0; j < arr.length; j++)
                 arr[j] = oldMatrix[j][i];
             transposed[i] = arr;       
         }
@@ -367,10 +364,10 @@ function App(props) {
 
     function randomMatrix(name, randomLow, randomHigh) {        
         if (randomLow <= randomHigh) {
-            var tempMatrix = [...matrices[name]];
+            const tempMatrix = [...matrices[name]];
             
-            for (var i = 0; i < tempMatrix.length - 1; i++)
-                for (var j = 0; j < tempMatrix[0].length - 1; j++)
+            for (let i = 0; i < tempMatrix.length - 1; i++)
+                for (let j = 0; j < tempMatrix[0].length - 1; j++)
                     tempMatrix[i][j] = Math.floor(Math.random() * (randomHigh - randomLow)) + randomLow;
             
             setMatrix(tempMatrix, name);
@@ -384,7 +381,7 @@ function App(props) {
 
 
     function reshapeMatrix(name, rowCount, colCount) {
-        var currentMatrix = matrices[name];
+        const currentMatrix = matrices[name];
         const numElements = (currentMatrix.length - 1) * (currentMatrix[0].length - 1);
       
         if (isNaN(rowCount) && isNaN(colCount)) {
@@ -413,14 +410,14 @@ function App(props) {
             
         }
 
-        var reshaped = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
+        const reshaped = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
 
         var reshapedI = 0;
         var reshapedJ = 0;
 
 
-        for (var i = 0; i < currentMatrix.length - 1; i++)
-            for (var j = 0; j < currentMatrix[0].length - 1; j++) {
+        for (let i = 0; i < currentMatrix.length - 1; i++)
+            for (let j = 0; j < currentMatrix[0].length - 1; j++) {
                 reshaped[reshapedI][reshapedJ] = currentMatrix[i][j];
 
                 if (reshapedJ >= reshaped[0].length - 2) {
@@ -436,10 +433,10 @@ function App(props) {
     }
 
     function fillEmpty(name, fillEmptyWithThis) {
-        var tempMatrix = [...matrices[name]];
+        const tempMatrix = [...matrices[name]];
        
-        for (var i = 0; i < tempMatrix.length - 1; i++)
-            for (var j = 0; j < tempMatrix[0].length - 1; j++) {
+        for (let i = 0; i < tempMatrix.length - 1; i++)
+            for (let j = 0; j < tempMatrix[0].length - 1; j++) {
                 if (tempMatrix[i][j] === "")
                     tempMatrix[i][j] = fillEmptyWithThis;
             }
@@ -448,10 +445,10 @@ function App(props) {
     }
 
     function fillAll(name, fillAllWithThis) {
-        var tempMatrix = [...matrices[name]];
+        const tempMatrix = [...matrices[name]];
        
-        for (var i = 0; i < tempMatrix.length - 1; i++)
-            for (var j = 0; j < tempMatrix[0].length - 1; j++) {
+        for (let i = 0; i < tempMatrix.length - 1; i++)
+            for (let j = 0; j < tempMatrix[0].length - 1; j++) {
                 tempMatrix[i][j] = fillAllWithThis;
         }
         
@@ -459,11 +456,11 @@ function App(props) {
     }
 
     function fillDiagonal(name, fillDiagonalWithThis) {
-        var tempMatrix = [...matrices[name]];
+        const tempMatrix = [...matrices[name]];
        
-        var smaller = Math.min(tempMatrix.length - 1,tempMatrix[0].length - 1);
+        const smaller = Math.min(tempMatrix.length - 1,tempMatrix[0].length - 1);
 
-        for (var i = 0; i < smaller; i++)
+        for (let i = 0; i < smaller; i++)
             tempMatrix[i][i] = fillDiagonalWithThis;
         
         
@@ -477,9 +474,9 @@ function App(props) {
         if (size === null || isNaN(size) || size <= 0)
             return;
             
-        var matrix = Array(size + 1).fill().map(()=>Array(size + 1).fill(""))
+        const matrix = Array(size + 1).fill().map(()=>Array(size + 1).fill(""))
 
-        for (var i = 0; i < size; i++)
+        for (let i = 0; i < size; i++)
             matrix[i][i] = 1;
         
         
@@ -500,11 +497,11 @@ function App(props) {
             y2 = temp;
         }
 
-        var matrix = [...matrices[name]];
+        const matrix = [...matrices[name]];
         console.log(x1 + " " + x2)
         console.log(y1 + " " + y2)
-        for (var i = x1; i <= x2; i++)
-            for (var j = y1; j <= y2; j++)
+        for (let i = x1; i <= x2; i++)
+            for (let j = y1; j <= y2; j++)
                 if (text === 8)
                     matrix[i][j] = matrix[i][j].substring(0, matrix[i][j].length - 1);
                 else
@@ -530,11 +527,11 @@ function App(props) {
         }
 
 
-        var spliced = Array(x2 - x1 + 2).fill().map(()=>Array(y2 - y1 + 2).fill(""))
-        var matrix = matrices[name];
+        const spliced = Array(x2 - x1 + 2).fill().map(()=>Array(y2 - y1 + 2).fill(""))
+        const matrix = matrices[name];
 
-        for (var i = x1; i <= x2; i++)
-            for (var j = y1; j <= y2; j++)
+        for (let i = x1; i <= x2; i++)
+            for (let j = y1; j <= y2; j++)
                 spliced[i - x1][j - y1] = matrix[i][j];
 
         setMatrix(spliced, newName);
@@ -559,16 +556,16 @@ function App(props) {
         }
 
 
-        var matrix = [...matrices[name]];
-        var copyMatrix = matrices[splice];
+        const matrix = [...matrices[name]];
+        const copyMatrix = matrices[splice];
 
         if (x2 - x1 + 2 !== copyMatrix.length || y2 - y1 + 2 !== copyMatrix[0].length) {
             alert("Error: selection dimensions and pasted matrix dimensions must match.")
             return;
         }
         
-        for (var i = x1; i <= x2; i++)
-            for (var j = y1; j <= y2; j++)
+        for (let i = x1; i <= x2; i++)
+            for (let j = y1; j <= y2; j++)
                 matrix[i][j] = copyMatrix[i - x1][j - y1];
             
 
@@ -585,8 +582,8 @@ function App(props) {
             matrixString = "";
             names += name + ",";
             
-            for (var i = 0; i < matrix.length - 1; i++) {                
-                for (var j = 0; j < matrix[0].length - 1; j++) {
+            for (let i = 0; i < matrix.length - 1; i++) {                
+                for (let j = 0; j < matrix[0].length - 1; j++) {
                     matrixString += matrix[i][j];
                     if (j !== matrix[0].length - 2)
                         matrixString += ","
@@ -610,23 +607,18 @@ function App(props) {
 
     function loadFromLocalStorage() {
         try {
-            var names = localStorage.getItem("names;")
-            names = names.split(",")
-            var loadedMatrices = {}
-
-            var matrix;
+            const names = localStorage.getItem("names;").split(",")
+            const loadedMatrices = {}
+            
             for (const n of names) {
-                matrix = localStorage.getItem(n);
-                matrix = matrix.split("]")
-                for (var i = 0; i < matrix.length; i++) {
+                const matrix = localStorage.getItem(n).split("]")
+                for (let i = 0; i < matrix.length; i++) {
                     matrix[i] = matrix[i].split(",")
                     matrix[i].push("");
                 }
 
                 matrix.push(new Array(matrix[0].length).fill(""));
-
-
-            
+        
                 loadedMatrices[n] = matrix;
             }
 

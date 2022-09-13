@@ -9,9 +9,9 @@ function Table(props) {
     //add Row/Col/Both and update matrix[row][col]
     function addRow(row, col, updated) {
         if (props.mirror) {
-            var cols = props.matrix[0].length;
-            var rows = props.matrix.length
-            var max = Math.max(rows + 1, cols)
+            const cols = props.matrix[0].length;
+            const rows = props.matrix.length
+            const max = Math.max(rows + 1, cols)
 
             var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
             tempMatrix[col][row] = updated;
@@ -25,9 +25,9 @@ function Table(props) {
     function addCol(row, col, updated) {
         
         if (props.mirror) {
-            var cols = props.matrix[0].length;
-            var rows = props.matrix.length
-            var max = Math.max(rows, cols + 1)
+            const cols = props.matrix[0].length;
+            const rows = props.matrix.length
+            const max = Math.max(rows, cols + 1)
 
             var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
             tempMatrix[col][row] = updated;
@@ -41,9 +41,9 @@ function Table(props) {
 
     function addBoth(row, col, updated) {
         if (props.mirror) {
-            var cols = props.matrix[0].length;
-            var rows = props.matrix.length
-            var max = Math.max(rows + 1, cols + 1);
+            const cols = props.matrix[0].length;
+            const rows = props.matrix.length
+            const max = Math.max(rows + 1, cols + 1);
 
             var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
             tempMatrix[col][row] = updated;
@@ -140,20 +140,19 @@ function Table(props) {
         }
     }
 
-    var cols = props.matrix[0].length;
-    var rows = props.matrix.length;
+    const cols = props.matrix[0].length;
+    const rows = props.matrix.length;
 
-    var tableRows = Array(rows).fill(Array(cols));
-    var eachRow;
+    const tableRows = Array(rows).fill(Array(cols));
 
-    var limitRows = Math.min(50, rows);
-    var limitCols = Math.min(50, cols);
+    const limitRows = Math.min(50, rows);
+    const limitCols = Math.min(50, cols);
 
     
-    for (var i = 0; i < limitRows; i++) {
-        eachRow = Array(cols);
+    for (let i = 0; i < limitRows; i++) {
+        const eachRow = Array(cols);
 
-        for (var j = 0; j < limitCols; j++) {   
+        for (let j = 0; j < limitCols; j++) {   
             eachRow[j] = <Box 
                         name = {props.name}
                         addRow = {addRow} 

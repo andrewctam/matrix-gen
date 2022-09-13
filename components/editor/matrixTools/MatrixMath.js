@@ -13,7 +13,7 @@ function MatrixMath(props) {
     }
 
     function calculate() {
-        var postfix = shuntingYard(expression);
+        var postfix = infixToPostfix(expression);
         var matrix = evaluatePostfix(postfix);
 
         if (matrix !== null)
@@ -22,19 +22,18 @@ function MatrixMath(props) {
 
     }
 
-    function shuntingYard(str) {
-        var output = [];
-        var stack = [];
+    function infixToPostfix(str) {
+        const output = [];
+        const stack = [];
         
         var start = -1;
         var end = -1;
-        var char;
         var parsingLetter = false;
         var parsingNum = false;
         //ABC123
 
-        for (var i = 0; i < str.length; i++) {
-            char = str.charAt(i);
+        for (let i = 0; i < str.length; i++) {
+            var char = str.charAt(i);
         
             if (char === " ") {
                 if (i === str.length - 1)
@@ -138,8 +137,8 @@ function MatrixMath(props) {
         }
  
         var product = JSON.parse(JSON.stringify(a));
-        for (var i = 0; i < a.length; i++)
-            for (var j = 0; j < a.length; j++)
+        for (let i = 0; i < a.length; i++)
+            for (let j = 0; j < a.length; j++)
                product[i][j] = a[i][j];
         
         for (i = 1; i < pow; i++)
@@ -153,8 +152,8 @@ function MatrixMath(props) {
         }
         else if (typeof(a) === "object" && typeof(b) === "number") {
             var product = JSON.parse(JSON.stringify(a));
-            for (var i = 0; i < a.length - 1; i++)
-                for (var j = 0; j < a[0].length - 1; j++)
+            for (let i = 0; i < a.length - 1; i++)
+                for (let j = 0; j < a[0].length - 1; j++)
                 product[i][j] = b * a[i][j]; //matrix scalar multiplication
 
             return product
@@ -177,7 +176,7 @@ function MatrixMath(props) {
             var row = []
             for (j = 0; j < b[0].length - 1; j++)  {
                 var sum = 0
-                for (var k = 0; k < b.length - 1; k++) {
+                for (let k = 0; k < b.length - 1; k++) {
                     if (a[i][k] === "")
                         var aVal = parseInt(props.sparseVal)
                     else
@@ -206,19 +205,18 @@ function MatrixMath(props) {
             return null;
         }
 
-        var matrixSum = []
-        var aVal, bVal;
+        const matrixSum = []
         
-        for (var i = 0; i < a.length - 1; i++) {
-            var row = []
-            for (var j = 0; j < b[0].length - 1; j++)  {
+        for (let i = 0; i < a.length - 1; i++) {
+            const row = []
+            for (let j = 0; j < b[0].length - 1; j++)  {
                 if (a[i][j] === "")
-                    aVal = parseInt(props.sparseVal)
+                    var aVal = parseInt(props.sparseVal)
                 else
                     aVal = parseInt(a[i][j])
                          
                 if (b[i][j] === "")
-                    bVal = parseInt(props.sparseVal)
+                    var bVal = parseInt(props.sparseVal)
                 else
                     bVal = parseInt(b[i][j])
 
@@ -236,18 +234,17 @@ function MatrixMath(props) {
         if (a.length !== b.length || a[0].length !== b[0].length)
             return null;
 
-        var matrixDiff = []
-        var aVal, bVal;
-        for (var i = 0; i < a.length - 1; i++) {
-            var row = []
-            for (var j = 0; j < b[0].length - 1; j++)  {
+        const matrixDiff = []
+        for (let i = 0; i < a.length - 1; i++) {
+            const row = []
+            for (let j = 0; j < b[0].length - 1; j++)  {
                 if (a[i][j] === "")
-                    aVal = parseInt(props.sparseVal)
+                    var aVal = parseInt(props.sparseVal)
                 else
                     aVal = parseInt(a[i][j])
                           
                 if (b[i][j] === "")
-                    bVal = parseInt(props.sparseVal)
+                    var bVal = parseInt(props.sparseVal)
                 else
                     bVal = parseInt(b[i][j])
 
@@ -265,14 +262,13 @@ function MatrixMath(props) {
 
 
     function evaluatePostfix(postFix) {
-        var stack = []
-        var a, b, result;
-        for (var i = 0; i < postFix.length; i++) {
+        const stack = []
+        for (let i = 0; i < postFix.length; i++) {
             switch(postFix[i]) {
                 case "*":
-                    b = stack.pop()
-                    a = stack.pop()
-                    result = matrixMultiplication(a, b)
+                    var b = stack.pop()
+                    var a = stack.pop()
+                    var result = matrixMultiplication(a, b)
                     if (result === null) {
                         alert("Error in input. Matrices have different rows and column dimensions")
                         return null

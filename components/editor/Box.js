@@ -35,14 +35,14 @@ function Box(props) {
             props.updateBoxesSelected(-1, -1, props.row, props.col);
     }
 
-    var lastRow = props.rows === props.row + 1;
-    var lastCol = props.cols === props.col + 1;
+    const lastRow = props.rows === props.row + 1;
+    const lastCol = props.cols === props.col + 1;
    
     //if one of the rows or cols is the max size (50),
     //force that last row/col to be a white background
     //instead of a red background since there isn't a 51st box
-    var lastRowIn50 = props.row === 49 && props.rows === 51;
-    var lastColIn50 = props.col === 49 && props.cols === 51;
+    const lastRowIn50 = props.row === 49 && props.rows === 51;
+    const lastColIn50 = props.col === 49 && props.cols === 51;
 
     if (props.boxSelected && (!lastRow || lastRowIn50) && (!lastCol || lastColIn50))
         var specialStyle =  { 
