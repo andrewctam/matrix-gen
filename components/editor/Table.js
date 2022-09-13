@@ -176,7 +176,7 @@ function Table(props) {
                 />
         }
 
-        tableRows[i] = <tr key = {"row" + i} className = {styles.tableRow}> {eachRow} </tr>
+        tableRows[i] = <tr key = {"row" + i} className = {styles.tableRow}>{eachRow}</tr>
     }
 
     return <table className = {"table table-bordered " + styles.matrixTable}>

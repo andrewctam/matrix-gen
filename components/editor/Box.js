@@ -75,8 +75,7 @@ function Box(props) {
             onChange = {(lastRow && lastCol ? handleAddBoth :
                                     lastRow ? handleAddRow :
                                     lastCol ? handleAddCol :
-                       
-                                    handleUpdate)} 
+                                              handleUpdate)} 
 
             onKeyDown = {handleKeyDown}
             onFocus = {handleFocus}

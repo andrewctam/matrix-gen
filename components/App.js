@@ -46,6 +46,7 @@ function App(props) {
                 break;
             case "autoSave":
                 setAutoSave(updated);
+                window.localStorage.setItem("autoSave;", updated ? "1" : "0");
                 break;
 
             default: 

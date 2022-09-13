@@ -169,7 +169,7 @@ function TextImport(props) {
                     matrix[i].push("");
                 }
 
-                matrix.push(Array(rows[0].length).fill(""));
+                matrix.push(Array(matrix[0].length).fill(""));
                 props.setMatrix(matrix, name); //function will also override existing (or non existing) matrices
                 
                 break;
@@ -194,7 +194,7 @@ function TextImport(props) {
                         matrix[i].push(" ");
                     }
 
-                    matrix.push(Array(rows[0].length).fill(""));
+                    matrix.push(Array(matrix[0].length).fill(""));
                     props.setMatrix(matrix, name);
 
                 } catch (error) {
@@ -235,7 +235,7 @@ function TextImport(props) {
     
                 }
 
-                matrix = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill())
+                matrix = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
 
                 let i = 0;
                 for (let j = 0; j < rowCount; j++)
@@ -252,13 +252,13 @@ function TextImport(props) {
                 
                 for (let i = 0; i < rows.length; i++) {
                     rows[i] = rows[i].replaceAll(" ","")
-                    
                     matrix.push(rows[i].split("&"));
                     matrix[i].push("");
                 }
 
-
                 matrix.push(Array(matrix[0].length).fill(""));
+
+
                 
                 if (removeEscape) {
 
@@ -292,6 +292,8 @@ function TextImport(props) {
 
             default: break;
         }
+
+        console.log(matrix)
 
     }
 
