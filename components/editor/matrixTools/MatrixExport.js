@@ -166,13 +166,13 @@ function MatrixExport(props) {
         const updated = e.target.id;
         switch(updated) {
             case "Square Braces [ ] ,":
-                setStart("{");
-                setEnd("}");
+                setStart("[");
+                setEnd("]");
                 setDelim(",");
                 break;  
             case "Curly Braces { } ,":
-                setStart("[");
-                setEnd("]");
+                setStart("{");
+                setEnd("}");
                 setDelim(",");
                 break;
             case "Parentheses ( ) ,":
