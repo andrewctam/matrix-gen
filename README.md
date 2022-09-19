@@ -7,11 +7,11 @@ The [Matrix Generator](https://matrixgen.web.app) is a web app that allows you t
 
 
 ## Installation
-Clone this repository and install npm dependencies. Then, start the local server.
+Clone this repository and install npm dependencies for the frontend. Then, start the local server.
 
 ```
-git clone https://github.com/tamandrew/matrix.git
-cd matrix
+git clone https://github.com/tamandrew/matrix-gen.git
+cd matrix-gen/frontend
 npm install
 npm run dev
 ```
