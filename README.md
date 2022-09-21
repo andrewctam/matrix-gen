@@ -7,11 +7,10 @@ The [Matrix Generator](https://matrixgen.web.app) is a web app that allows you t
 
 
 ## Installation
-Clone this repository and install npm dependencies for the frontend. Then, start the local server.
+This app is built using docker, so simply clone this repository and start docker.
 
 ```
 git clone https://github.com/tamandrew/matrix-gen.git
-cd matrix-gen/frontend
-npm install
-npm run dev
+cd matrix-gen
+docker compose up
 ```

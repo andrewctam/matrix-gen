@@ -6,3 +6,5 @@ uvicorn
 python-dotenv
 asyncpg
 psycopg2
+python-jose
+passlib
