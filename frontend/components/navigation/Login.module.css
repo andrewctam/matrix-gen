@@ -1,0 +1,60 @@
+
+.login {
+    background-color: rgb(88, 91, 96);
+    border-radius: 15px;
+    width: 95%;
+    margin: 2.5%;
+    margin-top: 1%;
+    padding: 10px;
+}
+
+
+.loginForm {
+    display: block;
+    margin: 0px;
+    width: fit-content;
+}
+
+.text {
+    margin: 0px;
+    text-align: center;
+}
+
+
+.loginInput {
+}
+
+.loginLabel {
+    font-size: small;
+    display: block;
+    margin-top: 3px;
+}
+.errorLabel {
+    font-size: small;
+    display: block;
+    margin-top: 0px;
+    color: rgb(221, 158, 158);
+
+}
+
+.loginButton {
+    display: block;
+    margin-left: 0px;
+    margin-top: 5px
+}
+
+.registerButton {
+    display: block;
+    margin-left: 0px;
+    margin-top: 0px
+}
+
+.closeButton {
+    float: right;
+    width: fit-content;
+    height: fit-content;
+}
+
+.clearButton {
+    margin-left: 0px;
+}

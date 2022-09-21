@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ParameterBoxInput from '../inputs/ParameterBoxInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
 
+import Login from './Login';
 import Tutorial from './Tutorial';
 import SelectorButton from './buttons/SelectorButton';
 import MenuButton from './buttons/MenuButton';
@@ -16,7 +17,7 @@ function Navigation(props) {
     const [showSettings, setShowSettings] = useState(false);
     const [showPresets, setShowPresets] = useState(false);
     const [showTutorial, setShowTutorial] = useState(false);
-
+    const [showSaveMenu, setShowSaveMenu] = useState(true);
     const [identitySize, setIdentitySize] = useState(3);
 
     useEffect(() => {
@@ -112,10 +113,26 @@ function Navigation(props) {
         setShowTutorial(false);
     }
 
+    function closeSaveMenu() {
+        setShowSaveMenu(false);
+    }
+
 
 
     
     return  <div className = {"row " + styles.navigateBar}>
+        {showSaveMenu ?
+        <Login 
+            username = {props.username}
+            updateUserInfo = {props.updateUserInfo} 
+            saveToLocal = {props.saveToLocal} 
+            updateParameter = {props.updateParameter}
+            
+            setMatrices = {props.setMatrices}
+            setSelection = {props.setSelection}
+            closeSaveMenu = {closeSaveMenu}
+            /> : null}
+
         {showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
 
         <div className = {"col-sm-4 " + styles.info}>
@@ -127,7 +144,8 @@ function Navigation(props) {
                         action = {() => {
                             var newName = props.setMatrix();
                             props.updateMatrixSelection(newName);
-                            }} />
+                        }} 
+                        />
 
                     {props.selection !== "0" ?
                     <MenuButton 
@@ -171,22 +189,20 @@ function Navigation(props) {
 
         <div className = {"col-sm-4 " + styles.info}>
             <div id = "selectors" className="list-group">
-                {!showTutorial ? 
                 <MenuButton 
-                    text = {"Show Tutorial"}
+                    text = {showTutorial ? "Hide Tutorial" : "Show Tutorial"}
                     buttonStyle = {"info"}
-                    action = {() => {setShowTutorial(true)}}
-                />: null}
+                    action = {() => {setShowTutorial(!showTutorial)}}
+                />
                 
-                {props.autoSave ? null : 
                 <MenuButton 
-                    text = {"Save Matrices"}
+                    text = {showSaveMenu ? "Close Save Menu" : "Save Matrices"}
                     buttonStyle = {"success"}
                     action = {() => {
-                        props.saveToLocalStorage();
-                        alert("Matrices saved to local browser storage.");
-                    }}/>
-                }
+                        setShowSaveMenu(!showSaveMenu)
+                    }}
+                />
+        
                
                 <MenuButton 
                     text = {showPresets ? "Hide Presets" : "Preset Matrices"}
@@ -218,7 +234,6 @@ function Navigation(props) {
 
             {showSettings ? 
             <div className = {styles.settingsMenu}>               
-                <ParameterBoxInput isChecked = {props.autoSave} id = {"autoSave"} name={"autoSave"} text = {"Auto Save"} updateParameter={props.updateParameter}/>
                 <ParameterBoxInput isChecked = {props.mirror} id = {"mirror"} name={"mirror"} text = {"Mirror Inputs"} updateParameter={props.updateParameter}/>
                 <ParameterBoxInput isChecked = {props.selectable} id = {"selectable"} name={"selectable"} text = {"Enable Selection"} updateParameter={props.updateParameter}/>
                 {"Empty Element:"} <ParameterTextInput width = {"30px"} text = {props.sparseVal} id={"sparse"} updateParameter={props.updateParameter}/>

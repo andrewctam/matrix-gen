@@ -11,23 +11,32 @@ function App(props) {
     const [sparseVal, setSparseVal] = useState("0");
     
     const [mirror, setMirror] = useState(false);
-    const [autoSave, setAutoSave] = useState(false);
     const [selectable, setSelectable] = useState(true);
+    const [saveToLocal, setSaveToLocal] = useState(false);
     
+    const [username, setUsername] = useState(null);
+    const [token, setToken] = useState(null);
+
+
     useEffect(() => {
         loadFromLocalStorage();
     }, []);
 
     useEffect( () => {
-        if (autoSave)
-            saveToLocalStorage();    
+        saveToLocalStorage();    
     // eslint-disable-next-line
-    }, [matrices, autoSave]);
+    }, [matrices]);
 
   
     
     function updateMatrixSelection(selected) {
         setSelection(selected);
+    }
+
+    function updateUserInfo(username, token) {
+        setUsername(username);
+        setToken(token);
+
     }
 
     function updateParameter(parameterName, updated) {
@@ -44,9 +53,9 @@ function App(props) {
                 setSelectable(updated);
                 window.localStorage.setItem("selectable;", updated ? "1" : "0");
                 break;
-            case "autoSave":
-                setAutoSave(updated);
-                window.localStorage.setItem("autoSave;", updated ? "1" : "0");
+            case "saveToLocal":
+                setSaveToLocal(updated);
+                window.localStorage.setItem("saveToLocal;", updated ? "1" : "0");
                 break;
 
             default: 
@@ -190,8 +199,8 @@ function App(props) {
             setSelection("0");
             setMatrices({});
 
-            if (autoSave)
-                localStorage.clear();
+            localStorage.setItem("names;", JSON.stringify([]));
+            localStorage.setItem("matrices;", JSON.stringify([]));     
         }
 
     }
@@ -600,7 +609,7 @@ function App(props) {
 
         window.localStorage.setItem("names;", names.substring(0, names.length - 1))
         window.localStorage.setItem("mirror;", mirror ? "1" : "0")
-        window.localStorage.setItem("autoSave;", autoSave ? "1" : "0")
+        window.localStorage.setItem("saveToLocal;", saveToLocal ? "1" : "0")
         window.localStorage.setItem("selectable;", selectable ? "1" : "0");
         window.localStorage.setItem("sparseValue;", sparseVal)
     }
@@ -624,10 +633,7 @@ function App(props) {
             }
 
             setMatrices(loadedMatrices);
-            setAutoSave(window.localStorage.getItem("autoSave;") === "1");
-            setMirror(window.localStorage.getItem("mirror;") === "1");
-            setSelectable(window.localStorage.getItem("selectable;") === "1");
-            setSparseVal(window.localStorage.getItem("sparseValue;"));
+            
             setSelection(names[0]);
         } catch (error) {
             console.log(error)
@@ -636,10 +642,29 @@ function App(props) {
                 "A": [["", ""], ["", ""]]
             });;
             setSelection("A");
-            setSparseVal("0");
-            setAutoSave(false);
-            setMirror(false);
+            
+            
         }
+
+        setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
+        setMirror(window.localStorage.getItem("mirror;") === "1");
+        
+        const sparse = window.localStorage.getItem("sparseValue;");
+        if (sparse !== null)
+            setSparseVal(sparse)
+        else
+            setSparseVal("0")
+
+        const selectable = window.localStorage.getItem("selectable;") === "1";
+        
+        if (selectable !== null)
+            setSelectable(selectable);
+        else
+            setSelectable(true);
+        
+
+
+
 
     }
     console.log(matrices)
@@ -648,7 +673,6 @@ function App(props) {
         <div> 
             <Navigation 
                 matrices = {matrices} 
-                autoSave = {autoSave}
                 mirror = {mirror}
                 selection = {selection}
                 sparseVal = {sparseVal}
@@ -665,6 +689,15 @@ function App(props) {
                 deleteAllMatrices = {deleteAllMatrices}
 
                 createIdentity = {createIdentity}
+
+                username = {username}
+                updateUserInfo = {updateUserInfo}
+                saveToLocal = {saveToLocal}
+                setSaveToLocal = {setSaveToLocal}
+
+
+                setSelection = {setSelection}
+                setMatrices = {setMatrices}
 
                 
             />
