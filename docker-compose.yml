@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: backend
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/usr/src/app
+  frontend:
+    build: frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/usr/src/app

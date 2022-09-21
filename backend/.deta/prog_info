@@ -1,1 +1,0 @@
-{"id":"d26389f4-6fac-4b95-a7bc-8a9e79f13ace","space":29783,"runtime":"python3.9","name":"backend","path":"q3fs7i","project":"b0vrct9d","account":"144798365827","region":"us-west-1","deps":["fastapi"],"envs":["DATABASE_URI"],"public":true,"log_level":"off","cron":""}

@@ -1,1 +1,8 @@
 fastapi
+databases
+sqlalchemy
+databases
+uvicorn
+python-dotenv
+asyncpg
+psycopg2
