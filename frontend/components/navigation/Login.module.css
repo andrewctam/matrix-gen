@@ -13,6 +13,11 @@
     display: block;
     margin: 0px;
     width: fit-content;
+    
+}
+
+.inputs {
+    margin-left: 5px;
 }
 
 .text {
@@ -20,9 +25,6 @@
     text-align: center;
 }
 
-
-.loginInput {
-}
 
 .loginLabel {
     font-size: small;
@@ -37,17 +39,12 @@
 
 }
 
-.loginButton {
+.loginRegisterButton {
     display: block;
     margin-left: 0px;
     margin-top: 5px
 }
 
-.registerButton {
-    display: block;
-    margin-left: 0px;
-    margin-top: 0px
-}
 
 .closeButton {
     float: right;
@@ -57,4 +54,35 @@
 
 .clearButton {
     margin-left: 0px;
+}
+
+.loginOption {
+    display: inline-block;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 15px;
+    user-select: none;
+}
+
+.registerOption {
+    display: inline-block;
+    padding: 5px;
+    padding-right: 15px;
+    user-select: none;
+
+}
+.methodSelector {
+    border-bottom: 1px solid white;
+    padding-left: 0;
+}
+
+.changePassword {
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 5px
+}
+
+.changePasswordInput {
+    display: block;
+
 }

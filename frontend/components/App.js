@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
 import Navigation from "./navigation/Navigation.js"
 
 function App(props) {
-    const [matrices, setMatrices] = useState( {
-        "A": [["", ""], ["", ""]]
-    });
+    const [matrices, setMatrices] = useState(null);
 
-    const [selection, setSelection] = useState("A");
+    const [selection, setSelection] = useState("0");
     const [sparseVal, setSparseVal] = useState("0");
     
     const [mirror, setMirror] = useState(false);
@@ -16,29 +14,45 @@ function App(props) {
     
     const [username, setUsername] = useState(null);
     const [token, setToken] = useState(null);
+    
 
     useEffect(() => {
-        loadFromLocalStorage();
-
         const username = localStorage.getItem("username");
         const token = localStorage.getItem("token");
         
         if (username !== null && token !== null) {
             setUsername(username);
             setToken(token);
+        } else if (localStorage.getItem("matrices;") !== null) {
+            loadFromLocalStorage();
+        } else {
+            setMatrices( {
+                "A": [["", ""], ["", ""]]
+            });;
+            setSelection("A");  
         }
-            
+
+        
     }, []);
 
     useEffect( () => {
         if (token && username)
-            updateMatrixData();
+            updateAccountMatrices();
+       
+    // eslint-disable-next-line
+    }, [matrices]);
+
+    useEffect(() => {
+        if (token)
+            getMatrixData();
+        
+    }, [token])
+
+ 
+    useEffect(() => {
         if (saveToLocal)
             saveToLocalStorage();    
-    // eslint-disable-next-line
-    }, [matrices, saveToLocal]);
-
-  
+    }, [[matrices, saveToLocal]] )
     
     function updateMatrixSelection(selected) {
         setSelection(selected);
@@ -215,7 +229,7 @@ function App(props) {
 
 
     function deleteAllMatrices() {
-        if (window.confirm("Delete all matrices?")) {
+        if (window.confirm("Are you sure you want to delete all of your matrices?")) {
             setSelection("0");
             setMatrices({});
 
@@ -620,14 +634,11 @@ function App(props) {
             const matrices = localStorage.getItem("matrices;")
             console.log(matrices)
             if (matrices === null)
-                throw error;
+                throw new Error("No matrices found in local storage");
 
             const parsed = JSON.parse(matrices);            
             if (parsed.length === 0) { //if {} is saved, it will be parsed to []
-                setMatrices( {
-                    "A": [["", ""], ["", ""]]
-                });;
-                setSelection("A");  
+                throw new Error("No matrices found in local storage");
             } else {
                 setMatrices(parsed);
                 setSelection(Object.keys(parsed)[0]);
@@ -636,6 +647,12 @@ function App(props) {
         } catch (error) {
             console.log(error)
             console.log("Error loading.")
+            localStorage.removeItem("matrices;");
+
+            setMatrices( {
+                "A": [["", ""], ["", ""]]
+            });;
+            setSelection("A");  
         }
 
         setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
@@ -653,17 +670,7 @@ function App(props) {
             setSelectable(selectable);
         else
             setSelectable(true);
-        
-
-
-
-
     }
-
-    useEffect(() => {
-        if (token)
-            getMatrixData();
-    }, [token])
 
     const getMatrixData = async () => {
         const response = await fetch("http://localhost:8080/api/matrix", {
@@ -682,6 +689,10 @@ function App(props) {
 
         if (response === null) {
             console.log("Unauthorized");
+            updateUserInfo(null, null);
+
+            if (matrices === null)
+                loadFromLocalStorage();
             return;
         }
 
@@ -689,7 +700,7 @@ function App(props) {
         setSelection(Object.keys(JSON.parse(response["matrix_data"]))[0])
     }
 
-    const updateMatrixData = async () => {
+    const updateAccountMatrices = async () => {
         const response = await fetch("http://localhost:8080/api/matrix", {
             method: "PUT",
             headers: {
@@ -703,7 +714,6 @@ function App(props) {
         }).then((response) => {
             if (response.status === 401) {
                 return null;
-
             }
 
             return response.json()
@@ -713,84 +723,117 @@ function App(props) {
 
         if (response === null) {
             console.log("Unauthorized");
+            updateUserInfo(null, null);
             return;
         }
 
-        console.log(response)
+        console.log("Matrices saved to account")
     }
 
-
-
-    return (
-        <div> 
-            <Navigation 
-                matrices = {matrices} 
-                mirror = {mirror}
-                selection = {selection}
-                sparseVal = {sparseVal}
-                selectable = {selectable}
-
-                updateMatrixSelection = {updateMatrixSelection} 
-                setMatrix = {setMatrix}
-                deleteMatrix = {deleteMatrix}
-                renameMatrix = {renameMatrix}
-                copyMatrix = {copyMatrix}
-                resizeMatrix = {resizeMatrix}
-                updateParameter = {updateParameter}
-                saveToLocalStorage = {saveToLocalStorage}
-                loadFromLocalStorage = {loadFromLocalStorage}
-                deleteAllMatrices = {deleteAllMatrices}
-
-                createIdentity = {createIdentity}
-
-                username = {username}
-                updateUserInfo = {updateUserInfo}
-                saveToLocal = {saveToLocal}
-                setSaveToLocal = {setSaveToLocal}
-
-
-                setSelection = {setSelection}
-                setMatrices = {setMatrices}
-
-                token = {token}
-
+    const refreshToken = async () => {
+        const response = await fetch("http://localhost:8080/api/token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                username: username,
+                matrix_data: ""
                 
-            />
+            })
+        }).then((response) => {
+            if (response.status === 401) {
+                return null;
+            }
 
-            {(selection in matrices) ? 
-            <MatrixEditor
-                matrix = {matrices[selection]} 
-                matrices = {matrices}
-                name = {selection} 
-                mirror = {mirror}
-                sparseVal = {sparseVal}
-                updateParameter = {updateParameter}
-                
-                setMatrix = {setMatrix}
-                generateUniqueName = {generateUniqueName}
+            return response.json()
+        }).catch (error => {
+            console.log(error)
+        })
 
-                fillEmpty = {fillEmpty}
-                reshapeMatrix = {reshapeMatrix}
-                randomMatrix = {randomMatrix}
-                transpose = {transpose}
-                mirrorRowsCols = {mirrorRowsCols}
-                addRowsAndCols = {addRowsAndCols}
-                addRows = {addRows}
-                addCols = {addCols}
-                updateEntry = {updateEntry}
-                tryToDelete = {tryToDelete}
-                fillAll = {fillAll}
-                fillDiagonal = {fillDiagonal}
+        if (response === null) {
+            setToken(null);
+            updateUserInfo(null, null);
+        } else {
+            setToken(response["token"]);
+        }
+    }
 
-                spliceMatrix = {spliceMatrix}
-                pasteMatrix = {pasteMatrix}
-                editSelection = {editSelection}
-                selectable = {selectable}
-            /> : null
-            } 
+   
+    if (matrices)
+        return (
+            <div> 
+                <Navigation 
+                    matrices = {matrices} 
+                    mirror = {mirror}
+                    selection = {selection}
+                    sparseVal = {sparseVal}
+                    selectable = {selectable}
+
+                    updateMatrixSelection = {updateMatrixSelection} 
+                    setMatrix = {setMatrix}
+                    deleteMatrix = {deleteMatrix}
+                    renameMatrix = {renameMatrix}
+                    copyMatrix = {copyMatrix}
+                    resizeMatrix = {resizeMatrix}
+                    updateParameter = {updateParameter}
+                    saveToLocalStorage = {saveToLocalStorage}
+                    loadFromLocalStorage = {loadFromLocalStorage}
+                    deleteAllMatrices = {deleteAllMatrices}
+
+                    createIdentity = {createIdentity}
+
+                    username = {username}
+                    updateUserInfo = {updateUserInfo}
+                    saveToLocal = {saveToLocal}
+                    setSaveToLocal = {setSaveToLocal}
 
 
-        </div>);
+                    setSelection = {setSelection}
+                    setMatrices = {setMatrices}
+
+                    token = {token}
+
+                    
+                />
+                {(selection in matrices) ? 
+                <MatrixEditor
+                    matrix = {matrices[selection]} 
+                    matrices = {matrices}
+                    name = {selection} 
+                    mirror = {mirror}
+                    sparseVal = {sparseVal}
+                    updateParameter = {updateParameter}
+                    
+                    setMatrix = {setMatrix}
+                    generateUniqueName = {generateUniqueName}
+
+                    fillEmpty = {fillEmpty}
+                    reshapeMatrix = {reshapeMatrix}
+                    randomMatrix = {randomMatrix}
+                    transpose = {transpose}
+                    mirrorRowsCols = {mirrorRowsCols}
+                    addRowsAndCols = {addRowsAndCols}
+                    addRows = {addRows}
+                    addCols = {addCols}
+                    updateEntry = {updateEntry}
+                    tryToDelete = {tryToDelete}
+                    fillAll = {fillAll}
+                    fillDiagonal = {fillDiagonal}
+
+                    spliceMatrix = {spliceMatrix}
+                    pasteMatrix = {pasteMatrix}
+                    editSelection = {editSelection}
+                    selectable = {selectable}
+                /> : null
+                } 
+
+            
+
+            </div>);
+    else
+        return <div></div>
 
 }
 

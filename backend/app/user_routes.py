@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
-from typing import Optional
-from xml.sax import saxutils
 
 from fastapi import Depends, APIRouter, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from .database import users, database
@@ -29,6 +27,10 @@ class UserData(BaseModel):
     password: str
     matrix_data: str
 
+class ChangeUserPassword(BaseModel):
+    username: str
+    current_password: str
+    new_password: str
 
 async def authenticate_user(username: str, password: str):
     query = users.select().where(users.c.username == username)
@@ -48,8 +50,14 @@ def create_token(username: str):
 
 
 async def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="/api/login"))):
-    
-    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )        
     username:str = payload.get("sub")
 
     if not username:
@@ -76,6 +84,11 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+@router.post("/api/token")
+async def refresh_token(current_user: User = Depends(get_current_active_user)):
+    token = create_token(current_user.username)
+    return {"access_token": token, "token_type": "bearer"}
 
 @router.post("/api/login")
 async def login_user(user: UserData):
@@ -108,3 +121,32 @@ async def register_new_user(user: UserData):
 
     token = create_token(user.username)
     return {"access_token": token, "token_type": "bearer"}
+
+@router.delete("/api/delete")
+async def delete_user(current_user: User = Depends(get_current_active_user)):
+    query = users.delete().where(users.c.username == current_user.username)
+    await database.execute(query)
+
+    return {"status": "deleted"}
+
+@router.put("/api/password")
+async def change_password(user: ChangeUserPassword, current_user: User = Depends(get_current_active_user)):
+    query = users.select().where(users.c.username == user.username)
+    userDB = await database.fetch_one(query)
+
+    if not user:
+        return False
+    
+    print(user, flush = True)
+    
+    if (pwd_context.verify(user.current_password, userDB.hashed_password)):
+        query = users.update().where(users.c.username == user.username).values(hashed_password = pwd_context.hash(user.new_password))
+        await database.execute(query)
+
+        return {"status": "Password Changed"}
+    else:
+       raise HTTPException (
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Password Incorrect",
+            headers={"WWW-Authenticate": "Bearer"},
+        )

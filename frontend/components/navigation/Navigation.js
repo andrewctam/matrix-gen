@@ -17,7 +17,7 @@ function Navigation(props) {
     const [showSettings, setShowSettings] = useState(false);
     const [showPresets, setShowPresets] = useState(false);
     const [showTutorial, setShowTutorial] = useState(false);
-    const [showSaveMenu, setShowSaveMenu] = useState(true);
+    const [showSaveMenu, setShowSaveMenu] = useState(false);
     const [identitySize, setIdentitySize] = useState(3);
 
     useEffect(() => {
@@ -64,7 +64,8 @@ function Navigation(props) {
 
 
         if (tempSelectors.length === 0)
-            tempSelectors.push(<div className = {styles.noMatrices}>{"No Matrices Found"}</div>);
+            if (props.matrices)
+                tempSelectors.push(<div key = "noMatrices" className = {styles.noMatrices}>{"No Matrices Found"}</div>);
         else
             tempSelectors.sort( (selector1, selector2)  => {
                 return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
@@ -118,9 +119,19 @@ function Navigation(props) {
     }
 
 
-
+    if (props.token && props.username && props.saveToLocal) {
+        var saving = `Logged in as ${props.username}. Matrices will be saved to your account and to your local browser's storage.`;
+    } else if (props.token && props.username) {
+        saving = `Logged in as ${props.username}. Matrices will be saved to your account.`;
+    } else if (props.saveToLocal) {
+        saving = `Matrices will be saved to your local browser's storage.`;
+    } else {
+        saving = "Matrices will not be saved if you refresh the page. If you want to save your matrices, click Save Matrices.";
+    }
     
     return  <div className = {"row " + styles.navigateBar}>
+        <p onClick = {() => {setShowSaveMenu(!showSaveMenu)}} className = {styles.savingInfo}>{saving}</p>
+        
         {showSaveMenu ?
         <Login 
             username = {props.username}
@@ -138,6 +149,7 @@ function Navigation(props) {
             /> : null}
 
         {showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
+        
 
         <div className = {"col-sm-4 " + styles.info}>
             <div id = "selectors" className="list-group">
@@ -172,7 +184,7 @@ function Navigation(props) {
                         }}/>
                     : null}
 
-                    {Object.keys(props.matrices).length > 0 ?
+                    {props.matrices && Object.keys(props.matrices).length > 0 ?
                     <MenuButton 
                         text = {"Delete All Matrices"}
                         buttonStyle = {"bigDanger"} 
@@ -245,6 +257,7 @@ function Navigation(props) {
             
 
         </div>
+
 
 
 
