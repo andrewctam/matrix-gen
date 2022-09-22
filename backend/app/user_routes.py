@@ -21,12 +21,13 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 class User(BaseModel):
     username: str
     matrix_data: str
-
+class UserPassword(BaseModel):
+    username: str
+    password: str
 class UserData(BaseModel):
     username: str
     password: str
     matrix_data: str
-
 class ChangeUserPassword(BaseModel):
     username: str
     current_password: str
@@ -39,7 +40,7 @@ async def authenticate_user(username: str, password: str):
     if not user:
         return False
     
-    print(user, flush = True)
+    print(password, flush = True)
     return pwd_context.verify(password, user.hashed_password)
 
 
@@ -123,23 +124,23 @@ async def register_new_user(user: UserData):
     return {"access_token": token, "token_type": "bearer"}
 
 @router.delete("/api/delete")
-async def delete_user(current_user: User = Depends(get_current_active_user)):
-    query = users.delete().where(users.c.username == current_user.username)
-    await database.execute(query)
+async def delete_user(user: UserPassword, current_user: User = Depends(get_current_active_user)):
+    if (await authenticate_user(user.username, user.password)):
+        query = users.delete().where(users.c.username == current_user.username)
+        await database.execute(query)
+        return {"status": "deleted"}
 
-    return {"status": "deleted"}
+    else:
+        raise HTTPException (
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Password Incorrect",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
 
 @router.put("/api/password")
 async def change_password(user: ChangeUserPassword, current_user: User = Depends(get_current_active_user)):
-    query = users.select().where(users.c.username == user.username)
-    userDB = await database.fetch_one(query)
-
-    if not user:
-        return False
-    
-    print(user, flush = True)
-    
-    if (pwd_context.verify(user.current_password, userDB.hashed_password)):
+    if (await authenticate_user(user.username, user.current_password)):
         query = users.update().where(users.c.username == user.username).values(hashed_password = pwd_context.hash(user.new_password))
         await database.execute(query)
 

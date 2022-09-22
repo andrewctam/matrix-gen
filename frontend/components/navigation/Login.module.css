@@ -39,6 +39,14 @@
 
 }
 
+.successLabel {
+    font-size: small;
+    display: block;
+    margin-top: 0px;
+    color:rgb(148 212 173);
+
+}
+
 .loginRegisterButton {
     display: block;
     margin-left: 0px;
@@ -76,9 +84,10 @@
     padding-left: 0;
 }
 
-.changePassword {
+.loginSubBox {
     border: 1px solid black;
-    padding: 5px;
+    width: fit-content;
+    padding: 10px;
     border-radius: 5px
 }
 

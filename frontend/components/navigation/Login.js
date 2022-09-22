@@ -1,24 +1,62 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Login.module.css";
+import LoginInput from "./LoginInput"
 
 function Login(props) {
+    const [showWelcome, setShowWelcome] = useState(false);
+    const [showLogin, setShowLogin] = useState(true);
+    const [showChangePassword, setShowChangePassword] = useState(false);
+    const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+
     const [usernameError, setUsernameError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
+
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
 
-    const [showWelcome, setShowWelcome] = useState(false);
-
-    const [showLogin, setShowLogin] = useState(true);
-
-
-    const [showChangePassword, setShowChangePassword] = useState(false);
-
     const [currentPassword, setCurrentPassword] = useState("");
-    const [newPasword, setNewPassword] = useState("");
-
     const [currentPasswordError, setCurrentPasswordError] = useState(null);
+
+    const [newPassword, setNewPassword] = useState("");
     const [newPasswordError, setNewPasswordError] = useState(null);
+    const [newPasswordSuccess, setNewPasswordSuccess] = useState(null);
+
+    const [deleteVerify, setDeleteVerify] = useState("");
+    const [deleteVerifyError, setDeleteVerifyError] = useState(null);
+
+
+    const resetStates = (arr) => {
+        if (arr.includes("bools")) {
+            setShowLogin(true);
+            setShowChangePassword(false);
+            setShowDeleteAccount(false);
+        }
+
+        if (arr.includes("login")) {
+            setUsernameError(null);
+            setPasswordError(null);
+            setUsernameInput("");
+            setPasswordInput("");
+        }
+
+        if (arr.includes("changePassword")) {
+            setCurrentPassword("");
+            setCurrentPasswordError(null);
+            setNewPassword("");
+            setNewPasswordError(null);
+            setNewPasswordSuccess(null);
+        }
+
+        if (arr.includes("deleteAccount")) {
+            setDeleteVerify("");
+            setDeleteVerifyError(null);
+        }
+    }
+
+
+
+
+
     const clearLocalMatrices = () => {
         var message = "Your matrices have been deleted from your browser's local storage."
         if (props.username)
@@ -35,19 +73,20 @@ function Login(props) {
         localStorage.setItem("token", null);
         localStorage.setItem("username", null);
         props.updateUserInfo(null, null);
-        
+
         setUsernameInput("")
         setPasswordInput("")
-        
+
         setUsernameError(null)
         setPasswordError(null)
-        
+
         setShowWelcome(false)
 
         props.loadFromLocalStorage();
+        resetStates(["bools", "login", "changePassword", "deleteAccount"]);
     }
 
-    
+
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -69,7 +108,7 @@ function Login(props) {
         if (error)
             return;
 
-        const response = await fetch("http://localhost:8080/api/login", {
+        const response = await fetch("https://matrixgen.fly.dev/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -96,6 +135,9 @@ function Login(props) {
 
         if (usernameInput && response && response["access_token"]) {
             props.updateUserInfo(usernameInput, response["access_token"]);
+            resetStates(["bools", "login", "changePassword", "deleteAccount"]);
+
+
         } else {
             console.log("Error")
         }
@@ -123,7 +165,7 @@ function Login(props) {
         if (error)
             return
 
-        const response = await fetch("http://localhost:8080/api/register", {
+        const response = await fetch("https://matrixgen.fly.dev/api/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -151,6 +193,7 @@ function Login(props) {
         if (usernameInput && response && response["access_token"]) {
             props.updateUserInfo(usernameInput, response["access_token"]);
             setShowWelcome(true)
+            resetStates(["bools", "login", "changePassword", "deleteAccount"]);
         } else {
             console.log("error")
         }
@@ -160,22 +203,27 @@ function Login(props) {
     const handleDeleteAccount = async (e) => {
         e.preventDefault();
 
+        if (!deleteVerify) {
+            setDeleteVerifyError("Enter your password")
+            return;
+        }
+
         if (!window.confirm("Are you sure you want to delete your account?"))
             return;
 
-        const response = await fetch("http://localhost:8080/api/delete", {
+        const response = await fetch("https://matrixgen.fly.dev/api/delete", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + localStorage.getItem("token")
             },
             body: JSON.stringify({
-                username: usernameInput,
-                matrix_data: ""
+                username: props.username,
+                password: deleteVerify
             })
         }).then((response) => {
             if (response.status === 401) {
-                return null
+                return null;
             }
             return response.json();
         }).catch((error) => {
@@ -183,12 +231,12 @@ function Login(props) {
         })
 
         if (response === null) {
-            console.log("Failed to delete")
+            setDeleteVerifyError("Incorrect password")
             return;
+        } else {
+            logOut();
+            console.log("Account deleted")
         }
-
-        console.log("Account deleted")
-        logOut();
 
     }
 
@@ -202,18 +250,18 @@ function Login(props) {
             error = true;
         }
 
-        if (!newPasword) {
+        if (!newPassword) {
             setNewPasswordError("Please enter a new password")
             error = true;
         } else if (newPassword === currentPassword) {
-            setNewPasswordError("Your new password is the same as your current password.")
+            setNewPasswordError("Your new password is the same as your current password")
             error = true;
         }
 
         if (error)
             return;
 
-        const response = await fetch("http://localhost:8080/api/password", {
+        const response = await fetch("https://matrixgen.fly.dev/api/password", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -222,7 +270,7 @@ function Login(props) {
             body: JSON.stringify({
                 username: props.username,
                 current_password: currentPassword,
-                new_password: newPasword
+                new_password: newPassword
             })
         }).then((response) => {
             if (response.status === 401) {
@@ -237,18 +285,14 @@ function Login(props) {
             setCurrentPasswordError("Incorrect current password")
             return;
         } else {
-            alert("Password changed!")
+            setNewPasswordSuccess("Password successfully changed")
             setCurrentPasswordError(null)
             setNewPasswordError(null)
+            setTimeout(() => { setShowChangePassword(false) }, 2000);
         }
 
 
     }
-
-
-
-
-
 
 
 
@@ -267,76 +311,97 @@ function Login(props) {
                 {props.username ?
                     <div>
 
-                    {showWelcome ?
-                        `New Account Created. Welcome, ${props.username}!`
-                        :
-                        `Signed in as ${props.username}`
-                    }
-                    <button onClick={logOut} className={"btn btn-secondary " + styles.loginRegisterButton}>Log Out</button>
-                    <button onClick={() => {setShowChangePassword(!showChangePassword)}} className={"btn btn-secondary " + styles.loginRegisterButton}>{showChangePassword ? "Close" : "Change Password"}</button>
-                    {
-                        showChangePassword ? 
-                        <form onSubmit = {handleChangePassword} className = {styles.changePassword}>
-                            <label htmlFor="currentPassword" className={styles.loginLabel}>Current Password</label>
-                            <input className={styles.loginInput} id="currentPassword" type="text" value={currentPassword} onChange={(e) => { setCurrentPassword(e.target.value) }} />
-                            {currentPasswordError ?
-                                <label htmlFor="currentPassword" className={styles.errorLabel}>{currentPasswordError}</label>
-                                : null}
-
-
-                            <label htmlFor="newPassword" className={styles.loginLabel}>New Password</label>
-                            <input className={styles.loginInput} id="newPassword" type="password" value={newPasword} onChange={(e) => { setNewPassword(e.target.value) }} />
-                            {newPasswordError ?
-                                <label htmlFor="newPassword" className={styles.errorLabel}>{newPasswordError}</label>
-                                : null}
-
-                            
-                            <button onClick={handleChangePassword} className={"btn btn-secondary " + styles.loginRegisterButton}>Confirm</button>
-                        </form> 
-                            : null
-                        }
-                    <button onClick={handleDeleteAccount} className={"btn btn-danger " + styles.loginRegisterButton}>Delete Account</button>
-                </div>
-
-                :
-                
-                <div>
-
-                    <form onSubmit={showLogin ? handleLogin : handleRegister} className={styles.loginForm}>
-
-                        <div className={styles.methodSelector}>
-                            <div onClick={() => { setShowLogin(true) }}
-                                style={{ color: (showLogin ? "rgb(185, 207, 220)" : "white") }}
-                                className={styles.loginOption}>Sign In
-                            </div>
-
-                            <div onClick={() => { setShowLogin(false) }}
-                                style={{ color: (!showLogin ? "rgb(185, 207, 220)" : "white") }}
-                                className={styles.registerOption}>Create New Account
-                            </div>
-                        </div>
-
-                        <label htmlFor="login" className={styles.loginLabel}>Username</label>
-                        <input className={styles.loginInput} id="login" type="text" value={usernameInput} onChange={(e) => { setUsernameInput(e.target.value) }} />
-                        {usernameError ?
-                            <label htmlFor="password" className={styles.errorLabel}>{usernameError}</label>
-                            : null}
-
-
-                        <label htmlFor="password" className={styles.loginLabel}>Password</label>
-                        <input className={styles.loginInput} id="password" type="password" value={passwordInput} onChange={(e) => { setPasswordInput(e.target.value) }} />
-                        {passwordError ?
-                            <label htmlFor="password" className={styles.errorLabel}>{passwordError}</label>
-                            : null}
-
-                        {showLogin ?
-                            <button onClick={handleLogin} className={"btn btn-secondary " + styles.loginRegisterButton}>Sign in</button>
+                        {showWelcome ?
+                            `New Account Created. Welcome, ${props.username}!`
                             :
-                            <button onClick={handleRegister} className={"btn btn-secondary " + styles.loginRegisterButton}>Register</button>
+                            `Signed in as ${props.username}`
                         }
+                        <button onClick={logOut} className={"btn btn-secondary " + styles.loginRegisterButton}>Log Out</button>
+                        <button onClick={() => { setShowChangePassword(!showChangePassword); resetStates(["changePassword"]); }} className={"btn btn-secondary " + styles.loginRegisterButton}>{showChangePassword ? "Close" : "Change Password"}</button>
+                        {
+                            showChangePassword ?
+                                <form onSubmit={handleChangePassword} className={styles.loginSubBox}>
 
-                    </form>
-                </div>
+                                    <LoginInput
+                                        name="Current Password"
+                                        type="password"
+                                        current={currentPassword}
+                                        setCurrent={setCurrentPassword}
+                                        error={currentPasswordError}
+                                    />
+
+
+                                    <LoginInput
+                                        name="New Password"
+                                        type="password"
+                                        current={newPassword}
+                                        setCurrent={setNewPassword}
+                                        error={newPasswordError}
+                                        success={newPasswordSuccess}
+                                    />
+
+                                    <button onClick={handleChangePassword} className={"btn btn-secondary " + styles.loginRegisterButton}>Confirm</button>
+                                </form> : null
+                        }
+                        <button onClick={() => { setShowDeleteAccount(!showDeleteAccount); resetStates(["deleteAccount"]); }} className={"btn btn-secondary " + styles.loginRegisterButton}>{showDeleteAccount ? "Cancel" : "Delete Account"}</button>
+                        {
+                            showDeleteAccount ?
+                                <form onSubmit={handleDeleteAccount} className={styles.loginSubBox}>
+                                    <LoginInput
+                                        name="Verify your password"
+                                        type="password"
+                                        current={deleteVerify}
+                                        setCurrent={setDeleteVerify}
+                                        error={deleteVerifyError}
+                                    />
+
+                                    <button onClick={handleDeleteAccount} className={"btn btn-danger " + styles.loginRegisterButton}>Confirm</button>
+                                </form> : null
+
+                        }
+                    </div>
+
+                    :
+
+                    <div>
+
+                        <form onSubmit={showLogin ? handleLogin : handleRegister} className={styles.loginForm}>
+
+                            <div className={styles.methodSelector}>
+                                <div onClick={() => { setShowLogin(true) }} style={{ color: (showLogin ? "rgb(185, 207, 220)" : "white") }} className={styles.loginOption}>
+                                    Sign In
+                                </div>
+
+                                <div onClick={() => { setShowLogin(false) }} style={{ color: (!showLogin ? "rgb(185, 207, 220)" : "white") }} className={styles.registerOption}>
+                                    Create New Account
+                                </div>
+                            </div>
+
+
+                            <LoginInput
+                                name="Username"
+                                type="text"
+                                current={usernameInput}
+                                setCurrent={setUsernameInput}
+                                error={usernameError}
+                            />
+
+                            <LoginInput
+                                name="Password"
+                                type="password"
+                                current={passwordInput}
+                                setCurrent={setPasswordInput}
+                                error={passwordError}
+                            />
+
+                            {showLogin ?
+                                <button onClick={handleLogin} className={"btn btn-secondary " + styles.loginRegisterButton}>Sign in</button>
+                                :
+                                <button onClick={handleRegister} className={"btn btn-secondary " + styles.loginRegisterButton}>Register</button>
+                            }
+
+                        </form>
+                    </div>
                 }
 
             </div>

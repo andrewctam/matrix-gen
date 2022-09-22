@@ -673,7 +673,7 @@ function App(props) {
     }
 
     const getMatrixData = async () => {
-        const response = await fetch("http://localhost:8080/api/matrix", {
+        const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -701,7 +701,7 @@ function App(props) {
     }
 
     const updateAccountMatrices = async () => {
-        const response = await fetch("http://localhost:8080/api/matrix", {
+        const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -731,7 +731,7 @@ function App(props) {
     }
 
     const refreshToken = async () => {
-        const response = await fetch("http://localhost:8080/api/token", {
+        const response = await fetch("https://matrixgen.fly.dev/api/token", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
