@@ -81,8 +81,11 @@ function Login(props) {
             return;
         }
 
-        
-        props.updateUserInfo(usernameInput, response["access_token"]);
+        if (usernameInput && response && response["access_token"]) {
+            props.updateUserInfo(usernameInput, response["access_token"]);
+        } else {
+            console.log("Error")
+        }
     
 
     }
@@ -96,8 +99,6 @@ function Login(props) {
         } else {
             setUsernameError(null)
         }
-
-
 
         if (!passwordInput) {
             setPasswordError("Please provide a password");
@@ -134,7 +135,12 @@ function Login(props) {
             return;
         }
 
-        props.updateUserInfo(usernameInput, response["access_token"]);
+        if (usernameInput && response && response["access_token"]) {
+            props.updateUserInfo(usernameInput, response["access_token"]);
+            setShowWelcome(true)
+        } else {
+            console.log("error")
+        }
         
     }
 
@@ -164,8 +170,6 @@ function Login(props) {
                             `Signed in as ${props.username}`
                             }
                            <button onClick = {logOut}  className={"btn btn-secondary " + styles.loginButton}>Log Out</button>
-
-                           {props.token? props.token : null}
 
                         </div>
                         :
@@ -212,7 +216,7 @@ function Login(props) {
                         id="saveToLocalSwitch"
                     />
                 </div>
-                <p>If this option is enabled, your matrices will automatically be saved to your browser's local storage after making any edits, even when logged out.</p>
+                <p>{"If this option is enabled, your matrices will automatically be saved to your browser's local storage after making any edits, even when logged out."}</p>
 
 
                 <button className={"btn btn-primary " + styles.clearButton} onClick={clearLocalMatrices}>{"Delete Matrices From Local Storage"}</button>

@@ -15,7 +15,8 @@ app.include_router(matrix_router)
 origins = [
     "http://localhost",
     "http://localhost:8080",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://matrixgen.web.app"
 ]
 
 app.add_middleware(

@@ -36,8 +36,9 @@ async def authenticate_user(username: str, password: str):
 
     if not user:
         return False
-
-    return pwd_context.verify(user.password, pwd_context.hash(password))
+    
+    print(user, flush = True)
+    return pwd_context.verify(password, user.hashed_password)
 
 
 def create_token(username: str):
@@ -102,7 +103,7 @@ async def register_new_user(user: UserData):
         )
 
 
-    query = users.insert().values(username = user.username, password = user.password, matrix_data = user.matrix_data)
+    query = users.insert().values(username = user.username, hashed_password = pwd_context.hash(user.password), matrix_data = user.matrix_data)
     await database.execute(query)
 
     token = create_token(user.username)

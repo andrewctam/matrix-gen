@@ -48,8 +48,15 @@ function App(props) {
         setUsername(username);
         setToken(token);
 
-        localStorage.setItem("username", username);
-        localStorage.setItem("token", token);
+        if (username)
+            localStorage.setItem("username", username);
+        else 
+            localStorage.removeItem("username");
+        
+        if (token)
+            localStorage.setItem("token", token);
+        else
+            localStorage.removeItem("token");
     }
 
     function updateParameter(parameterName, updated) {
@@ -629,10 +636,6 @@ function App(props) {
         } catch (error) {
             console.log(error)
             console.log("Error loading.")
-            setMatrices( {
-                "A": [["", ""], ["", ""]]
-            });;
-            setSelection("A");  
         }
 
         setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
@@ -700,16 +703,18 @@ function App(props) {
         }).then((response) => {
             if (response.status === 401) {
                 return null;
+
             }
 
             return response.json()
         }).catch (error => {
             console.log(error)
-            localStorage.removeItem("token");
-            localStorage.removeItem("username");
-            setToken(null);
-            setUsername(null);
         })
+
+        if (response === null) {
+            console.log("Unauthorized");
+            return;
+        }
 
         console.log(response)
     }

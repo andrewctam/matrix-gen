@@ -8,6 +8,7 @@ router = APIRouter()
 async def get_matrix_data(current_user: User = Depends(get_current_active_user)):
     query = users.select().where(users.c.username == current_user.username)
     user = await database.fetch_one(query)
+    print(user, flush = True)
     return {"matrix_data": user.matrix_data}
 
 @router.put("/api/matrix")
