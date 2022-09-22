@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
 import Navigation from "./navigation/Navigation.js"
 
@@ -17,15 +17,26 @@ function App(props) {
     const [username, setUsername] = useState(null);
     const [token, setToken] = useState(null);
 
-
     useEffect(() => {
         loadFromLocalStorage();
+
+        const username = localStorage.getItem("username");
+        const token = localStorage.getItem("token");
+        
+        if (username !== null && token !== null) {
+            setUsername(username);
+            setToken(token);
+        }
+            
     }, []);
 
     useEffect( () => {
-        saveToLocalStorage();    
+        if (token && username)
+            updateMatrixData();
+        if (saveToLocal)
+            saveToLocalStorage();    
     // eslint-disable-next-line
-    }, [matrices]);
+    }, [matrices, saveToLocal]);
 
   
     
@@ -37,6 +48,8 @@ function App(props) {
         setUsername(username);
         setToken(token);
 
+        localStorage.setItem("username", username);
+        localStorage.setItem("token", token);
     }
 
     function updateParameter(parameterName, updated) {
@@ -586,29 +599,8 @@ function App(props) {
 
 
     function saveToLocalStorage() {
-        var names = "";
-        var matrixString = "";
-        for (const [name, matrix] of Object.entries(matrices)) {
-            matrixString = "";
-            names += name + ",";
-            
-            for (let i = 0; i < matrix.length - 1; i++) {                
-                for (let j = 0; j < matrix[0].length - 1; j++) {
-                    matrixString += matrix[i][j];
-                    if (j !== matrix[0].length - 2)
-                        matrixString += ","
-                }
-
-                if (i !== matrix.length - 2)
-                    matrixString += "]";
-            }
-                
-            
-            window.localStorage.setItem(name, matrixString);
-        }
-
-        window.localStorage.setItem("names;", names.substring(0, names.length - 1))
-        window.localStorage.setItem("mirror;", mirror ? "1" : "0")
+        console.log(JSON.stringify(matrices))
+        window.localStorage.setItem("matrices;", JSON.stringify(matrices))
         window.localStorage.setItem("saveToLocal;", saveToLocal ? "1" : "0")
         window.localStorage.setItem("selectable;", selectable ? "1" : "0");
         window.localStorage.setItem("sparseValue;", sparseVal)
@@ -616,34 +608,31 @@ function App(props) {
 
 
     function loadFromLocalStorage() {
+        console.log("Loading from local storage...")
         try {
-            const names = localStorage.getItem("names;").split(",")
-            const loadedMatrices = {}
-            
-            for (const n of names) {
-                const matrix = localStorage.getItem(n).split("]")
-                for (let i = 0; i < matrix.length; i++) {
-                    matrix[i] = matrix[i].split(",")
-                    matrix[i].push("");
-                }
+            const matrices = localStorage.getItem("matrices;")
+            console.log(matrices)
+            if (matrices === null)
+                throw error;
 
-                matrix.push(new Array(matrix[0].length).fill(""));
-        
-                loadedMatrices[n] = matrix;
+            const parsed = JSON.parse(matrices);            
+            if (parsed.length === 0) { //if {} is saved, it will be parsed to []
+                setMatrices( {
+                    "A": [["", ""], ["", ""]]
+                });;
+                setSelection("A");  
+            } else {
+                setMatrices(parsed);
+                setSelection(Object.keys(parsed)[0]);
             }
 
-            setMatrices(loadedMatrices);
-            
-            setSelection(names[0]);
         } catch (error) {
             console.log(error)
             console.log("Error loading.")
             setMatrices( {
                 "A": [["", ""], ["", ""]]
             });;
-            setSelection("A");
-            
-            
+            setSelection("A");  
         }
 
         setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
@@ -667,7 +656,65 @@ function App(props) {
 
 
     }
-    console.log(matrices)
+
+    useEffect(() => {
+        if (token)
+            getMatrixData();
+    }, [token])
+
+    const getMatrixData = async () => {
+        const response = await fetch("http://localhost:8080/api/matrix", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            }
+        }).then((response) => {
+            if (response.status === 401) {
+                return null;
+            }
+
+            return response.json()
+        })
+
+        if (response === null) {
+            console.log("Unauthorized");
+            return;
+        }
+
+        setMatrices(JSON.parse(response["matrix_data"]))
+        setSelection(Object.keys(JSON.parse(response["matrix_data"]))[0])
+    }
+
+    const updateMatrixData = async () => {
+        const response = await fetch("http://localhost:8080/api/matrix", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                username: username,
+                matrix_data: JSON.stringify(matrices)
+            })
+        }).then((response) => {
+            if (response.status === 401) {
+                return null;
+            }
+
+            return response.json()
+        }).catch (error => {
+            console.log(error)
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+            setToken(null);
+            setUsername(null);
+        })
+
+        console.log(response)
+    }
+
+
 
     return (
         <div> 
@@ -686,6 +733,7 @@ function App(props) {
                 resizeMatrix = {resizeMatrix}
                 updateParameter = {updateParameter}
                 saveToLocalStorage = {saveToLocalStorage}
+                loadFromLocalStorage = {loadFromLocalStorage}
                 deleteAllMatrices = {deleteAllMatrices}
 
                 createIdentity = {createIdentity}
@@ -698,6 +746,8 @@ function App(props) {
 
                 setSelection = {setSelection}
                 setMatrices = {setMatrices}
+
+                token = {token}
 
                 
             />

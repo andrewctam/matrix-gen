@@ -125,11 +125,15 @@ function Navigation(props) {
         <Login 
             username = {props.username}
             updateUserInfo = {props.updateUserInfo} 
+            loadFromLocalStorage = {props.loadFromLocalStorage}
+
             saveToLocal = {props.saveToLocal} 
             updateParameter = {props.updateParameter}
-            
+            token = {props.token}
+            matrices = {props.matrices}
             setMatrices = {props.setMatrices}
             setSelection = {props.setSelection}
+
             closeSaveMenu = {closeSaveMenu}
             /> : null}
 
@@ -190,12 +194,6 @@ function Navigation(props) {
         <div className = {"col-sm-4 " + styles.info}>
             <div id = "selectors" className="list-group">
                 <MenuButton 
-                    text = {showTutorial ? "Hide Tutorial" : "Show Tutorial"}
-                    buttonStyle = {"info"}
-                    action = {() => {setShowTutorial(!showTutorial)}}
-                />
-                
-                <MenuButton 
                     text = {showSaveMenu ? "Close Save Menu" : "Save Matrices"}
                     buttonStyle = {"success"}
                     action = {() => {
@@ -203,7 +201,12 @@ function Navigation(props) {
                     }}
                 />
         
-               
+                <MenuButton 
+                    text = {showTutorial ? "Hide Tutorial" : "Show Tutorial"}
+                    buttonStyle = {"info"}
+                    action = {() => {setShowTutorial(!showTutorial)}}
+                />
+                       
                 <MenuButton 
                     text = {showPresets ? "Hide Presets" : "Preset Matrices"}
                     buttonStyle = {"primary"}
