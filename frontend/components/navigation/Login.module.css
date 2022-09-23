@@ -8,7 +8,6 @@
     padding: 10px;
 }
 
-
 .loginForm {
     display: block;
     margin: 0px;
@@ -43,7 +42,7 @@
     font-size: small;
     display: block;
     margin-top: 0px;
-    color:rgb(148 212 173);
+    color:rgb(148, 212, 173);
 
 }
 
@@ -93,5 +92,26 @@
 
 .changePasswordInput {
     display: block;
+}
 
+.mergeStorage {
+    border: 1px solid black;
+    background-color: rgb(135 77 77);
+    margin-top: 5px;
+    border-radius: 5px;
+    padding: 10px;
+
+}
+
+.mergeStorageButton {
+    display: inline-block;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 5px
+}
+
+.mergeStorageText {
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 5px
 }

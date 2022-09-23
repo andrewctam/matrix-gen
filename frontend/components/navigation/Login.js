@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styles from "./Login.module.css";
 import LoginInput from "./LoginInput"
 
+import MergeStorage from "./MergeStorage";
+
 function Login(props) {
     const [showWelcome, setShowWelcome] = useState(false);
     const [showLogin, setShowLogin] = useState(true);
@@ -53,22 +55,7 @@ function Login(props) {
         }
     }
 
-
-
-
-
-    const clearLocalMatrices = () => {
-        var message = "Your matrices have been deleted from your browser's local storage."
-        if (props.username)
-            message += "Your matrices on your account have not been deleted."
-
-        alert(message)
-
-        localStorage.removeItem("matrices;");
-
-        props.updateParameter("saveToLocal", false)
-    }
-
+    ``
     const logOut = () => {
         localStorage.setItem("token", null);
         localStorage.setItem("username", null);
@@ -136,12 +123,9 @@ function Login(props) {
         if (usernameInput && response && response["access_token"]) {
             props.updateUserInfo(usernameInput, response["access_token"]);
             resetStates(["bools", "login", "changePassword", "deleteAccount"]);
-
-
         } else {
             console.log("Error")
         }
-
 
     }
 
@@ -305,12 +289,10 @@ function Login(props) {
         </button>
 
         <div className="row">
-
             <div className="col-sm-6">
                 <h1>Save Matrices Online</h1>
                 {props.username ?
                     <div>
-
                         {showWelcome ?
                             `New Account Created. Welcome, ${props.username}!`
                             :
@@ -359,6 +341,17 @@ function Login(props) {
                                 </form> : null
 
                         }
+
+                        {props.showMerge ?
+                            <MergeStorage
+                                matrices={props.matrices}
+                                userMatrices={props.userMatrices}
+                                setMatrices={props.setMatrices}
+                                setSelection={props.setSelection}
+                                updateParameter={props.updateParameter}
+                            /> : null}
+
+
                     </div>
 
                     :
@@ -368,11 +361,11 @@ function Login(props) {
                         <form onSubmit={showLogin ? handleLogin : handleRegister} className={styles.loginForm}>
 
                             <div className={styles.methodSelector}>
-                                <div onClick={() => { setShowLogin(true) }} style={{ color: (showLogin ? "rgb(185, 207, 220)" : "white") }} className={styles.loginOption}>
+                                <div onClick={() => { setShowLogin(true) }} style={{ color: (showLogin ? "rgb(102, 199, 239)" : "white") }} className={styles.loginOption}>
                                     Sign In
                                 </div>
 
-                                <div onClick={() => { setShowLogin(false) }} style={{ color: (!showLogin ? "rgb(185, 207, 220)" : "white") }} className={styles.registerOption}>
+                                <div onClick={() => { setShowLogin(false) }} style={{ color: (!showLogin ? "rgb(102, 199, 239)" : "white") }} className={styles.registerOption}>
                                     Create New Account
                                 </div>
                             </div>
@@ -422,11 +415,6 @@ function Login(props) {
                     />
                 </div>
                 <p>{"If this option is enabled, your matrices will automatically be saved to your browser's local storage after making any edits, even when logged out."}</p>
-
-
-                <button className={"btn btn-primary " + styles.clearButton} onClick={clearLocalMatrices}>{"Delete Matrices From Local Storage"}</button>
-                <p>You can delete your matrices from local storage using the button above. Matrices on your account will not be deleted.</p>
-
 
             </div>
         </div>

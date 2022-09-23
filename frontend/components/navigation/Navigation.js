@@ -119,8 +119,11 @@ function Navigation(props) {
     }
 
 
-    if (props.token && props.username && props.saveToLocal) {
-        var saving = `Logged in as ${props.username}. Matrices will be saved to your account and to your local browser's storage.`;
+    if (props.showMerge) {
+        var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;
+
+    } else if (props.token && props.username && props.saveToLocal) {
+        saving = `Logged in as ${props.username}. Matrices will be saved to your account and to your local browser's storage.`;
     } else if (props.token && props.username) {
         saving = `Logged in as ${props.username}. Matrices will be saved to your account.`;
     } else if (props.saveToLocal) {
@@ -128,6 +131,10 @@ function Navigation(props) {
     } else {
         saving = "Matrices will not be saved if you refresh the page. If you want to save your matrices, click Save Matrices.";
     }
+
+    
+    
+    
     
     return  <div className = {"row " + styles.navigateBar}>
         <p onClick = {() => {setShowSaveMenu(!showSaveMenu)}} className = {styles.savingInfo}>{saving}</p>
@@ -142,9 +149,12 @@ function Navigation(props) {
             updateParameter = {props.updateParameter}
             token = {props.token}
             matrices = {props.matrices}
+
             setMatrices = {props.setMatrices}
             setSelection = {props.setSelection}
-
+            showMerge = {props.showMerge}
+            userMatrices = {props.userMatrices}
+            setShowMerge = {props.setShowMerge}
             closeSaveMenu = {closeSaveMenu}
             /> : null}
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
+import MergeStorage from './navigation/MergeStorage.js';
 import Navigation from "./navigation/Navigation.js"
 
 function App(props) {
@@ -15,7 +16,9 @@ function App(props) {
     const [username, setUsername] = useState(null);
     const [token, setToken] = useState(null);
     
-
+    const [showMerge, setShowMerge] = useState(false);
+    const [userMatrices, setUserMatrices] = useState(null);
+    
     useEffect(() => {
         const username = localStorage.getItem("username");
         const token = localStorage.getItem("token");
@@ -32,11 +35,28 @@ function App(props) {
             setSelection("A");  
         }
 
+        setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
+        setMirror(window.localStorage.getItem("mirror;") === "1");
+        setShowMerge(window.localStorage.getItem("showMerge;") === "1");
+
+        const sparse = window.localStorage.getItem("sparseValue;");
+        if (sparse !== null)
+            setSparseVal(sparse)
+        else
+            setSparseVal("0")
+
+        const selectable = window.localStorage.getItem("selectable;") === "1";
+        
+        if (selectable !== null)
+            setSelectable(selectable);
+        else
+            setSelectable(true);
+
         
     }, []);
 
     useEffect( () => {
-        if (token && username)
+        if (!showMerge && token && username)
             updateAccountMatrices();
        
     // eslint-disable-next-line
@@ -50,7 +70,7 @@ function App(props) {
 
  
     useEffect(() => {
-        if (saveToLocal)
+        if (matrices && saveToLocal)
             saveToLocalStorage();    
     }, [[matrices, saveToLocal]] )
     
@@ -89,7 +109,15 @@ function App(props) {
                 break;
             case "saveToLocal":
                 setSaveToLocal(updated);
-                window.localStorage.setItem("saveToLocal;", updated ? "1" : "0");
+                window.localStorage.setItem("saveToLocal;", updated ? "1" : "0");                
+                if (!updated)
+                    localStorage.removeItem("matrices;");
+
+                break;
+                
+            case "showMerge":
+                setShowMerge(updated);
+                window.localStorage.setItem("showMerge;", updated ? "1" : "0");
                 break;
 
             default: 
@@ -233,8 +261,7 @@ function App(props) {
             setSelection("0");
             setMatrices({});
 
-            localStorage.setItem("names;", JSON.stringify([]));
-            localStorage.setItem("matrices;", JSON.stringify([]));     
+            localStorage.removeItem("matrices;");     
         }
 
     }
@@ -631,6 +658,7 @@ function App(props) {
     function loadFromLocalStorage() {
         console.log("Loading from local storage...")
         try {
+            
             const matrices = localStorage.getItem("matrices;")
             console.log(matrices)
             if (matrices === null)
@@ -655,24 +683,10 @@ function App(props) {
             setSelection("A");  
         }
 
-        setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
-        setMirror(window.localStorage.getItem("mirror;") === "1");
-        
-        const sparse = window.localStorage.getItem("sparseValue;");
-        if (sparse !== null)
-            setSparseVal(sparse)
-        else
-            setSparseVal("0")
-
-        const selectable = window.localStorage.getItem("selectable;") === "1";
-        
-        if (selectable !== null)
-            setSelectable(selectable);
-        else
-            setSelectable(true);
     }
 
     const getMatrixData = async () => {
+        
         const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
             method: "GET",
             headers: {
@@ -693,11 +707,33 @@ function App(props) {
 
             if (matrices === null)
                 loadFromLocalStorage();
+
             return;
         }
 
-        setMatrices(JSON.parse(response["matrix_data"]))
-        setSelection(Object.keys(JSON.parse(response["matrix_data"]))[0])
+        const userMatrices = JSON.parse(response["matrix_data"]);
+        const keys = Object.keys(userMatrices);
+
+        const merge = localStorage.getItem("saveToLocal;") === "1" && localStorage.getItem("showMerge;") === "1";
+        //check if the current matrices are non trivial, so we know to overwrite or not
+        if (!merge && (matrices === null || (keys.length === 0 ||
+            (keys.length === 1 && keys[0] == "A" &&
+                matrices["A"] && matrices["A"].length === 2 && matrices["A"][0].length === 2 &&
+                matrices["A"][0][0] === "" && matrices["A"][0][1] === "" &&
+                matrices["A"][1][0] === "" && matrices["A"][1][1] === "")))) {
+    
+                setMatrices(userMatrices)
+                setSelection(Object.keys(userMatrices)[0])
+                updateParameter("showMerge", false);
+
+                 
+        } else { 
+            if (!matrices || saveToLocal)
+                loadFromLocalStorage();
+            updateParameter("showMerge", true);
+            setUserMatrices(userMatrices);
+            
+        }
     }
 
     const updateAccountMatrices = async () => {
@@ -795,8 +831,15 @@ function App(props) {
 
                     token = {token}
 
+                    showMerge = {showMerge}
+                    setShowMerge = {setShowMerge}
+                    userMatrices = {userMatrices}
                     
+
                 />
+
+         
+
                 {(selection in matrices) ? 
                 <MatrixEditor
                     matrix = {matrices[selection]} 
@@ -828,6 +871,8 @@ function App(props) {
                     selectable = {selectable}
                 /> : null
                 } 
+
+              
 
             
 
