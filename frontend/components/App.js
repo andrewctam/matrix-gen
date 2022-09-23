@@ -53,12 +53,12 @@ function App(props) {
         else
             setSparseVal("0")
 
-        const selectable = window.localStorage.getItem("selectable;") === "1";
+        const selectable = window.localStorage.getItem("selectable;");
         
-        if (selectable !== null)
-            setSelectable(selectable);
-        else
+        if (selectable === null)
             setSelectable(true);
+        else
+            setSelectable(selectable === "1");
 
         
     }, []);
@@ -754,7 +754,7 @@ function App(props) {
 
     const updateAccountMatrices = async () => {
         saving.current = true
-        const response = await fetch("http://localhost:8080/api/matrix", {
+        const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

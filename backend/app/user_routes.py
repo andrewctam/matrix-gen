@@ -45,7 +45,7 @@ async def authenticate_user(username: str, password: str):
 
 
 def create_token(username: str):
-    to_encode = {"exp": datetime.utcnow() + timedelta(minutes=30), "sub": username}
+    to_encode = {"exp": datetime.utcnow() + timedelta(days=1), "sub": username}
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
     return encoded_jwt
 
@@ -86,6 +86,13 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
+@router.get("/api/user")
+async def username_taken(username: str):
+    query = users.select().where(users.c.username == username)
+    user_exists = await database.fetch_one(query)
+
+    return user_exists is not None
+
 @router.post("/api/token")
 async def refresh_token(current_user: User = Depends(get_current_active_user)):
     token = create_token(current_user.username)
@@ -102,26 +109,22 @@ async def login_user(user: UserData):
 
     token = create_token(user.username)
     return {"access_token": token, "token_type": "bearer"}
-    
 
 @router.post("/api/register")
 async def register_new_user(user: UserData):
-    query = users.select().where(users.c.username == user.username)
-    user_exists = await database.fetch_one(query)
-
-    if user_exists:
+    if await username_taken(user.username):
         raise HTTPException (
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Username already exists",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-
     query = users.insert().values(username = user.username, hashed_password = pwd_context.hash(user.password), matrix_data = user.matrix_data)
     await database.execute(query)
 
     token = create_token(user.username)
     return {"access_token": token, "token_type": "bearer"}
+
 
 @router.delete("/api/delete")
 async def delete_user(user: UserPassword, current_user: User = Depends(get_current_active_user)):

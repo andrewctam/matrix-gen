@@ -26,30 +26,24 @@ function Navigation(props) {
             window.localStorage.setItem("firstVisit;", "0");
         }
     }, []) 
-    /*
-    useEffect(() => {
-        document.getElementById("selectors").scrollTop = document.getElementById("selectors").scrollHeight;
-        console.log(document.getElementById("selectors").scrollHeight);
-    }, [selectors])
-    */
 
     useEffect(() => {
-        const tempSelectors = []
-
+        
         const sizeFilters = [];
         const split = searchSize.split("x");
         if (searchSize !== "") {
             for (let i = 0; i < split.length; i++) {
                 const temp = parseInt(split[i])
                 if (!isNaN(temp))
-                    sizeFilters.push(temp)
+                sizeFilters.push(temp)
             }
         }
-
+        
         if (props.showMerge) {
             var intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
         }
-
+        
+        const tempSelectors = []
         for (const matrixName in props.matrices) {
             if ((searchName === "" || matrixName.startsWith(searchName)) && 
                 (searchSize === "" || verifySize(matrixName, sizeFilters)))
@@ -145,12 +139,9 @@ function Navigation(props) {
     } else {
         saving = "Matrices will not be saved if you refresh the page. If you want to save your matrices, click Save Matrices.";
     }
-
+        
     
-    
-    
-    
-    return  <div className = {"row " + styles.navigateBar}>
+    return <div className = {"row " + styles.navigateBar}>
         <p onClick = {() => {setShowSaveMenu(!showSaveMenu)}} className = {styles.savingInfo}>{saving}</p>
         
         {showSaveMenu ?
@@ -175,58 +166,7 @@ function Navigation(props) {
         {showTutorial ? <Tutorial closeTutorial = {closeTutorial}/> : null}
         
 
-        <div className = {"col-sm-4 " + styles.info}>
-            <div id = "selectors" className="list-group">
-                    <MenuButton
-                        key = "addButton" 
-                        text = {"Create New Empty Matrix"}
-                        buttonStyle = {"info"}
-                        action = {() => {
-                            var newName = props.setMatrix();
-                            props.setSelection(newName);
-                        }} 
-                        />
-
-                    {props.selection !== "0" ?
-                    <MenuButton 
-                        key = "duplicateButton" 
-                        buttonStyle = {"warning"}
-                        text = {`Duplicate Matrix ${props.selection}`}
-                        action = {() => {props.copyMatrix(props.selection)}} />
-                    : null}
-
-                    {props.selection !== "0" ?
-                    <MenuButton 
-                        key = "deleteButton" 
-                        buttonStyle = {"danger"}
-                        text = {`Delete Matrix ${props.selection}`}
-                        action = {() => {
-                            if (props.selection !== "0" && window.confirm("Are you sure you want to delete " + props.selection + "?")) {
-                                props.deleteMatrix(props.selection); 
-                                props.setSelection("0");
-                            }
-                        }}/>
-                    : null}
-
-                    {props.matrices && Object.keys(props.matrices).length > 0 ?
-                    <MenuButton 
-                        text = {"Delete All Matrices"}
-                        buttonStyle = {"bigDanger"} 
-                        action = {props.deleteAllMatrices}
-                    />
-                    : null}
-
-                    
-                </div> 
-        </div>
-
-        <div className = "col-sm-4">
-            <input className = {styles.nameSearchBar} onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
-            <input className = {styles.sizeSearchBar} onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
-
-            <div id = "selectors" className="list-group"> {selectors} </div>
-        </div>
-
+        
         <div className = {"col-sm-4 " + styles.info}>
             <div id = "selectors" className="list-group">
                 <MenuButton 
@@ -282,6 +222,58 @@ function Navigation(props) {
 
         </div>
 
+
+        <div className = "col-sm-4">
+            <input className = {styles.nameSearchBar} onChange = {updateSearchName} value = {searchName} placeholder='Search by Name'></input>
+            <input className = {styles.sizeSearchBar} onChange = {updateSearchSize} value = {searchSize} placeholder='Search by Size'></input>
+
+            <div id = "selectors" className="list-group"> {selectors} </div>
+        </div>
+
+        <div className = {"col-sm-4 " + styles.info}>
+            <div id = "selectors" className="list-group">
+                    <MenuButton
+                        key = "addButton" 
+                        text = {"Create New Empty Matrix"}
+                        buttonStyle = {"info"}
+                        action = {() => {
+                            var newName = props.setMatrix();
+                            props.setSelection(newName);
+                        }} 
+                        />
+
+                    {props.selection !== "0" ?
+                    <MenuButton 
+                        key = "duplicateButton" 
+                        buttonStyle = {"warning"}
+                        text = {`Duplicate Matrix ${props.selection}`}
+                        action = {() => {props.copyMatrix(props.selection)}} />
+                    : null}
+
+                    {props.selection !== "0" ?
+                    <MenuButton 
+                        key = "deleteButton" 
+                        buttonStyle = {"danger"}
+                        text = {`Delete Matrix ${props.selection}`}
+                        action = {() => {
+                            if (props.selection !== "0" && window.confirm("Are you sure you want to delete " + props.selection + "?")) {
+                                props.deleteMatrix(props.selection); 
+                                props.setSelection("0");
+                            }
+                        }}/>
+                    : null}
+
+                    {props.matrices && Object.keys(props.matrices).length > 0 ?
+                    <MenuButton 
+                        text = {"Delete All Matrices"}
+                        buttonStyle = {"bigDanger"} 
+                        action = {props.deleteAllMatrices}
+                    />
+                    : null}
+
+                    
+                </div> 
+        </div>
 
 
 
