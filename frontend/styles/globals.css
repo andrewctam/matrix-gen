@@ -4,6 +4,7 @@ body {
     padding: 0px 0px 48px 0px;
     color: white;
     background-color: rgb(82, 80, 83);
+    user-select: none;
 }
 
 

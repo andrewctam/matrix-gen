@@ -124,10 +124,11 @@ function MatrixActions(props) {
 
 function BasicActionButton(props) {
     return  <button 
-            className = "btn btn-primary" 
-            onClick={props.action}>
+                className = "btn btn-primary" 
+                onClick={props.action}
+            >
             {props.name}
-        </button>
+            </button>
 }
 
 

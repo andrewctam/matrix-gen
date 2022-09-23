@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./Login.module.css";
 import LoginInput from "./LoginInput"
 
@@ -33,14 +33,12 @@ function Login(props) {
             setShowChangePassword(false);
             setShowDeleteAccount(false);
         }
-
         if (arr.includes("login")) {
             setUsernameError(null);
             setPasswordError(null);
             setUsernameInput("");
             setPasswordInput("");
         }
-
         if (arr.includes("changePassword")) {
             setCurrentPassword("");
             setCurrentPasswordError(null);
@@ -48,29 +46,20 @@ function Login(props) {
             setNewPasswordError(null);
             setNewPasswordSuccess(null);
         }
-
         if (arr.includes("deleteAccount")) {
             setDeleteVerify("");
             setDeleteVerifyError(null);
         }
     }
 
-    ``
     const logOut = () => {
         localStorage.setItem("token", null);
         localStorage.setItem("username", null);
-        props.updateUserInfo(null, null);
-
-        setUsernameInput("")
-        setPasswordInput("")
-
-        setUsernameError(null)
-        setPasswordError(null)
-
+        resetStates(["bools", "login", "changePassword", "deleteAccount"]);
         setShowWelcome(false)
 
-        props.loadFromLocalStorage();
-        resetStates(["bools", "login", "changePassword", "deleteAccount"]);
+        props.updateUserInfo(null, null);
+        props.loadFromLocalStorage();        
     }
 
 
@@ -81,16 +70,14 @@ function Login(props) {
         if (!usernameInput) {
             setUsernameError("Enter your username");
             error = true
-        } else {
+        } else
             setUsernameError(null);
-        }
 
         if (!passwordInput) {
             setPasswordError("Enter your password");
             error = true
-        } else {
+        } else
             setPasswordError(null);
-        }
 
         if (error)
             return;
@@ -106,11 +93,10 @@ function Login(props) {
                 matrix_data: JSON.stringify(props.matrices)
             })
         }).then((response) => {
-            if (response.status === 401) {
+            if (response.status === 401)
                 return null;
-            }
-
-            return response.json();
+            else
+                return response.json();
         }).catch((error) => {
             console.log(error);
         });
@@ -123,10 +109,7 @@ function Login(props) {
         if (usernameInput && response && response["access_token"]) {
             props.updateUserInfo(usernameInput, response["access_token"]);
             resetStates(["bools", "login", "changePassword", "deleteAccount"]);
-        } else {
-            console.log("Error")
         }
-
     }
 
     const handleRegister = async (e) => {
@@ -135,19 +118,17 @@ function Login(props) {
         if (!usernameInput) {
             setUsernameError("Please provide a username");
             error = true
-        } else {
+        } else
             setUsernameError(null)
-        }
 
         if (!passwordInput) {
             setPasswordError("Please provide a password");
             error = true
-        } else {
+        } else
             setPasswordError(null)
-        }
 
         if (error)
-            return
+            return;
 
         const response = await fetch("https://matrixgen.fly.dev/api/register", {
             method: "POST",
@@ -161,10 +142,10 @@ function Login(props) {
             })
 
         }).then((response) => {
-            if (response.status === 401) {
-                return null
-            }
-            return response.json();
+            if (response.status === 401)
+                return null;
+            else
+                return response.json();
         }).catch((error) => {
             console.log(error);
         })
@@ -178,10 +159,7 @@ function Login(props) {
             props.updateUserInfo(usernameInput, response["access_token"]);
             setShowWelcome(true)
             resetStates(["bools", "login", "changePassword", "deleteAccount"]);
-        } else {
-            console.log("error")
         }
-
     }
 
     const handleDeleteAccount = async (e) => {
@@ -221,14 +199,12 @@ function Login(props) {
             logOut();
             console.log("Account deleted")
         }
-
     }
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
 
         var error = false
-
         if (!currentPassword) {
             setCurrentPasswordError("Please enter your current password")
             error = true;
@@ -257,10 +233,10 @@ function Login(props) {
                 new_password: newPassword
             })
         }).then((response) => {
-            if (response.status === 401) {
-                return null
-            }
-            return response.json();
+            if (response.status === 401)
+                return null;
+            else
+                return response.json();
         }).catch((error) => {
             console.log(error);
         })
@@ -274,8 +250,6 @@ function Login(props) {
             setNewPasswordError(null)
             setTimeout(() => { setShowChangePassword(false) }, 2000);
         }
-
-
     }
 
 
@@ -285,82 +259,66 @@ function Login(props) {
             onClick={props.closeSaveMenu}
             className={"btn btn-danger " + styles.closeButton}>
             {"Close"}
-
         </button>
 
         <div className="row">
             <div className="col-sm-6">
                 <h1>Save Matrices Online</h1>
-                {props.username ?
+                    {props.username ?
                     <div>
-                        {showWelcome ?
-                            `New Account Created. Welcome, ${props.username}!`
-                            :
-                            `Signed in as ${props.username}`
-                        }
+                        {showWelcome ? `New Account Created. Welcome, ${props.username}!` :`Signed in as ${props.username}`}
+
                         <button onClick={logOut} className={"btn btn-secondary " + styles.loginRegisterButton}>Log Out</button>
                         <button onClick={() => { setShowChangePassword(!showChangePassword); resetStates(["changePassword"]); }} className={"btn btn-secondary " + styles.loginRegisterButton}>{showChangePassword ? "Close" : "Change Password"}</button>
-                        {
-                            showChangePassword ?
-                                <form onSubmit={handleChangePassword} className={styles.loginSubBox}>
-
-                                    <LoginInput
-                                        name="Current Password"
-                                        type="password"
-                                        current={currentPassword}
-                                        setCurrent={setCurrentPassword}
-                                        error={currentPasswordError}
-                                    />
-
-
-                                    <LoginInput
-                                        name="New Password"
-                                        type="password"
-                                        current={newPassword}
-                                        setCurrent={setNewPassword}
-                                        error={newPasswordError}
-                                        success={newPasswordSuccess}
-                                    />
-
-                                    <button onClick={handleChangePassword} className={"btn btn-secondary " + styles.loginRegisterButton}>Confirm</button>
-                                </form> : null
-                        }
+                        { showChangePassword ?
+                            <form onSubmit={handleChangePassword} className={styles.loginSubBox}>
+                                <LoginInput
+                                    name="Current Password"
+                                    type="password"
+                                    current={currentPassword}
+                                    setCurrent={setCurrentPassword}
+                                    error={currentPasswordError}
+                                />
+                                <LoginInput
+                                    name="New Password"
+                                    type="password"
+                                    current={newPassword}
+                                    setCurrent={setNewPassword}
+                                    error={newPasswordError}
+                                    success={newPasswordSuccess}
+                                />
+                                <button onClick={handleChangePassword} className={"btn btn-secondary " + styles.loginRegisterButton}>Confirm</button>
+                            </form> 
+                        : null}
                         <button onClick={() => { setShowDeleteAccount(!showDeleteAccount); resetStates(["deleteAccount"]); }} className={"btn btn-secondary " + styles.loginRegisterButton}>{showDeleteAccount ? "Cancel" : "Delete Account"}</button>
-                        {
-                            showDeleteAccount ?
-                                <form onSubmit={handleDeleteAccount} className={styles.loginSubBox}>
-                                    <LoginInput
-                                        name="Verify your password"
-                                        type="password"
-                                        current={deleteVerify}
-                                        setCurrent={setDeleteVerify}
-                                        error={deleteVerifyError}
-                                    />
+                        { showDeleteAccount ?
+                            <form onSubmit={handleDeleteAccount} className={styles.loginSubBox}>
+                                <LoginInput
+                                    name="Verify your password"
+                                    type="password"
+                                    current={deleteVerify}
+                                    setCurrent={setDeleteVerify}
+                                    error={deleteVerifyError}
+                                />
 
-                                    <button onClick={handleDeleteAccount} className={"btn btn-danger " + styles.loginRegisterButton}>Confirm</button>
-                                </form> : null
-
+                                <button onClick={handleDeleteAccount} className={"btn btn-danger " + styles.loginRegisterButton}>Confirm</button>
+                            </form> : null
                         }
 
                         {props.showMerge ?
-                            <MergeStorage
-                                matrices={props.matrices}
-                                userMatrices={props.userMatrices}
-                                setMatrices={props.setMatrices}
-                                setSelection={props.setSelection}
-                                updateParameter={props.updateParameter}
-                                
-                            /> : null}
-
-
+                        <MergeStorage
+                            matrices={props.matrices}
+                            userMatrices={props.userMatrices}
+                            setMatrices={props.setMatrices}
+                            setSelection={props.setSelection}
+                            updateParameter={props.updateParameter}
+                        /> : null}
                     </div>
 
                     :
 
                     <div>
-
                         <form onSubmit={showLogin ? handleLogin : handleRegister} className={styles.loginForm}>
-
                             <div className={styles.methodSelector}>
                                 <div onClick={() => { setShowLogin(true) }} style={{ color: (showLogin ? "rgb(102, 199, 239)" : "white") }} className={styles.loginOption}>
                                     Sign In
@@ -370,7 +328,6 @@ function Login(props) {
                                     Create New Account
                                 </div>
                             </div>
-
 
                             <LoginInput
                                 name="Username"
@@ -403,7 +360,6 @@ function Login(props) {
             <div className="col-sm-6">
 
                 <h1>Save Matrices Locally</h1>
-
                 <div className="form-check form-switch">
                     <label className="form-check-label" htmlFor={"saveToLocalSwitch"}>Save To Browser Storage</label>
 
@@ -416,14 +372,9 @@ function Login(props) {
                     />
                 </div>
                 <p>{"If this option is enabled, your matrices will automatically be saved to your browser's local storage after making any edits, even when logged out."}</p>
-
             </div>
         </div>
-
-
-
     </div>
-
 }
 
 

@@ -1,13 +1,11 @@
-from datetime import datetime, timedelta
-
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from .database import users, database
-
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 import os
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -40,7 +38,6 @@ async def authenticate_user(username: str, password: str):
     if not user:
         return False
     
-    print(password, flush = True)
     return pwd_context.verify(password, user.hashed_password)
 
 
@@ -59,7 +56,8 @@ async def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="/
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )        
-    username:str = payload.get("sub")
+
+    username : str = payload.get("sub")
 
     if not username:
         raise HTTPException(

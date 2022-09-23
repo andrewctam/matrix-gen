@@ -20,10 +20,12 @@ function App(props) {
 
     const saving = useRef(false);
     const [dataTooLarge, setDataTooLarge] = useState(false);
+
+    //load from local storage and set up app
     useEffect(() => {
-        document.addEventListener("onbeforeunload", () => {
-            if (saving.current) 
-                return "You have unsaved changes. Are you sure you want to leave?";
+        window.addEventListener("beforeunload", (e) => {
+            if (saving.current)
+                e.returnValue = ""
         }); 
         
 
@@ -63,6 +65,7 @@ function App(props) {
         
     }, []);
 
+    //send updates to server
     useEffect( () => {
         if (!showMerge && token && username)
             updateAccountMatrices();
@@ -70,34 +73,22 @@ function App(props) {
     // eslint-disable-next-line
     }, [matrices]);
 
+    //if a new user is loged in, get their matrices
     useEffect(() => {
         if (token)
             getMatrixData();
         
     }, [token])
 
- 
+    //save matrices to local storage
     useEffect(() => {
         if (matrices && saveToLocal)
             saveToLocalStorage();    
     }, [[matrices, saveToLocal]] )
     
 
-    function updateUserInfo(username, token) {
-        setUsername(username);
-        setToken(token);
-
-        if (username)
-            localStorage.setItem("username", username);
-        else 
-            localStorage.removeItem("username");
-        
-        if (token)
-            localStorage.setItem("token", token);
-        else
-            localStorage.removeItem("token");
-    }
-
+   
+    //used for updating state and local storage
     function updateParameter(parameterName, updated) {
         switch (parameterName) {
             case "sparse":
@@ -132,6 +123,7 @@ function App(props) {
     
     }
 
+    //functions related to matrix editing
     function renameMatrix(oldName, newName) {     
         const tempObj = {...matrices};
         
@@ -146,21 +138,6 @@ function App(props) {
         return true;
     }
     
-    function copyMatrix(toCopy, name = undefined) {
-        if (toCopy !== "0") {
-            const tempObj = {...matrices};
-            if (name === undefined) {
-                var matrixName = generateUniqueName();
-            } else {
-                matrixName = name;
-            }
-
-            tempObj[matrixName] = tempObj[toCopy].map(function(arr) { return arr.slice(); });
-
-            setMatrices(tempObj);
-        }
-    }
-
     function setMatrix(matrix = undefined, name = undefined) {
         const tempObj = {...matrices};
         if (name === undefined) {
@@ -177,6 +154,20 @@ function App(props) {
         return name;
     }
 
+    function copyMatrix(toCopy, name = undefined) {
+        if (toCopy !== "0") {
+            const tempObj = {...matrices};
+            if (name === undefined) {
+                var matrixName = generateUniqueName();
+            } else {
+                matrixName = name;
+            }
+
+            tempObj[matrixName] = tempObj[toCopy].map((arr) => { return arr.slice(); });
+
+            setMatrices(tempObj);
+        }
+    }
 
     function deleteMatrix(name) {
         const tempObj = {...matrices};
@@ -184,6 +175,15 @@ function App(props) {
         setMatrices(tempObj);
     }
 
+    function deleteAllMatrices() {
+        if (window.confirm("Are you sure you want to delete all of your matrices?")) {
+            setSelection("0");
+            setMatrices({});
+
+            localStorage.removeItem("matrices;");     
+        }
+
+    }
 
     function generateUniqueName() {
         const name = ["A"]; 
@@ -215,8 +215,6 @@ function App(props) {
         return name.join("");
 
     }
-    
-    
 
     function resizeMatrix(name, rows, cols, update = true) {
         if (matrices[name].length !== rows || matrices[name][0].length !== cols) {
@@ -249,28 +247,6 @@ function App(props) {
         }
     }
 
-    /*
-    function deleteMany() {
-        var toDelete = window.prompt("Enter matrices to delete: (For example: \"A B C\")").split(" ");
-
-        for (var i = 0; i < toDelete.length; i++) {
-            deleteMatrix(toDelete[i]);
-        }
-    }
-    */
-
-
-    function deleteAllMatrices() {
-        if (window.confirm("Are you sure you want to delete all of your matrices?")) {
-            setSelection("0");
-            setMatrices({});
-
-            localStorage.removeItem("matrices;");     
-        }
-
-    }
-
-    
     function tryToDelete(name, row, col) {
         //Can not delete the red row/column
         if (row === matrices[name].length - 1 || col === matrices[name][0].length - 1) 
@@ -317,7 +293,6 @@ function App(props) {
         setMatrix(tempMatrix, name); 
     
     }
-
     
     function updateEntry(name, i, j, val, tempMatrix = null) {
         if (tempMatrix === null)
@@ -393,9 +368,8 @@ function App(props) {
 
         return tempMatrix; 
     }
-
-
     
+    //functions related to matrix actions
     function mirrorRowsCols(name, mirrorRowsToCols) { 
 
         if (matrices[name].length > matrices[name][0].length) { //more rows than cols 
@@ -420,8 +394,6 @@ function App(props) {
         setMatrix(symmetric, name); 
     }
     
-
-
     function transpose(name) {
         const oldMatrix = matrices[name];
         const transposed = new Array(oldMatrix[0].length).fill([]);
@@ -435,7 +407,6 @@ function App(props) {
 
         setMatrix(transposed, name); 
     }       
-
 
     function randomMatrix(name, randomLow, randomHigh) {        
         if (randomLow <= randomHigh) {
@@ -453,7 +424,6 @@ function App(props) {
         
 
     }
-
 
     function reshapeMatrix(name, rowCount, colCount) {
         const currentMatrix = matrices[name];
@@ -558,7 +528,7 @@ function App(props) {
         setMatrix(matrix, name);
     }
     
-
+    //functions related to matrix selection
     function editSelection(name, text, x1, y1, x2, y2) {
         if (x1 > x2) {
             var temp = x1;
@@ -649,7 +619,7 @@ function App(props) {
         setMatrix(matrix, name);
     }
 
-
+    //functions related to saving
     function saveToLocalStorage() {
         saving.current = true
         console.log(JSON.stringify(matrices))
@@ -657,7 +627,8 @@ function App(props) {
         window.localStorage.setItem("saveToLocal;", saveToLocal ? "1" : "0")
         window.localStorage.setItem("selectable;", selectable ? "1" : "0");
         window.localStorage.setItem("sparseValue;", sparseVal)
-        saving.cuurrent = false;
+        saving.current = false
+
     }
 
 
@@ -689,6 +660,21 @@ function App(props) {
             setSelection("A");  
         }
 
+    }
+
+    function updateUserInfo(username, token) {
+        setUsername(username);
+        setToken(token);
+
+        if (username)
+            localStorage.setItem("username", username);
+        else 
+            localStorage.removeItem("username");
+        
+        if (token)
+            localStorage.setItem("token", token);
+        else
+            localStorage.removeItem("token");
     }
 
     const getMatrixData = async () => {
@@ -898,10 +884,7 @@ function App(props) {
                     selectable = {selectable}
                 /> : null
                 } 
-
-              
-
-            
+        
 
             </div>);
     else

@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from "react";
+import React, { useLayoutEffect, useState } from "react";
 
 import styles from "./Tutorial.module.css";
 
@@ -8,11 +8,11 @@ function Tutorial(props) {
 
     useLayoutEffect(() => {
         var inside = null;
-        switch(selected) {
+        switch (selected) {
             case "editor":
                 inside = <div>
-                    The table below can be used to modify your matrices. The white boxes represent your matrix, and the red boxes allow you to quickly expand the matrix. 
-                    <ul className = {styles.tutorialList}>
+                    The table below can be used to modify your matrices. The white boxes represent your matrix, and the red boxes allow you to quickly expand the matrix.
+                    <ul className={styles.tutorialList}>
                         <li>Typing in a white box will update the corresponding entry. </li>
                         <li>Typing in a red box will add a row/column to the matrix. They are not part of the matrix until you type in them.</li>
                         <li>You can delete empty rows/columns with Backspace. The entire row/column must be empty.</li>
@@ -23,33 +23,33 @@ function Tutorial(props) {
                 break;
             case "saving":
                 inside = <div>
-                You can create multiple matrices and swap between them. If you need your matrices to persist after you close this webpage, you can also save them to your local browser storage or online account storage. The matrices will automatically be reloaded when this webpage is reopened.
-                <ul className = {styles.tutorialList}>
-                    <li>All matrices must have a name. Valid characters are uppercase and lowercase letters and underscores.</li>
-                    <li>You can rename a matrix by clicking its name on the selector buttons. You can also resize it by clicking the size and entering new dimensions.</li>
-                    <li>Save matrices to your local storage and/or online to an account using the Save Matrices button.</li>
-                    <li>If there is a conflict between your local and account matrix storage, (e.g. you make edits before logging in) you must choose to merge them, or to discard your local matrices. If you merge them, the matrices are combined, and duplicate names are automatically renamed.</li>
-                </ul>
-            </div>
+                    You can create multiple matrices and swap between them. If you need your matrices to persist after you close this webpage, you can also save them to your local browser storage or online account storage. The matrices will automatically be reloaded when this webpage is reopened.
+                    <ul className={styles.tutorialList}>
+                        <li>All matrices must have a name. Valid characters are uppercase and lowercase letters and underscores.</li>
+                        <li>You can rename a matrix by clicking its name on the selector buttons. You can also resize it by clicking the size and entering new dimensions.</li>
+                        <li>Save matrices to your local storage and/or online to an account using the Save Matrices button.</li>
+                        <li>If there is a conflict between your local and account matrix storage, (e.g. you make edits before logging in) you must choose to merge them, or to discard your local matrices. If you merge them, the matrices are combined, and duplicate names are automatically renamed.</li>
+                    </ul>
+                </div>
                 break;
             case "actions":
                 inside = <div>
-                Matrix Actions allows you to modify your matrix quickly. Most of these actions are irreversible, so save your matrices to your local storage or duplicate them if you might want to reverse the changes.
-                <ul className = {styles.tutorialList}>
-                    <li>Transpose will switch your matrices rows and columns</li>
-                    <li>Mirroring your matrix will copy elements (i, j) over the diagonal to (j, i). Mirroring Rows will copy the elements above the diagonal onto those below the diagonal. Mirroring Columns does the opposite.</li>
-                    <li>Fill Empty With will replace all empty boxes with the inputted element.</li>
-                    <li>Fill All With will replace all boxes with the inputted element.</li>
-                    <li>Fill Diagonal with replace all entires (i, i) with the inputted element.</li>
-                    <li>Randomize Elements will replace all entries with a random integer between the specified range inclusive.</li>
-                    <li>Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy reshape. The product of the new dimensions must be equal to the product of the old dimensions.</li>
-                </ul>
-            </div>
+                    Matrix Actions allows you to modify your matrix quickly. Most of these actions are irreversible, so save your matrices to your local storage or duplicate them if you might want to reverse the changes.
+                    <ul className={styles.tutorialList}>
+                        <li>Transpose will switch your matrices rows and columns</li>
+                        <li>Mirroring your matrix will copy elements (i, j) over the diagonal to (j, i). Mirroring Rows will copy the elements above the diagonal onto those below the diagonal. Mirroring Columns does the opposite.</li>
+                        <li>Fill Empty With will replace all empty boxes with the inputted element.</li>
+                        <li>Fill All With will replace all boxes with the inputted element.</li>
+                        <li>Fill Diagonal with replace all entires (i, i) with the inputted element.</li>
+                        <li>Randomize Elements will replace all entries with a random integer between the specified range inclusive.</li>
+                        <li>Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy reshape. The product of the new dimensions must be equal to the product of the old dimensions.</li>
+                    </ul>
+                </div>
                 break;
             case "math":
                 inside = <div>
                     You can evaluate mathematical expressions of your matrices using Matrix Math.
-                    <ul className = {styles.tutorialList}>
+                    <ul className={styles.tutorialList}>
                         <li>Enter a math expression using the name of matrices and these operators (+, -, *, ^)</li>
                         <li>The answer will be saved as a new matrix.</li>
                         <li>Multiplication can be scalar or matrix multiplication. For example, 2 * A would multiply each element by 2, and A * A would do matrix multiplication.</li>
@@ -59,7 +59,7 @@ function Tutorial(props) {
             case "selection":
                 inside = <div>
                     You can drag your mouse over boxes to select a sub matrix. Then, you can edit all the elements in the selection, save the selection to another matrix, or paste another matrix of the same size into the selection.
-                    <ul className = {styles.tutorialList}>
+                    <ul className={styles.tutorialList}>
                         <li>You can enable/disable selection in the settings.</li>
                         <li>Drag your mouse over boxes to select them.</li>
                         <li>Type in the box to edit all selected boxes. You can type characters or use backspace.</li>
@@ -71,7 +71,7 @@ function Tutorial(props) {
             case "importing":
                 inside = <div>
                     You can import your matrices from plain text following a specific format.
-                    <ul className = {styles.tutorialList}>
+                    <ul className={styles.tutorialList}>
                         <li>When importing, you can either overwrite the current matrix or save it as a new matrix. If you save it as a new matrix, you can enter a new name or it will automatically generate one if no new name is provided.</li>
                         <li>The Separators format expects elements to be separated by a common character, and rows to be separated by a common character. By default, a space separates elements and new lines separate rows.</li>
                         <li>The 2D Array format expects elements to be formatted in brackets and separated by a common character.</li>
@@ -84,8 +84,8 @@ function Tutorial(props) {
                 break;
             case "exporting":
                 inside = <div>
-                        You can export your matrices to plain text for use in programming, LaTeX, etc.
-                        <ul className = {styles.tutorialList}>
+                    You can export your matrices to plain text for use in programming, LaTeX, etc.
+                    <ul className={styles.tutorialList}>
                         <li>The output will appear in the large text box for you to copy it.</li>
                         <li>The 2D Arrays option will export the matrix in row major order. The quick options will allow you to quickly change the settings preset values.</li>
                         <li>The LaTeX option exports the matrix following LaTeX syntax. You can choose if you want to automatically add escapes for these characters: {"&%$#_{}~^\\"}</li>
@@ -95,46 +95,46 @@ function Tutorial(props) {
 
             default: break;
         }
-        setSpecificTutorial(<div className = {styles.specificTutorial}>{inside}</div>);
+        setSpecificTutorial(<div className={styles.specificTutorial}>{inside}</div>);
     }, [selected])
 
 
     function TutorialButton(props) {
-        return  <button 
-            className = {styles.tutorialButton + " btn btn-" + (props.selected === props.name ? "dark" : "light")}
-            onClick={() => {props.setSelected(props.name)}}>
+        return <button
+            className={styles.tutorialButton + " btn btn-" + (props.selected === props.name ? "dark" : "light")}
+            onClick={() => { props.setSelected(props.name) }}>
             {props.text}
         </button>
     }
 
-    return <div className = {styles.tutorial}>
-        <button 
-            className = {"btn btn-danger "  + styles.closeTutorial} 
+    return <div className={styles.tutorial}>
+        <button
+            className={"btn btn-danger " + styles.closeTutorial}
             onClick={props.closeTutorial}>
             {"Close"}
         </button>
-        
+
         <h1>Matrix Generator</h1>
-        <p className = {styles.tutorialBody}>This Matrix Generator web app can help you quickly create and modify matrices. 
-            It features an interactive table to quickly modify your matrices, quick actions such as transpose 
-            to modify the entire matrix, and export options to quickly save your matrix as plain text. 
-            You can also import matrices from text. The app has numerous uses, such as quickly creating LaTeX matrices, 
-            creating random matrices of arbitrary size, doing matrix math, etc. Click the buttons below to see how to 
+        <p className={styles.tutorialBody}>This Matrix Generator web app can help you quickly create and modify matrices.
+            It features an interactive table to quickly modify your matrices, quick actions such as transpose
+            to modify the entire matrix, and export options to quickly save your matrix as plain text.
+            You can also import matrices from text. The app has numerous uses, such as quickly creating LaTeX matrices,
+            creating random matrices of arbitrary size, doing matrix math, etc. Click the buttons below to see how to
             use the specific parts of this app:
         </p>
 
-        <TutorialButton text = "Matrix Editor" name = "editor" setSelected = {setSelected} selected = {selected} />
-        <TutorialButton text = "Saving Matrices" name = "saving" setSelected = {setSelected} selected = {selected} />
-        <TutorialButton text = "Matrix Actions" name = "actions" setSelected = {setSelected} selected = {selected} />
-        <TutorialButton text = "Matrix Math" name = "math" setSelected = {setSelected} selected = {selected} />
-        <TutorialButton text = "Selection" name = "selection" setSelected = {setSelected} selected = {selected} />
-        <TutorialButton text = "Importing From Text" name = "importing" setSelected = {setSelected} selected = {selected} />
-        <TutorialButton text = "Export Matrix" name = "exporting" setSelected = {setSelected} selected = {selected} />
+        <TutorialButton text="Matrix Editor" name="editor" setSelected={setSelected} selected={selected} />
+        <TutorialButton text="Saving Matrices" name="saving" setSelected={setSelected} selected={selected} />
+        <TutorialButton text="Matrix Actions" name="actions" setSelected={setSelected} selected={selected} />
+        <TutorialButton text="Matrix Math" name="math" setSelected={setSelected} selected={selected} />
+        <TutorialButton text="Selection" name="selection" setSelected={setSelected} selected={selected} />
+        <TutorialButton text="Importing From Text" name="importing" setSelected={setSelected} selected={selected} />
+        <TutorialButton text="Export Matrix" name="exporting" setSelected={setSelected} selected={selected} />
 
         {specificTutorial}
 
     </div>
-            
+
 }
 
 

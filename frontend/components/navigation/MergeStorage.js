@@ -3,7 +3,7 @@ import styles from "./MergeStorage.module.css";
 
 const MergeStorage = (props) => {
     const merge = () => {
-       
+
         var intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
         var union = { ...props.matrices, ...props.userMatrices };
 
@@ -33,21 +33,21 @@ const MergeStorage = (props) => {
         props.setSelection(Object.keys(props.userMatrices)[0]);
         props.updateParameter("showMerge", false)
     }
-    
 
-    return <div className = {styles.mergeStorage}>
-        <label className = {styles.mergeStorageText}>{"You currently have changes made to your local matrices. Would you like to merge your local matrices with your account's matrices, or discard the local matrices (and overwrite them with the matrices from your account)?"}</label>
+
+    return <div className={styles.mergeStorage}>
+        <label className={styles.mergeStorageText}>{"You currently have changes made to your local matrices. Would you like to merge your local matrices with your account's matrices, or discard the local matrices (and overwrite them with the matrices from your account)?"}</label>
 
         <button className={"btn btn-secondary " + styles.mergeStorageButton} onClick={merge}>
             Merge Storages
         </button>
 
-        <button className={"btn btn-secondary " + styles.mergeStorageButton} onClick= {overwriteLocal}>
+        <button className={"btn btn-secondary " + styles.mergeStorageButton} onClick={overwriteLocal}>
             Discard Local Storage
         </button>
 
-        <label className = {styles.mergeStorageText}>{"The matrices stored in your account will not be loaded or modified until you choose an option. Making changes in the editor below will only affect your local storage until then."}</label>
-        <label className = {styles.mergeStorageText}>{"If you merge storages and two matrices have the same name, the local matrix will be renamed to avoid duplicates. Local matrices that share the same name with one on your account are indicated with a blue name below."}</label>
+        <label className={styles.mergeStorageText}>{"The matrices stored in your account will not be loaded or modified until you choose an option. Making changes in the editor below will only affect your local storage until then."}</label>
+        <label className={styles.mergeStorageText}>{"If you merge storages and two matrices have the same name, the local matrix will be renamed to avoid duplicates. Local matrices that share the same name with one on your account are indicated with a blue name below."}</label>
 
     </div>
 }

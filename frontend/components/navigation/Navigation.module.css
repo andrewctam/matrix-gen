@@ -1,10 +1,9 @@
-
 .navigateBar {
-    background-color: rgb(48, 50, 51);
-    padding-bottom: 1%;
-    margin-top: 0;
-    margin-bottom: 5px;
-  }
+  background-color: rgb(48, 50, 51);
+  padding-bottom: 1%;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
 
 .info {
   overflow: auto;
@@ -58,6 +57,3 @@
   padding: 3px;
   border-bottom: 1px solid rgb(39, 37, 37);
 }
-
-
-
