@@ -12,7 +12,7 @@ function SelectorButton(props) {
     }
 
     function updateMatrixSelection() {
-        props.updateMatrixSelection(props.name);
+        props.setSelection(props.name);
     }
 
     function renameMatrix(e) {
@@ -49,7 +49,7 @@ function SelectorButton(props) {
                 setDisplayName(props.name);
             } else {
                 props.renameMatrix(props.name, displayName)
-                props.updateMatrixSelection(displayName)
+                props.setSelection(displayName)
             }
     }
 
@@ -86,32 +86,36 @@ function SelectorButton(props) {
         size = realSize();
     }
 
+    if (props.intersectionMerge) {
+        var specialText = styles.intersectionMerge;
+    }
+
 
     return <button type="button" 
         className = {"list-group-item list-group-item-action" + ((props.active) ? " active" : "")}
         onClick = {updateMatrixSelection}>
 
         <input 
-        value = {displayName} 
-        id = {props.name}
-        type = "text" 
-        className = {styles.selectorInput}
-        onChange = {renameMatrix}
-        onKeyDown = {handleKeyDown}
-        onBlur = {pushNewName}
-        onFocus = {handleFocus}
-        />
+            value = {displayName} 
+            id = {props.name}
+            type = "text" 
+            className = {styles.selectorInput + " " + specialText}
+            onChange = {renameMatrix}
+            onKeyDown = {handleKeyDown}
+            onBlur = {pushNewName}
+            onFocus = {handleFocus}
+            />
 
         <input 
-        value = {size} 
-        id = {"size " + props.name}
-        type = "text"
-        className = {styles.selectorInput + " " + styles.sizeInfo}
-        onChange = {resizeMatrix}
-        onBlur = {pushNewSize}
-        onFocusCapture = {handleFocus}
-        onKeyDown = {handleKeyDown}
-        />
+            value = {size} 
+            id = {"size " + props.name}
+            type = "text"
+            className = {styles.selectorInput + " " + styles.sizeInfo}
+            onChange = {resizeMatrix}
+            onBlur = {pushNewSize}
+            onFocusCapture = {handleFocus}
+            onKeyDown = {handleKeyDown}
+            />
     </button>
 
     

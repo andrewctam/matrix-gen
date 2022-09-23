@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
-import MergeStorage from './navigation/MergeStorage.js';
 import Navigation from "./navigation/Navigation.js"
 
 function App(props) {
@@ -16,10 +15,18 @@ function App(props) {
     const [username, setUsername] = useState(null);
     const [token, setToken] = useState(null);
     
-    const [showMerge, setShowMerge] = useState(false);
+    const [showMerge, setShowMerge] = useState(null);
     const [userMatrices, setUserMatrices] = useState(null);
-    
+
+    const saving = useRef(false);
+    const [dataTooLarge, setDataTooLarge] = useState(false);
     useEffect(() => {
+        document.addEventListener("onbeforeunload", () => {
+            if (saving.current) 
+                return "You have unsaved changes. Are you sure you want to leave?";
+        }); 
+        
+
         const username = localStorage.getItem("username");
         const token = localStorage.getItem("token");
         
@@ -28,16 +35,17 @@ function App(props) {
             setToken(token);
         } else if (localStorage.getItem("matrices;") !== null) {
             loadFromLocalStorage();
+            updateParameter("showMerge", false);
         } else {
             setMatrices( {
                 "A": [["", ""], ["", ""]]
             });;
-            setSelection("A");  
+            setSelection("A");
+            updateParameter("showMerge", false);
         }
 
         setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
         setMirror(window.localStorage.getItem("mirror;") === "1");
-        setShowMerge(window.localStorage.getItem("showMerge;") === "1");
 
         const sparse = window.localStorage.getItem("sparseValue;");
         if (sparse !== null)
@@ -74,9 +82,6 @@ function App(props) {
             saveToLocalStorage();    
     }, [[matrices, saveToLocal]] )
     
-    function updateMatrixSelection(selected) {
-        setSelection(selected);
-    }
 
     function updateUserInfo(username, token) {
         setUsername(username);
@@ -169,7 +174,6 @@ function App(props) {
         }
         
         setMatrices(tempObj);
-
         return name;
     }
 
@@ -647,11 +651,13 @@ function App(props) {
 
 
     function saveToLocalStorage() {
+        saving.current = true
         console.log(JSON.stringify(matrices))
         window.localStorage.setItem("matrices;", JSON.stringify(matrices))
         window.localStorage.setItem("saveToLocal;", saveToLocal ? "1" : "0")
         window.localStorage.setItem("selectable;", selectable ? "1" : "0");
         window.localStorage.setItem("sparseValue;", sparseVal)
+        saving.cuurrent = false;
     }
 
 
@@ -712,32 +718,43 @@ function App(props) {
         }
 
         const userMatrices = JSON.parse(response["matrix_data"]);
-        const keys = Object.keys(userMatrices);
 
-        const merge = localStorage.getItem("saveToLocal;") === "1" && localStorage.getItem("showMerge;") === "1";
-        //check if the current matrices are non trivial, so we know to overwrite or not
-        if (!merge && (matrices === null || (keys.length === 0 ||
-            (keys.length === 1 && keys[0] == "A" &&
-                matrices["A"] && matrices["A"].length === 2 && matrices["A"][0].length === 2 &&
-                matrices["A"][0][0] === "" && matrices["A"][0][1] === "" &&
-                matrices["A"][1][0] === "" && matrices["A"][1][1] === "")))) {
-    
-                setMatrices(userMatrices)
+        var localMatricesStr = localStorage.getItem("matrices;"); //if saving to local storage is disabled, this will be null
+
+        if (localMatricesStr === null) {
+            if (matrices === null)
+                localMatricesStr = null;
+            else
+                localMatricesStr = JSON.stringify(matrices); //use matrices in memory. would be same as local if saving to local
+        }
+
+        //if the local matries are default, trivial, or the same as the user's matrices, merging is unnecessary
+        const mergeUnnecessary = (localMatricesStr === null ||
+                                localMatricesStr === "{}" ||
+                                localMatricesStr === JSON.stringify({"A": [["", ""], ["", ""]]}) ||
+                                localMatricesStr === response["matrix_data"])
+        
+        if (mergeUnnecessary)  { 
+            updateParameter("showMerge", false);
+            setMatrices(userMatrices)
+            if (Object.keys(userMatrices).length > 0)
                 setSelection(Object.keys(userMatrices)[0])
-                updateParameter("showMerge", false);
-
-                 
-        } else { 
-            if (!matrices || saveToLocal)
-                loadFromLocalStorage();
+            else
+                setSelection("0");
+           
+        } else {
             updateParameter("showMerge", true);
             setUserMatrices(userMatrices);
-            
+            if (!matrices || saveToLocal)
+                loadFromLocalStorage();
+
+           
         }
     }
 
     const updateAccountMatrices = async () => {
-        const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
+        saving.current = true
+        const response = await fetch("http://localhost:8080/api/matrix", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -748,11 +765,22 @@ function App(props) {
                 matrix_data: JSON.stringify(matrices)
             })
         }).then((response) => {
-            if (response.status === 401) {
-                return null;
+           if (response.status === 413) {
+               if (!dataTooLarge) {
+                   alert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.");
+                }
+                setDataTooLarge(true)
+                return response.json();
             }
 
-            return response.json()
+            setDataTooLarge(false)
+            if (response.status === 401) {
+                return null;
+            } else {
+                console.log("Matrices saved to account")
+                return response.json()
+            }
+
         }).catch (error => {
             console.log(error)
         })
@@ -763,7 +791,7 @@ function App(props) {
             return;
         }
 
-        console.log("Matrices saved to account")
+        saving.current = false
     }
 
     const refreshToken = async () => {
@@ -807,7 +835,6 @@ function App(props) {
                     sparseVal = {sparseVal}
                     selectable = {selectable}
 
-                    updateMatrixSelection = {updateMatrixSelection} 
                     setMatrix = {setMatrix}
                     deleteMatrix = {deleteMatrix}
                     renameMatrix = {renameMatrix}
@@ -835,7 +862,7 @@ function App(props) {
                     setShowMerge = {setShowMerge}
                     userMatrices = {userMatrices}
                     
-
+                    dataTooLarge = {dataTooLarge}
                 />
 
          

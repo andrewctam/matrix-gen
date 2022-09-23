@@ -1,8 +1,9 @@
 
-import styles from "./Login.module.css";
+import styles from "./MergeStorage.module.css";
 
 const MergeStorage = (props) => {
     const merge = () => {
+       
         var intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
         var union = { ...props.matrices, ...props.userMatrices };
 
@@ -16,6 +17,11 @@ const MergeStorage = (props) => {
             }
 
             union[intersection[i]] = originalName;
+        }
+
+        if (JSON.stringify(union).length > 512000) {
+            alert("Merging your matrices will exceed the maximum storage limit for accounts. Please delete some local matrices before merging.");
+            return;
         }
 
         props.setMatrices(union);
@@ -41,6 +47,7 @@ const MergeStorage = (props) => {
         </button>
 
         <label className = {styles.mergeStorageText}>{"The matrices stored in your account will not be loaded or modified until you choose an option. Making changes in the editor below will only affect your local storage until then."}</label>
+        <label className = {styles.mergeStorageText}>{"If you merge storages and two matrices have the same name, the local matrix will be renamed to avoid duplicates. Local matrices that share the same name with one on your account are indicated with a blue name below."}</label>
 
     </div>
 }

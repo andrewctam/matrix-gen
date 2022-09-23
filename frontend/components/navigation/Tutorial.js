@@ -23,12 +23,12 @@ function Tutorial(props) {
                 break;
             case "saving":
                 inside = <div>
-                You can create multiple matrices and swap between them. If you need your matrices to persist after you close this webpage, you can also save them to your local browser storage. The matrices will automatically be reloaded when this webpage is reopened.
+                You can create multiple matrices and swap between them. If you need your matrices to persist after you close this webpage, you can also save them to your local browser storage or online account storage. The matrices will automatically be reloaded when this webpage is reopened.
                 <ul className = {styles.tutorialList}>
                     <li>All matrices must have a name. Valid characters are uppercase and lowercase letters and underscores.</li>
                     <li>You can rename a matrix by clicking its name on the selector buttons. You can also resize it by clicking the size and entering new dimensions.</li>
-                    <li>Save matrices to your local storage using the Save Matrices button.</li>
-                    <li>You can enable Auto Save in the settings if you want to automatically save your matrices after any changes are made</li>
+                    <li>Save matrices to your local storage and/or online to an account using the Save Matrices button.</li>
+                    <li>If there is a conflict between your local and account matrix storage, (e.g. you make edits before logging in) you must choose to merge them, or to discard your local matrices. If you merge them, the matrices are combined, and duplicate names are automatically renamed.</li>
                 </ul>
             </div>
                 break;

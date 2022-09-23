@@ -46,6 +46,9 @@ function Navigation(props) {
             }
         }
 
+        if (props.showMerge) {
+            var intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
+        }
 
         for (const matrixName in props.matrices) {
             if ((searchName === "" || matrixName.startsWith(searchName)) && 
@@ -54,11 +57,14 @@ function Navigation(props) {
                     <SelectorButton 
                         name = {matrixName}
                         key = {matrixName}
-                        updateMatrixSelection = {props.updateMatrixSelection}
+                        setSelection = {props.setSelection}
                         renameMatrix = {props.renameMatrix}
                         resizeMatrix = {props.resizeMatrix}
                         active = {props.selection === matrixName}
-                        matrices = {props.matrices}/>
+                        matrices = {props.matrices}
+
+                        intersectionMerge = {props.showMerge && intersection.includes(matrixName)}                        
+                        />
                     )
         }
 
@@ -119,13 +125,21 @@ function Navigation(props) {
     }
 
 
+
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;
-
-    } else if (props.token && props.username && props.saveToLocal) {
-        saving = `Logged in as ${props.username}. Matrices will be saved to your account and to your local browser's storage.`;
     } else if (props.token && props.username) {
-        saving = `Logged in as ${props.username}. Matrices will be saved to your account.`;
+        if (props.dataTooLarge) {
+            if (props.saveToLocal) {
+                saving = `Logged in as ${props.username}. Matrices are too large and new changes may not be saved to your account, but they will be saved to local storage.`;
+            } else {
+                saving = `Logged in as ${props.username}. WARNING: Matrices are too large and new changes may not be saved to your account. Please decrease matrices' size or enable saving to local storage. `;
+
+            }
+        } else if (props.saveToLocal)
+            saving = `Logged in as ${props.username}. Matrices will be saved to your account and to your local browser's storage.`;
+        else 
+            saving = `Logged in as ${props.username}. Matrices will be saved to your account.`;
     } else if (props.saveToLocal) {
         saving = `Matrices will be saved to your local browser's storage.`;
     } else {
@@ -169,7 +183,7 @@ function Navigation(props) {
                         buttonStyle = {"info"}
                         action = {() => {
                             var newName = props.setMatrix();
-                            props.updateMatrixSelection(newName);
+                            props.setSelection(newName);
                         }} 
                         />
 
@@ -189,7 +203,7 @@ function Navigation(props) {
                         action = {() => {
                             if (props.selection !== "0" && window.confirm("Are you sure you want to delete " + props.selection + "?")) {
                                 props.deleteMatrix(props.selection); 
-                                props.updateMatrixSelection("0");
+                                props.setSelection("0");
                             }
                         }}/>
                     : null}
