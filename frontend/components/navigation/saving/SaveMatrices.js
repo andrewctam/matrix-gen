@@ -29,7 +29,7 @@ const SaveMatrices = (props) => {
                         setSelection={props.setSelection}
                         updateParameter={props.updateParameter}
                         updateUserInfo = {props.updateUserInfo}
-                        loadFromLocalStorage = {props.loadFromLocalStorage}
+                        refreshTokens = {props.refreshTokens}
                     />
                     :
                     <LoginForm

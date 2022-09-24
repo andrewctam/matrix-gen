@@ -122,7 +122,7 @@ const Navigation = (props) => {
 
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;
-    } else if (props.token && props.username) {
+    } else if (props.username) {
         if (props.dataTooLarge) {
             if (props.saveToLocal) {
                 saving = `Logged in as ${props.username}. Matrices are too large and new changes may not be saved to your account, but they will be saved to local storage.`;
@@ -148,12 +148,10 @@ const Navigation = (props) => {
             <SaveMatrices
                 username={props.username}
                 updateUserInfo={props.updateUserInfo}
-                loadFromLocalStorage={props.loadFromLocalStorage}
-
                 saveToLocal={props.saveToLocal}
                 updateParameter={props.updateParameter}
-                token={props.token}
                 matrices={props.matrices}
+                refreshTokens={props.refreshTokens}
 
                 setMatrices={props.setMatrices}
                 setSelection={props.setSelection}
@@ -194,9 +192,6 @@ const Navigation = (props) => {
                     buttonStyle={"secondary"}
                     action={() => { setShowSettings(!showSettings) }}
                 />
-
-
-
             </div>
 
             {showPresets ?

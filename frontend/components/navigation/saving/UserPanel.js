@@ -26,9 +26,9 @@ const UserPanel = (props) => {
             setCurrentPasswordError(null);
             setNewPassword("");
             setNewPasswordError(null);
-            setNewPasswordSuccess(null);
         }
-
+        
+        setNewPasswordSuccess(null);
         setShowChangePassword(!showChangePassword);
     }
 
@@ -42,55 +42,58 @@ const UserPanel = (props) => {
     }
 
     const logOut = () => {
-        localStorage.setItem("token", null);
-        localStorage.setItem("username", null);
         props.setShowWelcome(false)
-
-        props.updateUserInfo(null, null);
-        props.loadFromLocalStorage();        
+        props.updateUserInfo(null, null, null);
     }
 
-    const handleDeleteAccount = async (e) => {
-        e.preventDefault();
+    const handleDeleteAccount = async (e = null) => {
+        if (e)
+            e.preventDefault();
 
         if (!deleteVerify) {
             setDeleteVerifyError("Enter your password")
             return;
         }
 
-        if (!window.confirm("Are you sure you want to delete your account?"))
-            return;
 
         const response = await fetch("https://matrixgen.fly.dev/api/delete", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token")
+                "Authorization": "Bearer " + localStorage.getItem("access_token")
             },
             body: JSON.stringify({
                 username: props.username,
                 password: deleteVerify
             })
         }).then((response) => {
-            if (response.status === 401) //Access Denied
-                return null;
-            else
+            if (response.status === 401) //access token expired
+                return 401;
+            else if (response.status === 403) //wrong password
+                return 403;
+            else //OK
                 return response.json();
         }).catch((error) => {
             console.log(error);
         })
 
-        if (response === null) { //Access Denied
+        if (response === 401) { 
+            if (await props.refreshTokens()) {
+                return handleDeleteAccount(); //retry
+            } else { //refresh token invalid
+                props.setUserInfo(null, null, null);
+            }
+        } else if (response == 403) { //Access Denied
             setDeleteVerifyError("Incorrect password")
-            return;
         } else {
             logOut();
             console.log("Account deleted")
         }
     }
 
-    const handleChangePassword = async (e) => {
-        e.preventDefault();
+    const handleChangePassword = async (e = null) => {
+        if (e)
+            e.preventDefault();
 
         var error = false
         if (!currentPassword) {
@@ -113,7 +116,7 @@ const UserPanel = (props) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token")
+                "Authorization": "Bearer " + localStorage.getItem("access_token")
             },
             body: JSON.stringify({
                 username: props.username,
@@ -122,21 +125,28 @@ const UserPanel = (props) => {
             })
         }).then((response) => {
             if (response.status === 401)
-                return null; //Access Denied
-            else
-                return response.json();
+                return 401; //Wrong Password
+            else if (response.status === 403)
+                return 403; //Access Token Expird
+                
+            return response.json();
         }).catch((error) => {
             console.log(error);
         })
 
-        if (response === null) { //Access Denied
+
+        if (response === 403) { //access token expired 
+            if (await props.refreshTokens()) 
+                return handleChangePassword(); //retry
+            else //refresh token invalid
+                props.setUserInfo(null, null, null);
+        } else if (response == 401) { //Wrong Password
             setCurrentPasswordError("Incorrect current password")
-            return;
         } else {
             setNewPasswordSuccess("Password successfully changed")
             setCurrentPasswordError(null)
             setNewPasswordError(null)
-            setTimeout(() => { setShowChangePassword(false) }, 2000);
+            setTimeout(() => { toggleShowChangePassword() }, 1000);
         }
     }
 

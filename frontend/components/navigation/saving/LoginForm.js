@@ -45,7 +45,7 @@ const LoginForm = (props) => {
                 matrix_data: JSON.stringify(props.matrices)
             })
         }).then((response) => {
-            if (response.status === 401)
+            if (response.status === 403) //wrong password
                 return null;
             else
                 return response.json();
@@ -57,9 +57,9 @@ const LoginForm = (props) => {
             setUsernameError("Invalid username or password");
             return;
         }
-
-        if (usernameInput && response && response["access_token"]) {
-            props.updateUserInfo(usernameInput, response["access_token"]);
+        
+        if (usernameInput && response) {
+            props.updateUserInfo(usernameInput, response["access_token"], response["refresh_token"]);
         }
     }
 
@@ -93,7 +93,7 @@ const LoginForm = (props) => {
             })
 
         }).then((response) => {
-            if (response.status === 401)
+            if (response.status === 400) //username already exists
                 return null;
             else
                 return response.json();
@@ -105,9 +105,8 @@ const LoginForm = (props) => {
             setUsernameError("Username already exists");
             return;
         }
-
-        if (usernameInput && response && response["access_token"]) {
-            props.updateUserInfo(usernameInput, response["access_token"]);
+        else if (usernameInput && response) {
+            props.updateUserInfo(usernameInput, response["access_token"], response["refresh_token"]);
             props.setShowWelcome(true)
         }
     }

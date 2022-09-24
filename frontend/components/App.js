@@ -13,7 +13,7 @@ const App = (props) => {
     const [saveToLocal, setSaveToLocal] = useState(false);
     
     const [username, setUsername] = useState(null);
-    const [token, setToken] = useState(null);
+    
     
     const [showMerge, setShowMerge] = useState(null);
     const [userMatrices, setUserMatrices] = useState(null);
@@ -30,11 +30,9 @@ const App = (props) => {
         
 
         const username = localStorage.getItem("username");
-        const token = localStorage.getItem("token");
         
-        if (username !== null && token !== null) {
+        if (username !== null) {
             setUsername(username);
-            setToken(token);
         } else if (localStorage.getItem("matrices;") !== null) {
             loadFromLocalStorage();
             updateParameter("showMerge", false);
@@ -67,18 +65,18 @@ const App = (props) => {
 
     //send updates to server
     useEffect( () => {
-        if (!showMerge && token && username)
+        if (!showMerge && username)
             updateAccountMatrices();
        
     // eslint-disable-next-line
     }, [matrices]);
 
-    //if a new user is loged in, get their matrices
+    //if a new user is logged in, get their matrices
     useEffect(() => {
-        if (token)
+        if (username)
             getMatrixData();
         
-    }, [token])
+    }, [username])
 
     //save matrices to local storage
     useEffect(() => {
@@ -672,31 +670,37 @@ const App = (props) => {
 
     }
 
-    const updateUserInfo = (username, token) => {
+    const updateUserInfo = (username, access_token, refresh_token) => {
         setUsername(username);
-        setToken(token);
 
         if (username)
             localStorage.setItem("username", username);
         else 
             localStorage.removeItem("username");
         
-        if (token)
-            localStorage.setItem("token", token);
-        else
-            localStorage.removeItem("token");
+        if (access_token && refresh_token) {
+            localStorage.setItem("access_token", access_token);
+            localStorage.setItem("refresh_token", refresh_token);
+        } else {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+        }
+
+        if (!username && !access_token && !refresh_token) {
+           loadFromLocalStorage();
+        }
+
     }
 
-    const getMatrixData = async () => {
-        
+    const getMatrixData = async () => {        
         const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
+                "Authorization": "Bearer " +  localStorage.getItem("access_token")
             }
         }).then((response) => {
-            if (response.status === 401) {
+            if (response.status === 401) { //invalid access token
                 return null;
             }
 
@@ -704,13 +708,17 @@ const App = (props) => {
         })
 
         if (response === null) {
-            console.log("Unauthorized");
-            updateUserInfo(null, null);
+            if (await refreshTokens()) { 
+                return getMatrixData(); //retry
+            } else { //refresh token invalid
+                console.log("Unauthorized"); 
+                updateUserInfo(null, null, null);
 
-            if (matrices === null)
-                loadFromLocalStorage();
+                if (matrices === null)
+                    loadFromLocalStorage();
 
-            return;
+                return;
+            }
         }
 
         
@@ -756,14 +764,14 @@ const App = (props) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
+                "Authorization": "Bearer " + localStorage.getItem("access_token")
             },
             body: JSON.stringify({
                 username: username,
                 matrix_data: JSON.stringify(matrices)
             })
         }).then((response) => {
-           if (response.status === 413) {
+           if (response.status === 413) { //data too large
                if (!dataTooLarge) { //only show the alert the first time
                    alert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.");
                 }
@@ -771,9 +779,9 @@ const App = (props) => {
                 return response.json();
             }
 
-            setDataTooLarge(false)
+            setDataTooLarge(false);
             if (response.status === 401) {
-                return null; //unauthorized
+                return null; //invalid access token
             } else {
                 console.log("Matrices saved to account")
                 return response.json()
@@ -783,29 +791,28 @@ const App = (props) => {
             console.log(error)
         })
 
-        if (response === null) { //unauthorized
-            console.log("Unauthorized");
-            updateUserInfo(null, null);
-            return;
+        if (response === null) { 
+            if (await refreshTokens()) { 
+                return updateAccountMatrices(); //retry
+            } else { //refresh token invalid
+                console.log("Unauthorized");
+                updateUserInfo(null, null, null);
+                return;
+            }
         }
 
         saving.current = false
     }
 
-    const refreshToken = async () => {
+    const refreshTokens = async () => {
         const response = await fetch("https://matrixgen.fly.dev/api/token", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            },
-            body: JSON.stringify({
-                username: username,
-                matrix_data: ""
-                
-            })
+                "Authorization": "Bearer " + localStorage.getItem("refresh_token")
+            }
         }).then((response) => {
-            if (response.status === 401) {
+            if (response.status === 401) { //invalid access token
                 return null;
             }
 
@@ -814,11 +821,16 @@ const App = (props) => {
             console.log(error)
         })
 
-        if (response === null) {
-            setToken(null);
-            updateUserInfo(null, null);
+        if (response) {
+            console.log("Tokens refreshed")
+            localStorage.setItem("access_token", response["access_token"]);
+            localStorage.setItem("refresh_token", response["refresh_token"]);
+
+            return true;
         } else {
-            setToken(response["token"]);
+            updateUserInfo(null, null, null);
+            localStorage.removeItem("refresh_token");
+            return false;
         }
     }
    
@@ -839,13 +851,13 @@ const App = (props) => {
                 resizeMatrix = {resizeMatrix}
                 updateParameter = {updateParameter}
                 saveToLocalStorage = {saveToLocalStorage}
-                loadFromLocalStorage = {loadFromLocalStorage}
                 deleteAllMatrices = {deleteAllMatrices}
 
                 createIdentity = {createIdentity}
 
                 username = {username}
                 updateUserInfo = {updateUserInfo}
+                refreshTokens = {refreshTokens}
                 saveToLocal = {saveToLocal}
                 setSaveToLocal = {setSaveToLocal}
 
@@ -853,7 +865,6 @@ const App = (props) => {
                 setSelection = {setSelection}
                 setMatrices = {setMatrices}
 
-                token = {token}
 
                 showMerge = {showMerge}
                 setShowMerge = {setShowMerge}

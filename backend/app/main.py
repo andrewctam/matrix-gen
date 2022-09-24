@@ -1,20 +1,16 @@
-
-from typing import List
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.sql import text
-from pydantic import BaseModel
-
-from .database import database, users
+from .database import database
 from .user_routes import router as user_router
 from .matrix_routes import router as matrix_router
+
 app = FastAPI()
 app.include_router(user_router)
 app.include_router(matrix_router)
 
 origins = [
     "http://localhost",
-    "http://localhost:8080",
+    "https://matrixgen.fly.dev",
     "http://localhost:3000",
     "https://matrixgen.web.app"
 ]
@@ -35,6 +31,3 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
-
-    
-    
