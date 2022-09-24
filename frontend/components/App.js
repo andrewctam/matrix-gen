@@ -438,25 +438,26 @@ const App = (props) => {
 
     const reshapeMatrix = (name, rowCount, colCount) => {
         const currentMatrix = matrices[name];      
-        debugger;
+        
+        const numElements = (currentMatrix.length - 1) * (currentMatrix[0].length - 1);
         if (isNaN(rowCount) || isNaN(colCount)) { //one is empty or NaN
             if (isNaN(rowCount) && isNaN(colCount)) {
                 alert("Enter rows and columns to reshape");
                 return;
             } else if (!isNaN(rowCount)) { //infer cols bsed on rows
-                if (elements.length % rowCount !== 0) {
+                if (numElements % rowCount !== 0) {
                     alert("Invalid number of rows");
                     return;
                 }
                 
-                colCount = elements.length / rowCount;
+                colCount = numElements / rowCount;
             } else if (!isNaN(colCount)) { //infer rows based on cols
-                if (elements.length % colCount !== 0) {
+                if (numElements % colCount !== 0) {
                     alert("Invalid number of columns");
                     return;
                 }
                 
-                rowCount = elements.length / colCount;
+                rowCount = numElements / colCount;
             } 
         }
 

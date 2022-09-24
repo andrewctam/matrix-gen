@@ -42,7 +42,7 @@ const Tutorial = (props) => {
                         <li>Fill All With will replace all boxes with the inputted element.</li>
                         <li>Fill Diagonal with replace all entires (i, i) with the inputted element.</li>
                         <li>Randomize Elements will replace all entries with a random integer between the specified range inclusive.</li>
-                        <li>Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy reshape. The product of the new dimensions must be equal to the product of the old dimensions.</li>
+                        <li>{"Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy reshape. The matrix is resized to the inputted dimensions n x m, and the elements' positions will be rearranged based on their position in row major order (i * m + j). If the new dimensions are less than the old ones, extra elements are discarded. If you want to resize your matrix while keeping element positions, resize by clicking on its size in the selector area."}</li>
                     </ul>
                 </div>
                 break;
