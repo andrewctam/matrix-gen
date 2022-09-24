@@ -1,28 +1,28 @@
 import React from 'react';
 import styles from "./Box.module.css"
-function Box(props) {
-    function handleAddRow(e) {
+const Box = (props) => {
+    const handleAddRow = (e) => {
         props.addRow(props.row, props.col, e.target.value);
     }
-    function handleAddCol(e) {
+    const handleAddCol = (e) => {
         props.addCol(props.row, props.col, e.target.value);
     }
-    function handleAddBoth(e) {
+    const handleAddBoth = (e) => {
         props.addBoth(props.row, props.col, e.target.value);
     }
-    function handleUpdate(e) { 
+    const handleUpdate = (e) => {  
         props.updateEntry(props.name, props.row, props.col, e.target.value);
     }
-    function handleKeyDown(e) {
+    const handleKeyDown = (e) => {
         props.keyDown(props.row, props.col, e);
     }
 
-    function handleMouseDown() {
+    const handleMouseDown = () => {
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             props.setMouseDown(true)
         } 
     }
-    function handleFocus(e) {
+    const handleFocus = (e) => {
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             props.updateBoxesSelected(props.row, props.col, props.row, props.col);
         } else {
@@ -30,7 +30,7 @@ function Box(props) {
         }
     }
 
-    function handleEnter(e) {
+    const handleEnter = (e) => {
         if (props.mouseDown && props.rows !== props.row + 1 && props.cols !== props.col + 1)
             props.updateBoxesSelected(-1, -1, props.row, props.col);
     }

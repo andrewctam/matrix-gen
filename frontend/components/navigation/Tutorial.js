@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 
 import styles from "./Tutorial.module.css";
 
-function Tutorial(props) {
+const Tutorial = (props) => {
     const [selected, setSelected] = useState("editor");
     const [specificTutorial, setSpecificTutorial] = useState(null)
 
@@ -99,7 +99,7 @@ function Tutorial(props) {
     }, [selected])
 
 
-    function TutorialButton(props) {
+    const TutorialButton = (props) => {
         return <button
             className={styles.tutorialButton + " btn btn-" + (props.selected === props.name ? "dark" : "light")}
             onClick={() => { props.setSelected(props.name) }}>

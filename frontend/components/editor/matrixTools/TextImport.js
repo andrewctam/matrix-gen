@@ -5,7 +5,7 @@ import ListButton from "./ListButton";
 
 import styles from "./TextImport.module.css"
 
-function TextImport(props) {
+const TextImport = (props) => {
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);
 
@@ -18,16 +18,35 @@ function TextImport(props) {
         "~":"\\char126",
         "\\":"\\char92"
     })
+    
 
+    //settings that change based on import format
     const [settingA, setSettingA] = useState(""); //opening bracket, numRows
     const [settingB, setSettingB] = useState(""); //closing bracket, numCols
     const [settingC, setSettingC] = useState(" "); //separator
     const [settingD, setSettingD] = useState("\n"); //new line separator
-    
 
-    useEffect(updatedDisplayWarning, [settingA, settingB, settingC, settingD, importFormat]);
+    useEffect(() => {
+        //if one of the setting changes, update if we should display a warning
+        switch(importFormat) {
+            case "Separator":
+                var updatedDisplayWarning = settingC.includes(" ") || settingD === "\n" || settingD.includes(" ");
+                break;
+            case "2D Arrays":
+                updatedDisplayWarning = settingA.includes(" ") || settingB.includes(" ") || settingC.includes(" ");
+                break;
+            case "Reshape From One Line":
+                updatedDisplayWarning = settingA.includes(" ") || settingB.includes(" ") || settingC.includes(" ");
+                break;
 
-    function updateParameter(parameterName, updated) {
+            default: break;
+        }
+        setDisplayWarning(updatedDisplayWarning)
+
+    }, [settingA, settingB, settingC, settingD, importFormat]);
+
+
+    const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
             case "overwrite":
                 setOverwrite(updated);
@@ -68,34 +87,10 @@ function TextImport(props) {
             default: break;
         }
 
-       
-            
-
     }
 
-    function updatedDisplayWarning() {
-        switch(importFormat) {
-            case "Separator":
-                var updatedDisplayWarning = settingC.includes(" ") || settingD === "\n" || settingD.includes(" ");
-                break;
-            case "2D Arrays":
-                updatedDisplayWarning = settingA.includes(" ") || settingB.includes(" ") || settingC.includes(" ");
-                break;
-            case "Reshape From One Line":
-                updatedDisplayWarning = settingA.includes(" ") || settingB.includes(" ") || settingC.includes(" ");
-                break;
-
-            default: break;
-        }
-
-        setDisplayWarning(updatedDisplayWarning);
-
-    }
-
-
-    function updateImportFormat(e) {
+    const updateImportFormat = (e) => {
         const updated = e.target.id;    
-
 
         switch(updated) {
             case "Separator":
@@ -123,15 +118,15 @@ function TextImport(props) {
 
     }
 
-    function updateNewMatrixName(e) {
+    const updateNewMatrixName = (e) => {
         const updated = e.target.value;
-        if (/^[A-Za-z_]*$/.test(updated)) {
+        if (/^[A-Za-z_]*$/.test(updated)) { //only update if valid chars used
            setNewName(updated);
         }
 
     }
 
-    function addRegexEscape(str) {
+    const addRegexEscape = (str) => {
         switch(str) { //escapes for regex
             case ".": case "+": case "*": case "?": case "^": case "$": case "(": case ")": case "[": case "]": case "{": case "}": case "|":
                 return "\\" + str;
@@ -143,26 +138,26 @@ function TextImport(props) {
 
         
     }
-    function parseText() {
+    const parseText = () => {
         const separator = settingC;
         var text = document.getElementById("importTextArea").value;
         var matrix = [];
 
         if (ignoreWhitespace)
-            text = text.replace(/\s/g,"")
-
+            text = text.replaceAll(/\s/g,"")
         
-        if (overwrite)
+        if (overwrite) //overwrite current matrix
             var name = props.currentName;
-        else if (newName === "")
+        else if (newName === "") //input empty, so auto generate
             name = props.generateUniqueName();
-        else
+        else //name provided
             name = newName;
 
         switch(importFormat) {
             case "Separator":
                 const rowSeparator = settingD;
 
+                //split into rows
                 var rows = text.split(rowSeparator);
                 for (let i = 0; i < rows.length; i++) {
                     matrix.push(rows[i].split(separator));
@@ -170,16 +165,14 @@ function TextImport(props) {
                 }
 
                 matrix.push(Array(matrix[0].length).fill(""));
-                props.setMatrix(matrix, name); //function will also override existing (or non existing) matrices
+                props.setMatrix(matrix, name); //override existing (or non existing) matrix
                 
                 break;
                 
             case "2D Arrays":
                 if (!ignoreWhitespace) //if we have not already removed new lines before 
                     text = text.replaceAll("\n", "");
-
                 try {
-                    
                     const firstBrace = text.indexOf(settingA) + 1; //remove {{
                     const lastBrace = text.lastIndexOf(settingB) - 1; //remove {{
                     const noBraces = text.substring(firstBrace + 1, lastBrace);
@@ -203,75 +196,95 @@ function TextImport(props) {
                 }
 
                 break;
-                
-            
+
         
             case "Reshape From One Line":
                 const elements = text.split(separator);
                 var rowCount = parseInt(settingA);
                 var colCount = parseInt(settingB);
 
-                if (isNaN(rowCount) && isNaN(colCount)) {
-                    alert("Enter rows and columns to reshape");
-                } else if (!isNaN(rowCount)) {
-                    if (elements.length % rowCount !== 0) {
-                        alert("Invalid number of rows");
+                if (isNaN(rowCount) || isNaN(colCount)) { //one is empty or NaN
+                    if (isNaN(rowCount) && isNaN(colCount)) {
+                        alert("Enter rows and columns to reshape");
                         return;
-                    }
-                    
-                    colCount = elements.length / rowCount;
-                } else if (!isNaN(colCount)) {
-                    if (elements.length % colCount !== 0) {
-                        alert("Invalid number of columns");
-                        return;
-                    }
-                    
-                    rowCount = elements.length / colCount;
-                } else {
-                    if (elements.length !== colCount * rowCount) {
-                        alert("Invalid dimensions for matrix")
-                        return;
-                    }
-    
+                    } else if (!isNaN(rowCount)) { //infer cols bsed on rows
+                        if (elements.length % rowCount !== 0) {
+                            alert("Invalid number of rows");
+                            return;
+                        }
+                        
+                        colCount = elements.length / rowCount;
+                    } else if (!isNaN(colCount)) { //infer rows based on cols
+                        if (elements.length % colCount !== 0) {
+                            alert("Invalid number of columns");
+                            return;
+                        }
+                        
+                        rowCount = elements.length / colCount;
+                    } 
                 }
 
-                matrix = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
+                  
+                matrix = Array(rowCount + 1).fill([]).map(()=>Array(colCount + 1).fill(""))
 
-                let i = 0;
-                for (let j = 0; j < rowCount; j++)
+                //go through each element and reshape into a matriz
+                let i = 0; //ptr
+                for (let j = 0; j < rowCount; j++) {
                     for (let k = 0; k < colCount; k++) {
                         matrix[j][k] = elements[i];
                         i++;
+                        
+                        if (i >= elements.length)
+                            break;
                     }
+                    if (i >= elements.length)
+                        break;
+                }
 
+                console.log(elements)
+                console.log(matrix)
                 props.setMatrix(matrix, name);
                 break;
 
             case "LaTeX":
+                if (!ignoreWhitespace) //latex always ignore whitespace, so remove if not already done above
+                    text = text.replaceAll(/\s/g,"")
+                
                 rows = text.split("\\\\");
                 
-                for (let i = 0; i < rows.length; i++) {
-                    rows[i] = rows[i].replaceAll(" ","")
+                let maxLen = 0;
+
+                //split rows by & and find max length
+                for (let i = 0; i < rows.length; i++) {    
                     matrix.push(rows[i].split("&"));
-                    matrix[i].push("");
+                    if (matrix[i].length > maxLen)
+                        maxLen = matrix[i].length;
+                }
+                
+                maxLen++; //add one for empty column
+
+                //add empty strings to make all rows the same length
+                for (let i = 0; i < rows.length; i++) {
+                    while (matrix[i].length < maxLen) {
+                        matrix[i].push("");
+                    }
                 }
 
-                matrix.push(Array(matrix[0].length).fill(""));
-
-
+                //extra empty row
+                matrix.push(Array(maxLen).fill(""));
                 
                 if (removeEscape) {
-
                     const tild = addRegexEscape(escapeMap["\\"]); //replace with tilde
                     const back = addRegexEscape(escapeMap["~"]); //replace with backslash
                     const circ = addRegexEscape(escapeMap["^"]); //replace with circumflex
 
                     const regex = new RegExp(`${tild}|${back}|${circ}|\\\\[&%$#_{}]`, 'g');
                     console.log(regex)
+                    
                     for (let i = 0; i < matrix.length - 1; i++)
                         for (let j = 0; j < matrix[0].length - 1; j++) {
                             matrix[i][j] = matrix[i][j].replaceAll(regex, (s) => {
-                                switch(s) {
+                                switch(s) { //replace chars with appropriate escapes
                                     case "\\&": case "\\%": case "\\$": case "\\#": case "\\_": case "\\{": case "\\}":
                                         return s.substring(1);
                                     case escapeMap["~"]:
@@ -286,8 +299,7 @@ function TextImport(props) {
                             });
                     }
                 }
-                props.setMatrix(matrix, name); //function will also override existing (or non existing) matrices
-                
+                props.setMatrix(matrix, name); 
                 break;
 
             default: break;

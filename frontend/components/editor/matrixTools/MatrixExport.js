@@ -5,7 +5,7 @@ import ListButton from './ListButton.js';
 
 import styles from "./MatrixExport.module.css"
 
-function MatrixExport(props) {    
+const MatrixExport = (props) => {    
     const [exportOption, setExportOption] = useState("2D Arrays");
 
 
@@ -23,11 +23,11 @@ function MatrixExport(props) {
         "\\":"\\char92"
     })
 
-    function handleFocus(e) {
+    const handleFocus = (e) => {
         e.target.select();
     }
     
-    function matrixToString() {
+    const matrixToString = () => {
         switch (exportOption) {
             case "LaTeX":
                 var result = environment !== "" ? `\\begin{${environment}}\n` : "";
@@ -106,7 +106,7 @@ function MatrixExport(props) {
 
     }
 
-    function updateExportParameter(parameterName, updated) {
+    const updateExportParameter = (parameterName, updated) => {
         switch (parameterName) { 
             case "start":
                 setStart(updated);  
@@ -143,7 +143,7 @@ function MatrixExport(props) {
     }
 
 
-    function updateExportOption(e) {
+    const updateExportOption = (e) => {
         const updated = e.target.id;
         switch (updated) {
             case "2D Arrays":
@@ -162,7 +162,7 @@ function MatrixExport(props) {
         }
     }
 
-    function presets(e) {
+    const presets = (e) => {
         const updated = e.target.id;
         switch(updated) {
             case "Square Braces [ ] ,":

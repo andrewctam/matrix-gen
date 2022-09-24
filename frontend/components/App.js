@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
 import Navigation from "./navigation/Navigation.js"
 
-function App(props) {
+const App = (props) => {
     const [matrices, setMatrices] = useState(null);
 
     const [selection, setSelection] = useState("0");
@@ -89,7 +89,7 @@ function App(props) {
 
    
     //used for updating state and local storage
-    function updateParameter(parameterName, updated) {
+    const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
             case "sparse":
                 setSparseVal(updated);
@@ -124,13 +124,14 @@ function App(props) {
     }
 
     //functions related to matrix editing
-    function renameMatrix(oldName, newName) {     
+    const renameMatrix = (oldName, newName) => {     
         const tempObj = {...matrices};
         
         if (newName in tempObj)
             return false;
 
-        tempObj[newName] = tempObj[oldName];
+        //rename and delete old one
+        tempObj[newName] = tempObj[oldName]; 
         delete tempObj[oldName];
 
         setMatrices(tempObj);
@@ -138,44 +139,46 @@ function App(props) {
         return true;
     }
     
-    function setMatrix(matrix = undefined, name = undefined) {
+    const setMatrix = (matrix = undefined, name = undefined) => {
         const tempObj = {...matrices};
-        if (name === undefined) {
+        if (name === undefined) { //no name, generate one
             name = generateUniqueName();
         }
         
-        if (matrix === undefined) {
+        if (matrix === undefined) { //no matrix, generate 1 x 1 one
             tempObj[name] = [["", ""], ["", ""]];
         } else {
             tempObj[name] = matrix;
         }
         
         setMatrices(tempObj);
-        return name;
+        return name; //return name of matrix (mainly for input is undefined)
     }
 
-    function copyMatrix(toCopy, name = undefined) {
+    const copyMatrix = (toCopy, name = undefined) => {
         if (toCopy !== "0") {
             const tempObj = {...matrices};
-            if (name === undefined) {
+
+            if (name === undefined) { //no name, generate one
                 var matrixName = generateUniqueName();
             } else {
                 matrixName = name;
             }
 
-            tempObj[matrixName] = tempObj[toCopy].map((arr) => { return arr.slice(); });
+            //deep copy matrix
+            tempObj[matrixName] = JSON.parse(JSON.stringify(matrices[toCopy]));
 
             setMatrices(tempObj);
         }
     }
 
-    function deleteMatrix(name) {
+    const deleteMatrix = (name) => {
         const tempObj = {...matrices};
         delete tempObj[name];
         setMatrices(tempObj);
     }
 
-    function deleteAllMatrices() {
+    const deleteAllMatrices = () => {
         if (window.confirm("Are you sure you want to delete all of your matrices?")) {
             setSelection("0");
             setMatrices({});
@@ -185,28 +188,34 @@ function App(props) {
 
     }
 
-    function generateUniqueName() {
+    const generateUniqueName = () => {
         const name = ["A"]; 
         var willExitFromZ = false;
         var pointer = 0;
 
-        while (name.join("") in matrices) {
+        //go from back to front and increment the letter. 
+        //if we reach Z, we set it to A and increment the previous letter
+        //if we reach the start of the string, pointer == -1, we just had a 
+        //Z...Z that converted to A...A, so we add a new letter to start at A...AA
+        while (name.join("") in matrices) { //go until name is unique
             while (true) {
-                if (pointer < 0) {
-                    name.push("@"); //'A" - 1
-                    pointer = name.length - 1;
+            
+                if (pointer < 0) { //reached start of string
+                    name.push("@"); //'A' - 1, will be incremeneted to 'A' after loop breaks
+                    pointer = name.length - 1; //go to end of string
                     break;
-                } else if (name[pointer] === "Z") {
+                } else if (name[pointer] === "Z") { //found a Z. we can't increment it so set to A and go backwards.
                     name[pointer] = "A";
                     pointer--;
                     willExitFromZ = true;
-                } else 
+                } else  //not a Z and not -1, so we can increment it
                     break;
             }
 
+            //increment the char at pointer
             name[pointer] = String.fromCharCode(name[pointer].charCodeAt(0) + 1);
 
-            if (willExitFromZ) {
+            if (willExitFromZ) { //if we exited from a Z, go to end of string and start going backwards again
                 pointer = name.length - 1;
                 willExitFromZ = false;
             }
@@ -216,38 +225,40 @@ function App(props) {
 
     }
 
-    function resizeMatrix(name, rows, cols, update = true) {
-        if (matrices[name].length !== rows || matrices[name][0].length !== cols) {
+    const resizeMatrix = (name, rows, cols, update = true) => {
+        if (matrices[name].length !== rows || matrices[name][0].length !== cols) { //check to make new and old dimensions are different
+            //get the smaller of each dimension in case new > old
             const lessRows = Math.min(rows, matrices[name].length)
             const lessCols = Math.min(cols, matrices[name][0].length)
 
 
             const resized = Array(rows).fill([])
-            for (let i = 0; i < lessRows - 1; i++) {            
-                const arr = Array(cols).fill("")
-                for (let j = 0; j < lessCols - 1; j++) {
+            for (let i = 0; i < lessRows - 1; i++) { //fill in the rows up to the smaller of the two
+                const arr = Array(cols).fill("") 
+
+                for (let j = 0; j < lessCols - 1; j++) { //fill in the columns up to the smaller of the two
                     arr[j] = matrices[name][i][j]
                 }
 
-                for (let j = lessCols - 1; j < cols; j++) {
+                for (let j = lessCols - 1; j < cols; j++) { //fill in the rest of the columns with empty strings
                     arr[j] = "";
                 }
                 
                 resized[i] = arr;
             }
 
-            
+            //fill in rest of row with empty strings
             for (let i = lessRows - 1; i < rows; i++) 
                 resized[i] = Array(cols).fill("");
 
-            if (update)
+            if (update) //if we want to update the state
                 setMatrix(resized, name); 
 
             return resized;
         }
     }
 
-    function tryToDelete(name, row, col) {
+    const tryToDelete = (name, row, col) => {
         //Can not delete the red row/column
         if (row === matrices[name].length - 1 || col === matrices[name][0].length - 1) 
             return null;
@@ -294,7 +305,7 @@ function App(props) {
     
     }
     
-    function updateEntry(name, i, j, val, tempMatrix = null) {
+    const updateEntry = (name, i, j, val, tempMatrix = null) => {
         if (tempMatrix === null)
             tempMatrix = [...matrices[name]]
 
@@ -317,7 +328,7 @@ function App(props) {
          
     }
     
-    function addCols(name, numToAdd, update = true) {
+    const addCols = (name, numToAdd, update = true) => {
         //copy matrix
         const tempMatrix = [...matrices[name]];
 
@@ -334,7 +345,7 @@ function App(props) {
         return tempMatrix;
     }
 
-    function addRows(name, numToAdd, update = true) {
+    const addRows = (name, numToAdd, update = true) => {
         const tempMatrix = [...matrices[name]];
 
 
@@ -349,7 +360,7 @@ function App(props) {
         return tempMatrix; 
     }
 
-    function addRowsAndCols(name, rowsToAdd, colsToAdd, update = true) {
+    const addRowsAndCols = (name, rowsToAdd, colsToAdd, update = true) => {
         const tempMatrix = [...matrices[name]];
 
         for (let i = 0; i < tempMatrix.length; i++) {
@@ -370,7 +381,7 @@ function App(props) {
     }
     
     //functions related to matrix actions
-    function mirrorRowsCols(name, mirrorRowsToCols) { 
+    const mirrorRowsCols = (name, mirrorRowsToCols) => { 
 
         if (matrices[name].length > matrices[name][0].length) { //more rows than cols 
             var symmetric = addCols(name, matrices[name].length - matrices[name][0].length, false);
@@ -394,7 +405,7 @@ function App(props) {
         setMatrix(symmetric, name); 
     }
     
-    function transpose(name) {
+    const transpose = (name) => {
         const oldMatrix = matrices[name];
         const transposed = new Array(oldMatrix[0].length).fill([]);
 
@@ -408,7 +419,7 @@ function App(props) {
         setMatrix(transposed, name); 
     }       
 
-    function randomMatrix(name, randomLow, randomHigh) {        
+    const randomMatrix = (name, randomLow, randomHigh) => {        
         if (randomLow <= randomHigh) {
             const tempMatrix = [...matrices[name]];
             
@@ -425,59 +436,62 @@ function App(props) {
 
     }
 
-    function reshapeMatrix(name, rowCount, colCount) {
-        const currentMatrix = matrices[name];
-        const numElements = (currentMatrix.length - 1) * (currentMatrix[0].length - 1);
-      
-        if (isNaN(rowCount) && isNaN(colCount)) {
-            alert("Enter rows and columns to reshape. The new rows and columns must have the same product as the current rows and columns.");
-        } else if (isNaN(rowCount)) {
-            if (numElements % colCount !== 0) {
-                alert(`Invalid number of columns. ${colCount} is not a multiple of ${numElements}`);
+    const reshapeMatrix = (name, rowCount, colCount) => {
+        const currentMatrix = matrices[name];      
+        debugger;
+        if (isNaN(rowCount) || isNaN(colCount)) { //one is empty or NaN
+            if (isNaN(rowCount) && isNaN(colCount)) {
+                alert("Enter rows and columns to reshape");
                 return;
-            } else {
-                rowCount = numElements / colCount;
-            }
-            
-            colCount = numElements / rowCount;
-        } else if (isNaN(colCount)) {
-            if (numElements % rowCount !== 0) {
-                alert(`Invalid number of rows. ${rowCount} is not a multiple of ${numElements}`);
-                return;
-            } else {
-                colCount = numElements / rowCount;
-            }
-            
-            rowCount = numElements / colCount;
-        } else if (numElements !== colCount * rowCount) {
-            alert(`Invalid dimensions. ${rowCount} * ${colCount} is not equal to ${numElements}`);
-            return;
-            
+            } else if (!isNaN(rowCount)) { //infer cols bsed on rows
+                if (elements.length % rowCount !== 0) {
+                    alert("Invalid number of rows");
+                    return;
+                }
+                
+                colCount = elements.length / rowCount;
+            } else if (!isNaN(colCount)) { //infer rows based on cols
+                if (elements.length % colCount !== 0) {
+                    alert("Invalid number of columns");
+                    return;
+                }
+                
+                rowCount = elements.length / colCount;
+            } 
         }
 
-        const reshaped = Array(rowCount + 1).fill().map(()=>Array(colCount + 1).fill(""))
 
+        const reshaped = Array(rowCount + 1).fill([]).map(()=>Array(colCount + 1).fill(""))
+
+        //pointers for reshaped matrix
         var reshapedI = 0;
         var reshapedJ = 0;
 
 
-        for (let i = 0; i < currentMatrix.length - 1; i++)
+        //iterate through matrix and copy to reshaped
+        for (let i = 0; i < currentMatrix.length - 1; i++) {
             for (let j = 0; j < currentMatrix[0].length - 1; j++) {
-                reshaped[reshapedI][reshapedJ] = currentMatrix[i][j];
-
-                if (reshapedJ >= reshaped[0].length - 2) {
-                    reshapedJ = 0;
+                if (reshapedJ >= colCount) { //last col
+                    reshapedJ = 0; //wrap back to first col
                     reshapedI++;
-                } else {
-                    reshapedJ++;
                 }
+                
+                if (reshapedI >= rowCount)
+                    break; //reached end of reshaped matrix
+
+                reshaped[reshapedI][reshapedJ] = currentMatrix[i][j]; 
+
+                reshapedJ++;
             }
+            if (reshapedI >= rowCount)
+                break;
+        }
 
         setMatrix(reshaped, name);
 
     }
 
-    function fillEmpty(name, fillEmptyWithThis) {
+    const fillEmpty = (name, fillEmptyWithThis) => {
         const tempMatrix = [...matrices[name]];
        
         for (let i = 0; i < tempMatrix.length - 1; i++)
@@ -489,7 +503,7 @@ function App(props) {
         setMatrix(tempMatrix, name);
     }
 
-    function fillAll(name, fillAllWithThis) {
+    const fillAll = (name, fillAllWithThis) => {
         const tempMatrix = [...matrices[name]];
        
         for (let i = 0; i < tempMatrix.length - 1; i++)
@@ -500,7 +514,7 @@ function App(props) {
         setMatrix(tempMatrix, name);
     }
 
-    function fillDiagonal(name, fillDiagonalWithThis) {
+    const fillDiagonal = (name, fillDiagonalWithThis) => {
         const tempMatrix = [...matrices[name]];
        
         const smaller = Math.min(tempMatrix.length - 1,tempMatrix[0].length - 1);
@@ -512,7 +526,7 @@ function App(props) {
         setMatrix(tempMatrix, name);
     }
 
-    function createIdentity(size, name = null) {
+    const createIdentity = (size, name = null) => {
         if (name === null)
             name = generateUniqueName();
 
@@ -529,98 +543,95 @@ function App(props) {
     }
     
     //functions related to matrix selection
-    function editSelection(name, text, x1, y1, x2, y2) {
-        if (x1 > x2) {
+    const editSelection = (name, text, x1, y1, x2, y2) => {
+        if (x1 > x2) { //x1 to smaller
             var temp = x1;
             x1 = x2;
             x2 = temp;
         }
 
-        if (y1 > y2) {
+        if (y1 > y2) { //y1 to smaller
             temp = y1;
             y1 = y2;
             y2 = temp;
         }
 
         const matrix = [...matrices[name]];
-        console.log(x1 + " " + x2)
-        console.log(y1 + " " + y2)
+
         for (let i = x1; i <= x2; i++)
             for (let j = y1; j <= y2; j++)
-                if (text === 8)
-                    matrix[i][j] = matrix[i][j].substring(0, matrix[i][j].length - 1);
+                if (text === 8) //backspace
+                    matrix[i][j] = matrix[i][j].substring(0, matrix[i][j].length - 1); //remove last char
                 else
                     matrix[i][j] += text;
 
         setMatrix(matrix, name);
     }
 
-    function spliceMatrix(name, x1, y1, x2, y2, newName = "") {
+    const spliceMatrix = (name, x1, y1, x2, y2, newName = "") => {
         if (newName === "")
-            newName = generateUniqueName();
+            newName = generateUniqueName(); //if no name is provided, generate a unique one
 
-        if (x1 > x2) {
+        if (x1 > x2) { //x1 to smaller
             var temp = x1;
             x1 = x2;
             x2 = temp;
         }
 
-        if (y1 > y2) {
+        if (y1 > y2) { //y1 to smaller
             temp = y1;
             y1 = y2;
             y2 = temp;
         }
 
 
-        const spliced = Array(x2 - x1 + 2).fill().map(()=>Array(y2 - y1 + 2).fill(""))
+        const spliced = Array(x2 - x1 + 2).fill().map(()=>Array(y2 - y1 + 2).fill("")) //new matrix of appropriate size
         const matrix = matrices[name];
 
-        for (let i = x1; i <= x2; i++)
+        for (let i = x1; i <= x2; i++) //deep copy
             for (let j = y1; j <= y2; j++)
                 spliced[i - x1][j - y1] = matrix[i][j];
 
         setMatrix(spliced, newName);
     }
 
-    function pasteMatrix(name, splice, x1, y1, x2, y2,) {
+    const pasteMatrix = (name, splice, x1, y1, x2, y2,) => {
         if (splice === "") {
             alert("Pasted matrix name is empty");
             return;
         }
 
-        if (x1 > x2) {
+        if (x1 > x2) { //x1 to smaller
             var temp = x1;
             x1 = x2;
             x2 = temp;
         }
 
-        if (y1 > y2) {
+        if (y1 > y2) { //y1 to smaller
             temp = y1;
             y1 = y2;
             y2 = temp;
         }
 
 
-        const matrix = [...matrices[name]];
         const copyMatrix = matrices[splice];
+        const matrix = [...matrices[name]]; 
 
         if (x2 - x1 + 2 !== copyMatrix.length || y2 - y1 + 2 !== copyMatrix[0].length) {
             alert("Error: selection dimensions and pasted matrix dimensions must match.")
             return;
         }
         
-        for (let i = x1; i <= x2; i++)
+        for (let i = x1; i <= x2; i++) //paste into matrix
             for (let j = y1; j <= y2; j++)
                 matrix[i][j] = copyMatrix[i - x1][j - y1];
             
-
-        
 
         setMatrix(matrix, name);
     }
 
     //functions related to saving
-    function saveToLocalStorage() {
+    const saveToLocalStorage = () => {
         saving.current = true
         console.log(JSON.stringify(matrices))
         window.localStorage.setItem("matrices;", JSON.stringify(matrices))
@@ -628,14 +639,12 @@ function App(props) {
         window.localStorage.setItem("selectable;", selectable ? "1" : "0");
         window.localStorage.setItem("sparseValue;", sparseVal)
         saving.current = false
-
     }
 
 
-    function loadFromLocalStorage() {
+    const loadFromLocalStorage = () => {
         console.log("Loading from local storage...")
         try {
-            
             const matrices = localStorage.getItem("matrices;")
             console.log(matrices)
             if (matrices === null)
@@ -662,7 +671,7 @@ function App(props) {
 
     }
 
-    function updateUserInfo(username, token) {
+    const updateUserInfo = (username, token) => {
         setUsername(username);
         setToken(token);
 
@@ -703,15 +712,15 @@ function App(props) {
             return;
         }
 
-        const userMatrices = JSON.parse(response["matrix_data"]);
+        
+        const userMatrices = JSON.parse(response["matrix_data"]); //matrices saved in database
+        var localMatricesStr = localStorage.getItem("matrices;"); 
 
-        var localMatricesStr = localStorage.getItem("matrices;"); //if saving to local storage is disabled, this will be null
-
-        if (localMatricesStr === null) {
-            if (matrices === null)
+        if (localMatricesStr === null) { //saving to local storage is disabled so no matrices were found
+            if (matrices === null) //page is loading, so its null
                 localMatricesStr = null;
             else
-                localMatricesStr = JSON.stringify(matrices); //use matrices in memory. would be same as local if saving to local
+                localMatricesStr = JSON.stringify(matrices); //use matrices in memory
         }
 
         //if the local matries are default, trivial, or the same as the user's matrices, merging is unnecessary
@@ -731,8 +740,10 @@ function App(props) {
         } else {
             updateParameter("showMerge", true);
             setUserMatrices(userMatrices);
-            if (!matrices || saveToLocal)
+            
+            if (!matrices || saveToLocal) //if the page is loading, load from local storage if enabled.
                 loadFromLocalStorage();
+            //otherwise, the merge request was made after the page finished laoding, so don't re load from local storage
 
            
         }
@@ -752,7 +763,7 @@ function App(props) {
             })
         }).then((response) => {
            if (response.status === 413) {
-               if (!dataTooLarge) {
+               if (!dataTooLarge) { //only show the alert the first time
                    alert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.");
                 }
                 setDataTooLarge(true)
@@ -761,7 +772,7 @@ function App(props) {
 
             setDataTooLarge(false)
             if (response.status === 401) {
-                return null;
+                return null; //unauthorized
             } else {
                 console.log("Matrices saved to account")
                 return response.json()
@@ -771,7 +782,7 @@ function App(props) {
             console.log(error)
         })
 
-        if (response === null) {
+        if (response === null) { //unauthorized
             console.log("Unauthorized");
             updateUserInfo(null, null);
             return;
@@ -809,86 +820,85 @@ function App(props) {
             setToken(response["token"]);
         }
     }
-
    
     if (matrices)
         return (
-            <div> 
-                <Navigation 
-                    matrices = {matrices} 
-                    mirror = {mirror}
-                    selection = {selection}
-                    sparseVal = {sparseVal}
-                    selectable = {selectable}
+        <div> 
+            <Navigation 
+                matrices = {matrices} 
+                mirror = {mirror}
+                selection = {selection}
+                sparseVal = {sparseVal}
+                selectable = {selectable}
 
-                    setMatrix = {setMatrix}
-                    deleteMatrix = {deleteMatrix}
-                    renameMatrix = {renameMatrix}
-                    copyMatrix = {copyMatrix}
-                    resizeMatrix = {resizeMatrix}
-                    updateParameter = {updateParameter}
-                    saveToLocalStorage = {saveToLocalStorage}
-                    loadFromLocalStorage = {loadFromLocalStorage}
-                    deleteAllMatrices = {deleteAllMatrices}
+                setMatrix = {setMatrix}
+                deleteMatrix = {deleteMatrix}
+                renameMatrix = {renameMatrix}
+                copyMatrix = {copyMatrix}
+                resizeMatrix = {resizeMatrix}
+                updateParameter = {updateParameter}
+                saveToLocalStorage = {saveToLocalStorage}
+                loadFromLocalStorage = {loadFromLocalStorage}
+                deleteAllMatrices = {deleteAllMatrices}
 
-                    createIdentity = {createIdentity}
+                createIdentity = {createIdentity}
 
-                    username = {username}
-                    updateUserInfo = {updateUserInfo}
-                    saveToLocal = {saveToLocal}
-                    setSaveToLocal = {setSaveToLocal}
+                username = {username}
+                updateUserInfo = {updateUserInfo}
+                saveToLocal = {saveToLocal}
+                setSaveToLocal = {setSaveToLocal}
 
 
-                    setSelection = {setSelection}
-                    setMatrices = {setMatrices}
+                setSelection = {setSelection}
+                setMatrices = {setMatrices}
 
-                    token = {token}
+                token = {token}
 
-                    showMerge = {showMerge}
-                    setShowMerge = {setShowMerge}
-                    userMatrices = {userMatrices}
-                    
-                    dataTooLarge = {dataTooLarge}
-                />
+                showMerge = {showMerge}
+                setShowMerge = {setShowMerge}
+                userMatrices = {userMatrices}
+                
+                dataTooLarge = {dataTooLarge}
+            />
 
-         
-
-                {(selection in matrices) ? 
-                <MatrixEditor
-                    matrix = {matrices[selection]} 
-                    matrices = {matrices}
-                    name = {selection} 
-                    mirror = {mirror}
-                    sparseVal = {sparseVal}
-                    updateParameter = {updateParameter}
-                    
-                    setMatrix = {setMatrix}
-                    generateUniqueName = {generateUniqueName}
-
-                    fillEmpty = {fillEmpty}
-                    reshapeMatrix = {reshapeMatrix}
-                    randomMatrix = {randomMatrix}
-                    transpose = {transpose}
-                    mirrorRowsCols = {mirrorRowsCols}
-                    addRowsAndCols = {addRowsAndCols}
-                    addRows = {addRows}
-                    addCols = {addCols}
-                    updateEntry = {updateEntry}
-                    tryToDelete = {tryToDelete}
-                    fillAll = {fillAll}
-                    fillDiagonal = {fillDiagonal}
-
-                    spliceMatrix = {spliceMatrix}
-                    pasteMatrix = {pasteMatrix}
-                    editSelection = {editSelection}
-                    selectable = {selectable}
-                /> : null
-                } 
         
 
-            </div>);
+            {(selection in matrices) ? 
+            <MatrixEditor
+                matrix = {matrices[selection]} 
+                matrices = {matrices}
+                name = {selection} 
+                mirror = {mirror}
+                sparseVal = {sparseVal}
+                updateParameter = {updateParameter}
+                
+                setMatrix = {setMatrix}
+                generateUniqueName = {generateUniqueName}
+
+                fillEmpty = {fillEmpty}
+                reshapeMatrix = {reshapeMatrix}
+                randomMatrix = {randomMatrix}
+                transpose = {transpose}
+                mirrorRowsCols = {mirrorRowsCols}
+                addRowsAndCols = {addRowsAndCols}
+                addRows = {addRows}
+                addCols = {addCols}
+                updateEntry = {updateEntry}
+                tryToDelete = {tryToDelete}
+                fillAll = {fillAll}
+                fillDiagonal = {fillDiagonal}
+
+                spliceMatrix = {spliceMatrix}
+                pasteMatrix = {pasteMatrix}
+                editSelection = {editSelection}
+                selectable = {selectable}
+            /> : null
+            } 
+    
+
+        </div>);
     else
-        return <div></div>
+        return <div />
 
 }
 

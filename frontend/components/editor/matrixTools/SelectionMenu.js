@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import TextActionButton from "./TextActionButton";
 import styles from "./SelectionMenu.module.css"
 
-function SelectionMenu(props) {
+const SelectionMenu = (props) => {
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
 
-    function updateName(parameterName, updated) {
-        if (/^[A-Za-z_]*$/.test(updated))
+    const updateName = (parameterName, updated) => {
+        if (/^[A-Za-z_]*$/.test(updated)) // only update if chars are letters or underscores
             switch(parameterName) {
                 case "Save Selection as New Matrix: ":
                     setSpliceName(updated);
@@ -19,7 +19,7 @@ function SelectionMenu(props) {
             }
     }
     
-    function handleChange(e) {
+    const handleChange = (e) => {
         props.editSelection(props.name, 
                             e.target.value,
                             props.boxesSelected["startX"], 
@@ -30,7 +30,7 @@ function SelectionMenu(props) {
         e.target.value = "";
     }
 
-    function handleKeyDown(e) {
+    const handleKeyDown = (e) => {
         if (e.keyCode === 8) {
             props.editSelection(props.name, 
                 8,

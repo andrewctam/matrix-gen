@@ -1,7 +1,7 @@
 import React from 'react';
 
-function ParameterTextInput(props) {
-    function handleChange(e) {
+const ParameterTextInput = (props) =>{
+    const handleChange = (e) =>{
         props.updateParameter(props.id, e.target.value);
     }
 

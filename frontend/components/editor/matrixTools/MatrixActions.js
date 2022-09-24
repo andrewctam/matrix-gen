@@ -5,7 +5,7 @@ import TwoTextActionButton from './TwoTextActionButton';
 
 import styles from "./MatrixActions.module.css"
 
-function MatrixActions(props) {
+const MatrixActions = (props) => {
     const [randomLow, setRandomLow] = useState("1");
     const [randomHigh, setRandomHigh] = useState("10");
     const [reshapeRows, setReshapeRows] = useState("");
@@ -16,7 +16,7 @@ function MatrixActions(props) {
     
 
 
-    function updateParameter(parameterName, updated) {
+    const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
             case "Fill Empty With: ":
                 setFillEmptyWithThis(updated);
@@ -122,7 +122,7 @@ function MatrixActions(props) {
     </div>
 }
 
-function BasicActionButton(props) {
+const BasicActionButton = (props) => {
     return  <button 
                 className = "btn btn-primary" 
                 onClick={props.action}

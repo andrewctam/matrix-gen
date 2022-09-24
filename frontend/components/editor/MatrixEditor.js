@@ -10,7 +10,7 @@ import SelectionMenu from './matrixTools/SelectionMenu.js';
 
 import styles from "./MatrixEditor.module.css"
 
-function MatrixEditor(props) {
+const MatrixEditor = (props) => {
     const [boxesSelected, setBoxesSelected] = useState({
         "startX" : -1,
         'startY' : -1,
@@ -35,7 +35,7 @@ function MatrixEditor(props) {
         "quadrant": -1
     })}, [props.name]);
 
-    function toggleShown(e) {
+    const toggleShown = (e) => {
         setShowImport(false);
         setShowActions(false);
         setShowExport(false);
@@ -63,7 +63,7 @@ function MatrixEditor(props) {
         }
     }
 
-    function updateBoxesSelected(x1, y1, x2, y2, clear = false) {
+    const updateBoxesSelected = (x1, y1, x2, y2, clear = false) => {
         if (clear) {
             setBoxesSelected({
                 "startX" : -1,
@@ -181,6 +181,7 @@ function MatrixEditor(props) {
         }
 
 
+
         {showImport ? 
             <TextImport
                 generateUniqueName = {props.generateUniqueName}
@@ -226,7 +227,7 @@ function MatrixEditor(props) {
 
 }
 
-function ToggleButton(props) {
+const ToggleButton = (props) => {
     return <button id = {props.name} 
             className = {"btn " + (props.active ? "btn-info" : "btn-secondary")} 
             onClick = {props.action}>

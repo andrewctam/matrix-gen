@@ -1,7 +1,7 @@
 import React from 'react';
-function ParameterBoxInput(props) {
+const ParameterBoxInput = (props) =>{
     
-    function handleChange(e) {
+    const handleChange = (e) =>{
         props.updateParameter(props.id, e.target.checked)
     }
 

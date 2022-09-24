@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import ParameterBoxInput from '../inputs/ParameterBoxInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
 
-import Login from './Login';
+import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
 import SelectorButton from './buttons/SelectorButton';
 import MenuButton from './buttons/MenuButton';
 import TextActionButton from "../editor/matrixTools/TextActionButton"
 import styles from "./Navigation.module.css";
 
-function Navigation(props) {
+const Navigation = (props) => {
     const [selectors, setSelectors] = useState([]);
     const [searchName, setSearchName] = useState("");
     const [searchSize, setSearchSize] = useState("");
@@ -75,7 +75,7 @@ function Navigation(props) {
         // eslint-disable-next-line
     }, [props.matrices, props.selection, searchName, searchSize]);
 
-    function updatePresetParameter(parameterName, updated) {
+    const updatePresetParameter = (parameterName, updated) => {
         switch (parameterName) {
             case "Identity Matrix ":
                 if (/^-?[0-9 \s]*$/.test(updated))
@@ -85,20 +85,20 @@ function Navigation(props) {
             default: break;
         }
     }
-    function updateSearchName(e) {
+    const updateSearchName = (e) => {
         const updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated))
             setSearchName(updated);
     }
 
-    function updateSearchSize(e) {
+    const updateSearchSize = (e) => {
         const updated = e.target.value;
-        if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated))
+        if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) //only allow digits and one instance of "x"
             setSearchSize(updated);
     }
 
 
-    function verifySize(name, sizeFilters) {
+    const verifySize = (name, sizeFilters) => {
         const matrix = props.matrices[name];
         const rows = matrix.length - 1;
         const cols = matrix[0].length - 1;
@@ -110,11 +110,11 @@ function Navigation(props) {
 
     }
 
-    function closeTutorial() {
+    const closeTutorial = () => {
         setShowTutorial(false);
     }
 
-    function closeSaveMenu() {
+    const closeSaveMenu = () => {
         setShowSaveMenu(false);
     }
 
@@ -145,7 +145,7 @@ function Navigation(props) {
         <p onClick={() => { setShowSaveMenu(!showSaveMenu) }} className={styles.savingInfo}>{saving}</p>
 
         {showSaveMenu ?
-            <Login
+            <SaveMatrices
                 username={props.username}
                 updateUserInfo={props.updateUserInfo}
                 loadFromLocalStorage={props.loadFromLocalStorage}
@@ -218,8 +218,6 @@ function Navigation(props) {
                     {"Empty Element:"} <ParameterTextInput width={"30px"} text={props.sparseVal} id={"sparse"} updateParameter={props.updateParameter} />
                 </div> : null}
 
-
-
         </div>
 
 
@@ -229,6 +227,7 @@ function Navigation(props) {
 
             <div id="selectors" className="list-group"> {selectors} </div>
         </div>
+
 
         <div className={"col-sm-4 " + styles.info}>
             <div id="selectors" className="list-group">
@@ -270,8 +269,6 @@ function Navigation(props) {
                         action={props.deleteAllMatrices}
                     />
                     : null}
-
-
             </div>
         </div>
 

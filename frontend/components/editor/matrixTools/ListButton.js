@@ -2,7 +2,7 @@ import React from "react";
 
 import styles from "./ListButton.module.css";
 
-function ListButton(props) {
+const ListButton = (props) => {
     return <li>
         <button
             id={props.name}

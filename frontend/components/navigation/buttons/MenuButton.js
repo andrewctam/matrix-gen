@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-function MenuButton(props) {
+const MenuButton = (props) => {
 
     return <button type="button"
         className={`list-group-item list-group-item-${props.buttonStyle} selector-button`}

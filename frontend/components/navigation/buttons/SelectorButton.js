@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 
 import styles from "./SelectorButton.module.css"
 
-function SelectorButton(props) {
-    const [displaySize, setDisplaySize] = useState(realSize());
+const SelectorButton = (props) => {
     const [displayName, setDisplayName] = useState(props.name);
+    const [displaySize, setDisplaySize] = useState("");
 
-    function realSize() {
-        return (props.matrices[props.name].length - 1) + " x " +
-            (props.matrices[props.name][0].length - 1);
+    const realSize = () => {
+        return (props.matrices[props.name].length - 1) + " x " + (props.matrices[props.name][0].length - 1);
     }
 
-    function updateMatrixSelection() {
+    const updateMatrixSelection = () => {
         props.setSelection(props.name);
     }
 
-    function renameMatrix(e) {
+    const renameMatrix = (e) => {
         const updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated)) {
             setDisplayName(updated);
@@ -23,14 +22,14 @@ function SelectorButton(props) {
 
     }
 
-    function handleFocus(e) {
+    const handleFocus = (e) => {
         const rows = props.matrices[props.name].length - 1
         const cols = props.matrices[props.name][0].length - 1
 
         setDisplaySize((rows) + " x " + cols);
     }
 
-    function resizeMatrix(e) {
+    const resizeMatrix = (e) => {
         const updated = e.target.value;
 
         if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) {
@@ -38,7 +37,7 @@ function SelectorButton(props) {
         }
     }
 
-    function pushNewName() {
+    const pushNewName = () => {
         if (displayName !== props.name)
             if (displayName === "") {
                 alert("The name can not be blank!")
@@ -53,7 +52,7 @@ function SelectorButton(props) {
             }
     }
 
-    function pushNewSize() {
+    const pushNewSize = () => {
         if (/[0-9]* ?x ?[0-9]*/.test(displaySize)) {
             const rows = parseInt(displaySize.substring(0, displaySize.indexOf("x")));
             const cols = parseInt(displaySize.substring(displaySize.indexOf("x") + 1));
@@ -72,7 +71,7 @@ function SelectorButton(props) {
         }
     }
 
-    function handleKeyDown(e) {
+    const handleKeyDown = (e) => {
         if (e.keyCode === 13) {
             e.target.blur();
         }

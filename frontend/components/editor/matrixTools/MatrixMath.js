@@ -1,18 +1,19 @@
 import React, {useState} from 'react';
 import styles from "./MatrixMath.module.css"
 
-function MatrixMath(props) {    
+const MatrixMath = (props) => {     
     const[expression, setExpression] = useState("");
 
 
-    function handleChange(e) {
+    const handleChange = (e) => {
         var updated = e.target.value
         if (/^[a-zA-Z0-9._*^+\-\s()]*$/.test(updated)) {
             setExpression(updated);
         }   
     }
 
-    function calculate() {
+    const calculate = (e) => {
+        e.preventDefault();
         var postfix = infixToPostfix(expression);
         var matrix = evaluatePostfix(postfix);
 
@@ -22,7 +23,7 @@ function MatrixMath(props) {
 
     }
 
-    function infixToPostfix(str) {
+    const infixToPostfix = (str) => {
         const output = [];
         const stack = [];
         
@@ -121,60 +122,60 @@ function MatrixMath(props) {
 
     }
 
-    function orderOfOperations(operator) {
+    const orderOfOperations = (operator) => {
         if (operator === "+" || operator === "-")
             return 0
         if (operator === "*" || operator === "^")
             return 1
     }
     
-    function matrixPower(a, pow) {
+    const matrixPower = (a, pow) => {
         if (typeof(pow) !== "number") {
             if (typeof(a) !== "object")
-                return null;
+                return null; //num to matrix 2 ^ A is invalid
         } else if (typeof(a) === "number") {
-            return Math.pow(a, pow);
+            return Math.pow(a, pow); //num to num 2 ^ 2
         }
- 
-        var product = JSON.parse(JSON.stringify(a));
-        for (let i = 0; i < a.length; i++)
-            for (let j = 0; j < a.length; j++)
-               product[i][j] = a[i][j];
         
-        for (i = 1; i < pow; i++)
+        //matrix to num A ^ 2
+        
+        //deep copy matrix
+        var product = JSON.parse(JSON.stringify(a));
+        
+        for (let i = 1; i < pow; i++)
             product = matrixMultiplication(product, a);
         return product
     }
 
-    function matrixMultiplication(a, b) {
+    const matrixMultiplication = (a, b) => {
         if (typeof(a) === "number" && typeof(b) === "number") {
             return a * b; //scalar multiplication
         }
         else if (typeof(a) === "object" && typeof(b) === "number") {
-            var product = JSON.parse(JSON.stringify(a));
+            var product = JSON.parse(JSON.stringify(a)); //deep copy matrix
+
             for (let i = 0; i < a.length - 1; i++)
                 for (let j = 0; j < a[0].length - 1; j++)
                 product[i][j] = b * a[i][j]; //matrix scalar multiplication
 
             return product
         } else if (typeof(a) === "number" && typeof(b) === "object") {
-            product = JSON.parse(JSON.stringify(b));
-            for (i = 0; i < b.length - 1; i++)
-                for (j = 0; j < b[0].length - 1; j++)
+            product = JSON.parse(JSON.stringify(b)); //deep copy matrix
+            for (let i = 0; i < b.length - 1; i++)
+                for (let j = 0; j < b[0].length - 1; j++)
                 product[i][j] = a * b[i][j]; //matrix scalar multiplication
 
             return product
         }
 
         //matrix multiplication
-
         if (a.length !== b[0].length)
             return null;
 
-        product = []
-        for (i = 0; i < a.length - 1; i++) {
+        product = [] //n^3 matrix multiplication
+        for (let i = 0; i < a.length - 1; i++) {
             var row = []
-            for (j = 0; j < b[0].length - 1; j++)  {
+            for (let j = 0; j < b[0].length - 1; j++)  {
                 var sum = 0
                 for (let k = 0; k < b.length - 1; k++) {
                     if (a[i][k] === "")
@@ -200,8 +201,8 @@ function MatrixMath(props) {
         return product
     }        
     
-    function matrixAddition(a, b) {
-        if (a.length !== b.length || a[0].length !== b[0].length) {
+    const matrixAddition = (a, b) => {
+        if (a.length !== b.length || a[0].length !== b[0].length) { //check dimensions
             return null;
         }
 
@@ -210,11 +211,12 @@ function MatrixMath(props) {
         for (let i = 0; i < a.length - 1; i++) {
             const row = []
             for (let j = 0; j < b[0].length - 1; j++)  {
+                //if either value is empty, use sparse value
                 if (a[i][j] === "")
                     var aVal = parseInt(props.sparseVal)
                 else
                     aVal = parseInt(a[i][j])
-                         
+                        
                 if (b[i][j] === "")
                     var bVal = parseInt(props.sparseVal)
                 else
@@ -230,7 +232,7 @@ function MatrixMath(props) {
         return matrixSum
     }  
 
-    function matrixSubtraction(a, b) {
+    const matrixSubtraction = (a, b) => { //same as addition but with subtraction operator
         if (a.length !== b.length || a[0].length !== b[0].length)
             return null;
 
@@ -256,12 +258,11 @@ function MatrixMath(props) {
         }
 
         matrixDiff.push(Array(a.length).fill(""))
-
         return matrixDiff
     }  
 
 
-    function evaluatePostfix(postFix) {
+    const evaluatePostfix = (postFix) => {
         const stack = []
         for (let i = 0; i < postFix.length; i++) {
             switch(postFix[i]) {
@@ -333,11 +334,11 @@ function MatrixMath(props) {
 
     return <div className = {"row " + styles.matrixMathContainer}>
         
-        <div className = "col-sm-3">
+        <form onSubmit = {calculate} className = "col-sm-3">
             <input type="text" className = {styles.mathInput} value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>
             <br/>
             <button className = {"btn btn-secondary " + styles.mathEvalButton} onClick={calculate}>Evaluate Expression</button>
-        </div>
+        </form>
 
         <div className = "col-sm-9">
             <ul className = {styles.mathInfo}>

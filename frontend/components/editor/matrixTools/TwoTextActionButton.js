@@ -2,7 +2,7 @@ import React from "react";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
 import styles from "./TextActionButton.module.css"
 
-function TwoTextActionButton(props) {
+const TwoTextActionButton = (props) => {
     return   <div className = {styles.textActionButton}>
             <button
                 className = "btn btn-primary"

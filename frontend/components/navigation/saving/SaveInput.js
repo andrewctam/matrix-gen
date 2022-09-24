@@ -1,6 +1,6 @@
-import styles from "./Login.module.css";
+import styles from "./SaveMatrices.module.css";
 
-const LoginInput = (props) => {
+const SaveInput = (props) => {
     return (
         <div>
             <label htmlFor={props.name} className={styles.loginLabel}>{props.name}</label>
@@ -16,4 +16,4 @@ const LoginInput = (props) => {
         </div>)
 
 }
-export default LoginInput;
+export default SaveInput;

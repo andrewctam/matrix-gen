@@ -3,11 +3,9 @@ import Box from './Box.js';
 
 import styles from "./Table.module.css"
 
-function Table(props) {
-
-
+const Table = (props) => {
     //add Row/Col/Both and update matrix[row][col]
-    function addRow(row, col, updated) {
+    const addRow = (row, col, updated) => {
         if (props.mirror) {
             const cols = props.matrix[0].length;
             const rows = props.matrix.length
@@ -22,7 +20,7 @@ function Table(props) {
         props.updateEntry(props.name, row, col, updated, tempMatrix);
     }
 
-    function addCol(row, col, updated) {
+    const addCol = (row, col, updated) => {
         
         if (props.mirror) {
             const cols = props.matrix[0].length;
@@ -39,7 +37,7 @@ function Table(props) {
     }
 
 
-    function addBoth(row, col, updated) {
+    const addBoth = (row, col, updated) => {
         if (props.mirror) {
             const cols = props.matrix[0].length;
             const rows = props.matrix.length
@@ -55,7 +53,7 @@ function Table(props) {
         props.updateEntry(props.name, row, col, updated, tempMatrix);
     }
 
-    function keyDown(row, col, e) {
+    const keyDown = (row, col, e) => {
         if (e.keyCode === 16) { //shift
             if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1))
                 props.addRowsAndCols(props.name, 1, 1)
@@ -118,7 +116,7 @@ function Table(props) {
         }
     }
 
-    function inSelection(x, y) {
+    const inSelection = (x, y) => {
         switch(props.boxesSelected["quadrant"]) {
             case -1:
                 return false;
