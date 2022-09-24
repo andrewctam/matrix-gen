@@ -221,7 +221,7 @@ const Navigation = (props) => {
             <input className={styles.nameSearchBar} onChange={updateSearchName} value={searchName} placeholder='Search by Name'></input>
             <input className={styles.sizeSearchBar} onChange={updateSearchSize} value={searchSize} placeholder='Search by Size'></input>
 
-            <div id="selectors" className="list-group"> {selectors} </div>
+            <div id="selectors" className={"list-group " + styles.matrixSelectorContainer}> {selectors} </div>
         </div>
 
 

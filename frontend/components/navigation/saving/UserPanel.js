@@ -135,12 +135,12 @@ const UserPanel = (props) => {
         })
 
 
-        if (response === 403) { //access token expired 
+        if (response === 401) { //access token expired 
             if (await props.refreshTokens()) 
                 return handleChangePassword(); //retry
             else //refresh token invalid
                 props.setUserInfo(null, null, null);
-        } else if (response == 401) { //Wrong Password
+        } else if (response == 403) { //Wrong Password
             setCurrentPasswordError("Incorrect current password")
         } else {
             setNewPasswordSuccess("Password successfully changed")

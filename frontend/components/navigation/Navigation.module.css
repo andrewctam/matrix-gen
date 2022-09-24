@@ -57,3 +57,7 @@
   padding: 3px;
   border-bottom: 1px solid rgb(39, 37, 37);
 }
+
+.matrixSelectorContainer {
+  height: 130px;
+}

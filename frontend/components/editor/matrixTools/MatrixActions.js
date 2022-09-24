@@ -59,12 +59,10 @@ const MatrixActions = (props) => {
             name = {"Transpose"}
         />
         <BasicActionButton 
-            id = "rowsToCols"
             action={() => {props.mirrorRowsCols(props.name, true)}}
             name = {"Mirror Rows Across Diagonal"}
         />
         <BasicActionButton 
-            id = "colsToRows"
             action={() => {props.mirrorRowsCols(props.name, false)}}
             name = {"Mirror Columns Across Diagonal"}
         />

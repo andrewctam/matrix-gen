@@ -91,7 +91,7 @@ const SelectorButton = (props) => {
 
 
     return <button type="button"
-        className={"list-group-item list-group-item-action" + ((props.active) ? " active" : "")}
+        className={styles.matrixSelector +  " list-group-item list-group-item-action" + ((props.active) ? " active" : "")}
         onClick={updateMatrixSelection}>
 
         <input
