@@ -5,7 +5,6 @@ const ParameterTextInput = (props) =>{
         props.updateParameter(props.id, e.target.value);
     }
 
-
     return <input
         type= "text" 
         style = {{width: props.width}} 

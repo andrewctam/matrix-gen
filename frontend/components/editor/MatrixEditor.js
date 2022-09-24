@@ -109,8 +109,6 @@ const MatrixEditor = (props) => {
     }
 
 
-    const showTable = (props.matrix.length <= 51 && props.matrix[0].length <= 51);
-
 
     return (
     <div className = {styles.matrixEditor} onMouseUp = {() => {if (mouseDown) setMouseDown(false)}} >
@@ -198,9 +196,10 @@ const MatrixEditor = (props) => {
         
 
 
-    {showTable ? 
+    {(props.matrix.length <= 51 && props.matrix[0].length <= 51) ? 
         <Table                 
             mirror = {props.mirror}
+            numbersOnly = {props.numbersOnly}
             name = {props.name}
             matrix = {props.matrix} 
             addCols = {props.addCols}
@@ -214,6 +213,7 @@ const MatrixEditor = (props) => {
             updateBoxesSelected = {updateBoxesSelected}
             mouseDown = {mouseDown}
             setMouseDown = {setMouseDown}
+            editSelection = {props.editSelection}
         /> 
         : <div className = {styles.bigMatrixInfo}>
             Matrices larger than 50 x 50 are too big to be displayed<br/>

@@ -21,9 +21,9 @@ const Navigation = (props) => {
     const [identitySize, setIdentitySize] = useState(3);
 
     useEffect(() => {
-        if (window.localStorage.getItem("firstVisit;") === null) {
+        if (window.localStorage.getItem("First Visit") === null) {
             setShowTutorial(true);
-            window.localStorage.setItem("firstVisit;", "0");
+            window.localStorage.setItem("First Visit", "0");
         }
     }, [])
 
@@ -208,9 +208,10 @@ const Navigation = (props) => {
 
             {showSettings ?
                 <div className={styles.settingsMenu}>
-                    <ParameterBoxInput isChecked={props.mirror} id={"mirror"} name={"mirror"} text={"Mirror Inputs"} updateParameter={props.updateParameter} />
-                    <ParameterBoxInput isChecked={props.selectable} id={"selectable"} name={"selectable"} text={"Enable Selection"} updateParameter={props.updateParameter} />
-                    {"Empty Element:"} <ParameterTextInput width={"30px"} text={props.sparseVal} id={"sparse"} updateParameter={props.updateParameter} />
+                    <ParameterBoxInput isChecked={props.mirror} name={"Mirror Inputs"} updateParameter={props.updateParameter} />
+                    <ParameterBoxInput isChecked={!props.selectable} name={"Disable Selection"} updateParameter={props.updateParameter} />
+                    <ParameterBoxInput isChecked={props.numbersOnly} name={"Numbers Only Input"} updateParameter={props.updateParameter} />
+                    {"Empty Element:"} <ParameterTextInput width={"30px"} text={props.sparseVal} id={"Empty Element"} updateParameter={props.updateParameter} />
                 </div> : null}
 
         </div>

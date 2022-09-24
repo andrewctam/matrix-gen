@@ -11,6 +11,7 @@ const App = (props) => {
     const [mirror, setMirror] = useState(false);
     const [selectable, setSelectable] = useState(true);
     const [saveToLocal, setSaveToLocal] = useState(false);
+    const [numbersOnly, setNumbersOnly] = useState(false);
     
     const [username, setUsername] = useState(null);
     
@@ -33,32 +34,33 @@ const App = (props) => {
         
         if (username !== null) {
             setUsername(username);
-        } else if (localStorage.getItem("matrices;") !== null) {
+        } else if (localStorage.getItem("matrices") !== null) {
             loadFromLocalStorage();
-            updateParameter("showMerge", false);
+            updateParameter("Show Merge", false);
         } else {
             setMatrices( {
                 "A": [["", ""], ["", ""]]
             });;
             setSelection("A");
-            updateParameter("showMerge", false);
+            updateParameter("Show Merge", false);
         }
 
-        setSaveToLocal(window.localStorage.getItem("saveToLocal;") === "1");
-        setMirror(window.localStorage.getItem("mirror;") === "1");
+        setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
+        setMirror(window.localStorage.getItem("Mirror Inputs") === "1");
+        setNumbersOnly(window.localStorage.getItem("Numbers Only Input") === "1");
 
-        const sparse = window.localStorage.getItem("sparseValue;");
+        const sparse = window.localStorage.getItem("Empty Element");
         if (sparse !== null)
             setSparseVal(sparse)
         else
             setSparseVal("0")
 
-        const selectable = window.localStorage.getItem("selectable;");
-        
-        if (selectable === null)
+        const disableSelection = window.localStorage.getItem("Disable Selection");
+
+        if (disableSelection === null)
             setSelectable(true);
         else
-            setSelectable(selectable === "1");
+            setSelectable(disableSelection === "0");
 
         
     }, []);
@@ -89,29 +91,35 @@ const App = (props) => {
     //used for updating state and local storage
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
-            case "sparse":
+            case "Empty Element":
                 setSparseVal(updated);
-                window.localStorage.setItem("sparseValue;", updated); 
+                window.localStorage.setItem("Empty Element", updated); 
                 break;
-            case "mirror":
+            case "Mirror Inputs":
                 setMirror(updated);  
-                window.localStorage.setItem("mirror;", updated ? "1" : "0");
+                window.localStorage.setItem("Mirror Inputs", updated ? "1" : "0");
                 break; 
-            case "selectable":
-                setSelectable(updated);
-                window.localStorage.setItem("selectable;", updated ? "1" : "0");
+            case "Disable Selection":
+                setSelectable(!updated);
+                window.localStorage.setItem("Disable Selection", updated ? "1" : "0");
                 break;
-            case "saveToLocal":
+            case "Save To Local":
                 setSaveToLocal(updated);
-                window.localStorage.setItem("saveToLocal;", updated ? "1" : "0");                
+                window.localStorage.setItem("Save To Local", updated ? "1" : "0");                
                 if (!updated)
-                    localStorage.removeItem("matrices;");
+                    localStorage.removeItem("matrices");
 
                 break;
+            case "Numbers Only Input":
+                setNumbersOnly(updated);
+                window.localStorage.setItem("Numbers Only Input", updated ? "1" : "0");
                 
-            case "showMerge":
+                break;
+
+                
+            case "Show Merge":
                 setShowMerge(updated);
-                window.localStorage.setItem("showMerge;", updated ? "1" : "0");
+                window.localStorage.setItem("Show Merge", updated ? "1" : "0");
                 break;
 
             default: 
@@ -181,7 +189,7 @@ const App = (props) => {
             setSelection("0");
             setMatrices({});
 
-            localStorage.removeItem("matrices;");     
+            localStorage.removeItem("matrices");     
         }
 
     }
@@ -633,10 +641,10 @@ const App = (props) => {
     const saveToLocalStorage = () => {
         saving.current = true
         console.log(JSON.stringify(matrices))
-        window.localStorage.setItem("matrices;", JSON.stringify(matrices))
-        window.localStorage.setItem("saveToLocal;", saveToLocal ? "1" : "0")
-        window.localStorage.setItem("selectable;", selectable ? "1" : "0");
-        window.localStorage.setItem("sparseValue;", sparseVal)
+        window.localStorage.setItem("matrices", JSON.stringify(matrices))
+        window.localStorage.setItem("Save To Local", saveToLocal ? "1" : "0")
+        window.localStorage.setItem("Disable Selection;", selectable ? "1" : "0");
+        window.localStorage.setItem("Empty Element", sparseVal)
         saving.current = false
     }
 
@@ -644,8 +652,8 @@ const App = (props) => {
     const loadFromLocalStorage = () => {
         console.log("Loading from local storage...")
         try {
-            const matrices = localStorage.getItem("matrices;")
-            console.log(matrices)
+            const matrices = localStorage.getItem("matrices")
+            console.log("Found: " + matrices)
             if (matrices === null)
                 throw new Error("No matrices found in local storage");
 
@@ -659,8 +667,7 @@ const App = (props) => {
 
         } catch (error) {
             console.log(error)
-            console.log("Error loading.")
-            localStorage.removeItem("matrices;");
+            localStorage.removeItem("matrices");
 
             setMatrices( {
                 "A": [["", ""], ["", ""]]
@@ -711,19 +718,14 @@ const App = (props) => {
             if (await refreshTokens()) { 
                 return getMatrixData(); //retry
             } else { //refresh token invalid
-                console.log("Unauthorized"); 
-                updateUserInfo(null, null, null);
-
-                if (matrices === null)
-                    loadFromLocalStorage();
-
+                console.log("Unauthorized. Refresh token invalid."); 
                 return;
             }
         }
 
         
         const userMatrices = JSON.parse(response["matrix_data"]); //matrices saved in database
-        var localMatricesStr = localStorage.getItem("matrices;"); 
+        var localMatricesStr = localStorage.getItem("matrices"); 
 
         if (localMatricesStr === null) { //saving to local storage is disabled so no matrices were found
             if (matrices === null) //page is loading, so its null
@@ -739,7 +741,7 @@ const App = (props) => {
                                 localMatricesStr === response["matrix_data"])
         
         if (mergeUnnecessary)  { 
-            updateParameter("showMerge", false);
+            updateParameter("Show Merge", false);
             setMatrices(userMatrices)
             if (Object.keys(userMatrices).length > 0)
                 setSelection(Object.keys(userMatrices)[0])
@@ -747,7 +749,7 @@ const App = (props) => {
                 setSelection("0");
            
         } else {
-            updateParameter("showMerge", true);
+            updateParameter("Show Merge", true);
             setUserMatrices(userMatrices);
             
             if (!matrices || saveToLocal) //if the page is loading, load from local storage if enabled.
@@ -795,8 +797,7 @@ const App = (props) => {
             if (await refreshTokens()) { 
                 return updateAccountMatrices(); //retry
             } else { //refresh token invalid
-                console.log("Unauthorized");
-                updateUserInfo(null, null, null);
+                console.log("Unauthorized. Refresh token invalid.");
                 return;
             }
         }
@@ -841,6 +842,7 @@ const App = (props) => {
                 matrices = {matrices} 
                 mirror = {mirror}
                 selection = {selection}
+                numbersOnly = {numbersOnly}
                 sparseVal = {sparseVal}
                 selectable = {selectable}
 
@@ -882,6 +884,7 @@ const App = (props) => {
                 name = {selection} 
                 mirror = {mirror}
                 sparseVal = {sparseVal}
+                numbersOnly = {numbersOnly}
                 updateParameter = {updateParameter}
                 
                 setMatrix = {setMatrix}
@@ -904,6 +907,8 @@ const App = (props) => {
                 pasteMatrix = {pasteMatrix}
                 editSelection = {editSelection}
                 selectable = {selectable}
+
+                
             /> : null
             } 
     

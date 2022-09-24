@@ -1,36 +1,26 @@
 import React from 'react';
 import styles from "./Box.module.css"
 const Box = (props) => {
-    const handleAddRow = (e) => {
-        props.addRow(props.row, props.col, e.target.value);
-    }
-    const handleAddCol = (e) => {
-        props.addCol(props.row, props.col, e.target.value);
-    }
-    const handleAddBoth = (e) => {
-        props.addBoth(props.row, props.col, e.target.value);
-    }
-    const handleUpdate = (e) => {  
-        props.updateEntry(props.name, props.row, props.col, e.target.value);
-    }
-    const handleKeyDown = (e) => {
-        props.keyDown(props.row, props.col, e);
-    }
+
 
     const handleMouseDown = () => {
+        //set the start of the selection
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             props.setMouseDown(true)
         } 
     }
     const handleFocus = (e) => {
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
+            //select this one box
             props.updateBoxesSelected(props.row, props.col, props.row, props.col);
         } else {
+            //no selection for the last row/col
             props.updateBoxesSelected(-1, -1, -1, -1, true);
         }
     }
 
-    const handleEnter = (e) => {
+    const handleMouseEnter = (e) => {
+        //if mouse is enters and is down (i.e. dragging) set this to the end of the selection
         if (props.mouseDown && props.rows !== props.row + 1 && props.cols !== props.col + 1)
             props.updateBoxesSelected(-1, -1, props.row, props.col);
     }
@@ -68,18 +58,21 @@ const Box = (props) => {
 
     return <td className = {styles.box} style = {specialStyle} >
         <input 
+            type = {props.numbersOnly ? "number" : "text"}
+            pattern = {props.numbersOnly ? "[0-9]*" : null}
             autoComplete = "off" 
             id = {props.row + ":" + props.col} 
             value = {props.val} 
             tabIndex = {props.row !== 0 && lastCol ? -1 : ""} 
-            onChange = {(lastRow && lastCol ? handleAddBoth :
-                                    lastRow ? handleAddRow :
-                                    lastCol ? handleAddCol :
-                                              handleUpdate)} 
+            onChange = {(lastRow && lastCol ? (e) => {props.addBoth(props.row, props.col, e.target.value)} :
+                                    lastRow ? (e) => {props.addRow(props.row, props.col, e.target.value)} :
+                                    lastCol ? (e) => {props.addCol(props.row, props.col, e.target.value)} :
+                                              (e) => {props.updateEntry(props.name, props.row, props.col, e.target.value)}
+                        )} 
 
-            onKeyDown = {handleKeyDown}
+            onKeyDown = {(e) => {props.keyDown(props.row, props.col, e)}}
             onFocus = {handleFocus}
-            onMouseEnter = {handleEnter}
+            onMouseEnter = {handleMouseEnter}
             onMouseDown = {handleMouseDown}
             onMouseUp = {() => {props.setMouseDown(false)}}
         />

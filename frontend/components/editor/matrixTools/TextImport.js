@@ -48,7 +48,7 @@ const TextImport = (props) => {
 
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
-            case "overwrite":
+            case "Overwrite Current Matrix":
                 setOverwrite(updated);
                 setNewName("");
                 break;
@@ -67,10 +67,10 @@ const TextImport = (props) => {
                 
                 setSettingD(updated);
                 break;
-            case "ignoreWhiteSpace":
+            case "Ignore White Space":
                 setIgnoreWhitespace(updated);
                 break;
-            case "removeEscape":
+            case "Remove Escapes For: #$%&_{}^~\\":
                 setRemoveEscape(updated);
                 break;  
                 
@@ -157,14 +157,27 @@ const TextImport = (props) => {
             case "Separator":
                 const rowSeparator = settingD;
 
+
                 //split into rows
+                let maxLen = 0;
                 var rows = text.split(rowSeparator);
                 for (let i = 0; i < rows.length; i++) {
                     matrix.push(rows[i].split(separator));
-                    matrix[i].push("");
+                    if (matrix[i].length > maxLen)
+                        maxLen = matrix[i].length;
                 }
 
-                matrix.push(Array(matrix[0].length).fill(""));
+                maxLen++; //add one for empty column
+
+                //add empty strings to make all rows the same length
+                for (let i = 0; i < rows.length; i++) {
+                    while (matrix[i].length < maxLen) {
+                        matrix[i].push("");
+                    }
+                }
+
+                //remove empty rows
+                matrix.push(Array(maxLen).fill(""));
                 props.setMatrix(matrix, name); //override existing (or non existing) matrix
                 
                 break;
@@ -181,14 +194,29 @@ const TextImport = (props) => {
                     //  finds },{ and removes random characters in between
                     const braceSeparator = new RegExp(`${addRegexEscape(settingB)}.*?${addRegexEscape(separator)}.*?${addRegexEscape(settingA)}`, 'g'); 
                     
+                    
                     rows = noBraces.split(braceSeparator);
+
+                    let maxLen = 0;
                     for (let i = 0; i < rows.length; i++) {
                         matrix.push(rows[i].split(separator));
-                        matrix[i].push(" ");
+                        if (matrix[i].length > maxLen)
+                            maxLen = matrix[i].length;
                     }
 
-                    matrix.push(Array(matrix[0].length).fill(""));
-                    props.setMatrix(matrix, name);
+
+                maxLen++; //add one for empty column
+
+                //add empty strings to make all rows the same length
+                for (let i = 0; i < rows.length; i++) {
+                    while (matrix[i].length < maxLen) {
+                        matrix[i].push("");
+                    }
+                }
+
+                //add empty row
+                matrix.push(Array(maxLen).fill(""));
+                props.setMatrix(matrix, name);
 
                 } catch (error) {
                     console.log(error); 
@@ -252,7 +280,7 @@ const TextImport = (props) => {
                 
                 rows = text.split("\\\\");
                 
-                let maxLen = 0;
+                maxLen = 0;
 
                 //split rows by & and find max length
                 for (let i = 0; i < rows.length; i++) {    
@@ -366,7 +394,7 @@ const TextImport = (props) => {
         <div className = "col-sm-4">
             {importFormat === "LaTeX" ? 
             <div>
-                <ParameterBoxInput isChecked = {removeEscape} id = "removeEscape" name = "removeEscape" text = {"Remove Escapes For: #$%&_{}^~\\"} updateParameter = {updateParameter}/>
+                <ParameterBoxInput isChecked = {removeEscape} name = {"Remove Escapes For: #$%&_{}^~\\"} updateParameter = {updateParameter}/>
                 {removeEscape ? <div>
                     <div>Replace <ParameterTextInput text = {escapeMap["^"]} width = {"20%"} id={"^"} updateParameter={updateParameter}/> with ^</div>
                     <div>Replace <ParameterTextInput text = {escapeMap["~"]} width = {"20%"} id={"~"} updateParameter={updateParameter}/> with ~</div>
@@ -374,7 +402,7 @@ const TextImport = (props) => {
                 </div> : null}
             </div> 
             
-            : <ParameterBoxInput isChecked = {ignoreWhitespace} id = "ignoreWhiteSpace" name = "ignoreWhiteSpace" text = {"Ignore White Space"} updateParameter = {updateParameter}/>
+            : <ParameterBoxInput isChecked = {ignoreWhitespace} name = {"Ignore White Space"} updateParameter = {updateParameter}/>
             }
 
             {importFormat === "Separator" ? 
@@ -407,7 +435,7 @@ const TextImport = (props) => {
         </div>
 
         <div className = "col-sm-4">
-            <ParameterBoxInput isChecked = {overwrite} id = "overwrite" name = "overwrite" text = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
+            <ParameterBoxInput isChecked = {overwrite} name = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
 
             {(overwrite ? null : 
             <div>

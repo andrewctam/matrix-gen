@@ -117,13 +117,13 @@ const MatrixExport = (props) => {
             case "delim":
                 setDelim(updated);  
                 break;   
-            case "newLines":
+            case "Add New Lines":
                 setNewLines(updated);
                 break;
             case "environment":
                 setEnvironment(updated);
                 break;
-            case "latexEscape":
+            case "Add Escapes For: #$%&_{}^~\\":
                 setLatexEscape(updated)
                 break;
 
@@ -216,7 +216,7 @@ const MatrixExport = (props) => {
             </div>
 
             <div className = "col-sm-4">
-                <ParameterBoxInput isChecked = {newLines} id={"newLines"} text = {"Add New Lines"} updateParameter={updateExportParameter}/>
+                <ParameterBoxInput isChecked = {newLines} name = {"Add New Lines"} updateParameter={updateExportParameter}/>
 
                 {exportOption === "2D Arrays" ? <div>
                     <div>Open arrays with &nbsp;
@@ -228,7 +228,7 @@ const MatrixExport = (props) => {
                 </div> : null}
 
                 {exportOption === "LaTeX" ? <div>
-                    <ParameterBoxInput isChecked = {latexEscape} id={"latexEscape"} text = {"Add Escapes For: #$%&_{}^~\\"} updateParameter={updateExportParameter}/>
+                    <ParameterBoxInput isChecked = {latexEscape} name = {"Add Escapes For: #$%&_{}^~\\"} updateParameter={updateExportParameter}/>
                 
                     <div>Environment &nbsp;
                     <ParameterTextInput width = {"25%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>

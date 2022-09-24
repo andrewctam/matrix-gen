@@ -55,14 +55,16 @@ const Table = (props) => {
 
     const keyDown = (row, col, e) => {
         if (e.keyCode === 16) { //shift
-            if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1))
+            if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) //add botj
                 props.addRowsAndCols(props.name, 1, 1)
-            else if (props.matrix.length === (row + 1))
+            else if (props.matrix.length === (row + 1)) //add row
                 props.addRows(props.name, 1);
-            else if (props.matrix[0].length === (col + 1))
+            else if (props.matrix[0].length === (col + 1)) //add col
                 props.addCols(props.name, 1);
+
         } else if (e.keyCode === 8 && e.target.value === "") { //delete
            props.tryToDelete(props.name, row, col); 
+
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             if (col !== 0) {
                 document.getElementById((row) + ":" + (col - 1)).focus();
@@ -75,14 +77,6 @@ const Table = (props) => {
         } 
         
         else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) { //Right
-            //skip the last col if you aren't on the first row/
-            /*
-            if (props.col === props.cols - 2 && props.row !== 0 && props.row !== props.rows - 1) { 
-                document.getElementById((props.row + 1) + ":0").focus();
-                document.getElementById((props.row + 1) + ":0").selectionStart = 0;
-
-            } 
-            else */
             if (props.col !== props.matrix[0].length - 1) { 
                 document.getElementById((row) + ":" + (col + 1)).focus();
                 document.getElementById((row) + ":" + (col + 1)).selectionStart = -1;
@@ -94,11 +88,7 @@ const Table = (props) => {
         }
 
         else if (e.keyCode === 40) { //Down
-            /*
-            if (props.row === props.rows - 2 && props.col !== 0 && props.col !== props.cols - 1) { //skip the last one if you aren't  on the first col
-                document.getElementById("0:" + (props.col + 1)).focus();
-            }
-            else */
+
             if (row !== props.matrix.length - 1) {
                 document.getElementById((row + 1) +  ":" + (col) ).focus();
             } 
@@ -143,16 +133,14 @@ const Table = (props) => {
 
     const tableRows = Array(rows).fill(Array(cols));
 
-    const limitRows = Math.min(50, rows);
-    const limitCols = Math.min(50, cols);
-
     
-    for (let i = 0; i < limitRows; i++) {
+    for (let i = 0; i < rows; i++) {
         const eachRow = Array(cols);
 
-        for (let j = 0; j < limitCols; j++) {   
+        for (let j = 0; j < cols; j++) {   
             eachRow[j] = <Box 
                         name = {props.name}
+                        numbersOnly = {props.numbersOnly}
                         addRow = {addRow} 
                         addCol = {addCol}
                         addBoth = {addBoth}

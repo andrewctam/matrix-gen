@@ -48,7 +48,7 @@ const SaveMatrices = (props) => {
                     <label className="form-check-label" htmlFor={"saveToLocalSwitch"}>Save To Browser Storage</label>
 
                     <input className="form-check-input pull-right"
-                        onChange={() => { props.updateParameter("saveToLocal", !props.saveToLocal) }}
+                        onChange={() => { props.updateParameter("Save To Local", !props.saveToLocal) }}
                         checked={props.saveToLocal}
                         type="checkbox"
                         role={"switch"}
