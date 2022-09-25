@@ -169,10 +169,10 @@ const Navigation = (props) => {
 
 
 
-        <div className={"col-sm-4 " + styles.info}>
+        <div className={"col-sm-4 order-sm-1 " + styles.generalTools}>
            
             <button
-                className = {"btn btn-primary " + styles.toolToggle}
+                className = {"btn btn-secondary " + styles.toolToggle}
                 onClick = {() => {setShowGeneralTools(!showGeneralTools)}}>
                 {showGeneralTools ? "Hide General Tools" : "General Tools"}
             </button>
@@ -235,21 +235,13 @@ const Navigation = (props) => {
         </div>
 
 
-        <div className="col-sm-4">
-            <input className={styles.nameSearchBar} onChange={updateSearchName} value={searchName} placeholder='Search by Name'></input>
-            <input className={styles.sizeSearchBar} onChange={updateSearchSize} value={searchSize} placeholder='Search by Size'></input>
-
-            <div id="selectors" className={"list-group " + styles.matrixSelectorContainer}> {selectors} </div>
-        </div>
-
-
-        <div className={"col-sm-4 " + styles.info}>
+        <div className={"col-sm-4 order-sm-3 " + styles.matrixTools}>
             <button
-                className = {"btn btn-primary " + styles.toolToggle}
+                className = {"btn btn-secondary " + styles.toolToggle}
                 onClick = {() => {setShowMatrixTools(!showMatrixTools)}}>
                 {showMatrixTools ? "Hide Matrix Tools" : "Matrix Tools"}
             </button>
-            
+
             { showMatrixTools ?
             <div id="selectors" className="list-group">
                 <MenuButton
@@ -289,14 +281,22 @@ const Navigation = (props) => {
                         buttonStyle={"danger"}
                         action={props.deleteAllMatrices}
                     />
-                    : null}
+                : null}
 
-
-
-            </div> : null}
-
+            </div> 
+            : null}
                 
         </div>
+
+
+        <div className={"col-sm-4 order-sm-2 " + styles.selectors}>
+            <input className={styles.nameSearchBar} onChange={updateSearchName} value={searchName} placeholder='Search by Name'></input>
+            <input className={styles.sizeSearchBar} onChange={updateSearchSize} value={searchSize} placeholder='Search by Size'></input>
+
+            <div id="selectors" className={"list-group " + styles.matrixSelectorContainer}> {selectors} </div>
+        </div>
+
+
 
 
 

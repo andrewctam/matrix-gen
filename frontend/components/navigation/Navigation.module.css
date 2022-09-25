@@ -5,9 +5,35 @@
   margin-bottom: 5px;
 }
 
-.info {
-  overflow: auto;
+
+@media (max-width: 576px) {
+  .navigateBar {
+    grid-template-columns: 1fr;
+    grid-template-rows: 3;
+    grid-template-areas: "col-1" "col-3" "col-2";
+
+  }
+
 }
+
+.generalTools {
+  grid-area: col-1;
+  overflow: auto;
+
+}
+
+.selectors {
+  grid-area: col-2;
+  overflow: auto;
+
+}
+
+.matrixTools {
+  grid-area: col-3;
+  overflow: auto;
+
+}
+
 
 .nameSearchBar {
   width: 45%;
