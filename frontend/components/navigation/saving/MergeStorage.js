@@ -25,13 +25,19 @@ const MergeStorage = (props) => {
         }
 
         props.setMatrices(union);
-        props.updateParameter("showMerge", false)
+        props.updateParameter("Show Merge", false)
     }
 
     const overwriteLocal = () => {
         props.setMatrices(props.userMatrices);
-        props.setSelection(Object.keys(props.userMatrices)[0]);
-        props.updateParameter("showMerge", false)
+        const accountMatrices = Object.keys(props.userMatrices)
+        if (accountMatrices.length > 0) {
+            props.setSelection(Object.keys(props.userMatrices)[0]);
+        } else {
+            props.setSelection("0");
+        }
+
+        props.updateParameter("Show Merge", false)
     }
 
 

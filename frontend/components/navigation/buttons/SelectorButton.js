@@ -10,10 +10,6 @@ const SelectorButton = (props) => {
         return (props.matrices[props.name].length - 1) + " x " + (props.matrices[props.name][0].length - 1);
     }
 
-    const updateMatrixSelection = () => {
-        props.setSelection(props.name);
-    }
-
     const renameMatrix = (e) => {
         const updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated)) {
@@ -92,7 +88,7 @@ const SelectorButton = (props) => {
 
     return <button type="button"
         className={styles.matrixSelector +  " list-group-item list-group-item-action" + ((props.active) ? " active" : "")}
-        onClick={updateMatrixSelection}>
+        onClick={() => {props.setSelection(props.name)}}>
 
         <input
             value={displayName}

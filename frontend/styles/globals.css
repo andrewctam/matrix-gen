@@ -101,7 +101,7 @@ li {
 
 .list-group > .active {
     color: black;
-    background-color: rgb(185, 225, 225);
+    background-color: rgb(198, 231, 231);
     border-color: rgb(185, 225, 225);
 }
 
@@ -112,37 +112,22 @@ li {
 }
 
 .list-group-item {
-    width: 75%;
+    width: 80%;
     margin-left: auto;
     margin-right: auto;
     color: black;
 }
 
 .list-group-item-primary {
-    background-color: rgb(204, 209, 234);
+    background-color: rgb(180, 189, 219);
+}
+.list-group-item-info {
+    background-color: rgb(174, 218, 227);
 }
 
 .list-group-item-secondary {
-    background-color: rgb(169, 194, 237);
+    background-color: rgb(196, 244, 191);
 }
-
-.list-group-item-success {
-    background-color: rgb(201, 226, 195);
-}
-
-.list-group-item-warning {
-    background-color: rgb(206, 251, 205);
-}
-
 .list-group-item-danger {
     background-color: rgb(239, 203, 203); 
 }
-
-.list-group-item-bigDanger {
-    background-color: rgb(241, 185, 183);
-}
-
-
-
-
-

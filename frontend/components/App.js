@@ -4,17 +4,15 @@ import Navigation from "./navigation/Navigation.js"
 
 const App = (props) => {
     const [matrices, setMatrices] = useState(null);
-
-    const [selection, setSelection] = useState("0");
-    const [sparseVal, setSparseVal] = useState("0");
+    const [selection, setSelection] = useState("0"); //0 for no selection
     
     const [mirror, setMirror] = useState(false);
     const [selectable, setSelectable] = useState(true);
-    const [saveToLocal, setSaveToLocal] = useState(false);
     const [numbersOnly, setNumbersOnly] = useState(false);
+    const [sparseVal, setSparseVal] = useState("0"); 
     
     const [username, setUsername] = useState(null);
-    
+    const [saveToLocal, setSaveToLocal] = useState(false);
     
     const [showMerge, setShowMerge] = useState(null);
     const [userMatrices, setUserMatrices] = useState(null);
@@ -26,7 +24,7 @@ const App = (props) => {
     useEffect(() => {
         window.addEventListener("beforeunload", (e) => {
             if (saving.current)
-                e.returnValue = ""
+                e.returnValue = "";
         }); 
         
 
@@ -40,7 +38,7 @@ const App = (props) => {
         } else {
             setMatrices( {
                 "A": [["", ""], ["", ""]]
-            });;
+            });
             setSelection("A");
             updateParameter("Show Merge", false);
         }
@@ -84,7 +82,7 @@ const App = (props) => {
     useEffect(() => {
         if (matrices && saveToLocal)
             saveToLocalStorage();    
-    }, [[matrices, saveToLocal]] )
+    }, [[matrices, saveToLocal]])
     
 
    
@@ -662,7 +660,13 @@ const App = (props) => {
                 throw new Error("No matrices found in local storage");
             } else {
                 setMatrices(parsed);
-                setSelection(Object.keys(parsed)[0]);
+
+                const localMatrices = Object.keys(parsed);
+                if (localMatrices.length > 0)
+                    setSelection(localMatrices[0]);
+                else
+                    setSelection("0");
+                
             }
 
         } catch (error) {
@@ -693,8 +697,9 @@ const App = (props) => {
             localStorage.removeItem("refresh_token");
         }
 
+        //if all is set to null (log out or invalid tokens), then load local storage
         if (!username && !access_token && !refresh_token) {
-           loadFromLocalStorage();
+           loadFromLocalStorage(); 
         }
 
     }
@@ -813,7 +818,7 @@ const App = (props) => {
                 "Authorization": "Bearer " + localStorage.getItem("refresh_token")
             }
         }).then((response) => {
-            if (response.status === 401) { //invalid access token
+            if (response.status === 401) { //invalid refresh token
                 return null;
             }
 
@@ -827,11 +832,11 @@ const App = (props) => {
             localStorage.setItem("access_token", response["access_token"]);
             localStorage.setItem("refresh_token", response["refresh_token"]);
 
-            return true;
+            return true; //tokens successfully refreshed
         } else {
             updateUserInfo(null, null, null);
             localStorage.removeItem("refresh_token");
-            return false;
+            return false; //failed to refresh tokens
         }
     }
    
@@ -840,8 +845,12 @@ const App = (props) => {
         <div> 
             <Navigation 
                 matrices = {matrices} 
-                mirror = {mirror}
                 selection = {selection}
+
+                setSelection = {setSelection}
+                setMatrices = {setMatrices}
+
+                mirror = {mirror}
                 numbersOnly = {numbersOnly}
                 sparseVal = {sparseVal}
                 selectable = {selectable}
@@ -863,11 +872,6 @@ const App = (props) => {
                 saveToLocal = {saveToLocal}
                 setSaveToLocal = {setSaveToLocal}
 
-
-                setSelection = {setSelection}
-                setMatrices = {setMatrices}
-
-
                 showMerge = {showMerge}
                 setShowMerge = {setShowMerge}
                 userMatrices = {userMatrices}
@@ -882,13 +886,15 @@ const App = (props) => {
                 matrix = {matrices[selection]} 
                 matrices = {matrices}
                 name = {selection} 
+                
+                updateParameter = {updateParameter}
                 mirror = {mirror}
                 sparseVal = {sparseVal}
                 numbersOnly = {numbersOnly}
-                updateParameter = {updateParameter}
-                
-                setMatrix = {setMatrix}
+                selectable = {selectable}
+
                 generateUniqueName = {generateUniqueName}
+                setMatrix = {setMatrix}
 
                 fillEmpty = {fillEmpty}
                 reshapeMatrix = {reshapeMatrix}
@@ -902,15 +908,12 @@ const App = (props) => {
                 tryToDelete = {tryToDelete}
                 fillAll = {fillAll}
                 fillDiagonal = {fillDiagonal}
-
+                
                 spliceMatrix = {spliceMatrix}
                 pasteMatrix = {pasteMatrix}
                 editSelection = {editSelection}
-                selectable = {selectable}
-
                 
-            /> : null
-            } 
+            /> : null} 
     
 
         </div>);

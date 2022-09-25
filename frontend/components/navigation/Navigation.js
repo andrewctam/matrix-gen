@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ParameterBoxInput from '../inputs/ParameterBoxInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
 
@@ -20,6 +20,7 @@ const Navigation = (props) => {
     const [showSaveMenu, setShowSaveMenu] = useState(false);
     const [identitySize, setIdentitySize] = useState(3);
 
+    const navigationRef = useRef(null);
     useEffect(() => {
         if (window.localStorage.getItem("First Visit") === null) {
             setShowTutorial(true);
@@ -141,7 +142,7 @@ const Navigation = (props) => {
     }
 
 
-    return <div className={"row " + styles.navigateBar}>
+    return <div ref = {navigationRef} className={"row " + styles.navigateBar}>
         <p onClick={() => { setShowSaveMenu(!showSaveMenu) }} className={styles.savingInfo}>{saving}</p>
 
         {showSaveMenu ?
@@ -169,7 +170,7 @@ const Navigation = (props) => {
             <div id="selectors" className="list-group">
                 <MenuButton
                     text={showSaveMenu ? "Close Save Menu" : "Save Matrices"}
-                    buttonStyle={"success"}
+                    buttonStyle={"info"}
                     action={() => {
                         setShowSaveMenu(!showSaveMenu)
                     }}
@@ -189,7 +190,7 @@ const Navigation = (props) => {
 
                 <MenuButton
                     text={showSettings ? "Hide Settings" : "Settings"}
-                    buttonStyle={"secondary"}
+                    buttonStyle={"primary"}
                     action={() => { setShowSettings(!showSettings) }}
                 />
             </div>
@@ -230,7 +231,7 @@ const Navigation = (props) => {
                 <MenuButton
                     key="addButton"
                     text={"Create New Empty Matrix"}
-                    buttonStyle={"info"}
+                    buttonStyle={"secondary"}
                     action={() => {
                         var newName = props.setMatrix();
                         props.setSelection(newName);
@@ -240,7 +241,7 @@ const Navigation = (props) => {
                 {props.selection !== "0" ?
                     <MenuButton
                         key="duplicateButton"
-                        buttonStyle={"warning"}
+                        buttonStyle={"secondary"}
                         text={`Duplicate Matrix ${props.selection}`}
                         action={() => { props.copyMatrix(props.selection) }} />
                     : null}
@@ -261,7 +262,7 @@ const Navigation = (props) => {
                 {props.matrices && Object.keys(props.matrices).length > 0 ?
                     <MenuButton
                         text={"Delete All Matrices"}
-                        buttonStyle={"bigDanger"}
+                        buttonStyle={"danger"}
                         action={props.deleteAllMatrices}
                     />
                     : null}
