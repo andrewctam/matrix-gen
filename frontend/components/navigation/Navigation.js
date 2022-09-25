@@ -20,6 +20,9 @@ const Navigation = (props) => {
     const [showSaveMenu, setShowSaveMenu] = useState(false);
     const [identitySize, setIdentitySize] = useState(3);
 
+    const [showGeneralTools, setShowGeneralTools] = useState(true);
+    const [showMatrixTools, setShowMatrixTools] = useState(true);
+
     const navigationRef = useRef(null);
     useEffect(() => {
         if (window.localStorage.getItem("First Visit") === null) {
@@ -167,7 +170,18 @@ const Navigation = (props) => {
 
 
         <div className={"col-sm-4 " + styles.info}>
+           
+            <button
+                className = {"btn btn-primary " + styles.toolToggle}
+                onClick = {() => {setShowGeneralTools(!showGeneralTools)}}>
+                {showGeneralTools ? "Hide General Tools" : "General Tools"}
+            </button>
+
+
+            {showGeneralTools ?
             <div id="selectors" className="list-group">
+
+
                 <MenuButton
                     text={showSaveMenu ? "Close Save Menu" : "Save Matrices"}
                     buttonStyle={"info"}
@@ -193,7 +207,6 @@ const Navigation = (props) => {
                     buttonStyle={"primary"}
                     action={() => { setShowSettings(!showSettings) }}
                 />
-            </div>
 
             {showPresets ?
                 <div className={styles.settingsMenu}>
@@ -215,6 +228,10 @@ const Navigation = (props) => {
                     {"Empty Element:"} <ParameterTextInput width={"30px"} text={props.sparseVal} id={"Empty Element"} updateParameter={props.updateParameter} />
                 </div> : null}
 
+            </div>: null}
+
+
+
         </div>
 
 
@@ -227,6 +244,13 @@ const Navigation = (props) => {
 
 
         <div className={"col-sm-4 " + styles.info}>
+            <button
+                className = {"btn btn-primary " + styles.toolToggle}
+                onClick = {() => {setShowMatrixTools(!showMatrixTools)}}>
+                {showMatrixTools ? "Hide Matrix Tools" : "Matrix Tools"}
+            </button>
+            
+            { showMatrixTools ?
             <div id="selectors" className="list-group">
                 <MenuButton
                     key="addButton"
@@ -266,7 +290,12 @@ const Navigation = (props) => {
                         action={props.deleteAllMatrices}
                     />
                     : null}
-            </div>
+
+
+
+            </div> : null}
+
+                
         </div>
 
 
