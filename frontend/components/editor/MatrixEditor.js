@@ -112,7 +112,7 @@ const MatrixEditor = (props) => {
 
     return (
     <div className = {styles.matrixEditor} onMouseUp = {() => {if (mouseDown) setMouseDown(false)}} >
-        <div className = {styles.optionsBar}>
+        <div className = {styles.optionsBar + " " + ((showActions || showMath || showSelectionMenu || showExport || showImport) ? styles.flatBottom : "")}>
             <ToggleButton 
                 name = "Matrix Actions" 
                 active = {showActions}

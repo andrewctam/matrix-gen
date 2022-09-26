@@ -7,6 +7,9 @@
     color: white;
     --bs-gutter-x: 0px;
 
+    text-align: center;
+
+
 }
 
 .importTextArea {

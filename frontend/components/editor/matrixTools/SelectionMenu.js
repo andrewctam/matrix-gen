@@ -47,7 +47,7 @@ const SelectionMenu = (props) => {
     var generatedName = props.generateUniqueName();
 
     return <div className = {styles.selectionSettingsContainer}>
-        {props.boxesSelected["quadrant"] === -1 ? <div>No Boxes Selected</div>
+        {props.boxesSelected["quadrant"] === -1 ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
         : <div>
             <div>
                 {"Selection Size: " + 

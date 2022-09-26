@@ -9,8 +9,12 @@
   width: fit-content;
   padding: 5px;
   background-color: rgba(50, 50, 50, 0.5);
-  border-radius: 10px;
   margin-top: 10px;
+  border-radius: 10px;
+}
+
+.flatBottom {
+  border-radius: 10px 10px 0px 0px;
 }
 
 .bigMatrixInfo {
