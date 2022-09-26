@@ -55,8 +55,8 @@ const UserPanel = (props) => {
             return;
         }
 
-
-        const response = await fetch("https://matrixgen.fly.dev/api/delete", {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/delete`;
+        const response = await fetch(url, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -111,8 +111,9 @@ const UserPanel = (props) => {
 
         if (error)
             return;
-
-        const response = await fetch("https://matrixgen.fly.dev/api/password", {
+        
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/password`;
+        const response = await fetch(url, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

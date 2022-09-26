@@ -1,8 +1,8 @@
 .navigateBar {
   background-color: rgb(48, 50, 51);
-  padding-bottom: 1%;
   margin-top: 0px;
-  margin-bottom: 5px;
+  margin-bottom: 1px;
+  width: 100%;
 }
 
 
@@ -80,15 +80,6 @@
   padding: 10px;
 }
 
-.savingInfo {
-  text-align: center;
-  background-color: rgb(47, 45, 45);
-  width: 100%;
-  padding: 3px;
-  border-bottom: 1px solid rgb(39, 37, 37);
-  margin: 0px;
-}
-
 .matrixSelectorContainer {
   min-height: 45px;
   height: 175px;
@@ -107,4 +98,26 @@
   margin-right: auto;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+
+.topBar {
+  width: 100%;
+  height: fit-content;
+  background-color: rgb(47, 45, 45);
+  border-bottom: 1px solid rgb(39, 37, 37);
+}
+.navToggle {
+  color: white;
+  text-align: right;
+  padding-right: 10px;
+  margin: 0;
+
+}
+
+.savingInfo {
+  text-align: center;
+  padding: 3px;
+  margin: 0px;
+  height: fit-content;  
 }

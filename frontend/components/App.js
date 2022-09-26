@@ -705,7 +705,8 @@ const App = (props) => {
     }
 
     const getMatrixData = async () => {        
-        const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/matrix`;
+        const response = await fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -717,7 +718,10 @@ const App = (props) => {
             }
 
             return response.json()
-        })
+        }).catch((error) => {
+            console.log("A")
+            return null;
+        });
 
         if (response === null) {
             if (await refreshTokens()) { 
@@ -767,7 +771,8 @@ const App = (props) => {
 
     const updateAccountMatrices = async () => {
         saving.current = true
-        const response = await fetch("https://matrixgen.fly.dev/api/matrix", {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/matrix`;
+        const response = await fetch(url, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -811,7 +816,8 @@ const App = (props) => {
     }
 
     const refreshTokens = async () => {
-        const response = await fetch("https://matrixgen.fly.dev/api/token", {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/token`;
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

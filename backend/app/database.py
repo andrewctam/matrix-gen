@@ -3,7 +3,8 @@ import databases
 import sqlalchemy
 from dotenv import load_dotenv
 
-load_dotenv()
+if os.getenv("ENVIRONMENT") != "production":
+    load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 

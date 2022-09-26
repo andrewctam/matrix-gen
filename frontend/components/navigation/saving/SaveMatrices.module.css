@@ -4,14 +4,13 @@
     width: 95%;
     margin: 2.5%;
     margin-top: 1%;
-    padding: 10px;
+    padding: 20px;
 }
 
 .loginForm {
     display: block;
     margin: 0px;
     width: fit-content;
-
 }
 
 .inputs {

@@ -15,15 +15,10 @@ The [Matrix Generator](https://matrixgen.web.app) is a full stack web app that a
 - [Tailwind CSS](https://tailwindcss.com/docs/guides/nextjs)
 
 ## Installation
-Clone this repository, and create a .env file in the backend with your DATABASE_URL in it and a 32 bit SECRET_KEY. This app is built using docker, so run ```docker compose up``` at the root of the project.
+Clone this repository, and update the environmental variables in backend/.env.template (rename this to .env) and in frontend/.env.local.template (rename this to .env.local). This app is built using docker, so run ```docker compose up``` at the root of the project.
 
 ```
 git clone https://github.com/tamandrew/matrix-gen.git
-cd matrix-gen/backend
-touch .env
-echo "DATABASE_URL={URL}" >> .env
-echo "SECRET_KEY={KEY}" >> .env
-cd ../
 docker compose up
 ```
 

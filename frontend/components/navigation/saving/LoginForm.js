@@ -34,7 +34,9 @@ const LoginForm = (props) => {
         if (error)
             return;
 
-        const response = await fetch("https://matrixgen.fly.dev/api/login", {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/login`;
+
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -81,7 +83,8 @@ const LoginForm = (props) => {
         if (error)
             return;
 
-        const response = await fetch("https://matrixgen.fly.dev/api/register", {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/register`;
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

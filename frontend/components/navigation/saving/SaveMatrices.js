@@ -8,12 +8,7 @@ const SaveMatrices = (props) => {
     const [showWelcome, setShowWelcome] = useState(false);
    
     return <div className={styles.saveMatrices}>
-        <button
-            onClick={props.closeSaveMenu}
-            className={"btn btn-danger " + styles.closeButton}>
-            {"Close"}
-        </button>
-
+       
         <div className="row">
             <div className="col-sm-6">
                 <h1>Save Matrices Online</h1>
@@ -39,6 +34,7 @@ const SaveMatrices = (props) => {
                    />
                 }
 
+
             </div>
 
             <div className="col-sm-6">
@@ -59,6 +55,13 @@ const SaveMatrices = (props) => {
             </div>
 
         </div>
+
+        <button
+            onClick={props.closeSaveMenu}
+            className={"btn btn-danger " + styles.closeButton}>
+            {"Close"}
+        </button>
+
 
     </div>
 }

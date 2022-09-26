@@ -108,11 +108,7 @@ const Tutorial = (props) => {
     }
 
     return <div className={styles.tutorial}>
-        <button
-            className={"btn btn-danger " + styles.closeTutorial}
-            onClick={props.closeTutorial}>
-            {"Close"}
-        </button>
+       
 
         <h1>Matrix Generator</h1>
         <p className={styles.tutorialBody}>This Matrix Generator web app can help you quickly create and modify matrices.
@@ -133,6 +129,11 @@ const Tutorial = (props) => {
 
         {specificTutorial}
 
+        <button
+            className={"btn btn-danger " + styles.closeTutorial}
+            onClick={props.closeTutorial}>
+            {"Close"}
+        </button>
     </div>
 
 }

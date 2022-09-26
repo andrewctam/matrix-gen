@@ -20,6 +20,7 @@ const Navigation = (props) => {
     const [showSaveMenu, setShowSaveMenu] = useState(false);
     const [identitySize, setIdentitySize] = useState(3);
 
+    const [showNavigation, setShowNavigation] = useState(true);
     const [showGeneralTools, setShowGeneralTools] = useState(true);
     const [showMatrixTools, setShowMatrixTools] = useState(true);
 
@@ -145,8 +146,12 @@ const Navigation = (props) => {
     }
 
 
-    return <div ref = {navigationRef} className={"row " + styles.navigateBar}>
+    return<div className = {styles.navigateBar}>
+    <div className = {styles.topBar}>
         <p onClick={() => { setShowSaveMenu(!showSaveMenu) }} className={styles.savingInfo}>{saving}</p>
+    </div>
+    {showNavigation ? 
+    <div ref = {navigationRef} className={"row"}>
 
         {showSaveMenu ?
             <SaveMatrices
@@ -299,6 +304,9 @@ const Navigation = (props) => {
 
 
 
+        </div> : null}
+
+        <div className = {styles.navToggle} onClick = {() => {setShowNavigation(!showNavigation)}}>{showNavigation ? String.fromCharCode(8593) : String.fromCharCode(8595)}</div>
 
     </div>
 }
