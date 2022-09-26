@@ -75,7 +75,7 @@ const Tutorial = (props) => {
                         <li>When importing, you can either overwrite the current matrix or save it as a new matrix. If you save it as a new matrix, you can enter a new name or it will automatically generate one if no new name is provided.</li>
                         <li>The Separators format expects elements to be separated by a common character, and rows to be separated by a common character. By default, a space separates elements and new lines separate rows.</li>
                         <li>The 2D Array format expects elements to be formatted in brackets and separated by a common character.</li>
-                        <li>Reshape From One Line takes all of the elements separated by a common character and reshapes it into the specified dimensions. The number of elements must be equal to the product of the dimensions</li>
+                        <li>Reshape From One Line takes all of the elements separated by a common character and reshapes it into the specified dimensions.</li>
                         <li>The LaTeX format follows the LaTeX matrix syntax. Do not include the environment. You can choose if you want to automatically remove escapes from these characters: {"&%$#_{}~^\\"}</li>
                         <li>The Ignore Whitespace option will remove all whitespace before parsing your input. If you use spaces or new lines for your elements or for your settings, then this will incorrectly parse the text.</li>
 

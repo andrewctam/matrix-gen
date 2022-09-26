@@ -60,7 +60,7 @@ const App = (props) => {
         else
             setSelectable(disableSelection === "0");
 
-        
+    // eslint-disable-next-line
     }, []);
 
     //send updates to server
@@ -75,14 +75,16 @@ const App = (props) => {
     useEffect(() => {
         if (username)
             getMatrixData();
-        
+      
+    // eslint-disable-next-line
     }, [username])
 
     //save matrices to local storage
     useEffect(() => {
         if (matrices && saveToLocal)
-            saveToLocalStorage();    
-    }, [[matrices, saveToLocal]])
+            saveToLocalStorage();   
+    // eslint-disable-next-line 
+    }, [matrices, saveToLocal])
     
 
    
