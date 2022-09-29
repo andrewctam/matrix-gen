@@ -67,7 +67,7 @@ const Box = (props) => {
             onChange = {(lastRow && lastCol ? (e) => {props.addBoth(props.row, props.col, e.target.value)} :
                                     lastRow ? (e) => {props.addRow(props.row, props.col, e.target.value)} :
                                     lastCol ? (e) => {props.addCol(props.row, props.col, e.target.value)} :
-                                              (e) => {props.updateEntry(props.name, props.row, props.col, e.target.value)}
+                                              (e) => {props.update(props.row, props.col, e.target.value)}
                         )} 
 
             onKeyDown = {(e) => {props.keyDown(props.row, props.col, e)}}

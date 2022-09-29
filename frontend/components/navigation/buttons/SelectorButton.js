@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import styles from "./SelectorButton.module.css"
 
+import { resizeMatrix } from '../../matrixFunctions';
+
 const SelectorButton = (props) => {
     const [displayName, setDisplayName] = useState(props.name);
     const [displaySize, setDisplaySize] = useState("");
@@ -10,7 +12,7 @@ const SelectorButton = (props) => {
         return (props.matrices[props.name].length - 1) + " x " + (props.matrices[props.name][0].length - 1);
     }
 
-    const renameMatrix = (e) => {
+    const updateRename = (e) => {
         const updated = e.target.value;
         if (/^[A-Za-z_]*$/.test(updated)) {
             setDisplayName(updated);
@@ -25,7 +27,7 @@ const SelectorButton = (props) => {
         setDisplaySize((rows) + " x " + cols);
     }
 
-    const resizeMatrix = (e) => {
+    const updateResize = (e) => {
         const updated = e.target.value;
 
         if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) {
@@ -56,7 +58,7 @@ const SelectorButton = (props) => {
             if (rows > 0 && cols > 0) {
                 setDisplaySize((rows) + " x " + cols);
 
-                props.resizeMatrix(props.name, rows + 1, cols + 1);
+                props.setMatrix(props.name, resizeMatrix(props.matrix, rows + 1, cols + 1));
 
             } else {
                 alert("Dimensions can not be zero");
@@ -95,7 +97,7 @@ const SelectorButton = (props) => {
             id={props.name}
             type="text"
             className={styles.selectorInput + " " + specialText}
-            onChange={renameMatrix}
+            onChange={updateRename}
             onKeyDown={handleKeyDown}
             onBlur={pushNewName}
             onFocus={handleFocus}
@@ -106,7 +108,7 @@ const SelectorButton = (props) => {
             id={"size " + props.name}
             type="text"
             className={styles.selectorInput + " " + styles.sizeInfo}
-            onChange={resizeMatrix}
+            onChange={updateResize}
             onBlur={pushNewSize}
             onFocusCapture={handleFocus}
             onKeyDown={handleKeyDown}

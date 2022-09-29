@@ -3,6 +3,7 @@ import Box from './Box.js';
 
 import styles from "./Table.module.css"
 
+import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete} from '../matrixFunctions.js';
 const Table = (props) => {
     //add Row/Col/Both and update matrix[row][col]
     const addRow = (row, col, updated) => {
@@ -11,13 +12,13 @@ const Table = (props) => {
             const rows = props.matrix.length
             const max = Math.max(rows + 1, cols)
 
-            var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
+            var tempMatrix = addRowsAndCols(props.matrix, max - rows, max - cols);
             tempMatrix[col][row] = updated;
         } else {
-            tempMatrix = props.addRows(props.name, 1, false);
+            tempMatrix = addRows(props.matrix, 1);
         }
 
-        props.updateEntry(props.name, row, col, updated, tempMatrix);
+        props.setMatrix(props.name, updateEntry(tempMatrix, row, col, updated));
     }
 
     const addCol = (row, col, updated) => {
@@ -27,13 +28,13 @@ const Table = (props) => {
             const rows = props.matrix.length
             const max = Math.max(rows, cols + 1)
 
-            var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
+            var tempMatrix = addRowsAndCols(props.matrix, max - rows, max - cols);
             tempMatrix[col][row] = updated;
         } else {
-            tempMatrix = props.addCols(props.name, 1, false);
+            tempMatrix = addCols(props.matrix, 1);
         }
 
-        props.updateEntry(props.name, row, col, updated, tempMatrix);
+        props.setMatrix(props.name, updateEntry(tempMatrix, row, col, updated));
     }
 
 
@@ -43,27 +44,34 @@ const Table = (props) => {
             const rows = props.matrix.length
             const max = Math.max(rows + 1, cols + 1);
 
-            var tempMatrix = props.addRowsAndCols(props.name, max - rows, max - cols, false);
+            var tempMatrix = addRowsAndCols(props.matrix, max - rows, max - cols);
             tempMatrix[col][row] = updated;
 
         } else {
-            tempMatrix = props.addRowsAndCols(props.name, 1, 1, false);
+            tempMatrix = addRowsAndCols(props.matrix, 1, 1);
         }
 
-        props.updateEntry(props.name, row, col, updated, tempMatrix);
+        props.setMatrix(props.name, updateEntry(tempMatrix, row, col, updated));
+    }
+
+    const update = (row, col, updated) => {
+        props.setMatrix(props.name, updateEntry(props.matrix, row, col, updated));
     }
 
     const keyDown = (row, col, e) => {
         if (e.keyCode === 16) { //shift
             if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) //add botj
-                props.addRowsAndCols(props.name, 1, 1)
+                props.setMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
             else if (props.matrix.length === (row + 1)) //add row
-                props.addRows(props.name, 1);
+                props.setMatrix(props.name, addRows(props.matrix, 1))
             else if (props.matrix[0].length === (col + 1)) //add col
-                props.addCols(props.name, 1);
+                props.setMatrix(props.name, addCols(props.matrix, 1))
 
         } else if (e.keyCode === 8 && e.target.value === "") { //delete
-           props.tryToDelete(props.name, row, col); 
+            const result = tryToDelete(props.matrix, row, col)
+
+            if (result)
+                props.setMatrix(props.name, ); 
 
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             if (col !== 0) {
@@ -144,7 +152,7 @@ const Table = (props) => {
                         addRow = {addRow} 
                         addCol = {addCol}
                         addBoth = {addBoth}
-                        updateEntry = {props.updateEntry}
+                        update = {update}
                         
                         keyDown = {keyDown}
                         updateBoxesSelected = {props.updateBoxesSelected}

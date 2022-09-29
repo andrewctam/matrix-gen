@@ -148,13 +148,9 @@ const MatrixEditor = (props) => {
         {showActions ? 
             <MatrixActions 
                 name = {props.name}
-                transpose = {props.transpose}
-                mirrorRowsCols = {props.mirrorRowsCols}
-                fillEmpty = {props.fillEmpty}
-                fillAll = {props.fillAll}
-                fillDiagonal = {props.fillDiagonal}
-                randomMatrix = {props.randomMatrix}
-                reshapeMatrix = {props.reshapeMatrix}/>
+                matrix = {props.matrix}
+                setMatrix = {props.setMatrix}
+            />
         : null}
         
         {showMath ?
@@ -167,12 +163,12 @@ const MatrixEditor = (props) => {
 
         { props.selectable && showSelectionMenu  ? 
             <SelectionMenu 
-                boxesSelected = {boxesSelected} 
-                generateUniqueName = {props.generateUniqueName}
-                editSelection = {props.editSelection}
-                spliceMatrix = {props.spliceMatrix}
-                pasteMatrix = {props.pasteMatrix}
+                matrices = {props.matrices}
                 name = {props.name}
+                matrix = {props.matrix}
+                setMatrix = {props.setMatrix}
+                boxesSelected = {boxesSelected} 
+                editSelection = {props.editSelection}
                 updateBoxesSelected = {updateBoxesSelected}
                 
             />: null
@@ -182,8 +178,8 @@ const MatrixEditor = (props) => {
 
         {showImport ? 
             <TextImport
-                generateUniqueName = {props.generateUniqueName}
                 setMatrix = {props.setMatrix}
+                matrices = {props.matrices}
                 currentName = {props.name}/> 
         : null}
 
@@ -202,11 +198,8 @@ const MatrixEditor = (props) => {
             numbersOnly = {props.numbersOnly}
             name = {props.name}
             matrix = {props.matrix} 
-            addCols = {props.addCols}
-            addRows = {props.addRows}
-            addRowsAndCols = {props.addRowsAndCols}
-            updateEntry = {props.updateEntry}
-            tryToDelete = {props.tryToDelete}
+            setMatrix = {props.setMatrix}
+
             selectable = {props.selectable}
 
             boxesSelected = {boxesSelected}

@@ -5,6 +5,7 @@ import ListButton from "./ListButton";
 
 import styles from "./TextImport.module.css"
 
+import { generateUniqueName } from "../../matrixFunctions";
 const TextImport = (props) => {
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);
@@ -149,7 +150,7 @@ const TextImport = (props) => {
         if (overwrite) //overwrite current matrix
             var name = props.currentName;
         else if (newName === "") //input empty, so auto generate
-            name = props.generateUniqueName();
+            name = generateUniqueName(props.matrices);
         else //name provided
             name = newName;
 
@@ -356,7 +357,7 @@ const TextImport = (props) => {
 
 
     if (!overwrite) {
-        var namePlaceholder = props.generateUniqueName();
+        var namePlaceholder = generateUniqueName(props.matrices);
     }
 
     return <div className = {"row " + styles.importContainer}>

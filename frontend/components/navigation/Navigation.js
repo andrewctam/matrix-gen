@@ -9,6 +9,9 @@ import MenuButton from './buttons/MenuButton';
 import TextActionButton from "../editor/matrixTools/TextActionButton"
 import styles from "./Navigation.module.css";
 
+
+import {cloneMatrix, createIdentity} from '../matrixFunctions';
+
 const Navigation = (props) => {
     const [selectors, setSelectors] = useState([]);
     const [searchName, setSearchName] = useState("");
@@ -58,9 +61,10 @@ const Navigation = (props) => {
                         key={matrixName}
                         setSelection={props.setSelection}
                         renameMatrix={props.renameMatrix}
-                        resizeMatrix={props.resizeMatrix}
                         active={props.selection === matrixName}
                         matrices={props.matrices}
+                        matrix = {props.matrix}
+                        setMatrix = {props.setMatrix}
 
                         intersectionMerge={props.showMerge && intersection.includes(matrixName)}
                     />
@@ -217,7 +221,11 @@ const Navigation = (props) => {
                 <div className={styles.settingsMenu}>
                     <TextActionButton
                         name="Identity Matrix "
-                        action={() => { props.createIdentity(parseInt(identitySize)) }}
+                        action={() => { 
+                            const identity = createIdentity(parseInt(identitySize))
+                            if (identity)
+                                props.setMatrix(props.name, identity)
+                        }}
                         updateParameter={updatePresetParameter}
                         width={"40px"}
                         value={identitySize}
@@ -254,7 +262,7 @@ const Navigation = (props) => {
                     text={"Create New Empty Matrix"}
                     buttonStyle={"secondary"}
                     action={() => {
-                        var newName = props.setMatrix();
+                        var newName = props.setMatrix(); //generates a new matrix and returns name
                         props.setSelection(newName);
                     }}
                 />
@@ -264,7 +272,7 @@ const Navigation = (props) => {
                         key="duplicateButton"
                         buttonStyle={"secondary"}
                         text={`Duplicate Matrix ${props.selection}`}
-                        action={() => { props.copyMatrix(props.selection) }} />
+                        action={() => { props.setMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
                     : null}
 
                 {props.selection !== "0" ?
@@ -297,11 +305,8 @@ const Navigation = (props) => {
         <div className={"col-sm-4 order-sm-2 " + styles.selectors}>
             <input className={styles.nameSearchBar} onChange={updateSearchName} value={searchName} placeholder='Search by Name'></input>
             <input className={styles.sizeSearchBar} onChange={updateSearchSize} value={searchSize} placeholder='Search by Size'></input>
-
             <div id="selectors" className={"list-group " + styles.matrixSelectorContainer}> {selectors} </div>
         </div>
-
-
 
 
         </div> : null}
