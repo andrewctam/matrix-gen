@@ -9,7 +9,6 @@ import Toggle from '../../navigation/Toggle.js';
 const MatrixExport = (props) => {    
     const [exportOption, setExportOption] = useState("2D Arrays");
 
-
     const [start, setStart] = useState("{");
     const [end, setEnd] = useState("}");
     const [delim, setDelim] = useState(",");
@@ -27,9 +26,7 @@ const MatrixExport = (props) => {
 
     const matrixExport = useRef(null);
 
-    useEffect(() => {
-        document.body.style.paddingBottom = matrixExport.current.offsetHeight + "px";
-    }, [matrixExport])
+
 
 
 

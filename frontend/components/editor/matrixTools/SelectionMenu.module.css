@@ -6,6 +6,10 @@
     --bs-gutter-x: 0px;
     padding: 10px;
     pointer-events: none;
+    max-height: 75vh;
+    border-top: 1px solid black;
+    overflow-y: auto;
+
   }
 
 .editSelectedInput {
@@ -14,6 +18,7 @@
   margin: 1vh;
   padding: 5px;
   color: rgb(215, 206, 206);
+  pointer-events: all;
   
 }
 

@@ -4,6 +4,9 @@
   background-color: rgb(50, 50, 50);
   --bs-gutter-x: 0px;
   text-align: center;
+  max-height: 75vh;  
+  overflow-y: auto;
+
 }
 
 .exportTextArea {
