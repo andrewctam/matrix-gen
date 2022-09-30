@@ -3,7 +3,7 @@ import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
 import useExpand from './useExpand';
 
-import { generateUniqueName } from '../../matrixFunctions';
+import { generateUniqueName, cloneMatrix } from '../../matrixFunctions';
 
 const MatrixMath = (props) => {     
     const [expression, setExpression] = useState("");
@@ -33,9 +33,7 @@ const MatrixMath = (props) => {
             return;
         }
         
-        
-        const postfix = infixToPostfix("(A + B) * 2C");
-        
+        const postfix = infixToPostfix(expression);
         const matrix = evaluatePostfix(postfix);
 
         if (matrix !== null)
@@ -160,7 +158,7 @@ const MatrixMath = (props) => {
         //matrix to num A ^ 2
         
         //deep copy matrix
-        var product = JSON.parse(JSON.stringify(a));
+        var product = cloneMatrix(a);
         
         for (let i = 1; i < pow; i++)
             product = matrixMultiplication(product, a);
@@ -172,7 +170,7 @@ const MatrixMath = (props) => {
             return a * b; //scalar multiplication
         }
         else if (typeof(a) === "object" && typeof(b) === "number") {
-            var product = JSON.parse(JSON.stringify(a)); //deep copy matrix
+            var product = cloneMatrix(a); //deep copy matrix
 
             for (let i = 0; i < a.length - 1; i++)
                 for (let j = 0; j < a[0].length - 1; j++)
@@ -180,7 +178,7 @@ const MatrixMath = (props) => {
 
             return product
         } else if (typeof(a) === "number" && typeof(b) === "object") {
-            product = JSON.parse(JSON.stringify(b)); //deep copy matrix
+            product = cloneMatrix(b); //deep copy matrix
             for (let i = 0; i < b.length - 1; i++)
                 for (let j = 0; j < b[0].length - 1; j++)
                 product[i][j] = a * b[i][j]; //matrix scalar multiplication

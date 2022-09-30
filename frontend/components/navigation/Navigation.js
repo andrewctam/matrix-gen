@@ -37,9 +37,8 @@ const Navigation = (props) => {
     }, [])
 
     useEffect(() => {
-
         const sizeFilters = [];
-        const split = searchSize.split("x");
+        const split = searchSize.split("x"); //extrcat numbers from n x m
         if (searchSize !== "") {
             for (let i = 0; i < split.length; i++) {
                 const temp = parseInt(split[i])
@@ -52,20 +51,22 @@ const Navigation = (props) => {
             var intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
         }
 
+        //map matrices to selectors
         const tempSelectors = []
         for (const matrixName in props.matrices) {
             if ((searchName === "" || matrixName.startsWith(searchName)) &&
                 (searchSize === "" || verifySize(matrixName, sizeFilters)))
                 tempSelectors.push(
                     <SelectorButton
-                        name={matrixName}
                         key={matrixName}
-                        setSelection={props.setSelection}
-                        renameMatrix={props.renameMatrix}
-                        active={props.selection === matrixName}
+                        name={matrixName}
                         matrices={props.matrices}
                         matrix = {props.matrix}
+
+                        setSelection={props.setSelection}
                         setMatrix = {props.setMatrix}
+                        renameMatrix={props.renameMatrix}
+                        active={props.selection === matrixName}
 
                         intersectionMerge={props.showMerge && intersection.includes(matrixName)}
                     />
@@ -97,7 +98,7 @@ const Navigation = (props) => {
     }
     const updateSearchName = (e) => {
         const updated = e.target.value;
-        if (/^[A-Za-z_]*$/.test(updated))
+        if (/^[A-Za-z_]*$/.test(updated)) //only allow letters and underscores
             setSearchName(updated);
     }
 
@@ -118,14 +119,6 @@ const Navigation = (props) => {
         else //n x m entered
             return rows === sizeFilters[0] && cols === sizeFilters[1];
 
-    }
-
-    const closeTutorial = () => {
-        setShowTutorial(false);
-    }
-
-    const closeSaveMenu = () => {
-        setShowSaveMenu(false);
     }
 
 
@@ -151,7 +144,7 @@ const Navigation = (props) => {
     }
 
 
-    return<div className = {styles.navigateBar}>
+    return <div className = {styles.navigateBar}>
     <div className = {styles.topBar}>
         <p onClick={() => { setShowSaveMenu(!showSaveMenu) }} className={styles.savingInfo}>{saving}</p>
     </div>
@@ -172,10 +165,10 @@ const Navigation = (props) => {
                 showMerge={props.showMerge}
                 userMatrices={props.userMatrices}
                 setShowMerge={props.setShowMerge}
-                closeSaveMenu={closeSaveMenu}
+                closeSaveMenu={() => {setShowSaveMenu(false)}}
             /> : null}
 
-        {showTutorial ? <Tutorial closeTutorial={closeTutorial} /> : null}
+        {showTutorial ? <Tutorial closeTutorial={() => {setShowTutorial(false)}} /> : null}
 
 
 

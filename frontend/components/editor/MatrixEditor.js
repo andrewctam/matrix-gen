@@ -10,6 +10,8 @@ import SelectionMenu from './matrixTools/SelectionMenu.js';
 
 import styles from "./MatrixEditor.module.css"
 
+import ActiveButton from './ActiveButton.js';
+
 const MatrixEditor = (props) => {
     const [boxesSelected, setBoxesSelected] = useState({
         "startX": -1,
@@ -116,31 +118,31 @@ const MatrixEditor = (props) => {
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { if (mouseDown) setMouseDown(false) }} >
             <div ref = {optionsBarRef} className={styles.optionsBar}>
-                <ToggleButton
+                <ActiveButton
                     name="Matrix Actions"
                     active={showActions}
                     action={toggleShown}
                 />
 
-                <ToggleButton
+                <ActiveButton
                     name="Matrix Math"
                     active={showMath}
                     action={toggleShown}
                 />
                 {props.selectable ?
-                    <ToggleButton
+                    <ActiveButton
                         name="Selection Settings"
                         active={showSelectionMenu}
                         action={toggleShown}
                     /> : null}
 
-                <ToggleButton
+                <ActiveButton
                     name="Export Matrix"
                     active={showExport}
                     action={toggleShown}
                 />
 
-                <ToggleButton
+                <ActiveButton
                     name="Import Matrix From Text"
                     active={showImport}
                     action={toggleShown}
@@ -244,15 +246,6 @@ const MatrixEditor = (props) => {
 
 
         </div>)
-
-}
-
-const ToggleButton = (props) => {
-    return <button id={props.name}
-        className={"btn " + (props.active ? "btn-info" : "btn-secondary")}
-        onClick={props.action}>
-        {props.name}
-    </button>
 
 }
 

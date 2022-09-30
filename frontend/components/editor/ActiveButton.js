@@ -1,6 +1,6 @@
 import React from "react";
 
-const ListButton = (props) => {
+const ActiveButton = (props) => {
     return <button
             id={props.name}
             onClick={props.action}
@@ -10,4 +10,4 @@ const ListButton = (props) => {
         </button>
 }
 
-export default ListButton;
+export default ActiveButton;

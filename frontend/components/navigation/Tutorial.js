@@ -78,7 +78,6 @@ const Tutorial = (props) => {
                         <li>Reshape From One Line takes all of the elements separated by a common character and reshapes it into the specified dimensions.</li>
                         <li>The LaTeX format follows the LaTeX matrix syntax. Do not include the environment. You can choose if you want to automatically remove escapes from these characters: {"&%$#_{}~^\\"}</li>
                         <li>The Ignore Whitespace option will remove all whitespace before parsing your input. If you use spaces or new lines for your elements or for your settings, then this will incorrectly parse the text.</li>
-
                     </ul>
                 </div>
                 break;

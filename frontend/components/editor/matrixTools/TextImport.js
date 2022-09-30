@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import ParameterBoxInput from "../../inputs/ParameterBoxInput";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
-import ListButton from "./ListButton";
+import ActiveButton from "../ActiveButton";
 
 import styles from "./TextImport.module.css"
 
@@ -372,25 +372,24 @@ const TextImport = (props) => {
             <ul>
                 {"Import Format"}
                 <li>
-                <ListButton
+                <ActiveButton
                     name = {"Separator"}
                     action = {updateImportFormat}
                     active = {importFormat === "Separator"}
                 />
 
-                <ListButton
+                <ActiveButton
                     name = {"2D Arrays"}
                     action = {updateImportFormat}
                     active = {importFormat === "2D Arrays"}
                 />
 
-
-                <ListButton
+                <ActiveButton
                     name = {"LaTeX"}
                     action = {updateImportFormat}
                     active = {importFormat === "LaTeX"}
                 />
-                <ListButton
+                <ActiveButton
                     name = {"Reshape From One Line"}
                     action = {updateImportFormat}
                     active = {importFormat === "Reshape From One Line"}

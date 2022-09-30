@@ -48,8 +48,11 @@ export const generateUniqueName = (matrices) => {
 }
 
 export const resizeMatrix = (matrix, rows, cols) => {
-    if (matrix.length !== rows || matrix[0].length !== cols) { //check to make new and old dimensions are different
-        //get the smaller of each dimension in case new > old
+    //check to make new and old dimensions are different
+    if (matrix.length === rows && matrix[0].length === cols)
+        return null;
+        
+    //get the smaller of each dimension in case new > old
         const lessRows = Math.min(rows, matrix.length)
         const lessCols = Math.min(cols, matrix[0].length)
 
@@ -73,8 +76,7 @@ export const resizeMatrix = (matrix, rows, cols) => {
         for (let i = lessRows - 1; i < rows; i++) 
             resized[i] = Array(cols).fill("");
 
-        return resized;
-    }
+    return resized;
 }
 
 export const tryToDelete = (matrix, row, col) => {

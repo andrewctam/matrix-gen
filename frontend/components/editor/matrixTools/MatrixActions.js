@@ -61,8 +61,8 @@ const MatrixActions = (props) => {
 
     return <div ref = {matrixActions} className = {"fixed-bottom " + styles.matrixActionsContainer}>
         <BasicActionButton 
-            action = {
-                () => {props.setMatrix(props.name, transpose(props.matrix))
+            action = {() => {
+                props.setMatrix(props.name, transpose(props.matrix))
             }}
             name = {"Transpose"}
         />
@@ -74,7 +74,7 @@ const MatrixActions = (props) => {
         />
         <BasicActionButton 
             action={() => {
-                props.setMatrix(props.name, mirrorRowsCols(props.matrix, false))
+                props.setMatrix(props.name, mirrorRowsCols(props.matrix, false)) //false means cols to rows
             }}
             name = {"Mirror Columns Across Diagonal"}
         />
@@ -141,7 +141,7 @@ const MatrixActions = (props) => {
             width = {"40px"}
         />
 
-    <Toggle toggle = {props.close} show = {!props.active} />
+        <Toggle toggle = {props.close} show = {!props.active} />
 
     </div>
 }

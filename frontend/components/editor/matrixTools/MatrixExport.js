@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput.js';
 import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
-import ListButton from './ListButton.js';
+import ActiveButton from '../ActiveButton.js';
 
 import styles from "./MatrixExport.module.css"
 import Toggle from '../../navigation/Toggle.js';
@@ -206,13 +206,13 @@ const MatrixExport = (props) => {
                 <ul>
                     {"Export Format"}
                     <li>
-                    <ListButton
+                    <ActiveButton
                         name = {"2D Arrays"}
                         action = {updateExportOption}
                         active = {exportOption === "2D Arrays"}
                     />
 
-                    <ListButton
+                    <ActiveButton
                         name = {"LaTeX"}
                         action = {updateExportOption}
                         active = {exportOption === "LaTeX"}
@@ -248,22 +248,23 @@ const MatrixExport = (props) => {
                     <ul>
                         {"Quick Options:"}
                         <li>
-                        <ListButton
-                            name = {"Square Braces [ ] ,"}
-                            action = {presets}
-                            active = {false}/>
-                        <ListButton
+                        <ActiveButton
                             name = {"Curly Braces { } ,"}
                             action = {presets}
-                            active = {false}/>
-                        <ListButton
+                            active = {start === "{" && end === "}" && delim === ","}/>
+                        <ActiveButton
+                            name = {"Square Braces [ ] ,"}
+                            action = {presets}
+                            active = {start === "[" && end === "]" && delim === ","}/>
+                        <ActiveButton
                             name = {"Parentheses ( ) ,"}
                             action = {presets}
-                            active = {false}/>
-                        <ListButton
+                            active = {start === "(" && end === ")" && delim === ","}/>
+                        <ActiveButton
                             name = {"Spaces"}
                             action = {presets}
-                            active = {false}/>
+                            active = {start === "" && end === "" && delim === " "}/>
+
                         </li>
                     </ul>
                 : null}

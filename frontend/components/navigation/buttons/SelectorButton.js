@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import styles from "./SelectorButton.module.css"
 
@@ -7,6 +7,8 @@ import { resizeMatrix } from '../../matrixFunctions';
 const SelectorButton = (props) => {
     const [displayName, setDisplayName] = useState(props.name);
     const [displaySize, setDisplaySize] = useState("");
+    const resizeInput = useRef(null);
+    const nameInput = useRef(null);
 
     const realSize = () => {
         return (props.matrices[props.name].length - 1) + " x " + (props.matrices[props.name][0].length - 1);
@@ -14,37 +16,25 @@ const SelectorButton = (props) => {
 
     const updateRename = (e) => {
         const updated = e.target.value;
-        if (/^[A-Za-z_]*$/.test(updated)) {
+        if (/^[A-Za-z_]*$/.test(updated))
             setDisplayName(updated);
-        }
-
-    }
-
-    const handleFocus = (e) => {
-        const rows = props.matrices[props.name].length - 1
-        const cols = props.matrices[props.name][0].length - 1
-
-        setDisplaySize((rows) + " x " + cols);
     }
 
     const updateResize = (e) => {
         const updated = e.target.value;
-
-        if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) {
+        if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated))
             setDisplaySize(updated);
-        }
     }
 
-    const pushNewName = () => {
+    const pushNewName = () => {debugger;
         if (displayName !== props.name)
             if (displayName === "") {
                 alert("The name can not be blank!")
                 setDisplayName(props.name);
             } else if (displayName in props.matrices) {
-                alert("The name " + displayName + " already exists!")
-
+                alert(`The name ${displayName} already exists!`)
                 setDisplayName(props.name);
-            } else {
+            } else {         
                 props.renameMatrix(props.name, displayName)
                 props.setSelection(displayName)
             }
@@ -57,8 +47,9 @@ const SelectorButton = (props) => {
 
             if (rows > 0 && cols > 0) {
                 setDisplaySize((rows) + " x " + cols);
-
-                props.setMatrix(props.name, resizeMatrix(props.matrix, rows + 1, cols + 1));
+                const resized = resizeMatrix(props.matrix, rows + 1, cols + 1)
+                if (resized)
+                    props.setMatrix(props.name, resized);
 
             } else {
                 alert("Dimensions can not be zero");
@@ -76,16 +67,19 @@ const SelectorButton = (props) => {
     }
 
 
-
-    if (document.activeElement === document.getElementById("size " + props.name)) {
+    if (document.activeElement === resizeInput.current) {
         var size = displaySize
     } else {
         size = realSize();
+
     }
+
 
     if (props.intersectionMerge) {
         var specialText = styles.intersectionMerge;
-    }
+    } else 
+        specialText = "";
+
 
 
     return <button type="button"
@@ -94,23 +88,24 @@ const SelectorButton = (props) => {
 
         <input
             value={displayName}
+            ref = {nameInput}
             id={props.name}
             type="text"
-            className={styles.selectorInput + " " + specialText}
+            className={styles.selectorInput + " " + styles.renameInput + " " + specialText}
             onChange={updateRename}
             onKeyDown={handleKeyDown}
             onBlur={pushNewName}
-            onFocus={handleFocus}
         />
+
 
         <input
             value={size}
+            ref = {resizeInput}
             id={"size " + props.name}
             type="text"
-            className={styles.selectorInput + " " + styles.sizeInfo}
+            className={styles.selectorInput + " " + styles.sizeInput}
             onChange={updateResize}
             onBlur={pushNewSize}
-            onFocusCapture={handleFocus}
             onKeyDown={handleKeyDown}
         />
     </button>

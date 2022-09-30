@@ -132,11 +132,10 @@ const App = (props) => {
 
     //functions related to matrix editing
     const renameMatrix = (oldName, newName) => {     
-        const tempObj = {...matrices};
-        
-        if (newName in tempObj)
+        if (newName in matrices)
             return false;
-
+        
+        const tempObj = {...matrices};
         //rename and delete old one
         tempObj[newName] = tempObj[oldName]; 
         delete tempObj[oldName];
@@ -261,7 +260,6 @@ const App = (props) => {
 
             return response.json()
         }).catch((error) => {
-            console.log("A")
             return null;
         });
 
@@ -387,15 +385,18 @@ const App = (props) => {
             return false; //failed to refresh tokens
         }
     }
-   
-    if (matrices)
-        return (
+       
+    if (!matrices)
+        return <div />
+        
+    return (
         <div> 
             <Navigation 
                 matrices = {matrices} 
                 selection = {selection}
                 matrix = {matrices[selection]}
 
+                updateParameter = {updateParameter}
                 setSelection = {setSelection}
                 setMatrices = {setMatrices}
 
@@ -407,7 +408,6 @@ const App = (props) => {
                 setMatrix = {setMatrix}
                 deleteMatrix = {deleteMatrix}
                 renameMatrix = {renameMatrix}
-                updateParameter = {updateParameter}
                 saveToLocalStorage = {saveToLocalStorage}
                 deleteAllMatrices = {deleteAllMatrices}
 
@@ -443,8 +443,6 @@ const App = (props) => {
     
 
         </div>);
-    else
-        return <div />
 
 }
 
