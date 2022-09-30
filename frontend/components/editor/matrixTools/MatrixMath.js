@@ -3,8 +3,11 @@ import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
 import useExpand from './useExpand';
 
+import { generateUniqueName } from '../../matrixFunctions';
+
 const MatrixMath = (props) => {     
-    const[expression, setExpression] = useState("");
+    const [expression, setExpression] = useState("");
+    const [resultName, setResultName] = useState("");
 
     const matrixMath = useExpand(props.optionsBarRef);
 
@@ -15,13 +18,28 @@ const MatrixMath = (props) => {
         }   
     }
 
+    const handleResultNameChange = (e) => {
+        var updated = e.target.value
+        if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
+            setResultName(updated);
+        }
+    }
+
     const calculate = (e) => {
         e.preventDefault();
-        var postfix = infixToPostfix(expression);
-        var matrix = evaluatePostfix(postfix);
+
+        if (expression === "") {
+            alert("Please enter an expression using matrix names and these operators: + - * ^");
+            return;
+        }
+        
+        
+        const postfix = infixToPostfix("(A + B) * 2C");
+        
+        const matrix = evaluatePostfix(postfix);
 
         if (matrix !== null)
-            props.setMatrix(matrix)
+            props.setMatrix(resultName === "" ? undefined : resultName, matrix)
 
     }
 
@@ -332,24 +350,25 @@ const MatrixMath = (props) => {
         return stack[0]
     }
 
+    const placeholderName = generateUniqueName(props.matrices);
+    
+    return <div ref = {matrixMath} className = {"fixed-bottom " + styles.matrixMathContainer}>
 
-    console.log(props.close)
-    return <div ref = {matrixMath} className = {"fixed-bottom row " + styles.matrixMathContainer}>
-        <form onSubmit = {calculate} className = "col-sm-3">
-            <input type="text" className = {styles.mathInput} value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>
-            <br/>
-            <button className = {"btn btn-secondary " + styles.mathEvalButton} onClick={calculate}>Evaluate Expression</button>
+        <form onSubmit = {calculate}>
+            <div className = {styles.inputBlock}>
+                Expression:
+                <input type="text" className = {styles.mathInput} value = {expression} placeholder = {"e.g. (A + B) * 2C"} onChange = {handleChange}></input>
+            </div>
+
+            <div className = {styles.inputBlock}>
+                Save as:
+                <input type="text" className = {styles.nameInput} value = {resultName} placeholder = {placeholderName} onChange = {handleResultNameChange}></input>
+            </div>
+            
+            <button className = {"btn btn-success " + styles.mathEvalButton} onClick={calculate}>Evaluate Expression</button>
         </form>
 
-        <div className = "col-sm-9">
-            <ul className = {styles.mathInfo}>
-                <li>Enter a math expression. The resulting matrix will be added as a new matrix</li>
-                <li>You can enter matrix names or numbers (for matrix scalar multiplication)</li>
-                <li>Valid operators: * ^ + -</li>
-                <li>You can use parentheses to specify order of operations.</li>
-            </ul>
-        </div>
-
+     
         <Toggle toggle = {props.close} show = {!props.active}/>
 
 

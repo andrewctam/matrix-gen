@@ -5,25 +5,47 @@
     --bs-gutter-x: 0px;
     max-height: 75vh;
     overflow-y: auto;
-
-  
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: block;
 }
 
 .mathInput {
     width: 100%;
     margin-bottom: 1vh;
     color: white;
+    display: block;
+    margin: auto; 
+    padding: 5px
+
 }
 
 .mathInput::placeholder {
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .mathEvalButton {
-    width: 100%;   
-    margin: 0; 
+    margin: auto; 
+    display: block;
+    padding: 10px;
+    margin-top: 3px;
 }
 
 .mathInfo {
-    padding-left: 10px;
+    display: block;
+    margin: auto; 
+}
+
+.nameInput {
+    width: 100%;
+    display: block;
+    margin: auto; 
+    padding: 5px
+
+
+}
+
+.inputBlock {
+    display: inline-block;
 }

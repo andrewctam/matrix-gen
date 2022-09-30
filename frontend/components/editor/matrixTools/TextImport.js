@@ -184,7 +184,7 @@ const TextImport = (props) => {
 
                 //remove empty rows
                 matrix.push(Array(maxLen).fill(""));
-                props.setMatrix(matrix, name); //override existing (or non existing) matrix
+                props.setMatrix(name, matrix); //override existing (or non existing) matrix
                 
                 break;
                 
@@ -222,7 +222,7 @@ const TextImport = (props) => {
 
                 //add empty row
                 matrix.push(Array(maxLen).fill(""));
-                props.setMatrix(matrix, name);
+                props.setMatrix(name, matrix);
 
                 } catch (error) {
                     console.log(error); 
@@ -277,7 +277,7 @@ const TextImport = (props) => {
 
                 console.log(elements)
                 console.log(matrix)
-                props.setMatrix(matrix, name);
+                props.setMatrix(name, matrix);
                 break;
 
             case "LaTeX":
@@ -333,7 +333,7 @@ const TextImport = (props) => {
                             });
                     }
                 }
-                props.setMatrix(matrix, name); 
+                props.setMatrix(name, matrix);
                 break;
 
             default: break;
