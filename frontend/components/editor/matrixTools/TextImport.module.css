@@ -2,7 +2,7 @@
     width: 100%;
     padding: 10px;
 
-    background-color: rgb(50, 50, 50);
+    background-color: rgba(50, 50, 50, 0.8);
     color: white;
     --bs-gutter-x: 0px;
     text-align: center;

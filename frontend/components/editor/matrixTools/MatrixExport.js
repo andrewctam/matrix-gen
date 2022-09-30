@@ -5,9 +5,11 @@ import ListButton from './ListButton.js';
 
 import styles from "./MatrixExport.module.css"
 import Toggle from '../../navigation/Toggle.js';
+import useExpand from './useExpand.js';
 
 const MatrixExport = (props) => {    
     const [exportOption, setExportOption] = useState("2D Arrays");
+
 
     const [start, setStart] = useState("{");
     const [end, setEnd] = useState("}");
@@ -24,10 +26,7 @@ const MatrixExport = (props) => {
     })
 
 
-    const matrixExport = useRef(null);
-
-
-
+    const matrixExport = useExpand(props.optionsBarRef);
 
 
     const handleFocus = (e) => {

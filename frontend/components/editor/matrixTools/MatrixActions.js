@@ -7,6 +7,7 @@ import styles from "./MatrixActions.module.css"
 
 import {transpose, mirrorRowsCols, fillEmpty, fillAll, fillDiagonal, randomMatrix, reshapeMatrix} from '../../matrixFunctions';
 import Toggle from '../../navigation/Toggle';
+import useExpand from './useExpand';
 
 const MatrixActions = (props) => {
     const [randomLow, setRandomLow] = useState("1");
@@ -18,11 +19,7 @@ const MatrixActions = (props) => {
     const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
     
 
-    const matrixActions = useRef(null);
-
-    useEffect(() => {
-        document.body.style.paddingBottom = matrixActions.current.offsetHeight + "px";
-    }, [matrixActions])
+    const matrixActions = useExpand(props.optionsBarRef);
 
 
 

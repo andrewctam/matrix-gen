@@ -7,6 +7,7 @@ import styles from "./TextImport.module.css"
 
 import { generateUniqueName } from "../../matrixFunctions";
 import Toggle from "../../navigation/Toggle";
+import useExpand from "./useExpand";
 const TextImport = (props) => {
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);
@@ -21,11 +22,8 @@ const TextImport = (props) => {
         "\\":"\\char92"
     })
 
-    const textImport = useRef(null);
 
-    useEffect(() => {
-        document.body.style.paddingBottom = textImport.current.offsetHeight + "px";
-    }, [textImport])
+    const textImport = useExpand(props.optionsBarRef);
     
 
     //settings that change based on import format

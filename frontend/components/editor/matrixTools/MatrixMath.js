@@ -1,17 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
+import useExpand from './useExpand';
 
 const MatrixMath = (props) => {     
     const[expression, setExpression] = useState("");
 
-
-
-    const matrixMath = useRef(null);
-
-    useEffect(() => {
-        document.body.style.paddingBottom = matrixMath.current.offsetHeight + "px";
-    }, [matrixMath])
+    const matrixMath = useExpand(props.optionsBarRef);
 
     const handleChange = (e) => {
         var updated = e.target.value

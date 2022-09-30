@@ -5,15 +5,14 @@ import styles from "./SelectionMenu.module.css"
 
 import {generateUniqueName, spliceMatrix, pasteMatrix} from "../../matrixFunctions";
 import Toggle from "../../navigation/Toggle";
+import useExpand from "./useExpand";
 
 const SelectionMenu = (props) => {
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
-    const selectionMenu = useRef(null);
 
-    useEffect(() => {
-        document.body.style.paddingBottom = selectionMenu.current.offsetHeight + "px";
-    }, [selectionMenu])
+    const selectionMenu = useExpand(props.optionsBarRef);
+
 
     const updateName = (parameterName, updated) => {
         if (/^[A-Za-z_]*$/.test(updated)) // only update if chars are letters or underscores

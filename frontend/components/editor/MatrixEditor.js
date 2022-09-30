@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import Table from "./Table.js"
 
@@ -27,6 +27,7 @@ const MatrixEditor = (props) => {
     const [showImport, setShowImport] = useState(false);
     const [showSelectionMenu, setShowSelectionMenu] = useState(false);
 
+    const optionsBarRef = useRef(null)
     useEffect(() => {
         setBoxesSelected({
             "startX": -1,
@@ -114,7 +115,7 @@ const MatrixEditor = (props) => {
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { if (mouseDown) setMouseDown(false) }} >
-            <div className={styles.optionsBar}>
+            <div ref = {optionsBarRef} className={styles.optionsBar}>
                 <ToggleButton
                     name="Matrix Actions"
                     active={showActions}
@@ -154,6 +155,7 @@ const MatrixEditor = (props) => {
                     setMatrix={props.setMatrix}
                     close={() => { setShowActions(false)}}
                     active={showActions}
+                    optionsBarRef = {optionsBarRef}
 
                 />
                 : null}
@@ -166,6 +168,7 @@ const MatrixEditor = (props) => {
                     sparseVal={props.sparseVal}
                     close={() => { setShowMath(false) }}
                     active={showMath}
+                    optionsBarRef = {optionsBarRef}
 
                 />
                 : null}
@@ -181,6 +184,7 @@ const MatrixEditor = (props) => {
                     updateBoxesSelected={updateBoxesSelected}
                     close={() => { setShowSelectionMenu(false) }}
                     active={showSelectionMenu}
+                    optionsBarRef = {optionsBarRef}
 
 
 
@@ -196,6 +200,7 @@ const MatrixEditor = (props) => {
                     currentName={props.name}
                     close={() => { setShowImport(false) }}
                     active={showImport}
+                    optionsBarRef = {optionsBarRef}
 
                 />
                 : null}
@@ -206,6 +211,7 @@ const MatrixEditor = (props) => {
                     sparseVal={props.sparseVal}
                     close={() => { setShowExport(false) }}
                     active={showExport}
+                    optionsBarRef = {optionsBarRef}
 
                 />
                 : null}

@@ -1,7 +1,7 @@
 .matrixMathContainer {
     width: 100%;
     padding: 10px;
-    background-color: rgb(48, 50, 51);
+    background-color: rgba(50, 50, 50, 0.8);
     --bs-gutter-x: 0px;
     max-height: 75vh;
     overflow-y: auto;
