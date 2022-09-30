@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import ParameterBoxInput from "../../inputs/ParameterBoxInput";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
 import ListButton from "./ListButton";
@@ -19,6 +19,12 @@ const TextImport = (props) => {
         "~":"\\char126",
         "\\":"\\char92"
     })
+
+    const textImport = useRef(null);
+
+    useEffect(() => {
+        document.body.style.paddingBottom = textImport.current.offsetHeight + "px";
+    }, [textImport])
     
 
     //settings that change based on import format
@@ -360,13 +366,13 @@ const TextImport = (props) => {
         var namePlaceholder = generateUniqueName(props.matrices);
     }
 
-    return <div className = {"row " + styles.importContainer}>
+    return <div ref = {textImport} className = {"fixed-bottom row " + styles.importContainer}>
         <textarea id = "importTextArea" className = {styles.importTextArea} placeholder = {inputMatrixPlaceholder}></textarea>
 
         <div className = "col-sm-4">
             <ul>
                 {"Import Format"}
-                
+                <li>
                 <ListButton
                     name = {"Separator"}
                     action = {updateImportFormat}
@@ -379,6 +385,7 @@ const TextImport = (props) => {
                     active = {importFormat === "2D Arrays"}
                 />
 
+
                 <ListButton
                     name = {"LaTeX"}
                     action = {updateImportFormat}
@@ -389,8 +396,10 @@ const TextImport = (props) => {
                     action = {updateImportFormat}
                     active = {importFormat === "Reshape From One Line"}
                 />
-            </ul> 
+            </li></ul> 
         </div>
+
+        
 
         <div className = "col-sm-4">
             {importFormat === "LaTeX" ? 

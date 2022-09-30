@@ -1,11 +1,12 @@
 
 .selectionSettingsContainer {
-    background-color: rgba(48, 50, 51, 0.49);
+    background-color: rgba(50, 50, 50, 0.75);
     width: 100%;
     text-align: center;
     --bs-gutter-x: 0px;
     padding: 1vh;
     padding-bottom: 2vh;
+    pointer-events: none;
   }
 
 .editSelectedInput {

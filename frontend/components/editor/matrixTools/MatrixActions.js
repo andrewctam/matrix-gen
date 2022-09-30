@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
 import TextActionButton from './TextActionButton';
 import TwoTextActionButton from './TwoTextActionButton';
@@ -16,6 +16,13 @@ const MatrixActions = (props) => {
     const [fillAllWithThis, setFillAllWithThis] = useState("");
     const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
     
+
+    const matrixActions = useRef(null);
+
+    useEffect(() => {
+        document.body.style.paddingBottom = matrixActions.current.offsetHeight + "px";
+    }, [matrixActions])
+
 
 
     const updateParameter = (parameterName, updated) => {
@@ -54,7 +61,7 @@ const MatrixActions = (props) => {
     }
 
 
-    return <div className = {styles.matrixActionsContainer}>
+    return <div ref = {matrixActions} className = {"fixed-bottom " + styles.matrixActionsContainer}>
 
         <BasicActionButton 
             action = {

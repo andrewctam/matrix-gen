@@ -1,9 +1,16 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import styles from "./MatrixMath.module.css"
 
 const MatrixMath = (props) => {     
     const[expression, setExpression] = useState("");
 
+
+
+    const matrixMath = useRef(null);
+
+    useEffect(() => {
+        document.body.style.paddingBottom = matrixMath.current.offsetHeight + "px";
+    }, [matrixMath])
 
     const handleChange = (e) => {
         var updated = e.target.value
@@ -19,7 +26,6 @@ const MatrixMath = (props) => {
 
         if (matrix !== null)
             props.setMatrix(matrix)
-        
 
     }
 
@@ -332,7 +338,7 @@ const MatrixMath = (props) => {
 
 
 
-    return <div className = {"row " + styles.matrixMathContainer}>
+    return <div ref = {matrixMath} className = {"fixed-bottom row " + styles.matrixMathContainer}>
         
         <form onSubmit = {calculate} className = "col-sm-3">
             <input type="text" className = {styles.mathInput} value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>

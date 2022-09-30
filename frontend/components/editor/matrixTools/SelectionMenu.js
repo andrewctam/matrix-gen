@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import TextActionButton from "./TextActionButton";
 import styles from "./SelectionMenu.module.css"
 
@@ -8,6 +8,11 @@ import {generateUniqueName, spliceMatrix, pasteMatrix} from "../../matrixFunctio
 const SelectionMenu = (props) => {
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
+    const selectionMenu = useRef(null);
+
+    useEffect(() => {
+        document.body.style.paddingBottom = selectionMenu.current.offsetHeight + "px";
+    }, [selectionMenu])
 
     const updateName = (parameterName, updated) => {
         if (/^[A-Za-z_]*$/.test(updated)) // only update if chars are letters or underscores
@@ -48,7 +53,7 @@ const SelectionMenu = (props) => {
 
     var generatedName = generateUniqueName(props.matrices);
 
-    return <div className = {styles.selectionSettingsContainer}>
+    return <div ref = {selectionMenu} className = {styles.selectionSettingsContainer + " fixed-bottom" }>
         {props.boxesSelected["quadrant"] === -1 ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
         : <div>
             <div>
@@ -87,14 +92,16 @@ const SelectionMenu = (props) => {
             <TextActionButton 
                 name = {"Paste Another Matrix Into Selection: "}
                 action = {() => {
-                    const pasted = pasteMatrix(pasteName, 
+                    const pasted = pasteMatrix(
+                        props.matrices[props.name], //matrix to paste on
+                        props.matrices[pasteName],  //matrix to copy from
                         props.boxesSelected["startX"], 
                         props.boxesSelected["startY"], 
                         props.boxesSelected["endX"], 
                         props.boxesSelected["endY"])
 
                     if (pasted)
-                        props.setMatrix(props.name, sub)
+                        props.setMatrix(props.name, pasted)
                 }}
                     
                 updateParameter = {updateName}

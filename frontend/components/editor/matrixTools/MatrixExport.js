@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput.js';
 import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import ListButton from './ListButton.js';
@@ -22,6 +22,15 @@ const MatrixExport = (props) => {
         "~":"\\char126",
         "\\":"\\char92"
     })
+
+
+    const matrixExport = useRef(null);
+
+    useEffect(() => {
+        document.body.style.paddingBottom = matrixExport.current.offsetHeight + "px";
+    }, [matrixExport])
+
+
 
     const handleFocus = (e) => {
         e.target.select();
@@ -194,13 +203,13 @@ const MatrixExport = (props) => {
 
   
     
-    return <div className = {"row " + styles.exportContainer}>
+    return <div ref = {matrixExport} className = {"fixed-bottom row " + styles.exportContainer}>
         <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
 
             <div className = "col-sm-4">
                 <ul>
                     {"Export Format"}
-
+                    <li>
                     <ListButton
                         name = {"2D Arrays"}
                         action = {updateExportOption}
@@ -212,7 +221,8 @@ const MatrixExport = (props) => {
                         action = {updateExportOption}
                         active = {exportOption === "LaTeX"}
                     />
-                </ul> 
+                    </li>
+                </ul>
             </div>
 
             <div className = "col-sm-4">
@@ -241,7 +251,7 @@ const MatrixExport = (props) => {
                 {exportOption === "2D Arrays" ? 
                     <ul>
                         {"Quick Options:"}
-
+                        <li>
                         <ListButton
                             name = {"Square Braces [ ] ,"}
                             action = {presets}
@@ -258,6 +268,7 @@ const MatrixExport = (props) => {
                             name = {"Spaces"}
                             action = {presets}
                             active = {false}/>
+                        </li>
                     </ul>
                 : null}
 

@@ -3,59 +3,63 @@ import Box from './Box.js';
 
 import styles from "./Table.module.css"
 
-import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete} from '../matrixFunctions.js';
+import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete, cloneMatrix} from '../matrixFunctions.js';
 const Table = (props) => {
     //add Row/Col/Both and update matrix[row][col]
     const addRow = (row, col, updated) => {
+        var clone = cloneMatrix(props.matrix);
         if (props.mirror) {
-            const cols = props.matrix[0].length;
-            const rows = props.matrix.length
+            const cols = clone[0].length;
+            const rows = clone.length
             const max = Math.max(rows + 1, cols)
 
-            var tempMatrix = addRowsAndCols(props.matrix, max - rows, max - cols);
-            tempMatrix[col][row] = updated;
+            clone = addRowsAndCols(clone, max - rows, max - cols);
+            clone[col][row] = updated;
         } else {
-            tempMatrix = addRows(props.matrix, 1);
+            clone = addRows(clone, 1);
         }
 
-        props.setMatrix(props.name, updateEntry(tempMatrix, row, col, updated));
+        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
     }
 
     const addCol = (row, col, updated) => {
-        
+        var clone = cloneMatrix(props.matrix);
         if (props.mirror) {
-            const cols = props.matrix[0].length;
-            const rows = props.matrix.length
+            const cols = clone[0].length;
+            const rows = clone.length
             const max = Math.max(rows, cols + 1)
 
-            var tempMatrix = addRowsAndCols(props.matrix, max - rows, max - cols);
+            clone = addRowsAndCols(clone, max - rows, max - cols);
             tempMatrix[col][row] = updated;
         } else {
-            tempMatrix = addCols(props.matrix, 1);
+            clone = addCols(clone, 1);
         }
 
-        props.setMatrix(props.name, updateEntry(tempMatrix, row, col, updated));
+        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
     }
 
 
     const addBoth = (row, col, updated) => {
+        var clone = cloneMatrix(props.matrix)
+
         if (props.mirror) {
-            const cols = props.matrix[0].length;
-            const rows = props.matrix.length
+            const cols = clone[0].length;
+            const rows = clone.length
             const max = Math.max(rows + 1, cols + 1);
 
-            var tempMatrix = addRowsAndCols(props.matrix, max - rows, max - cols);
+            clone = addRowsAndCols(clone, max - rows, max - cols);
             tempMatrix[col][row] = updated;
 
         } else {
-            tempMatrix = addRowsAndCols(props.matrix, 1, 1);
+            clone = addRowsAndCols(clone, 1, 1);
         }
 
-        props.setMatrix(props.name, updateEntry(tempMatrix, row, col, updated));
+        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
     }
 
     const update = (row, col, updated) => {
-        props.setMatrix(props.name, updateEntry(props.matrix, row, col, updated));
+        var clone = cloneMatrix(props.matrix)
+        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
     }
 
     const keyDown = (row, col, e) => {

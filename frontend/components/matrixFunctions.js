@@ -124,62 +124,60 @@ export const tryToDelete = (matrix, row, col) => {
     return clone;
 }
 
-export const updateEntry = (matrix, i, j, val, mirror) => {
-    const clone = cloneMatrix(matrix);
 
+
+export const updateEntry = (matrix, i, j, val, mirror) => {
+    //does not make a clone to prevent unnecessary cloning if we use multiple functions 
     if (mirror) {
         //add enough rows/cols in order to update the correct  j, i
 
         if (i >= matrix[0].length - 1 && j >= matrix.length - 1) {
-            clone = addRowsAndCols(selection, j - matrix.length + 2, i - matrix[0].length + 2, false)
+            matrix = addRowsAndCols(matrix, j - matrix.length + 2, i - matrix[0].length + 2, false)
         } else if (j >= matrix.length - 1) {
-            clone = addRows(selection, j - matrix.length + 2, false)
+            matrix = addRows(matrix, j - matrix.length + 2, false)
         } else if (i >= matrix[0].length - 1) {
-            clone = addCols(selection, i - matrix[0].length + 2, false)
+            matrix = addCols(matrix, i - matrix[0].length + 2, false)
         }
         
-        clone[j][i] = val;
+        matrix[j][i] = val;
     }
 
-    clone[i][j] = val;
-    return clone        
+    matrix[i][j] = val;
+
+    return matrix        
 }
 
 export const addCols = (matrix, numToAdd) => {
-    //copy matrix
-    const clone = cloneMatrix(matrix);
-
-    for (let i = 0; i < clone.length; i++) {
+    //does not make a clone to prevent unnecessary cloning if we use multiple functions 
+    for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < numToAdd; j++)
             //Add ""s to each row
-            clone[i].push("");
+            matrix[i].push("");
     }
 
-    return clone;
+    return matrix;
 }
 
 export const addRows = (matrix, numToAdd) => {
-    const clone = cloneMatrix(matrix);
-
+    //does not make a clone to prevent unnecessary cloning if we use multiple functions 
     for (let i = 0; i < numToAdd; i++) {
-        clone.push(new Array(clone[0].length).fill(""));
+        matrix.push(new Array(matrix[0].length).fill(""));
     }
     
-    return clone; 
+    return matrix; 
 }
 
 export const addRowsAndCols = (matrix, rowsToAdd, colsToAdd) => {
-    const clone = cloneMatrix(matrix);
-
-    for (let i = 0; i < clone.length; i++) {
+    //does not make a clone to prevent unnecessary cloning if we use multiple functions 
+    for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < colsToAdd; j++)
-            clone[i].push("");
+            matrix[i].push("");
     }
     
     for (let i = 0; i < rowsToAdd; i++)
-        clone.push(new Array(clone[0].length).fill(""));
+        matrix.push(new Array(matrix[0].length).fill(""));
 
-    return clone; 
+    return matrix; 
 }
 
 //functions related to matrix actions
@@ -384,6 +382,7 @@ export const spliceMatrix = (matrix, x1, y1, x2, y2) => {
 }
 
 export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
+   
     if (x1 > x2) { //x1 to smaller
         var temp = x1;
         x1 = x2;
@@ -395,6 +394,10 @@ export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
         y1 = y2;
         y2 = temp;
     }
+
+    console.log(pasteMatrix)
+    console.log(copyMatrix)
+    debugger;
 
     
     if (x2 - x1 + 2 !== copyMatrix.length || y2 - y1 + 2 !== copyMatrix[0].length) {
