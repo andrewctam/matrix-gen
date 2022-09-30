@@ -107,13 +107,6 @@
   background-color: rgb(47, 45, 45);
   border-bottom: 1px solid rgb(39, 37, 37);
 }
-.navToggle {
-  color: white;
-  text-align: right;
-  padding-right: 10px;
-  margin: 0;
-
-}
 
 .savingInfo {
   text-align: center;

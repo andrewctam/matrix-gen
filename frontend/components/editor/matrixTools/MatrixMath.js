@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
+import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
 
 const MatrixMath = (props) => {     
@@ -337,9 +338,8 @@ const MatrixMath = (props) => {
     }
 
 
-
+    console.log(props.close)
     return <div ref = {matrixMath} className = {"fixed-bottom row " + styles.matrixMathContainer}>
-        
         <form onSubmit = {calculate} className = "col-sm-3">
             <input type="text" className = {styles.mathInput} value = {expression} placeholder = {"(A + B) * C"} onChange = {handleChange}></input>
             <br/>
@@ -354,6 +354,9 @@ const MatrixMath = (props) => {
                 <li>You can use parentheses to specify order of operations.</li>
             </ul>
         </div>
+
+        <Toggle toggle = {props.close} show = {!props.active}/>
+
 
 
     </div>

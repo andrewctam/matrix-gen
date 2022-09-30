@@ -11,6 +11,7 @@ import styles from "./Navigation.module.css";
 
 
 import {cloneMatrix, createIdentity} from '../matrixFunctions';
+import Toggle from './Toggle';
 
 const Navigation = (props) => {
     const [selectors, setSelectors] = useState([]);
@@ -311,7 +312,7 @@ const Navigation = (props) => {
 
         </div> : null}
 
-        <div className = {styles.navToggle} onClick = {() => {setShowNavigation(!showNavigation)}}>{showNavigation ? String.fromCharCode(8593) : String.fromCharCode(8595)}</div>
+        <Toggle show = {showNavigation} toggle = {() => {setShowNavigation(!showNavigation)}}/>
 
     </div>
 }

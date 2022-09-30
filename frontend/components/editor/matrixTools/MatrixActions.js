@@ -6,6 +6,7 @@ import TwoTextActionButton from './TwoTextActionButton';
 import styles from "./MatrixActions.module.css"
 
 import {transpose, mirrorRowsCols, fillEmpty, fillAll, fillDiagonal, randomMatrix, reshapeMatrix} from '../../matrixFunctions';
+import Toggle from '../../navigation/Toggle';
 
 const MatrixActions = (props) => {
     const [randomLow, setRandomLow] = useState("1");
@@ -62,7 +63,6 @@ const MatrixActions = (props) => {
 
 
     return <div ref = {matrixActions} className = {"fixed-bottom " + styles.matrixActionsContainer}>
-
         <BasicActionButton 
             action = {
                 () => {props.setMatrix(props.name, transpose(props.matrix))
@@ -143,6 +143,8 @@ const MatrixActions = (props) => {
             separator = {" x "}
             width = {"40px"}
         />
+
+    <Toggle toggle = {props.close} show = {!props.active} />
 
     </div>
 }

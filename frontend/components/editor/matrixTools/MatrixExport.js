@@ -4,6 +4,7 @@ import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import ListButton from './ListButton.js';
 
 import styles from "./MatrixExport.module.css"
+import Toggle from '../../navigation/Toggle.js';
 
 const MatrixExport = (props) => {    
     const [exportOption, setExportOption] = useState("2D Arrays");
@@ -202,7 +203,6 @@ const MatrixExport = (props) => {
     }
 
   
-    
     return <div ref = {matrixExport} className = {"fixed-bottom row " + styles.exportContainer}>
         <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
 
@@ -279,6 +279,9 @@ const MatrixExport = (props) => {
                 </div> : null}
 
             </div>
+
+            <Toggle toggle = {props.close} show = {!props.active}/>
+
     </div>    
 }
 

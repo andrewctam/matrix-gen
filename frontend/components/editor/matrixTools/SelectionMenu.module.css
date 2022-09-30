@@ -4,8 +4,7 @@
     width: 100%;
     text-align: center;
     --bs-gutter-x: 0px;
-    padding: 1vh;
-    padding-bottom: 2vh;
+    padding: 10px;
     pointer-events: none;
   }
 

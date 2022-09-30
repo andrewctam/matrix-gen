@@ -4,6 +4,7 @@ import styles from "./SelectionMenu.module.css"
 
 
 import {generateUniqueName, spliceMatrix, pasteMatrix} from "../../matrixFunctions";
+import Toggle from "../../navigation/Toggle";
 
 const SelectionMenu = (props) => {
     const [spliceName, setSpliceName] = useState("");
@@ -110,6 +111,8 @@ const SelectionMenu = (props) => {
             /> <br />
 
         </div> }
+
+        <Toggle toggle = {props.close} show = {!props.active}/>
         
     </div>
            

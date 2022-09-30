@@ -6,6 +6,7 @@ import ListButton from "./ListButton";
 import styles from "./TextImport.module.css"
 
 import { generateUniqueName } from "../../matrixFunctions";
+import Toggle from "../../navigation/Toggle";
 const TextImport = (props) => {
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);
@@ -367,7 +368,7 @@ const TextImport = (props) => {
     }
 
     return <div ref = {textImport} className = {"fixed-bottom row " + styles.importContainer}>
-        <textarea id = "importTextArea" className = {styles.importTextArea} placeholder = {inputMatrixPlaceholder}></textarea>
+         <textarea id = "importTextArea" className = {styles.importTextArea} placeholder = {inputMatrixPlaceholder}></textarea>
 
         <div className = "col-sm-4">
             <ul>
@@ -464,7 +465,7 @@ const TextImport = (props) => {
 
         </div>
 
-       
+        <Toggle toggle = {props.close} show = {!props.active}/>
        
     </div>
 }
