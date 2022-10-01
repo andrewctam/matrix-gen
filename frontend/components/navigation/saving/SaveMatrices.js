@@ -6,7 +6,8 @@ import UserPanel from "./UserPanel";
 
 const SaveMatrices = (props) => {
     const [showWelcome, setShowWelcome] = useState(false);
-   
+    const [showLocalStorageWarning, setShowLocalStorageWarning] = useState(false);
+
     return <div className={styles.saveMatrices}>
        
         <div className="row">
@@ -44,7 +45,10 @@ const SaveMatrices = (props) => {
                     <label className="form-check-label" htmlFor={"saveToLocalSwitch"}>Save To Browser Storage</label>
 
                     <input className="form-check-input pull-right"
-                        onChange={() => { props.updateParameter("Save To Local", !props.saveToLocal) }}
+                        onChange={() => { 
+                            props.updateParameter("Save To Local", !props.saveToLocal) 
+                            setShowLocalStorageWarning(props.saveToLocal); //set to true if currently saving to local (which will become false after this)
+                        }}
                         checked={props.saveToLocal}
                         type="checkbox"
                         role={"switch"}
@@ -52,6 +56,10 @@ const SaveMatrices = (props) => {
                     />
                 </div>
                 <p>{"If this option is enabled, your matrices will automatically be saved to your browser's local storage after making any edits, even when logged out."}</p>
+                
+                {showLocalStorageWarning ? 
+                <p className = {styles.localWarning}>WARNING: Your matrices in local storage will be deleted once you refresh this page.</p>
+                : null}
             </div>
 
         </div>

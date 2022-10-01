@@ -93,3 +93,7 @@
 .changePasswordInput {
     display: block;
 }
+
+.localWarning {
+    color: rgb(250, 168, 168);
+}

@@ -5,7 +5,7 @@ import TwoTextActionButton from './TwoTextActionButton';
 
 import styles from "./MatrixActions.module.css"
 
-import {transpose, mirrorRowsCols, fillEmpty, fillAll, fillDiagonal, randomMatrix, reshapeMatrix} from '../../matrixFunctions';
+import {transpose, mirrorRowsCols, fillEmpty, fillAll, fillDiagonal, randomMatrix, reshapeMatrix, resizeMatrix} from '../../matrixFunctions';
 import Toggle from '../../navigation/Toggle';
 import useExpand from './useExpand';
 
@@ -14,6 +14,8 @@ const MatrixActions = (props) => {
     const [randomHigh, setRandomHigh] = useState("10");
     const [reshapeRows, setReshapeRows] = useState("");
     const [reshapeCols, setReshapeCols] = useState("");
+    const [resizeRows, setResizeRows] = useState("");
+    const [resizeCols, setResizeCols] = useState("");
     const [fillEmptyWithThis, setFillEmptyWithThis] = useState("0");
     const [fillAllWithThis, setFillAllWithThis] = useState("");
     const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
@@ -50,7 +52,14 @@ const MatrixActions = (props) => {
                 if (/^[0-9 \s]*$/.test(updated)) 
                     setReshapeCols(updated);
                 break; 
-
+            case "resizeRows":
+                if (/^[0-9 \s]*$/.test(updated))
+                    setResizeRows(updated);
+                break;
+            case "resizeCols":
+                if (/^[0-9 \s]*$/.test(updated))
+                    setResizeCols(updated);
+                break;
                 
             default: break;
   
@@ -140,6 +149,23 @@ const MatrixActions = (props) => {
             separator = {" x "}
             width = {"40px"}
         />
+
+        <TwoTextActionButton
+            name = "Resize To: "
+            action = {() => {
+                const resized = resizeMatrix(props.matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
+                if (resized)
+                    props.setMatrix(props.name, resized)
+            }}
+            updateParameter = {updateParameter}
+            id1 = {"resizeRows"}
+            id2 = {"resizeCols"}
+            value1 = {resizeRows}
+            value2 = {resizeCols}
+            separator = {" x "}
+            width = {"40px"}
+        />
+
 
         <Toggle toggle = {props.close} show = {!props.active} />
 

@@ -34,7 +34,7 @@ const Tutorial = (props) => {
                 break;
             case "actions":
                 inside = <div>
-                    Matrix Actions allows you to modify your matrix quickly. Most of these actions are irreversible, so save your matrices to your local storage or duplicate them if you might want to reverse the changes.
+                    Matrix Actions allows you to modify your matrix quickly. Most of these actions are irreversible, so duplicate them beforehand if you might want to reverse the changes.
                     <ul className={styles.tutorialList}>
                         <li>Transpose will switch your matrices rows and columns</li>
                         <li>Mirroring your matrix will copy elements (i, j) over the diagonal to (j, i). Mirroring Rows will copy the elements above the diagonal onto those below the diagonal. Mirroring Columns does the opposite.</li>
@@ -42,7 +42,8 @@ const Tutorial = (props) => {
                         <li>Fill All With will replace all boxes with the inputted element.</li>
                         <li>Fill Diagonal with replace all entires (i, i) with the inputted element.</li>
                         <li>Randomize Elements will replace all entries with a random integer between the specified range inclusive.</li>
-                        <li>{"Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy reshape. The matrix is resized to the inputted dimensions n x m, and the elements' positions will be rearranged based on their position in row major order (i * m + j). If the new dimensions are less than the old ones, extra elements are discarded. If you want to resize your matrix while keeping element positions, resize by clicking on its size in the selector area."}</li>
+                        <li>{"Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy reshape. The matrix is resized to the inputted dimensions n x m, and the elements' positions will be rearranged based on their position in row major order (i * m + j). If the new dimensions are less than the old ones, extra elements are discarded."}</li>
+                        <li>{"Resize Matrix will resize your matrix's dimentions while keeping elements at their positions. Out of bounds elements are deleted. This action is the same as the one in the selector menu."}</li>
                     </ul>
                 </div>
                 break;

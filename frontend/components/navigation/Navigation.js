@@ -149,7 +149,7 @@ const Navigation = (props) => {
         <p onClick={() => { setShowSaveMenu(!showSaveMenu) }} className={styles.savingInfo}>{saving}</p>
     </div>
     {showNavigation ? 
-    <div ref = {navigationRef} className={"row"}>
+    <div ref = {navigationRef} className={"row " + styles.mainBar}>
 
         {showSaveMenu ?
             <SaveMatrices

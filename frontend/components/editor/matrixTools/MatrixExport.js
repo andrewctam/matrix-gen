@@ -200,7 +200,7 @@ const MatrixExport = (props) => {
 
   
     return <div ref = {matrixExport} className = {"fixed-bottom row " + styles.exportContainer}>
-        <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
+            <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
 
             <div className = "col-sm-4">
                 <ul>

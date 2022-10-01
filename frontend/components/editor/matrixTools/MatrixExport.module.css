@@ -1,24 +1,29 @@
 .exportContainer {
   width: 100%;
-  padding: 10px;
   background-color: rgba(50, 50, 50, 0.8);
   --bs-gutter-x: 0px;
   text-align: center;
   max-height: 75vh;  
   overflow-y: auto;
+  border-top: 1px solid black;
 
 }
 
 .exportTextArea {
+  color: white;
   width: 100%;
   height: 250px;
   margin-bottom: 10px;
-  background-color: rgb(125, 120, 125);
-  color: white;
-  padding: 2px;
+  background-color: rgba(125, 120, 125, 0.5);
+  margin-bottom: 10px;
+  padding: 5px;
   overflow-wrap: normal;
   overflow-x: auto;
   overflow-y: auto;
   white-space: pre;
   resize: none;
+}
+
+.exportTextArea:focus {
+  outline: none !important;
 }

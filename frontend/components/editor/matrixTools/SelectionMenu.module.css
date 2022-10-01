@@ -4,12 +4,11 @@
     width: 100%;
     text-align: center;
     --bs-gutter-x: 0px;
-    padding: 10px;
     pointer-events: none;
     max-height: 75vh;
     border-top: 1px solid black;
     overflow-y: auto;
-
+    padding-top: 5px;
   }
 
 .editSelectedInput {

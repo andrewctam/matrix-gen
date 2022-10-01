@@ -1,6 +1,5 @@
 .matrixMathContainer {
     width: 100%;
-    padding: 10px;
     background-color: rgba(50, 50, 50, 0.8);
     --bs-gutter-x: 0px;
     max-height: 75vh;
@@ -9,6 +8,8 @@
     margin-right: auto;
     text-align: center;
     display: block;
+    border-top: 1px solid black;
+    padding-top: 5px;
 }
 
 .mathInput {
