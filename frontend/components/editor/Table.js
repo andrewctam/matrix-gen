@@ -1,10 +1,14 @@
-import React from 'react';
-import Box from './Box.js'; 
-
 import styles from "./Table.module.css"
 
+import Box from './Box.js'; 
+
+import { useState } from 'react';
+
 import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete, cloneMatrix} from '../matrixFunctions.js';
+
 const Table = (props) => {
+    const [showHelpers, setShowHelpers] = useState(props.firstVisit);
+
     //add Row/Col/Both and update matrix[row][col]
     const addRow = (row, col, updated) => {
         var clone = cloneMatrix(props.matrix);
@@ -36,6 +40,7 @@ const Table = (props) => {
         }
 
         props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        setShowHelpers(false)
     }
 
 
@@ -55,11 +60,15 @@ const Table = (props) => {
         }
 
         props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        setShowHelpers(false)
+
     }
 
     const update = (row, col, updated) => {
         var clone = cloneMatrix(props.matrix)
         props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        setShowHelpers(false)
+
     }
 
     const keyDown = (row, col, e) => {
@@ -75,7 +84,7 @@ const Table = (props) => {
             const result = tryToDelete(props.matrix, row, col)
 
             if (result)
-                props.setMatrix(props.name, ); 
+                props.setMatrix(props.name, result); 
 
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             if (col !== 0) {
@@ -116,6 +125,8 @@ const Table = (props) => {
                 document.getElementById(props.matrix.length - 1 +  ":" + (col - 1)).focus();
             }
         }
+
+        
     }
 
     const inSelection = (x, y) => {
@@ -177,11 +188,32 @@ const Table = (props) => {
         tableRows[i] = <tr key = {"row" + i} className = {styles.tableRow}>{eachRow}</tr>
     }
 
-    return <table className = {"table table-bordered " + styles.matrixTable}>
-        <tbody>{tableRows}</tbody>
-    </table>
+    return (
+        <div className = "d-flex justify-content-center">
+            {showHelpers ? 
+            <div className = {"d-flex justify-content-end " + styles.helperLeft}>
+                <div className = {styles.helperTextLeft + " d-flex"}>
+                    <div>Type in a white box to update an entry</div>
+                    <div className = {styles.arrowLeft}>&#8594;</div>
+                </div>
+            </div> : null}
 
-;
+            <div className = "d-flex">
+                <table className = {"table table-bordered " + styles.matrixTable}>
+                    <tbody>{tableRows}</tbody>
+                </table> 
+            </div>
+
+            {showHelpers ? 
+            <div className = {"d-flex " + styles.helperRight}>
+                    <div className = {styles.helperTextRight + " d-flex"}>
+                        <div className = {styles.arrowRight}> &#8592;</div>
+                    <div>Type in a red box to add a row or column</div>
+                </div>
+            </div> : null}
+
+        </div>
+    )
 }
 
 export default Table;

@@ -1,6 +1,6 @@
 .matrixTable {
-    width: auto !important;
-    margin-top: 10px ;
+    width: fit-content;
+    height: fit-content;
     margin-left: auto;
     margin-right: auto;
     background-color: rgb(196, 185, 185);
@@ -25,4 +25,45 @@
     height: 25px;
 }
 
+.helperLeft {
+    padding: 6px;
+    text-align: right;
+    width: 300px;
+    height: fit-content;
+}
 
+.helperRight {
+    padding: 6px;
+    width: 300px;
+    height: fit-content;
+    
+
+}
+
+.helperTextLeft {
+    border: 1px solid rgb(204, 190, 190);
+    color: rgb(204, 190, 190);
+    border-radius: 5px;
+    padding: 8px;
+    font-size: small
+}
+
+.helperTextRight {
+    border: 1px solid rgb(213, 152, 152);
+    color: rgb(213, 152, 152);
+    border-radius: 5px;
+    padding: 8px;
+    font-size: small
+
+
+}
+
+
+.arrowLeft {
+    padding-left: 5px;
+}
+
+.arrowRight {
+    padding-right: 5px;
+
+}

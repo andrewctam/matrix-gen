@@ -20,7 +20,7 @@ const Navigation = (props) => {
 
     const [showSettings, setShowSettings] = useState(false);
     const [showPresets, setShowPresets] = useState(false);
-    const [showTutorial, setShowTutorial] = useState(false);
+    const [showTutorial, setShowTutorial] = useState(props.firstVisit);
     const [showSaveMenu, setShowSaveMenu] = useState(false);
     const [identitySize, setIdentitySize] = useState(3);
 
@@ -29,12 +29,7 @@ const Navigation = (props) => {
     const [showMatrixTools, setShowMatrixTools] = useState(true);
 
     const navigationRef = useRef(null);
-    useEffect(() => {
-        if (window.localStorage.getItem("First Visit") === null) {
-            setShowTutorial(true);
-            window.localStorage.setItem("First Visit", "0");
-        }
-    }, [])
+
 
     useEffect(() => {
         const sizeFilters = [];
@@ -186,7 +181,7 @@ const Navigation = (props) => {
 
 
                 <MenuButton
-                    text={showSaveMenu ? "Close Save Menu" : "Save Matrices"}
+                    text={showSaveMenu ? "Hide Save Menu" : "Save Matrices"}
                     buttonStyle={"info"}
                     action={() => {
                         setShowSaveMenu(!showSaveMenu)

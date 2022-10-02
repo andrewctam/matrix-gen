@@ -21,6 +21,7 @@ const App = (props) => {
     const saving = useRef(false);
     const [dataTooLarge, setDataTooLarge] = useState(false);
 
+    const [firstVisit, setFirstVisit] = useState(false);
     //load from local storage and set up app
     useEffect(() => {
         window.addEventListener("beforeunload", (e) => {
@@ -60,6 +61,13 @@ const App = (props) => {
             setSelectable(true);
         else
             setSelectable(disableSelection === "0");
+
+        if (window.localStorage.getItem("First Visit") === null) {
+            setFirstVisit(true);
+            window.localStorage.setItem("First Visit", "0");
+        }
+
+        
 
     // eslint-disable-next-line
     }, []);
@@ -421,6 +429,8 @@ const App = (props) => {
                 setShowMerge = {setShowMerge}
                 userMatrices = {userMatrices}
                 dataTooLarge = {dataTooLarge}
+                
+                firstVisit = {firstVisit}
             />
 
         
@@ -438,6 +448,8 @@ const App = (props) => {
                 selectable = {selectable}
 
                 setMatrix = {setMatrix}
+
+                firstVisit = {firstVisit}
                                 
             /> : null} 
     

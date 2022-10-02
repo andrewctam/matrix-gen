@@ -236,12 +236,15 @@ const MatrixEditor = (props) => {
                     mouseDown={mouseDown}
                     setMouseDown={setMouseDown}
                     editSelection={props.editSelection}
+                    
+                    firstVisit = {props.firstVisit}
                 />
                 : <div className={styles.bigMatrixInfo}>
                     Matrices larger than 50 x 50 are too big to be displayed<br />
                     Use Import Matrix From Text or Matrix Actions to edit the matrix<br />
                     Use Export Matrix to view the matrix
                 </div>}
+
 
 
 
