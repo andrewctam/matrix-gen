@@ -53,8 +53,8 @@ const LoginForm = (props) => {
                 return response.json();
         }).catch((error) => {
             console.log(error);
-        });
-
+            setPasswordError("Unable to connect to server");
+        })
         if (response === null) {
             setUsernameError("Invalid username or password");
             return;
@@ -102,6 +102,8 @@ const LoginForm = (props) => {
                 return response.json();
         }).catch((error) => {
             console.log(error);
+            setPasswordError("Unable to connect to server");
+
         })
 
         if (response === null) {

@@ -268,6 +268,8 @@ const App = (props) => {
 
             return response.json()
         }).catch((error) => {
+            console.log(error)
+            alert("Error connecting to server")
             return null;
         });
 

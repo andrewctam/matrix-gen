@@ -24,6 +24,8 @@ const Table = (props) => {
         }
 
         props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        setShowHelpers(false)
+
     }
 
     const addCol = (row, col, updated) => {
