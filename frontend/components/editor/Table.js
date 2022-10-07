@@ -89,6 +89,8 @@ const Table = (props) => {
                 props.setMatrix(props.name, result); 
 
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
+            e.preventDefault();
+
             if (col !== 0) {
                 document.getElementById((row) + ":" + (col - 1)).focus();
                 document.getElementById((row) + ":" + (col - 1)).selectionStart = 0;
@@ -100,17 +102,19 @@ const Table = (props) => {
         } 
         
         else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) { //Right
+            e.preventDefault();
+
             if (props.col !== props.matrix[0].length - 1) { 
                 document.getElementById((row) + ":" + (col + 1)).focus();
                 document.getElementById((row) + ":" + (col + 1)).selectionStart = -1;
 
-            } 
-            else if (row !== props.matrix.length - 1) { //Wrap
+            } else if (row !== props.matrix.length - 1) { //Wrap
                 document.getElementById((row + 1) + ":0").focus();
             }
         }
 
         else if (e.keyCode === 40) { //Down
+            e.preventDefault();
 
             if (row !== props.matrix.length - 1) {
                 document.getElementById((row + 1) +  ":" + (col) ).focus();
@@ -120,6 +124,8 @@ const Table = (props) => {
             }
 
         } else if (e.keyCode === 38) { //Up
+            e.preventDefault();
+
             if (row !== 0) {     
                 document.getElementById(row - 1 + ":" + col).focus();
             } 
@@ -191,7 +197,7 @@ const Table = (props) => {
     }
 
     return (
-        <div className = "d-flex justify-content-center">
+        <div className = {"d-flex justify-content-center" } >
             {showHelpers ? 
             <div className = {"d-flex justify-content-end " + styles.helperLeft}>
                 <div className = {styles.helperTextLeft + " d-flex"}>
@@ -200,8 +206,9 @@ const Table = (props) => {
                 </div>
             </div> : null}
 
-            <div className = "d-flex">
-                <table className = {"table table-bordered " + styles.matrixTable}>
+            
+            <div className = {"d-flex " + styles.tableContainer}>
+                <table className = {"table " + styles.matrixTable}>
                     <tbody>{tableRows}</tbody>
                 </table> 
             </div>

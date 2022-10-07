@@ -36,27 +36,19 @@ const Box = (props) => {
 
     if (props.boxSelected && (!lastRow || lastRowIn50) && (!lastCol || lastColIn50))
         var specialStyle =  { 
-            "backgroundColor": "rgb(183, 212, 216)",
-            "maxWidth": "50px",
-            "width": "50px",
-            "maxHeight": "50px",
-            "height": "50px" 
+            "backgroundColor": "rgb(183, 212, 216)"
         }  
     else if ((lastRowIn50 && lastColIn50) ||                //bottom right corner of 50 x 50
             (lastRowIn50 && props.col < props.cols - 1) || //bottom row of 50 x m (excluding right most col)
             (lastColIn50 && props.row < props.rows - 1)) { //right most col of n x 50 (excluding last row)
             specialStyle =  { 
-            "backgroundColor": "rgb(196, 185, 185)",
-            "maxWidth": "50px",
-            "width": "50px",
-            "maxHeight": "50px",
-            "height": "50px" 
+            "backgroundColor": "rgb(196, 185, 185)"
         }
     } else
         specialStyle = null;
 
 
-    return <td className = {styles.box} style = {specialStyle} >
+    return <td className = {styles.box}>
         <input 
             type = {props.numbersOnly ? "number" : "text"}
             pattern = {props.numbersOnly ? "[0-9]*" : null}
@@ -64,6 +56,7 @@ const Box = (props) => {
             id = {props.row + ":" + props.col} 
             value = {props.val} 
             tabIndex = {props.row !== 0 && lastCol ? -1 : ""} 
+            style = {specialStyle} 
             onChange = {(lastRow && lastCol ? (e) => {props.addBoth(props.row, props.col, e.target.value)} :
                                     lastRow ? (e) => {props.addRow(props.row, props.col, e.target.value)} :
                                     lastCol ? (e) => {props.addCol(props.row, props.col, e.target.value)} :

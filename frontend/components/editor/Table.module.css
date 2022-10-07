@@ -1,33 +1,48 @@
+
 .matrixTable {
     width: fit-content;
     height: fit-content;
     margin-left: auto;
     margin-right: auto;
-    background-color: rgb(196, 185, 185);
+    margin-bottom: 0px;
+    
 }
+
+.tableContainer {
+    border-left: 5px solid white;
+    border-right: 5px solid white;
+    border-radius: 15px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 
 .tableRow {
-    border: 1px solid rgb(0, 0, 0);
-    margin: 0;
-    padding: 0;
-}
-
-.matrixTable>:not(caption)>*>* {
-    padding: 0;
-    margin: 0;
-    height: 50px;
-
+    margin: 0px;
+    padding: 0px;
 }
 
 .tableRow:nth-last-child(1) > td {
-    background-color: rgb(188, 146, 146);
-    max-height: 25px;
-    height: 25px;
+    height: 29px;
 }
 
+.tableRow:nth-last-child(1) > td > input {
+    background-color: rgb(188, 146, 146);
+    height: 29px;
+}
+
+
+.bracket {
+    height: 100%;
+}
 .helperLeft {
     text-align: right;
     padding: 6px;
+    margin-top: 5px;
     width: 300px;
     height: fit-content;
 }
@@ -47,6 +62,7 @@
 
 .helperRight {
     padding: 6px;
+    margin-top: 5px;
     width: 300px;
     height: fit-content;
 }

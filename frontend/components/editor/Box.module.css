@@ -1,26 +1,37 @@
 .box {
-    padding: 0;
-    margin: 0;
-    width: 50px;
-    height: 50px;
-    background-color: white;
-    border: 1px solid rgb(0, 0, 0);
+    width: 54px;
+    height: 54px;
+    padding: 2px !important;
+    border: none;
+ 
+    background: none;
 }
 
+.box > input {
+    width: 50px;
+    height: 50px;
+    border-radius: 3px;
+}
 .box > input:focus {
     outline: none !important;
-  }
+}
+
+.box:nth-last-child(1) > input {
+    background-color: rgb(188, 146, 146);
+    max-width: 25px;
+    width: 25px;
+}
+
 
 .box:nth-last-child(1) {
-    background-color: rgb(188, 146, 146);
-    max-width: 30px;
-    width: 30px;
+    max-width: 29px;
+    width: 29px;
 }
 
 .box > input {
     width: 100%;
     height: 100%;
-    background: none;
+    background-color: rgb(232, 223, 223);
     border: none;
     padding: 0;
     margin: 0;
