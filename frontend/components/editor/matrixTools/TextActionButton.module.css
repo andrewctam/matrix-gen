@@ -15,8 +15,6 @@
     border: 1px solid black;
     pointer-events: all;
     
-
-
 }
 
 .textActionButton > button {
@@ -39,14 +37,13 @@
     color: black;
     vertical-align: middle;
     pointer-events: all;
-    
 
 }
 
 
 
 .textActionButton > input::placeholder {
-    color: rgba(0, 0, 0, 0.75);
+    color: rgba(0, 0, 0, 0.5);
 }
 
 

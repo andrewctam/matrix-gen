@@ -22,6 +22,7 @@
   overflow-y: auto;
   white-space: pre;
   resize: none;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .exportTextArea:focus {

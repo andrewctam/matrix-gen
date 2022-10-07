@@ -13,6 +13,7 @@ const TwoTextActionButton = (props) => {
             <ParameterTextInput 
                 id={props.id1} 
                 updateParameter = {props.updateParameter} 
+                placeholder = {props.placeholder1}
                 text = {props.value1} 
                 width = {props.width} />
 
@@ -22,6 +23,7 @@ const TwoTextActionButton = (props) => {
                 id={props.id2} 
                 updateParameter = {props.updateParameter} 
                 text = {props.value2} 
+                placeholder = {props.placeholder2}
                 width = {props.width} />
         </div>
 

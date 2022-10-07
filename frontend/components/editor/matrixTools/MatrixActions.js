@@ -5,7 +5,7 @@ import TwoTextActionButton from './TwoTextActionButton';
 
 import styles from "./MatrixActions.module.css"
 
-import {transpose, mirrorRowsCols, fillEmpty, fillAll, fillDiagonal, randomMatrix, reshapeMatrix, resizeMatrix} from '../../matrixFunctions';
+import {transpose, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, reshapeMatrix, resizeMatrix} from '../../matrixFunctions';
 import Toggle from '../../navigation/Toggle';
 import useExpand from './useExpand';
 
@@ -19,7 +19,8 @@ const MatrixActions = (props) => {
     const [fillEmptyWithThis, setFillEmptyWithThis] = useState("0");
     const [fillAllWithThis, setFillAllWithThis] = useState("");
     const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
-    
+    const [replaceX, setReplaceX] = useState("");
+    const [replaceY, setReplaceY] = useState("");
 
     const matrixActions = useExpand(props.optionsBarRef);
 
@@ -60,6 +61,16 @@ const MatrixActions = (props) => {
                 if (/^[0-9 \s]*$/.test(updated))
                     setResizeCols(updated);
                 break;
+            case "replaceX":
+                if (/^[0-9 \s]*$/.test(updated))
+                    setReplaceX(updated);
+                break;
+            case "replaceY":
+                if (/^[0-9 \s]*$/.test(updated))
+                    setReplaceY(updated);
+                break;
+
+
                 
             default: break;
   
@@ -109,6 +120,23 @@ const MatrixActions = (props) => {
             width = {"40px"}
             value = {fillAllWithThis}
         />
+
+        <TwoTextActionButton
+            name = "Replace X With Y: "
+            action = {() => {
+                props.setMatrix(props.name, fillXY(props.matrix, replaceX, replaceY))
+            }}
+            updateParameter = {updateParameter}
+            id1 = {"replaceX"}
+            placeholder1 = {"X"}
+            id2 = {"replaceY"}
+            placeholder2 = {"Y"}
+            value1 = {replaceX}
+            value2 = {replaceY}
+            separator = {" → "}
+            width = {"40px"}
+        />
+
 
         <TextActionButton 
             name = "Fill Diagonal With: "

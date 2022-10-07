@@ -18,19 +18,17 @@
     margin-bottom: 10px;
     padding: 5px;
     resize: none;
+    font-family: 'Courier New', Courier, monospace;
     overflow-wrap: normal;
     overflow-x: auto;
     overflow-y: auto;
-    white-space: pre;
-    
-    
+    white-space: pre;   
 }
 
 
 .importTextArea:focus {
     outline: none !important;
 }
-
 
 .importTextArea::placeholder, .importedMatrixName::placeholder {
     color: rgba(255, 255, 255, 0.5);

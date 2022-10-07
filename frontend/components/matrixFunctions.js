@@ -304,19 +304,39 @@ export const fillEmpty = (matrix, fillEmptyWithThis) => {
     return clone;
 }
 
-export const fillAll = (matrix, fillAllWithThis) => {
-    return Array(matrix.length).fill([]).map(()=>
-        Array(matrix[0].length).fill(fillAllWithThis)
-    );
+
+export const fillXY = (matrix, X, Y) => {
+    const clone = cloneMatrix(matrix)
+    
+    for (let i = 0; i < clone.length - 1; i++)
+        for (let j = 0; j < clone[0].length - 1; j++) {
+            if (clone[i][j] === X)
+                clone[i][j] = Y;
+        }
+    
+    return clone;
 }
 
-export const fillDiagonal = (matrix, fillDiagonalWithThis) => {
+export const fillAll = (matrix, fill) => {
+    const clone = cloneMatrix(matrix)
+    
+    for (let i = 0; i < clone.length - 1; i++)
+        for (let j = 0; j < clone[0].length - 1; j++) {
+            clone[i][j] = fill;
+        }
+    
+    return clone;
+}
+
+
+
+export const fillDiagonal = (matrix, fill) => {
     const clone = cloneMatrix(matrix)
     
     const smaller = Math.min(clone.length - 1,clone[0].length - 1);
 
     for (let i = 0; i < smaller; i++)
-        clone[i][i] = fillDiagonalWithThis;
+        clone[i][i] = fill;
     
     return clone;    
 }
