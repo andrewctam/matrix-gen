@@ -14,10 +14,9 @@ metadata = sqlalchemy.MetaData()
 users = sqlalchemy.Table(
     "users",
     metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("created_at", sqlalchemy.DateTime),
-    sqlalchemy.Column("username", sqlalchemy.VARCHAR), 
+    sqlalchemy.Column("username", sqlalchemy.VARCHAR, primary_key=True), 
     sqlalchemy.Column("hashed_password", sqlalchemy.VARCHAR),
+    sqlalchemy.Column("created_at", sqlalchemy.DateTime),
     sqlalchemy.Column("matrix_data", sqlalchemy.VARCHAR),
     sqlalchemy.Column("refresh_token", sqlalchemy.VARCHAR)
 )
