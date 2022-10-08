@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete, cloneMatrix} from '../matrixFunctions.js';
 
 const Table = (props) => {
-    const [showHelpers, setShowHelpers] = useState(props.firstVisit);
+    const [showHelpers, setShowHelpers] = useState(window.innerWidth > 576 && props.firstVisit);
 
     //add Row/Col/Both and update matrix[row][col]
     const addRow = (row, col, updated) => {
@@ -104,7 +104,7 @@ const Table = (props) => {
         else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) { //Right
             e.preventDefault();
 
-            if (props.col !== props.matrix[0].length - 1) { 
+            if (col !== props.matrix[0].length - 1) { 
                 document.getElementById((row) + ":" + (col + 1)).focus();
                 document.getElementById((row) + ":" + (col + 1)).selectionStart = -1;
 
@@ -197,7 +197,12 @@ const Table = (props) => {
     }
 
     return (
-        <div className = {"d-flex justify-content-center" } >
+        <div className = {"d-flex justify-content-center" } id = "hide" onClick = {(e) => {
+            if (e.target.id === "hide") {
+                props.updateBoxesSelected(-1, -1, -1, -1, true);
+            } 
+        }}>
+
             {showHelpers ? 
             <div className = {"d-flex justify-content-end " + styles.helperLeft}>
                 <div className = {styles.helperTextLeft + " d-flex"}>
