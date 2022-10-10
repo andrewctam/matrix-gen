@@ -28,11 +28,13 @@
 
 .tableRow:nth-last-child(1) > td {
     height: 29px;
+    max-height: 29px;
 }
 
 .tableRow:nth-last-child(1) > td > input {
     background-color: rgb(188, 146, 146);
-    height: 29px;
+    height: 25px;
+    max-height: 25px;
 }
 
 

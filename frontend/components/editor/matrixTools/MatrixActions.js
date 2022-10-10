@@ -1,5 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState } from 'react';
 
+import BasicActionButton from './BasicActionButton';
 import TextActionButton from './TextActionButton';
 import TwoTextActionButton from './TwoTextActionButton';
 
@@ -199,16 +200,6 @@ const MatrixActions = (props) => {
 
     </div>
 }
-
-const BasicActionButton = (props) => {
-    return  <button 
-                className = "btn btn-primary" 
-                onClick={props.action}
-            >
-            {props.name}
-            </button>
-}
-
 
 
 export default MatrixActions;

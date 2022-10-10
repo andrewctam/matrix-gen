@@ -48,6 +48,11 @@ export const generateUniqueName = (matrices) => {
 }
 
 export const resizeMatrix = (matrix, rows, cols) => {
+    if (rows <= 1 || cols <= 1) { //actually inputted 0 x 0, which is 1 x 1
+        alert("Dimensions must be positive");
+        return null;
+    }
+
     //check to make new and old dimensions are different
     if (matrix.length === rows && matrix[0].length === cols)
         return null;
@@ -260,7 +265,10 @@ export const reshapeMatrix = (matrix, rowCount, colCount) => {
             rowCount = numElements / colCount;
         } 
     }
-
+    if (rowCount <= 0 || colCount <= 0) {
+        alert("Dimensions must be positive");
+        return null;
+    }
 
     const reshaped = Array(rowCount + 1).fill([]).map(()=>Array(colCount + 1).fill(""))
 
@@ -419,7 +427,6 @@ export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
 
     console.log(pasteMatrix)
     console.log(copyMatrix)
-    debugger;
 
     
     if (x2 - x1 + 2 !== copyMatrix.length || y2 - y1 + 2 !== copyMatrix[0].length) {
@@ -437,3 +444,101 @@ export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
     return clone;
 }
 
+
+const closeToZero = (n) => {
+    return Math.abs(n) < 0.000001;
+}
+
+
+export const LDecomposition = (matrix) => {
+    const smaller = Math.min(matrix.length - 1, matrix[0].length - 1);
+
+    for (let i = 0; i < smaller; i++) {
+        if (closeToZero(matrix[i][i])) {
+            //find nonzero pivot and swap
+            for (let k = i + 1; k < matrix.length - 1; k++) {
+                if (!closeToZero(matrix[i][i])) { //close to 0 for floating point error
+                    const temp = matrix[i];
+                    matrix[i] = matrix[k];
+                    matrix[k] = temp;
+                    break;
+                }
+            }
+        }
+
+
+        if (closeToZero(matrix[i][i]))
+            continue;
+
+        for (let j = i + 1; j < matrix.length - 1; j++) {
+            const ratio = matrix[j][i] / matrix[i][i];
+            for (let k = i; k < matrix[0].length - 1; k++) {
+                matrix[j][k] -= ratio * matrix[i][k];
+                if (closeToZero(matrix[i][i])) {//close to 0 for floating point error
+                    matrix[j][k] = 0;
+                }
+            }
+        }
+    }
+
+    return matrix;
+}
+
+export const UDecomposition = (matrix) => {
+    const smaller = Math.min(matrix.length - 1, matrix[0].length - 1);
+    for (let i = smaller - 1; i >= 0; i--) {
+        if (closeToZero(matrix[i][i])) {
+            //find nonzero pivot and swap
+            for (let k = i - 1; k >= 0; k--) {
+                if (!closeToZero(matrix[k][i])) { //close to 0 for floating point error
+                    const temp = matrix[i];
+                    matrix[i] = matrix[k];
+                    matrix[k] = temp;
+                    break;
+                }
+            }
+        }
+
+        if (closeToZero(matrix[i][i]))
+            continue;
+
+        
+        for (let j = i - 1; j >= 0; j--) {
+            const ratio = matrix[j][i] / matrix[i][i];
+            for (let k = i; k >= 0; k--) {
+                matrix[j][k] -= ratio * matrix[i][k];
+                if (closeToZero(matrix[i][i])) {//close to 0 for floating point error
+                    matrix[j][k] = 0;
+                }
+            }
+        }
+        
+    }
+
+    return matrix;
+}
+
+export const gaussian = (matrix) => {
+    const rref = UDecomposition(LDecomposition(matrix))
+    const smaller = Math.min(rref.length - 1, rref[0].length - 1);
+
+    for (let i = 0; i < smaller; i++) {
+        if (rref[i][i] !== 0) {
+            const pivot = rref[i][i];
+            for (let j = i; j < rref[0].length - 1; j++) {
+                rref[i][j] /= pivot;
+            }
+        }
+    }   
+
+    return rref;
+}
+
+export const calculateDeterminant = (matrix) => {
+    const LMatrix = LDecomposition(matrix);
+    
+    let determinant = 1;
+    for (let i = 0; i < LMatrix.length - 1; i++)
+        determinant *= LMatrix[i][i];
+    return determinant;
+}

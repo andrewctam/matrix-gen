@@ -166,6 +166,7 @@ const MatrixEditor = (props) => {
                 <MatrixMath
                     matrices={props.matrices}
                     matrix={props.matrix}
+                    name = {props.name}
                     setMatrix={props.setMatrix}
                     sparseVal={props.sparseVal}
                     close={() => { setShowMath(false) }}
