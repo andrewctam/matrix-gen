@@ -20,6 +20,10 @@ h1 {
     
 }
 
+h2 {
+    font-size: larger;
+}
+
 input {
     background-color: rgb(125, 120, 125);
     border-radius: 5px;

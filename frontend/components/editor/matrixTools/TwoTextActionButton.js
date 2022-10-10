@@ -3,7 +3,7 @@ import ParameterTextInput from "../../inputs/ParameterTextInput";
 import styles from "./TextActionButton.module.css"
 
 const TwoTextActionButton = (props) => {
-    return   <div className = {styles.textActionButton}>
+    return   <form className = {styles.textActionButton} onSubmit = {(e) => {e.preventDefault(); props.action()}}>
             <button
                 className = "btn btn-primary"
                 onClick={props.action}> 
@@ -25,7 +25,7 @@ const TwoTextActionButton = (props) => {
                 text = {props.value2} 
                 placeholder = {props.placeholder2}
                 width = {props.width} />
-        </div>
+        </form>
 
 
     

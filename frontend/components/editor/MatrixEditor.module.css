@@ -14,8 +14,9 @@
   border-radius: 10px;
   text-align: center;
 }
-
-
+.undoRedo {
+  display: inline-block;
+}
 
 .bigMatrixInfo {
   width: fit-content;

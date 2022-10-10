@@ -128,8 +128,11 @@ const App = (props) => {
 
     //set matrices and update undo stack
     const updateMatrices = (updated) => {
-        setUndoStack([...undoStack, JSON.stringify(matrices)]);
-        setRedoStack([]);
+        const current = JSON.stringify(matrices)
+        if (current !== "null") {
+            setUndoStack([...undoStack, current]);
+            setRedoStack([]);
+        }
         
         setMatrices(updated);
 

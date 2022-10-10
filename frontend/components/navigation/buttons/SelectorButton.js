@@ -26,7 +26,7 @@ const SelectorButton = (props) => {
             setDisplaySize(updated);
     }
 
-    const pushNewName = () => {debugger;
+    const pushNewName = () => {
         if (displayName !== props.name)
             if (displayName === "") {
                 alert("The name can not be blank!")

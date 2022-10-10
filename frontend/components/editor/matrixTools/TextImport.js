@@ -4,7 +4,7 @@ import ParameterTextInput from "../../inputs/ParameterTextInput";
 import ActiveButton from "../ActiveButton";
 
 import styles from "./TextImport.module.css"
-
+import OverwriteInput from "./OverwriteInput";
 import { generateUniqueName } from "../../matrixFunctions";
 import Toggle from "../../navigation/Toggle";
 import useExpand from "./useExpand";
@@ -57,6 +57,11 @@ const TextImport = (props) => {
             case "Overwrite Current Matrix":
                 setOverwrite(updated);
                 setNewName("");
+                break;
+            case "newName":
+                if (/^[A-Za-z_]*$/.test(updated)) { //only update if valid chars used
+                    setNewName(updated);
+                }
                 break;
             case "settingA":
                 setSettingA(updated);
@@ -124,14 +129,6 @@ const TextImport = (props) => {
 
     }
 
-    const updateNewMatrixName = (e) => {
-        const updated = e.target.value;
-        if (/^[A-Za-z_]*$/.test(updated)) { //only update if valid chars used
-           setNewName(updated);
-        }
-
-    }
-
     const addRegexEscape = (str) => {
         switch(str) { //escapes for regex
             case ".": case "+": case "*": case "?": case "^": case "$": case "(": case ")": case "[": case "]": case "{": case "}": case "|":
@@ -162,8 +159,6 @@ const TextImport = (props) => {
         switch(importFormat) {
             case "Separator":
                 const rowSeparator = settingD;
-
-                debugger
                 //split into rows
                 let maxLen = 0;
                 var rows = text.split(rowSeparator);
@@ -439,19 +434,15 @@ const TextImport = (props) => {
         </div>
 
         <div className = "col-sm-4">
-            {props.currentName ?
-            <ParameterBoxInput isChecked = {overwrite} name = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
+            {props.currentName ? 
+                <OverwriteInput
+                overwrite = {overwrite}
+                updateParameter = {updateParameter}
+                id = "newName"
+                placeholder = {generateUniqueName(props.matrices)}
+                newName = {newName}
+            /> 
             : null}
-
-            {(props.currentName && overwrite ? null : 
-            <div>
-                {"Save as New Matrix: "}
-                <input className = {styles.importedMatrixName} 
-                placeholder={generateUniqueName(props.matrices)} 
-                value = {newName}
-                onChange={updateNewMatrixName} />
-            </div>
-            )}
 
             <button className = "btn btn-success" onClick = {parseText}>
                 {"Import Matrix"}

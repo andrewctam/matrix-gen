@@ -149,8 +149,10 @@ const MatrixEditor = (props) => {
                     action={toggleShown}
                 />
 
-                <BasicActionButton disabled = {!props.canUndo} name = "↺" action = {props.undo} />   
-                <BasicActionButton disabled = {!props.canRedo} name = "↻" action = {props.redo} />
+                <div className={styles.undoRedo}>
+                    <BasicActionButton disabled = {!props.canUndo} name = "↺" action = {props.undo} />   
+                    <BasicActionButton disabled = {!props.canRedo} name = "↻" action = {props.redo} />
+                </div>
             </div>
 
 

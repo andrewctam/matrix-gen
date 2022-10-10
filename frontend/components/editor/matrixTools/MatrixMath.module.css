@@ -35,6 +35,12 @@
     font-size: larger;
 }
 
+.arrow {
+    display: inline-block;
+    font-size: larger;
+    padding-left: 5px;
+    padding-right: 5px;
+}
 .title {
     display: block;
 }

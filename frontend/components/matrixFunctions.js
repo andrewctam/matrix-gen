@@ -232,7 +232,7 @@ export const randomMatrix = (matrix, randomLow, randomHigh) => {
         
         for (let i = 0; i < clone.length - 1; i++)
             for (let j = 0; j < clone[0].length - 1; j++)
-                clone[i][j] = Math.floor(Math.random() * (randomHigh - randomLow)) + randomLow;
+                clone[i][j] = (Math.floor(Math.random() * (randomHigh - randomLow)) + randomLow).toString();
         
         return clone;
     }
@@ -356,7 +356,7 @@ export const createIdentity = (size) => {
     const matrix = Array(size + 1).fill().map(()=>Array(size + 1).fill(""))
 
     for (let i = 0; i < size; i++)
-        matrix[i][i] = 1;
+        matrix[i][i] = "1";
     
     return matrix
 }
@@ -450,76 +450,54 @@ const closeToZero = (n) => {
 }
 
 
-export const LDecomposition = (matrix) => {
-    const smaller = Math.min(matrix.length - 1, matrix[0].length - 1);
-
-    for (let i = 0; i < smaller; i++) {
-        if (closeToZero(matrix[i][i])) {
-            //find nonzero pivot and swap
-            for (let k = i + 1; k < matrix.length - 1; k++) {
-                if (!closeToZero(matrix[k][i])) { //close to 0 for floating point error
-                    const temp = matrix[i];
-                    matrix[i] = matrix[k];
-                    matrix[k] = temp;
-                    break;
+export const LUDecomposition = (matrix) => {
+    
+    const size = matrix.length - 1;
+    const L = new Array(matrix.length).fill().map(()=>new Array(matrix.length).fill(""));
+    
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            if (i === j)
+                L[i][j] = 1;
+            else
+                L[i][j] = 0;
+        }
+    }
+    debugger
+    
+    const U = cloneMatrix(matrix);    
+    let sign = 1;
+    for (let k = 0; k < size - 1; k++) {
+        for (let i = k + 1; i < size; i++) {    
+            if (closeToZero(U[k][k])) {
+                //find a non zero pivot to swap with
+                for (let j = k + 1; j < size; j++) {
+                    if (!closeToZero(U[j][k])) {
+                        //swap rows
+                        const temp = U[k];
+                        U[k] = U[j];
+                        U[j] = temp;
+                        sign *= -1;
+                        break;
+                    }
                 }
             }
-        }
 
+            if (closeToZero(U[k][k])) {
+                return [null, null, 0]
+            }
+                
 
-        if (closeToZero(matrix[i][i]))
-            continue;
-
-        for (let j = i + 1; j < matrix.length - 1; j++) {
-            const ratio = matrix[j][i] / matrix[i][i];
-            for (let k = i; k < matrix[0].length - 1; k++) {
-                matrix[j][k] -= ratio * matrix[i][k];
-                if (closeToZero(matrix[i][i])) {//close to 0 for floating point error
-                    matrix[j][k] = 0;
-                }
+            L[i][k] = U[i][k] / U[k][k];
+            for (let j = k; j < size; j++) {
+                U[i][j] = U[i][j] - L[i][k] * U[k][j];
             }
         }
     }
 
-    return matrix;
+    return [L, U, sign];
 }
-
-export const UDecomposition = (matrix) => {
-    const smaller = Math.min(matrix.length - 1, matrix[0].length - 1);
-    for (let i = smaller - 1; i >= 0; i--) {
-        if (closeToZero(matrix[i][i])) {
-            //find nonzero pivot and swap
-            for (let k = i - 1; k >= 0; k--) {
-                if (!closeToZero(matrix[k][i])) { //close to 0 for floating point error
-                    const temp = matrix[i];
-                    matrix[i] = matrix[k];
-                    matrix[k] = temp;
-                    break;
-                }
-            }
-        }
-
-        if (closeToZero(matrix[i][i]))
-            continue;
-
-        
-        for (let j = i - 1; j >= 0; j--) {
-            const ratio = matrix[j][i] / matrix[i][i];
-            for (let k = i; k >= 0; k--) {
-                matrix[j][k] -= ratio * matrix[i][k];
-                if (closeToZero(matrix[i][i])) {//close to 0 for floating point error
-                    matrix[j][k] = 0;
-                }
-            }
-        }
-        
-    }
-
-    return matrix;
-}
-
 export const gaussian = (matrix) => {
-    debugger;
     const smaller = Math.min(matrix.length - 1, matrix[0].length - 1);
     //divide each row by the pivot
     for (let i = 0; i < smaller; i++) {
@@ -561,14 +539,6 @@ export const gaussian = (matrix) => {
     
 }
 
-export const calculateDeterminant = (matrix) => {
-    const LMatrix = LDecomposition(cloneMatrix(matrix));
-    
-    let determinant = 1;
-    for (let i = 0; i < LMatrix.length - 1; i++)
-        determinant *= LMatrix[i][i];
-    return determinant;
-}
 
 export const inverse = (matrix) => {
     const clone = cloneMatrix(matrix);
@@ -582,9 +552,10 @@ export const inverse = (matrix) => {
         clone[i].push("")
     }
 
+    //extend last row
+    clone[size] = clone[size].concat(Array(size).fill(""));
 
-    
-    return gaussian(clone).map(row => row.slice(size));
+    return(gaussian(clone).map(row => row.slice(size)));
 
     
 }
