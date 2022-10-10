@@ -53,10 +53,11 @@ const Tutorial = (props) => {
                     You can evaluate mathematical expressions of your matrices using Matrix Math.
                     <ul className={styles.tutorialList}>
                         <li>Enter a math expression using the name of matrices and these operators (+, -, *, ^)</li>
+                        <li>You can adjust the decimal places to round to in the settings</li>
                         <li>The answer will be saved as a new matrix.</li>
                         <li>Multiplication can be scalar or matrix multiplication. For example, 2 * A would multiply each element by 2, and A * A would do matrix multiplication.</li>
-                        <li>THe Matrix Reductions buttons will directly reduce your matrix with the specificed algorithms.</li>
-                        <li>If you matrix is square, you can see the determinant of the matrix</li>
+                        <li>The Matrix Reductions buttons will directly reduce your matrix with the specificed algorithms.</li>
+                        <li>If you matrix is square, the determinant of the matrix will be displayed</li>
 
                     </ul>
                 </div>

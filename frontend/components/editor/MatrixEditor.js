@@ -177,6 +177,7 @@ const MatrixEditor = (props) => {
                     sparseVal={props.sparseVal}
                     close={() => { setShowMath(false) }}
                     active={showMath}
+                    rounding = {props.rounding}
                     optionsBarRef = {optionsBarRef}
 
                 />

@@ -3,7 +3,7 @@ import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
 import useExpand from './useExpand';
 
-import { generateUniqueName, cloneMatrix, gaussian, LUDecomposition, inverse} from '../../matrixFunctions';
+import { generateUniqueName, cloneMatrix, gaussian, LUDecomposition, inverse, createIdentity} from '../../matrixFunctions';
 import BasicActionButton from './BasicActionButton';
 import OverwriteInput from './OverwriteInput';
 const MatrixMath = (props) => {
@@ -16,12 +16,23 @@ const MatrixMath = (props) => {
     const matrixMath = useExpand(props.optionsBarRef);
 
     const toStringUpdateMatrix = (name, matrix) => {
-        for (let i = 0; i < matrix.length; i++) {
-            for (let j = 0; j < matrix[i].length; j++) {
-                matrix[i][j] = matrix[i][j] + "";
+        for (let i = 0; i < matrix.length - 1; i++) {
+            for (let j = 0; j < matrix[i].length - 1; j++) {
+                if (props.rounding !== "") {
+                    matrix[i][j] = roundAndString(matrix[i][j]);
+                } else
+                    matrix[i][j] = matrix[i][j].toString();
             }
         }
         props.updateMatrix(name, matrix);
+    }
+
+    const roundAndString = (num) => {
+        if (props.rounding !== "") {
+           return parseFloat(num.toFixed(props.rounding)).toString(); //round then remove trailing zeros
+        }
+
+        return num.toString()
     }
         
 
@@ -222,14 +233,26 @@ const MatrixMath = (props) => {
             return Math.pow(a, pow); //num to num 2 ^ 2
         }
 
-        //matrix to num A ^ 2
+        if (pow < 0) {
+            var product = inverse(a); //invert for negative powers
+            a = cloneMatrix(product);
+            pow *= -1; 
+        } else if (pow === 0) {
+            return createIdentity(a.length - 1); //identity matrix for 0 power
+        } product = cloneMatrix(a);
+        
+        while (pow > 1) {
+            if (pow % 2 === 1) {
+                product = matrixMultiplication(product, a);
+                pow--;
+            } else {
+                product = matrixMultiplication(product, product); //  (A^2)^(n/2)
+                pow /= 2;
+            }
+        
+        }
 
-        //deep copy matrix
-        var product = cloneMatrix(a);
-
-        for (let i = 1; i < pow; i++)
-            product = matrixMultiplication(product, a);
-        return product
+        return product;
     }
 
     const matrixMultiplication = (a, b) => {
@@ -433,7 +456,6 @@ const MatrixMath = (props) => {
                             updateParameter("expression", e.target.value)
                     }} />
                 </div>
-                <div className={styles.arrow}>→</div>
                 <div className={styles.inputBlock}>
                     Save as:
                     <input type="text" className={styles.nameInput} value={resultName} placeholder={placeholderName} 

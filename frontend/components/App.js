@@ -17,6 +17,7 @@ const App = (props) => {
     const [selectable, setSelectable] = useState(true);
     const [numbersOnly, setNumbersOnly] = useState(false);
     const [sparseVal, setSparseVal] = useState("0"); 
+    const [rounding, setRounding] = useState(8);
     
     const [username, setUsername] = useState(null);
     const [saveToLocal, setSaveToLocal] = useState(false);
@@ -61,6 +62,12 @@ const App = (props) => {
         setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
         setMirror(window.localStorage.getItem("Mirror Inputs") === "1");
         setNumbersOnly(window.localStorage.getItem("Numbers Only Input") === "1");
+
+        const round = window.localStorage.getItem("Rounding");
+        if (round !== null)
+            setRounding(round);
+        else
+            setRounding(8);
 
         const sparse = window.localStorage.getItem("Empty Element");
         if (sparse !== null)
@@ -168,7 +175,23 @@ const App = (props) => {
                 window.localStorage.setItem("Numbers Only Input", updated ? "1" : "0");
                 
                 break;
+            case "Decimals To Round":
+                if (updated === "") {
+                    setRounding(updated);
+                    window.localStorage.setItem("Rounding", updated);
+                } else if (/^\d+$/.test(updated)) {
+                    let num = parseInt(updated);
+                    if (!isNaN(num)) {
+                        if (num > 16)
+                            num = 16;
+                        else if (num < 0)
+                            num = 0;
 
+                        setRounding(num);   
+                        window.localStorage.setItem("Rounding", updated);
+                    }
+                }
+                break;
                 
             case "Show Merge":
                 setShowMerge(updated);
@@ -460,6 +483,7 @@ const App = (props) => {
                 numbersOnly = {numbersOnly}
                 sparseVal = {sparseVal}
                 selectable = {selectable}
+                rounding = {rounding}
 
                 updateMatrix = {updateMatrix}
                 deleteMatrix = {deleteMatrix}
@@ -498,6 +522,8 @@ const App = (props) => {
                 updateMatrix = {updateMatrix}
 
                 firstVisit = {firstVisit}
+                rounding = {rounding}
+
 
                 undo = {undo}
                 canUndo = {undoStack.length > 0}

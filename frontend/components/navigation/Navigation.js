@@ -155,7 +155,7 @@ const Navigation = (props) => {
                 matrices={props.matrices}
                 refreshTokens={props.refreshTokens}
 
-                updateMatrices={props.updateMatrices}
+                setMatrices={props.setMatrices}
                 setSelection={props.setSelection}
                 showMerge={props.showMerge}
                 userMatrices={props.userMatrices}
@@ -227,7 +227,9 @@ const Navigation = (props) => {
                     <ParameterBoxInput isChecked={props.mirror} name={"Mirror Inputs"} updateParameter={props.updateParameter} />
                     <ParameterBoxInput isChecked={!props.selectable} name={"Disable Selection"} updateParameter={props.updateParameter} />
                     <ParameterBoxInput isChecked={props.numbersOnly} name={"Numbers Only Input"} updateParameter={props.updateParameter} />
-                    {"Empty Element:"} <ParameterTextInput width={"30px"} text={props.sparseVal} id={"Empty Element"} updateParameter={props.updateParameter} />
+                    {"Empty Element:"} <ParameterTextInput width={"50px"} text={props.sparseVal} id={"Empty Element"} updateParameter={props.updateParameter} />
+                    <br />
+                    {"Decimals To Round:"} <ParameterTextInput width={"50px"} text={props.rounding} id={"Decimals To Round"} updateParameter={props.updateParameter} placeholder = {props.rounding === "" ? "None" : ""}/>
                 </div> : null}
 
             </div>: null}
