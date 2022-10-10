@@ -23,7 +23,7 @@ const Table = (props) => {
             clone = addRows(clone, 1);
         }
 
-        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
 
     }
@@ -41,7 +41,7 @@ const Table = (props) => {
             clone = addCols(clone, 1);
         }
 
-        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
     }
 
@@ -61,14 +61,14 @@ const Table = (props) => {
             clone = addRowsAndCols(clone, 1, 1);
         }
 
-        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
 
     }
 
     const update = (row, col, updated) => {
         var clone = cloneMatrix(props.matrix)
-        props.setMatrix(props.name, updateEntry(clone, row, col, updated));
+        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
 
     }
@@ -76,17 +76,17 @@ const Table = (props) => {
     const keyDown = (row, col, e) => {
         if (e.keyCode === 16) { //shift
             if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) //add botj
-                props.setMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
+                props.updateMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
             else if (props.matrix.length === (row + 1)) //add row
-                props.setMatrix(props.name, addRows(props.matrix, 1))
+                props.updateMatrix(props.name, addRows(props.matrix, 1))
             else if (props.matrix[0].length === (col + 1)) //add col
-                props.setMatrix(props.name, addCols(props.matrix, 1))
+                props.updateMatrix(props.name, addCols(props.matrix, 1))
 
         } else if (e.keyCode === 8 && e.target.value === "") { //delete
             const result = tryToDelete(props.matrix, row, col)
 
             if (result)
-                props.setMatrix(props.name, result); 
+                props.updateMatrix(props.name, result); 
 
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             e.preventDefault();

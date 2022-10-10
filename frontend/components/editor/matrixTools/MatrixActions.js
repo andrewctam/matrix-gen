@@ -83,19 +83,19 @@ const MatrixActions = (props) => {
     return <div ref = {matrixActions} className = {"fixed-bottom " + styles.matrixActionsContainer}>
         <BasicActionButton 
             action = {() => {
-                props.setMatrix(props.name, transpose(props.matrix))
+                props.updateMatrix(props.name, transpose(props.matrix))
             }}
             name = {"Transpose"}
         />
         <BasicActionButton 
             action={() => {
-                props.setMatrix(props.name, mirrorRowsCols(props.matrix, true))
+                props.updateMatrix(props.name, mirrorRowsCols(props.matrix, true))
             }}
             name = {"Mirror Rows Across Diagonal"}
         />
         <BasicActionButton 
             action={() => {
-                props.setMatrix(props.name, mirrorRowsCols(props.matrix, false)) //false means cols to rows
+                props.updateMatrix(props.name, mirrorRowsCols(props.matrix, false)) //false means cols to rows
             }}
             name = {"Mirror Columns Across Diagonal"}
         />
@@ -105,7 +105,7 @@ const MatrixActions = (props) => {
         <TextActionButton 
             name = "Fill Empty With: "
             action = {() => {
-                props.setMatrix(props.name, fillEmpty(props.matrix, fillEmptyWithThis))
+                props.updateMatrix(props.name, fillEmpty(props.matrix, fillEmptyWithThis))
             }}
             updateParameter = {updateParameter}
             width = {"40px"}
@@ -115,7 +115,7 @@ const MatrixActions = (props) => {
         <TextActionButton 
             name = "Fill All With: "
             action = {() => {
-                props.setMatrix(props.name, fillAll(props.matrix, fillAllWithThis))
+                props.updateMatrix(props.name, fillAll(props.matrix, fillAllWithThis))
             }}
             updateParameter = {updateParameter}
             width = {"40px"}
@@ -125,7 +125,7 @@ const MatrixActions = (props) => {
         <TwoTextActionButton
             name = "Replace X With Y: "
             action = {() => {
-                props.setMatrix(props.name, fillXY(props.matrix, replaceX, replaceY))
+                props.updateMatrix(props.name, fillXY(props.matrix, replaceX, replaceY))
             }}
             updateParameter = {updateParameter}
             id1 = {"replaceX"}
@@ -142,7 +142,7 @@ const MatrixActions = (props) => {
         <TextActionButton 
             name = "Fill Diagonal With: "
             action = {() => {
-                props.setMatrix(props.name, fillDiagonal(props.matrix, fillDiagonalWithThis))
+                props.updateMatrix(props.name, fillDiagonal(props.matrix, fillDiagonalWithThis))
             }}
             updateParameter = {updateParameter}
             width = {"40px"}
@@ -152,7 +152,7 @@ const MatrixActions = (props) => {
         <TwoTextActionButton 
             name = "Randomize Elements: "
             action = {() => {
-                props.setMatrix(props.name, randomMatrix(props.matrix, parseInt(randomLow), parseInt(randomHigh)))
+                props.updateMatrix(props.name, randomMatrix(props.matrix, parseInt(randomLow), parseInt(randomHigh)))
             }}
             updateParameter = {updateParameter}
             id1 = {"randomLow"}
@@ -168,7 +168,7 @@ const MatrixActions = (props) => {
             action = {() => {
                 const reshaped = reshapeMatrix(props.matrix, parseInt(reshapeRows), parseInt(reshapeCols))
                 if (reshaped)
-                    props.setMatrix(props.name, reshaped)
+                    props.updateMatrix(props.name, reshaped)
             }}
             updateParameter = {updateParameter}
             id1 = {"reshapeRows"}
@@ -184,7 +184,7 @@ const MatrixActions = (props) => {
             action = {() => {
                 const resized = resizeMatrix(props.matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
                 if (resized)
-                    props.setMatrix(props.name, resized)
+                    props.updateMatrix(props.name, resized)
             }}
             updateParameter = {updateParameter}
             id1 = {"resizeRows"}

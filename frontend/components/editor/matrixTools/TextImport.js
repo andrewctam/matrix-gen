@@ -152,7 +152,7 @@ const TextImport = (props) => {
         if (ignoreWhitespace)
             text = text.replaceAll(/\s/g,"")
         
-        if (overwrite) //overwrite current matrix
+        if (props.currentName && overwrite) //overwrite current matrix
             var name = props.currentName;
         else if (newName === "") //input empty, so auto generate
             name = generateUniqueName(props.matrices);
@@ -163,7 +163,7 @@ const TextImport = (props) => {
             case "Separator":
                 const rowSeparator = settingD;
 
-
+                debugger
                 //split into rows
                 let maxLen = 0;
                 var rows = text.split(rowSeparator);
@@ -184,7 +184,7 @@ const TextImport = (props) => {
 
                 //remove empty rows
                 matrix.push(Array(maxLen).fill(""));
-                props.setMatrix(name, matrix); //override existing (or non existing) matrix
+                props.updateMatrix(name, matrix); //override existing (or non existing) matrix
                 
                 break;
                 
@@ -222,7 +222,7 @@ const TextImport = (props) => {
 
                 //add empty row
                 matrix.push(Array(maxLen).fill(""));
-                props.setMatrix(name, matrix);
+                props.updateMatrix(name, matrix);
 
                 } catch (error) {
                     console.log(error); 
@@ -277,7 +277,7 @@ const TextImport = (props) => {
 
                 console.log(elements)
                 console.log(matrix)
-                props.setMatrix(name, matrix);
+                props.updateMatrix(name, matrix);
                 break;
 
             case "LaTeX":
@@ -333,7 +333,7 @@ const TextImport = (props) => {
                             });
                     }
                 }
-                props.setMatrix(name, matrix);
+                props.updateMatrix(name, matrix);
                 break;
 
             default: break;
@@ -360,10 +360,6 @@ const TextImport = (props) => {
         default: break;
     }
 
-
-    if (!overwrite) {
-        var namePlaceholder = generateUniqueName(props.matrices);
-    }
 
     return <div ref = {textImport} className = {"fixed-bottom row " + styles.importContainer}>
          <textarea id = "importTextArea" className = {styles.importTextArea} placeholder = {inputMatrixPlaceholder}></textarea>
@@ -443,13 +439,15 @@ const TextImport = (props) => {
         </div>
 
         <div className = "col-sm-4">
+            {props.currentName ?
             <ParameterBoxInput isChecked = {overwrite} name = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
+            : null}
 
-            {(overwrite ? null : 
+            {(props.currentName && overwrite ? null : 
             <div>
                 {"Save as New Matrix: "}
                 <input className = {styles.importedMatrixName} 
-                placeholder={namePlaceholder} 
+                placeholder={generateUniqueName(props.matrices)} 
                 value = {newName}
                 onChange={updateNewMatrixName} />
             </div>

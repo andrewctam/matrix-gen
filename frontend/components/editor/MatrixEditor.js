@@ -11,6 +11,7 @@ import SelectionMenu from './matrixTools/SelectionMenu.js';
 import styles from "./MatrixEditor.module.css"
 
 import ActiveButton from './ActiveButton.js';
+import BasicActionButton from './matrixTools/BasicActionButton.js';
 
 const MatrixEditor = (props) => {
     const [boxesSelected, setBoxesSelected] = useState({
@@ -147,6 +148,9 @@ const MatrixEditor = (props) => {
                     active={showImport}
                     action={toggleShown}
                 />
+
+                <BasicActionButton disabled = {!props.canUndo} name = "↺" action = {props.undo} />   
+                <BasicActionButton disabled = {!props.canRedo} name = "↻" action = {props.redo} />
             </div>
 
 
@@ -154,7 +158,7 @@ const MatrixEditor = (props) => {
                 <MatrixActions
                     name={props.name}
                     matrix={props.matrix}
-                    setMatrix={props.setMatrix}
+                    updateMatrix={props.updateMatrix}
                     close={() => { setShowActions(false)}}
                     active={showActions}
                     optionsBarRef = {optionsBarRef}
@@ -167,7 +171,7 @@ const MatrixEditor = (props) => {
                     matrices={props.matrices}
                     matrix={props.matrix}
                     name = {props.name}
-                    setMatrix={props.setMatrix}
+                    updateMatrix={props.updateMatrix}
                     sparseVal={props.sparseVal}
                     close={() => { setShowMath(false) }}
                     active={showMath}
@@ -181,7 +185,7 @@ const MatrixEditor = (props) => {
                     matrices={props.matrices}
                     name={props.name}
                     matrix={props.matrix}
-                    setMatrix={props.setMatrix}
+                    updateMatrix={props.updateMatrix}
                     boxesSelected={boxesSelected}
                     editSelection={props.editSelection}
                     updateBoxesSelected={updateBoxesSelected}
@@ -198,7 +202,7 @@ const MatrixEditor = (props) => {
 
             {showImport ?
                 <TextImport
-                    setMatrix={props.setMatrix}
+                    updateMatrix={props.updateMatrix}
                     matrices={props.matrices}
                     currentName={props.name}
                     close={() => { setShowImport(false) }}
@@ -221,14 +225,14 @@ const MatrixEditor = (props) => {
 
 
 
-
+                
             {(props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
                 <Table
                     mirror={props.mirror}
                     numbersOnly={props.numbersOnly}
                     name={props.name}
                     matrix={props.matrix}
-                    setMatrix={props.setMatrix}
+                    updateMatrix={props.updateMatrix}
 
                     selectable={props.selectable}
 

@@ -49,7 +49,7 @@ const SelectorButton = (props) => {
                 setDisplaySize((rows) + " x " + cols);
                 const resized = resizeMatrix(props.matrix, rows + 1, cols + 1)
                 if (resized)
-                    props.setMatrix(props.name, resized);
+                    props.updateMatrix(props.name, resized);
 
             } else {
                 alert("Dimensions can not be zero");

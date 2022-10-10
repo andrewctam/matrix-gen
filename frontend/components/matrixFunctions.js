@@ -457,7 +457,7 @@ export const LDecomposition = (matrix) => {
         if (closeToZero(matrix[i][i])) {
             //find nonzero pivot and swap
             for (let k = i + 1; k < matrix.length - 1; k++) {
-                if (!closeToZero(matrix[i][i])) { //close to 0 for floating point error
+                if (!closeToZero(matrix[k][i])) { //close to 0 for floating point error
                     const temp = matrix[i];
                     matrix[i] = matrix[k];
                     matrix[k] = temp;
@@ -519,26 +519,72 @@ export const UDecomposition = (matrix) => {
 }
 
 export const gaussian = (matrix) => {
-    const rref = UDecomposition(LDecomposition(matrix))
-    const smaller = Math.min(rref.length - 1, rref[0].length - 1);
-
+    debugger;
+    const smaller = Math.min(matrix.length - 1, matrix[0].length - 1);
+    //divide each row by the pivot
     for (let i = 0; i < smaller; i++) {
-        if (rref[i][i] !== 0) {
-            const pivot = rref[i][i];
-            for (let j = i; j < rref[0].length - 1; j++) {
-                rref[i][j] /= pivot;
+        if (closeToZero(matrix[i][i])) {
+            //find nonzero pivot and swap
+            for (let j = i + 1; j < matrix.length - 1; j++) {
+                if (!closeToZero(matrix[j][i])) { //close to 0 for floating point error
+                    const temp = matrix[i];
+                    matrix[i] = matrix[j];
+                    matrix[j] = temp;
+                    break;
+                }
             }
         }
-    }   
 
-    return rref;
+        if (closeToZero(matrix[i][i]))
+            continue;
+
+        const pivot = matrix[i][i];
+        for (let j = i; j < matrix[0].length - 1; j++) {
+            matrix[i][j] /= pivot;
+        }
+
+        for (let j = 0; j < matrix.length - 1; j++) {
+            if (j === i) 
+                continue;
+
+            const ratio = matrix[j][i];
+            for (let k = i; k < matrix[0].length - 1; k++) {
+                matrix[j][k] -= ratio * matrix[i][k];
+                if (closeToZero(matrix[i][i])) {//close to 0 for floating point error
+                    matrix[j][k] = 0;
+                }
+            }
+        }
+    }
+
+    return matrix
+    
 }
 
 export const calculateDeterminant = (matrix) => {
-    const LMatrix = LDecomposition(matrix);
+    const LMatrix = LDecomposition(cloneMatrix(matrix));
     
     let determinant = 1;
     for (let i = 0; i < LMatrix.length - 1; i++)
         determinant *= LMatrix[i][i];
     return determinant;
+}
+
+export const inverse = (matrix) => {
+    const clone = cloneMatrix(matrix);
+    let size = clone.length - 1;
+    //augment matrix with identity matrix
+    for (let i = 0; i < size; i++) {
+        //add row of 0s
+        clone[i].pop();
+        clone[i] = clone[i].concat(Array(size).fill(0));
+        clone[i][i + size] = 1;
+        clone[i].push("")
+    }
+
+
+    
+    return gaussian(clone).map(row => row.slice(size));
+
+    
 }

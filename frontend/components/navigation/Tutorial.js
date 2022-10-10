@@ -34,7 +34,7 @@ const Tutorial = (props) => {
                 break;
             case "actions":
                 inside = <div>
-                    Matrix Actions allows you to modify your matrix quickly. Most of these actions are irreversible, so duplicate them beforehand if you might want to reverse the changes.
+                    Matrix Actions allows you to modify your matrix quickly.
                     <ul className={styles.tutorialList}>
                         <li>Transpose will switch your matrices rows and columns</li>
                         <li>Mirroring your matrix will copy elements (i, j) over the diagonal to (j, i). Mirroring Rows will copy the elements above the diagonal onto those below the diagonal. Mirroring Columns does the opposite.</li>
@@ -55,6 +55,9 @@ const Tutorial = (props) => {
                         <li>Enter a math expression using the name of matrices and these operators (+, -, *, ^)</li>
                         <li>The answer will be saved as a new matrix.</li>
                         <li>Multiplication can be scalar or matrix multiplication. For example, 2 * A would multiply each element by 2, and A * A would do matrix multiplication.</li>
+                        <li>THe Matrix Reductions buttons will directly reduce your matrix with the specificed algorithms.</li>
+                        <li>If you matrix is square, you can see the determinant of the matrix</li>
+
                     </ul>
                 </div>
                 break;

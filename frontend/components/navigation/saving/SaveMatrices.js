@@ -21,7 +21,7 @@ const SaveMatrices = (props) => {
                         showMerge = {props.showMerge}
                         matrices={props.matrices}
                         userMatrices={props.userMatrices}
-                        setMatrices={props.setMatrices}
+                        updateMatrices={props.updateMatrices}
                         setSelection={props.setSelection}
                         updateParameter={props.updateParameter}
                         updateUserInfo = {props.updateUserInfo}

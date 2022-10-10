@@ -3,26 +3,42 @@ import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
 import useExpand from './useExpand';
 
-import { generateUniqueName, cloneMatrix, calculateDeterminant, gaussian, LDecomposition, UDecomposition} from '../../matrixFunctions';
+import { generateUniqueName, cloneMatrix, calculateDeterminant, gaussian, LDecomposition, UDecomposition, inverse} from '../../matrixFunctions';
 import BasicActionButton from './BasicActionButton';
+import ParameterBoxInput from '../../inputs/ParameterBoxInput';
 
 const MatrixMath = (props) => {
     const [expression, setExpression] = useState("");
     const [resultName, setResultName] = useState("");
 
+    const [overwrite, setOverwrite] = useState(true);
+    const [reductionName, setReductionName] = useState("");
+
     const matrixMath = useExpand(props.optionsBarRef);
 
-    const handleChange = (e) => {
-        var updated = e.target.value
-        if (/^[a-zA-Z0-9._*^+\-\s()]*$/.test(updated)) {
-            setExpression(updated);
-        }
-    }
-
-    const handleResultNameChange = (e) => {
-        var updated = e.target.value
-        if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
-            setResultName(updated);
+    const updateParameter = (parameterName, updated) => {
+        switch(parameterName) {
+            case "Overwrite Current Matrix":
+                setOverwrite(updated);
+                setReductionName("");
+                break;
+            case "expression":
+                if (/^[a-zA-Z0-9._*^+\-\s()]*$/.test(updated)) {
+                    setExpression(updated);
+                }
+                return;
+            case "resultName":
+                if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
+                    setResultName(updated);
+                }
+                return;
+            case "reductionName":
+                if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
+                    setReductionName(updated);
+                }
+                return;
+             
+            default: return;
         }
     }
 
@@ -39,7 +55,7 @@ const MatrixMath = (props) => {
             console.log(postfix)
             const matrix = evaluatePostfix(postfix);
             if (matrix !== null)
-                props.setMatrix(resultName === "" ? undefined : resultName, matrix)
+                props.updateMatrix(resultName === "" ? undefined : resultName, matrix)
         } catch (error) {
             alert("Error in expression.");
             console.log(error);
@@ -372,20 +388,41 @@ const MatrixMath = (props) => {
 
     const numMatrix = cloneAndVerify(props.matrix);
 
+    if (numMatrix)
+        var determinant = calculateDeterminant(numMatrix)
+        
     const placeholderName = generateUniqueName(props.matrices);
+    const isSquare = props.matrix.length === props.matrix[0].length
+
+    if (overwrite)
+        var newName = props.name;
+    else if (reductionName === "")
+        newName = placeholderName;
+    else
+        newName = reductionName
 
     return <div ref={matrixMath} className={"fixed-bottom " + styles.matrixMathContainer}>
        
         <div className="row">
             <form onSubmit={calculate} className="col-sm-6">
+                <div className = {styles.title}>Calculator</div>
+
                 <div className={styles.inputBlock}>
                     Expression:
-                    <input type="text" className={styles.mathInput} value={expression} placeholder={"e.g. (A + B) * 2C"} onChange={handleChange}></input>
+                    <input type="text" className={styles.mathInput} value={expression} placeholder={"e.g. (A + B) * 2C"}
+                        onChange={(e) => {
+                            updateParameter("expression", e.target.value)
+                        }}>
+                    </input>
                 </div>
 
                 <div className={styles.inputBlock}>
                     Save as:
-                    <input type="text" className={styles.nameInput} value={resultName} placeholder={placeholderName} onChange={handleResultNameChange}></input>
+                    <input type="text" className={styles.nameInput} value={resultName} placeholder={placeholderName} 
+                     onChange={(e) => {
+                        updateParameter("resultName", e.target.value)
+                    }}>
+                </input>
                 </div>
 
                 <button className={"btn btn-success " + styles.mathEvalButton} onClick={calculate}>Evaluate Expression</button>
@@ -397,18 +434,50 @@ const MatrixMath = (props) => {
             </div>
             :
             <div className='col-sm-6'>
-                
-                {"Matrix Reductions"}
+              
+                <div className = {styles.title} >
+                    Matrix Reductions
+                </div>
+            
+
                 <ul>
-                <BasicActionButton name = "Reduced Row Echelon Form" action = {() => props.setMatrix(props.name, gaussian(numMatrix))} />
-                <BasicActionButton name = "L Decomposition" action = {() => props.setMatrix(props.name, LDecomposition(numMatrix))} />
-                <BasicActionButton name = "U Decomposition" action = {() => props.setMatrix(props.name, UDecomposition(numMatrix))} />
+                    <BasicActionButton name = "RREF" action = {() => {
+                        props.updateMatrix(newName, gaussian(numMatrix))
+                    }}/>
+                    <BasicActionButton name = "L" action = {() => {
+                        props.updateMatrix(newName, LDecomposition(numMatrix))
+                    }}/>
+                    <BasicActionButton name = "U" action = {() => {
+                        props.updateMatrix(newName, UDecomposition(numMatrix))
+                    }}/>
+
+                    {isSquare  ?
+                    <BasicActionButton name = "Inverse" action = {() => {
+                        props.updateMatrix(newName, inverse(numMatrix))
+                    }}/>
+                    : null}
+
                 </ul>
-                {props.matrix.length === props.matrix[0].length ?
-                    <div>
-                        {`Determinant: ${calculateDeterminant(numMatrix)}`}
-                    </div> : null}
                 
+               
+                    
+                <ParameterBoxInput isChecked = {overwrite} name = {"Overwrite Current Matrix"} updateParameter = {updateParameter}/>
+                {overwrite ? null : 
+                <div>
+                    {"Save as New Matrix: "}
+                    <input className = {styles.reductionName} 
+                    placeholder={placeholderName} 
+                    value = {reductionName}
+                    onChange={(e) => {updateParameter("reductionName", e.target.value)}} />
+                </div>
+                }
+
+                {isSquare ?
+                    <div className = {styles.detInfo}>
+                        {`Determinant: ${determinant}`}
+                    </div> : null}
+
+
             </div>
             }
 

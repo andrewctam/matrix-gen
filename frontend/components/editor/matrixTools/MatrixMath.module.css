@@ -26,6 +26,18 @@
     color: rgba(255, 255, 255, 0.5);
 }
 
+
+.reductionName::placeholder, .reductionName::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.detInfo {
+    font-size: larger;
+}
+
+.title {
+    display: block;
+}
 .mathEvalButton {
     margin: auto; 
     display: block;

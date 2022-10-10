@@ -1,8 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MatrixEditor from './editor/MatrixEditor.js';
 import Navigation from "./navigation/Navigation.js"
+import matrixEditorStyles from './editor/MatrixEditor.module.css';
+
+import ActiveButton from './editor/ActiveButton.js';
+import BasicActionButton from './editor/matrixTools/BasicActionButton.js';
+import TextImport from './editor/matrixTools/TextImport.js';
 
 import { generateUniqueName } from './matrixFunctions.js';
+
 const App = (props) => {
     const [matrices, setMatrices] = useState(null);
     const [selection, setSelection] = useState("0"); //0 for no selection
@@ -22,6 +28,14 @@ const App = (props) => {
     const [dataTooLarge, setDataTooLarge] = useState(false);
 
     const [firstVisit, setFirstVisit] = useState(false);
+
+    const [showImport, setShowImport] = useState(false);
+
+    const [undoStack, setUndoStack] = useState([]);
+    const [redoStack, setRedoStack] = useState([]);
+
+    const optionsBarRef = useRef(null);
+
     //load from local storage and set up app
     useEffect(() => {
         window.addEventListener("beforeunload", (e) => {
@@ -29,7 +43,6 @@ const App = (props) => {
                 e.returnValue = "";
         }); 
         
-
         const username = localStorage.getItem("username");
         
         if (username !== null) {
@@ -95,6 +108,34 @@ const App = (props) => {
     // eslint-disable-next-line 
     }, [matrices, saveToLocal])
     
+    const undo = () => {
+        if (undoStack.length > 0) {
+            setRedoStack([...redoStack, JSON.stringify(matrices)]);
+            setMatrices(JSON.parse(undoStack.pop()))
+        } else {
+            alert("Nothing to undo");
+        }
+    }
+
+    const redo = () => {
+        if (redoStack.length > 0) {
+            setUndoStack([...undoStack, JSON.stringify(matrices)]);
+            setMatrices(JSON.parse(redoStack.pop()));
+        } else {
+            alert("Nothing to redo");
+        }
+    }
+
+    //set matrices and update undo stack
+    const updateMatrices = (updated) => {
+        setUndoStack([...undoStack, JSON.stringify(matrices)]);
+        setRedoStack([]);
+        
+        setMatrices(updated);
+
+    }
+            
+
 
    
     //used for updating state and local storage
@@ -148,12 +189,12 @@ const App = (props) => {
         tempObj[newName] = tempObj[oldName]; 
         delete tempObj[oldName];
 
-        setMatrices(tempObj);
+        updateMatrices(tempObj);
 
         return true;
     }
     
-    const setMatrix = (name = undefined, matrix = undefined) => {
+    const updateMatrix = (name = undefined, matrix = undefined) => {
         const tempObj = {...matrices};
         if (name === undefined) { //no name, generate one
             name = generateUniqueName(matrices);
@@ -165,20 +206,20 @@ const App = (props) => {
             tempObj[name] = matrix;
         }
         
-        setMatrices(tempObj);
+        updateMatrices(tempObj);
         return name; //return name of matrix (mainly for input is undefined)
     }
 
     const deleteMatrix = (name) => {
         const tempObj = {...matrices};
         delete tempObj[name];
-        setMatrices(tempObj);
+        updateMatrices(tempObj);
     }
 
     const deleteAllMatrices = () => {
         if (window.confirm("Are you sure you want to delete all of your matrices?")) {
             setSelection("0");
-            setMatrices({});
+            updateMatrices({});
 
             localStorage.removeItem("matrices");     
         }
@@ -248,7 +289,9 @@ const App = (props) => {
 
         //if all is set to null (log out or invalid tokens), then load local storage
         if (!username && !access_token && !refresh_token) {
-           loadFromLocalStorage(); 
+            setUndoStack([]);
+            setRedoStack([]);
+            loadFromLocalStorage(); 
         }
 
     }
@@ -408,14 +451,14 @@ const App = (props) => {
 
                 updateParameter = {updateParameter}
                 setSelection = {setSelection}
-                setMatrices = {setMatrices}
+                updateMatrices = {updateMatrices}
 
                 mirror = {mirror}
                 numbersOnly = {numbersOnly}
                 sparseVal = {sparseVal}
                 selectable = {selectable}
 
-                setMatrix = {setMatrix}
+                updateMatrix = {updateMatrix}
                 deleteMatrix = {deleteMatrix}
                 renameMatrix = {renameMatrix}
                 saveToLocalStorage = {saveToLocalStorage}
@@ -449,11 +492,39 @@ const App = (props) => {
                 numbersOnly = {numbersOnly}
                 selectable = {selectable}
 
-                setMatrix = {setMatrix}
+                updateMatrix = {updateMatrix}
 
                 firstVisit = {firstVisit}
+
+                undo = {undo}
+                canUndo = {undoStack.length > 0}
+                redo = {redo} 
+                canRedo = {redoStack.length > 0}
                                 
-            /> : null} 
+            /> 
+            : 
+            <div ref = {optionsBarRef} className={matrixEditorStyles.optionsBar}>
+                 <ActiveButton
+                    name="Import Matrix From Text"
+                    active={showImport}
+                    action={() => {setShowImport(!showImport)}}
+                />
+
+                {showImport ?
+                <TextImport
+                    updateMatrix={updateMatrix}
+                    matrices={matrices}
+                    currentName={null}
+                    close={() => { setShowImport(false) }}
+                    active={showImport}
+                    optionsBarRef = {optionsBarRef}
+                />
+                : null}
+
+                <BasicActionButton disabled = {undoStack.length === 0} name = "↺" action = {undo} />   
+                <BasicActionButton disabled = {redoStack.length === 0} name = "↻" action = {redo} />
+
+            </div>} 
     
 
         </div>);

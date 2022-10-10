@@ -71,7 +71,7 @@ li {
 
 .btn-primary, .btn-primary:hover, .btn-primary:active {
     background-color: rgb(185, 207, 221) !important;
-    border-color: black;
+    border-color: rgb(138, 152, 162) !important;
     color: black !important;
 }
 

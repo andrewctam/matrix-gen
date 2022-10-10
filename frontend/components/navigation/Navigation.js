@@ -59,7 +59,7 @@ const Navigation = (props) => {
                         matrix = {props.matrix}
 
                         setSelection={props.setSelection}
-                        setMatrix = {props.setMatrix}
+                        updateMatrix = {props.updateMatrix}
                         renameMatrix={props.renameMatrix}
                         active={props.selection === matrixName}
 
@@ -155,7 +155,7 @@ const Navigation = (props) => {
                 matrices={props.matrices}
                 refreshTokens={props.refreshTokens}
 
-                setMatrices={props.setMatrices}
+                updateMatrices={props.updateMatrices}
                 setSelection={props.setSelection}
                 showMerge={props.showMerge}
                 userMatrices={props.userMatrices}
@@ -213,7 +213,7 @@ const Navigation = (props) => {
                         action={() => { 
                             const identity = createIdentity(parseInt(identitySize))
                             if (identity)
-                                props.setMatrix(props.name, identity)
+                                props.updateMatrix(props.name, identity)
                         }}
                         updateParameter={updatePresetParameter}
                         width={"40px"}
@@ -251,7 +251,7 @@ const Navigation = (props) => {
                     text={"Create New Empty Matrix"}
                     buttonStyle={"secondary"}
                     action={() => {
-                        var newName = props.setMatrix(); //generates a new matrix and returns name
+                        var newName = props.updateMatrix(); //generates a new matrix and returns name
                         props.setSelection(newName);
                     }}
                 />
@@ -261,7 +261,7 @@ const Navigation = (props) => {
                         key="duplicateButton"
                         buttonStyle={"secondary"}
                         text={`Duplicate Matrix ${props.selection}`}
-                        action={() => { props.setMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
+                        action={() => { props.updateMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
                     : null}
 
                 {props.selection !== "0" ?
