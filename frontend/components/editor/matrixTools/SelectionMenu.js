@@ -55,7 +55,7 @@ const SelectionMenu = (props) => {
                             props.boxSelectionStart["y"] === -1 && 
                             props.boxSelectionEnd["x"] === -1 && 
                             props.boxSelectionEnd["y"] === -1;
-    return <div ref={selectionMenu} className={styles.selectionSettingsContainer + " fixed-bottom"}>
+    return <div ref={selectionMenu} className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
         {noBoxesSelected ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
             : <div>
                 <div>

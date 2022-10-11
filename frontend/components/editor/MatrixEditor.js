@@ -13,6 +13,7 @@ import styles from "./MatrixEditor.module.css"
 import ActiveButton from './ActiveButton.js';
 import BasicActionButton from './matrixTools/BasicActionButton.js';
 
+import { cloneMatrix, updateEntry } from '../matrixFunctions.js';
 const MatrixEditor = (props) => {
     const [boxSelectionStart, setBoxSelectionStart] = useState({
         "x": -1,
@@ -102,9 +103,29 @@ const MatrixEditor = (props) => {
         props.updateMatrix(name, matrix);
     }
 
+    const showFullInput = document.activeElement && 
+                        document.activeElement.tagName === "INPUT" &&
+                        boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1 && 
+                        (props.matrix[boxSelectionStart.x][boxSelectionStart.y].toString().length > 5 || document.activeElement.id === "fullInput")
 
+    if (showFullInput)  {        
+        const x = boxSelectionStart["x"];
+        const y = boxSelectionStart["y"];
+        
+
+        var fullInput = 
+            <input className = {"fixed-bottom " + styles.fullInput} 
+                value = {props.matrix[x][y]}
+                id = {"fullInput"}
+                onChange = {(e) => {
+                    var clone = cloneMatrix(props.matrix)
+                    props.updateMatrix(props.name, updateEntry(clone, x, y, e.target.value));
+                }}/>
+    } else {
+        fullInput = null
+    }
     return (
-        <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }} >
+        <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }} style = {{"bottom": props.showFullInput ? "28px" : "0"}} >
             <div ref = {optionsBarRef} className={styles.optionsBar}>
                 <ActiveButton
                     name="Matrix Actions"
@@ -151,6 +172,7 @@ const MatrixEditor = (props) => {
                     close={() => { setShowActions(false)}}
                     active={showActions}
                     optionsBarRef = {optionsBarRef}
+                    showFullInput = {showFullInput}
 
                 />
                 : null}
@@ -166,6 +188,7 @@ const MatrixEditor = (props) => {
                     active={showMath}
                     rounding = {props.rounding}
                     optionsBarRef = {optionsBarRef}
+                    showFullInput = {showFullInput}
                 />
                 : null}
 
@@ -182,14 +205,9 @@ const MatrixEditor = (props) => {
                     close={() => { setShowSelectionMenu(false) }}
                     active={showSelectionMenu}
                     optionsBarRef = {optionsBarRef}
-
-
-
+                    showFullInput = {showFullInput}
                 /> : null
             }
-
-
-
             {showImport ?
                 <TextImport
                     updateMatrix={props.updateMatrix}
@@ -198,6 +216,7 @@ const MatrixEditor = (props) => {
                     close={() => { setShowImport(false) }}
                     active={showImport}
                     optionsBarRef = {optionsBarRef}
+                    showFullInput = {showFullInput}
 
                 />
                 : null}
@@ -209,6 +228,7 @@ const MatrixEditor = (props) => {
                     close={() => { setShowExport(false) }}
                     active={showExport}
                     optionsBarRef = {optionsBarRef}
+                    showFullInput = {showFullInput}
                 />
                 : null}
 
@@ -240,8 +260,7 @@ const MatrixEditor = (props) => {
                     Use Export Matrix to view the matrix
                 </div>}
 
-
-
+        {fullInput}
 
         </div>)
 

@@ -356,7 +356,7 @@ const TextImport = (props) => {
     }
 
 
-    return <div ref = {textImport} className = {"fixed-bottom row " + styles.importContainer}>
+    return <div ref = {textImport} className = {"fixed-bottom row " + styles.importContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
          <textarea id = "importTextArea" className = {styles.importTextArea} placeholder = {inputMatrixPlaceholder}></textarea>
 
         <div className = "col-sm-4">

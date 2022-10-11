@@ -25,8 +25,6 @@ const MatrixActions = (props) => {
 
     const matrixActions = useExpand(props.optionsBarRef);
 
-
-
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
             case "Fill Empty With: ":
@@ -80,7 +78,8 @@ const MatrixActions = (props) => {
     }
 
 
-    return <div ref = {matrixActions} className = {"fixed-bottom " + styles.matrixActionsContainer}>
+    return <div ref = {matrixActions} className = {"fixed-bottom " + styles.matrixActionsContainer} 
+    style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
         <BasicActionButton 
             action = {() => {
                 props.updateMatrix(props.name, transpose(props.matrix))

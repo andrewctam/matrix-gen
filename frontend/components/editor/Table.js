@@ -21,7 +21,7 @@ const Table = (props) => {
         } else {
             clone = addRows(clone, 1);
         }
-
+        props.updateBoxesSelected(row, col, row, col);
         props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
 
@@ -39,7 +39,7 @@ const Table = (props) => {
         } else {
             clone = addCols(clone, 1);
         }
-
+        props.updateBoxesSelected(row, col, row, col);
         props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
     }, [props.matrix, props.mirror, props.name, props.updateMatrix])
@@ -59,7 +59,7 @@ const Table = (props) => {
         } else {
             clone = addRowsAndCols(clone, 1, 1);
         }
-
+        props.updateBoxesSelected(row, col, row, col);
         props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
 

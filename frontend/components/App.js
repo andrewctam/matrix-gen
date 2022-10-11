@@ -117,6 +117,7 @@ const App = (props) => {
     // eslint-disable-next-line 
     }, [matrices, saveToLocal])
     
+    
     const undo = () => {
         if (undoStack.length > 0) {
             setRedoStack([...redoStack, JSON.stringify(matrices)]);
@@ -146,8 +147,6 @@ const App = (props) => {
         setMatrices(updated);
 
     }
-            
-
 
    
     //used for updating state and local storage

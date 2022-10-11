@@ -1,6 +1,6 @@
 body {
     overflow-y: scroll;
-    margin: 0;
+    margin: 0px;
     padding: 0px 0px 48px 0px;
     color: white;
     background-color: rgb(82, 80, 83);
@@ -34,7 +34,7 @@ input {
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  margin: 0;
+  margin: 0px;
 }
 
 input[type=number] {
