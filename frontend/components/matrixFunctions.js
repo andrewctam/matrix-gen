@@ -450,7 +450,7 @@ const closeToZero = (n) => {
 
 
 export const LUDecomposition = (matrix) => {
-    
+    console.log("computing LU decomposition")
     const size = matrix.length - 1;
     const L = new Array(matrix.length).fill().map(()=>new Array(matrix.length).fill(""));
     
@@ -462,7 +462,6 @@ export const LUDecomposition = (matrix) => {
                 L[i][j] = 0;
         }
     }
-    debugger
     
     const U = cloneMatrix(matrix);    
     let sign = 1;

@@ -30,11 +30,10 @@ const SelectionMenu = (props) => {
     const handleChange = (e) => {
         props.updateMatrix(props.name, editSelection(props.matrix,
             e.target.value,
-            props.boxesSelected["startX"],
-            props.boxesSelected["startY"],
-            props.boxesSelected["endX"],
-            props.boxesSelected["endY"]));
-
+            props.boxSelectionStart["x"],
+            props.boxSelectionStart["y"],
+            props.boxSelectionEnd["x"],
+            props.boxSelectionEnd["y"]));
 
         e.target.value = "";
     }
@@ -43,29 +42,32 @@ const SelectionMenu = (props) => {
         if (e.keyCode === 8)
             props.updateMatrix(props.name, editSelection(props.matrix,
                 8,
-                props.boxesSelected["startX"],
-                props.boxesSelected["startY"],
-                props.boxesSelected["endX"],
-                props.boxesSelected["endY"]));
+                props.boxSelectionStart["x"],
+                props.boxSelectionStart["y"],
+                props.boxSelectionEnd["x"],
+                props.boxSelectionEnd["y"]));
     }
 
 
 
     var generatedName = generateUniqueName(props.matrices);
-
+    const noBoxesSelected = props.boxSelectionStart["x"] === -1 &&
+                            props.boxSelectionStart["y"] === -1 && 
+                            props.boxSelectionEnd["x"] === -1 && 
+                            props.boxSelectionEnd["y"] === -1;
     return <div ref={selectionMenu} className={styles.selectionSettingsContainer + " fixed-bottom"}>
-        {props.boxesSelected["quadrant"] === -1 ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
+        {noBoxesSelected ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
             : <div>
                 <div>
                     {"Selection Size: " +
-                        (Math.abs(props.boxesSelected["startX"] - props.boxesSelected["endX"]) + 1)
+                        (Math.abs(props.boxSelectionStart["x"] - props.boxSelectionEnd["x"]) + 1)
                         + " x " +
-                        (Math.abs(props.boxesSelected["startY"] - props.boxesSelected["endY"]) + 1)}
+                        (Math.abs(props.boxSelectionStart["y"] - props.boxSelectionEnd["y"]) + 1)}
                 </div>
 
-                <div>{"Start: Row " + (props.boxesSelected["startX"] + " Column " + props.boxesSelected["startY"])}</div>
+                <div>{"Start: Row " + (props.boxSelectionStart["x"] + " Column " + props.boxSelectionStart["y"])}</div>
 
-                <div>{"End: Row " + (props.boxesSelected["endX"] + " Column " + props.boxesSelected["endY"])}</div>
+                <div>{"End: Row " + (props.boxSelectionEnd["x"] + " Column " + props.boxSelectionEnd["y"])}</div>
 
                 <input className={styles.editSelectedInput}
                     onChange={handleChange}
@@ -76,12 +78,11 @@ const SelectionMenu = (props) => {
                 <TextActionButton
                     name={"Save Selection as New Matrix: "}
                     action={() => {
-                        debugger;
                         props.updateMatrix(spliceName ? spliceName : generatedName, spliceMatrix(props.matrix,
-                            props.boxesSelected["startX"],
-                            props.boxesSelected["startY"],
-                            props.boxesSelected["endX"],
-                            props.boxesSelected["endY"],
+                            props.boxSelectionStart["x"],
+                            props.boxSelectionStart["y"],
+                            props.boxSelectionEnd["x"],
+                            props.boxSelectionEnd["y"],
                             spliceName))
                     }}
 
@@ -101,14 +102,13 @@ const SelectionMenu = (props) => {
                             alert("Matrix not found");
                             return;
                         }
-                        debugger;
                         const pasted = pasteMatrix(
                             props.matrices[props.name], //matrix to paste on
                             props.matrices[pasteName],  //matrix to copy from
-                            props.boxesSelected["startX"],
-                            props.boxesSelected["startY"],
-                            props.boxesSelected["endX"],
-                            props.boxesSelected["endY"])
+                            props.boxSelectionStart["x"],
+                            props.boxSelectionStart["y"],
+                            props.boxSelectionEnd["x"],
+                            props.boxSelectionEnd["y"])
 
                         if (pasted)
                             props.updateMatrix(props.name, pasted)

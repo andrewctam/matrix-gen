@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 import Table from "./Table.js"
 
@@ -14,14 +14,15 @@ import ActiveButton from './ActiveButton.js';
 import BasicActionButton from './matrixTools/BasicActionButton.js';
 
 const MatrixEditor = (props) => {
-    const [boxesSelected, setBoxesSelected] = useState({
-        "startX": -1,
-        'startY': -1,
-        "endX": -1,
-        "endY": -1,
-        "quadrant": -1
+    const [boxSelectionStart, setBoxSelectionStart] = useState({
+        "x": -1,
+        "y": -1
     });
-    const [mouseDown, setMouseDown] = useState(false);
+
+    const [boxSelectionEnd, setBoxSelectionEnd] = useState({
+        "x": -1,
+        "y": -1
+    });
 
 
     const [showActions, setShowActions] = useState(false);
@@ -31,14 +32,9 @@ const MatrixEditor = (props) => {
     const [showSelectionMenu, setShowSelectionMenu] = useState(false);
 
     const optionsBarRef = useRef(null)
+    const mouseDown = useRef(false);
     useEffect(() => {
-        setBoxesSelected({
-            "startX": -1,
-            'startY': -1,
-            "endX": -1,
-            "endY": -1,
-            "quadrant": -1
-        })
+        updateBoxesSelected(-1, -1, -1, -1, true)
     }, [props.name]);
 
     const toggleShown = (e) => {
@@ -69,55 +65,50 @@ const MatrixEditor = (props) => {
         }
     }
 
-    const updateBoxesSelected = (x1, y1, x2, y2, clear = false) => {
+    const updateBoxesSelected = useCallback((x1, y1, x2, y2, clear = false) => {
         if (clear) {
-            setBoxesSelected({
-                "startX": -1,
-                'startY': -1,
-                "endX": -1,
-                "endY": -1,
-                "quadrant": -1
-            });
+            setBoxSelectionEnd({ "x": -1, "y": -1});
+            setBoxSelectionStart({ "x": -1, "y": -1});
             return;
         }
 
         if (!props.selectable)
             return;
 
-        if (x1 === -1)
-            x1 = boxesSelected["startX"];
-        if (y1 === -1)
-            y1 = boxesSelected["startY"];
-        if (x2 === -1)
-            x2 = boxesSelected["endX"];
-        if (y2 === -1)
-            y2 = boxesSelected["endY"];
+        if (x1 !== -1 && y1 !== -1)
+            setBoxSelectionStart({
+                "x": x1,
+                "y": y1
+            });
+
+        if (x2 !== -1 && y2 !== -1)
+            setBoxSelectionEnd({
+                "x": x2,
+                "y": y2
+            });
+    }, [props.selectable]);
 
 
 
-        if (x1 <= x2) { //treat start as the origin
-            if (y1 <= y2)
-                var quadrant = 1;
-            else
-                quadrant = 4;
-        } else if (y1 <= y2) { // x1 > x2
-            quadrant = 2;
-        } else
-            quadrant = 3;
+    const toStringUpdateMatrix = useCallback((name, matrix) => {
+        for (let i = 0; i < matrix.length - 1; i++) {
+            for (let j = 0; j < matrix[i].length - 1; j++) {
+                if (props.rounding !== "") {
+                    matrix[i][j] = parseFloat(matrix[i][j].toFixed(props.rounding)).toString(); //round then remove trailing zeros
+                } else
+                    matrix[i][j] = matrix[i][j].toString();
+            }
+        }
+        props.updateMatrix(name, matrix);
 
-        setBoxesSelected({
-            "startX": x1,
-            'startY': y1,
-            "endX": x2,
-            "endY": y2,
-            "quadrant": quadrant
-        });
-    }
+    }, [props.rounding, props.updateMatrix]);
 
-
+    const closeMath = useCallback(() => {
+        setShowMath(false);
+    }, []);
 
     return (
-        <div className={styles.matrixEditor} onMouseUp={() => { setMouseDown(false) }} >
+        <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }} >
             <div ref = {optionsBarRef} className={styles.optionsBar}>
                 <ActiveButton
                     name="Matrix Actions"
@@ -173,13 +164,12 @@ const MatrixEditor = (props) => {
                     matrices={props.matrices}
                     matrix={props.matrix}
                     name = {props.name}
-                    updateMatrix={props.updateMatrix}
+                    toStringUpdateMatrix={toStringUpdateMatrix}
                     sparseVal={props.sparseVal}
-                    close={() => { setShowMath(false) }}
+                    close={closeMath}
                     active={showMath}
                     rounding = {props.rounding}
                     optionsBarRef = {optionsBarRef}
-
                 />
                 : null}
 
@@ -189,7 +179,8 @@ const MatrixEditor = (props) => {
                     name={props.name}
                     matrix={props.matrix}
                     updateMatrix={props.updateMatrix}
-                    boxesSelected={boxesSelected}
+                    boxSelectionStart={boxSelectionStart}
+                    boxSelectionEnd={boxSelectionEnd}
                     editSelection={props.editSelection}
                     updateBoxesSelected={updateBoxesSelected}
                     close={() => { setShowSelectionMenu(false) }}
@@ -222,10 +213,8 @@ const MatrixEditor = (props) => {
                     close={() => { setShowExport(false) }}
                     active={showExport}
                     optionsBarRef = {optionsBarRef}
-
                 />
                 : null}
-
 
 
                 
@@ -240,10 +229,11 @@ const MatrixEditor = (props) => {
                     selectable={props.selectable}
                     darkModeTable = {props.darkModeTable}
 
-                    boxesSelected={boxesSelected}
+                    boxSelectionStart={boxSelectionStart}
+                    boxSelectionEnd={boxSelectionEnd}
                     updateBoxesSelected={updateBoxesSelected}
+                    
                     mouseDown={mouseDown}
-                    setMouseDown={setMouseDown}
                     editSelection={props.editSelection}
                     
                     firstVisit = {props.firstVisit}

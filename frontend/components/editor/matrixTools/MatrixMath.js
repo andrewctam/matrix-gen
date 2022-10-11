@@ -1,4 +1,4 @@
-import React, { useCallback, useState  } from 'react';
+import React, { memo, useState, useMemo  } from 'react';
 import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
 import useExpand from './useExpand';
@@ -15,26 +15,6 @@ const MatrixMath = (props) => {
 
     const matrixMath = useExpand(props.optionsBarRef);
 
-    const toStringUpdateMatrix = (name, matrix) => {
-        for (let i = 0; i < matrix.length - 1; i++) {
-            for (let j = 0; j < matrix[i].length - 1; j++) {
-                if (props.rounding !== "") {
-                    matrix[i][j] = roundAndString(matrix[i][j]);
-                } else
-                    matrix[i][j] = matrix[i][j].toString();
-            }
-        }
-        props.updateMatrix(name, matrix);
-    }
-
-    const roundAndString = (num) => {
-        if (props.rounding !== "") {
-           return parseFloat(num.toFixed(props.rounding)).toString(); //round then remove trailing zeros
-        }
-
-        return num.toString()
-    }
-        
 
     const updateParameter = (parameterName, updated) => {
         switch(parameterName) {
@@ -46,17 +26,17 @@ const MatrixMath = (props) => {
                 if (/^[a-zA-Z0-9._*^+\-\s()]*$/.test(updated)) {
                     setExpression(updated);
                 }
-                return;
+                break;
             case "resultName":
                 if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
                     setResultName(updated);
                 }
-                return;
+                break;
             case "reductionName":
                 if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
                     setReductionName(updated);
                 }
-                return;
+                break;
              
             default: return;
         }
@@ -75,7 +55,7 @@ const MatrixMath = (props) => {
             console.log(postfix)
             const matrix = evaluatePostfix(postfix);
             if (matrix !== null)
-                toStringUpdateMatrix(resultName === "" ? undefined : resultName, matrix)
+                props.toStringUpdateMatrix(resultName === "" ? undefined : resultName, matrix)
         } catch (error) {
             alert("Error in expression.");
             console.log(error);
@@ -418,21 +398,28 @@ const MatrixMath = (props) => {
     }
 
 
+    const [numMatrix, L, U, determinant] = useMemo(() => {
+        const numMatrix = cloneAndVerify(props.matrix)
+        
+        if (numMatrix === null) {
+            return [null, null, null, null]
+        }
 
-
-    const numMatrix = cloneAndVerify(props.matrix);
-    if (numMatrix) {
-        var [L, U, sign] = LUDecomposition(numMatrix)
+    
+        const [L, U, sign] = LUDecomposition(numMatrix)
+        let determinant = sign;
         if (L === null || U === null) {
             determinant = 0;
         } else {
-            var determinant = sign;
-            for (let i = 0; i < U.length - 1; i++) {
+            for (let i = 0; i < U.length - 1; i++)
                 determinant *= U[i][i]
-            }
         }
-    }
 
+        return [numMatrix, L, U, determinant]
+
+    }, [props.matrix]);
+    
+    
     const placeholderName = generateUniqueName(props.matrices);
     const isSquare = props.matrix.length === props.matrix[0].length
 
@@ -443,6 +430,7 @@ const MatrixMath = (props) => {
     else
         newName = reductionName
 
+    console.log("render math")
     return <div ref={matrixMath} className={"fixed-bottom " + styles.matrixMathContainer}>
        
         <div className="row">
@@ -487,20 +475,20 @@ const MatrixMath = (props) => {
 
                 <ul>
                     <BasicActionButton name = "RREF" action = {() => {
-                        toStringUpdateMatrix(newName, gaussian(numMatrix))
+                        props.toStringUpdateMatrix(newName, gaussian(numMatrix))
                     }}/>
                     
                     {isSquare && determinant !== 0 ?
                     <>
                         <BasicActionButton name = "L" action = {() => {
-                            toStringUpdateMatrix(newName, L)
+                            props.toStringUpdateMatrix(newName, L)
                         }}/>
                         <BasicActionButton name = "U" action = {() => {
-                            toStringUpdateMatrix(newName, U);
+                            props.toStringUpdateMatrix(newName, U);
                         }}/>
 
                         <BasicActionButton name = "Inverse" action = {() => {
-                            toStringUpdateMatrix(newName, inverse(numMatrix))
+                            props.toStringUpdateMatrix(newName, inverse(numMatrix))
                         }}/>
                     </>
                     : null}
@@ -530,7 +518,4 @@ const MatrixMath = (props) => {
 
 
 
-
-
-
-export default MatrixMath;
+export default memo(MatrixMath);

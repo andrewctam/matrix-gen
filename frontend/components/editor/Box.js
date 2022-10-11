@@ -1,12 +1,10 @@
-import React from 'react';
+import React, {memo} from 'react';
 import styles from "./Box.module.css"
 const Box = (props) => {
-
-
     const handleMouseDown = () => {
         //set the start of the selection
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
-            props.setMouseDown(true)
+            props.mouseDown.current = true
         }
     }
     const handleFocus = (e) => {
@@ -21,7 +19,7 @@ const Box = (props) => {
 
     const handleMouseEnter = (e) => {
         //if mouse is enters and is down (i.e. dragging) set this to the end of the selection
-        if (props.mouseDown && props.rows !== props.row + 1 && props.cols !== props.col + 1)
+        if (props.mouseDown.current && props.rows !== props.row + 1 && props.cols !== props.col + 1)
             props.updateBoxesSelected(-1, -1, props.row, props.col);
     }
 
@@ -68,8 +66,6 @@ const Box = (props) => {
                 boxStyle["width"] = "25px"
         } 
     }
-    
-
 
     return <td className={styles.box} style = {boxStyle}>
         <input
@@ -90,9 +86,9 @@ const Box = (props) => {
             onFocus={handleFocus}
             onMouseEnter={handleMouseEnter}
             onMouseDown={handleMouseDown}
-            onMouseUp={() => { props.setMouseDown(false) }}
+            onMouseUp={() => { props.mouseDown.current = false}}
         />
     </td>;
 }
 
-export default Box;
+export default memo(Box);

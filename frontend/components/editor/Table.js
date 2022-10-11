@@ -1,8 +1,7 @@
 import styles from "./Table.module.css"
+import { memo, useCallback, useState } from 'react';
 
 import Box from './Box.js'; 
-
-import { useState } from 'react';
 
 import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete, cloneMatrix} from '../matrixFunctions.js';
 
@@ -10,7 +9,7 @@ const Table = (props) => {
     const [showHelpers, setShowHelpers] = useState(window.innerWidth > 576 && props.firstVisit);
 
     //add Row/Col/Both and update matrix[row][col]
-    const addRow = (row, col, updated) => {
+    const addRow = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix);
         if (props.mirror) {
             const cols = clone[0].length;
@@ -26,9 +25,9 @@ const Table = (props) => {
         props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
 
-    }
+    }, [props.matrix, props.mirror, props.name, props.updateMatrix]);
 
-    const addCol = (row, col, updated) => {
+    const addCol = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix);
         if (props.mirror) {
             const cols = clone[0].length;
@@ -43,10 +42,10 @@ const Table = (props) => {
 
         props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
-    }
+    }, [props.matrix, props.mirror, props.name, props.updateMatrix])
 
 
-    const addBoth = (row, col, updated) => {
+    const addBoth = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix)
 
         if (props.mirror) {
@@ -64,16 +63,15 @@ const Table = (props) => {
         props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
 
-    }
+    }, [props.matrix, props.mirror, props.name, props.updateMatrix])
 
-    const update = (row, col, updated) => {
+    const update = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix)
         props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
+    }, [props.matrix, props.name, props.updateMatrix])
 
-    }
-
-    const keyDown = (row, col, e) => {
+    const keyDown = useCallback((row, col, e) => {
         if (e.keyCode === 16) { //shift
             if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) //add botj
                 props.updateMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
@@ -135,34 +133,42 @@ const Table = (props) => {
         }
 
         
-    }
+    }, [props.matrix, props.name, props.updateMatrix])
 
-    const inSelection = (x, y) => {
-        switch(props.boxesSelected["quadrant"]) {
-            case -1:
-                return false;
 
-            case 1:
-                return props.boxesSelected["startX"] <= x && x <= props.boxesSelected["endX"] &&
-                       props.boxesSelected["startY"] <= y && y <= props.boxesSelected["endY"];
-            case 2:
-                return props.boxesSelected["endX"] <= x && x <= props.boxesSelected["startX"] &&
-                       props.boxesSelected["startY"] <= y && y <= props.boxesSelected["endY"];
-            case 3:
-                return props.boxesSelected["endX"] <= x && x <= props.boxesSelected["startX"] &&
-                       props.boxesSelected["endY"] <= y && y <= props.boxesSelected["startY"];
-            case 4:
-                return props.boxesSelected["startX"] <= x && x <= props.boxesSelected["endX"] &&
-                       props.boxesSelected["endY"] <= y && y <= props.boxesSelected["startY"];
+    const inSelection = (x, y) => {        
+        let x1 = props.boxSelectionStart["x"]
+        let y1 = props.boxSelectionStart["y"]
+        let x2 = props.boxSelectionEnd["x"]
+        let y2 = props.boxSelectionEnd["y"]
 
-            default: return false;
+        if (x1 <= x2 && y1 <= y2) {//quadrant 1
+            return x1 <= x && x <= x2 && 
+                   y1 <= y && y <= y2;
+        
+
+        } else if (x1 >= x2 && y1 <= y2) {//quadrant 2
+            return x2 <= x && x <= x1 && 
+                   y1 <= y && y <= y2;
+
+        } else if (x1 <= x2 && y1 <= y2) {//quadrant 3
+            return x2 <= x && x <= x1 &&
+                   y2 <= y && y <= y1;
+
+        } else if (x1 <= x2 && y1 >= y2) {//quadrant 4
+            return x1 <= x && x <= x2 && 
+                   y2 <= y && y <= y1;
         }
+        
+
+        return false;
     }
 
     const cols = Math.min(50, props.matrix[0].length);
     const rows = Math.min(50, props.matrix.length);
 
     const tableRows = Array(rows).fill(Array(cols));
+    
     
     for (let i = 0; i < rows; i++) {
         const eachRow = Array(cols);
@@ -171,13 +177,12 @@ const Table = (props) => {
             eachRow[j] = <Box 
                         name = {props.name}
                         numbersOnly = {props.numbersOnly}
+                        darkModeTable = {props.darkModeTable}
+
                         addRow = {addRow} 
                         addCol = {addCol}
                         addBoth = {addBoth}
                         update = {update}
-
-                        darkModeTable = {props.darkModeTable}
-                        
                         keyDown = {keyDown}
                         updateBoxesSelected = {props.updateBoxesSelected}
 
@@ -189,7 +194,6 @@ const Table = (props) => {
                         key = {i + ";" + j}
 
                         boxSelected = {props.selectable ? inSelection(i, j) : false}
-                        setMouseDown = {props.setMouseDown}
                         mouseDown = {props.mouseDown} 
                 />
         }
@@ -197,6 +201,7 @@ const Table = (props) => {
         tableRows[i] = <tr key = {"row" + i} className = {styles.tableRow}>{eachRow}</tr>
     }
 
+    console.log("hi")
     return (
         <div className = {"d-flex justify-content-center" } id = "hide" onClick = {(e) => {
             if (e.target.id === "hide") {
