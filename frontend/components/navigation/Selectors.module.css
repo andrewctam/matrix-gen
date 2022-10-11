@@ -1,0 +1,94 @@
+.sizeInput {
+    color: black;
+    width: 25%;
+    float: right;
+    text-align: right;
+}
+
+.renameInput {
+    color: black;
+    width: 25%;
+    float: left;
+    text-align: left;
+}
+
+.intersectionMerge {
+    color: rgb(65, 141, 240);
+}
+
+.matrixSelector {
+    width: 100%;
+    background-color: rgb(236, 236, 236);
+}
+
+.matrixSelector:hover {
+    background-color: rgb(208, 205, 205);
+}
+
+.active {
+    background-color: rgb(200, 230, 230) !important;
+}
+
+.multiSelected {
+    background-color: rgb(240, 193, 193) !important;
+}
+
+.multiSelected.active  {
+    background-color: rgb(232, 168, 190) !important;
+}
+
+
+.matrixSelector > input {
+    color: black;
+    border: none;
+    background: none;
+    width: 25%;
+}
+
+
+.nameSearchBar {
+    width: 45%;
+    margin-left: 5%;
+    margin-bottom: 3px;
+    margin-top: 5px;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.25)
+}
+
+.sizeSearchBar {
+    width: 45%;
+    margin-right: 5%;
+    margin-bottom: 3px;
+    margin-top: 5px;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.25)
+}
+
+.nameSearchBar::placeholder, .sizeSearchBar::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+}
+
+
+.noMatrices {
+    text-align: center;
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-top: 10px;
+    color: white;
+    border-radius: 5px;
+}
+
+
+.matrixSelectorContainer {
+    min-height: 45px;
+    height: 175px;
+    max-height: fit-content;
+    resize: vertical;
+    background-color: rgba(255, 255, 255, 0.1);
+
+}
+

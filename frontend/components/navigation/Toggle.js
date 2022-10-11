@@ -5,7 +5,7 @@ const Toggle = (props) => {
         className = {styles.toggle} 
         onClick = {props.toggle}>
 
-        {props.show ? String.fromCharCode(8593) : String.fromCharCode(8595)}
+        {props.show ? "↑" : "↓"}
     </div>
 
 }

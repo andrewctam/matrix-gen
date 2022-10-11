@@ -246,21 +246,35 @@ const App = (props) => {
         delete tempObj[name];
         updateMatrices(tempObj);
     }
+       
 
-    const deleteAllMatrices = () => {
-        if (window.confirm("Are you sure you want to delete all of your matrices?")) {
+    const deleteSelectedMatrices = (matricesToDelete) => {
+        if (matricesToDelete.length === 0 && window.confirm("Are you sure you want to delete all of your matrices?")) { //if input is empty, delete all
             setSelection("0");
             updateMatrices({});
 
-            localStorage.removeItem("matrices");     
+            localStorage.removeItem("matrices");
+            return true;
+        } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
+            const tempObj = {...matrices};
+
+            for (let i = 0; i < matricesToDelete.length; i++) {
+                if (selection === matricesToDelete[i])
+                    setSelection("0");
+
+                delete tempObj[matricesToDelete[i]];
+            }
+            updateMatrices(tempObj);
+            return true;
         }
+
+        return false;
 
     }
 
     //functions related to saving
     const saveToLocalStorage = () => {
         saving.current = true
-        console.log(JSON.stringify(matrices))
         window.localStorage.setItem("matrices", JSON.stringify(matrices))
         window.localStorage.setItem("Save To Local", saveToLocal ? "1" : "0")
         window.localStorage.setItem("Disable Selection;", selectable ? "1" : "0");
@@ -495,7 +509,7 @@ const App = (props) => {
                 deleteMatrix = {deleteMatrix}
                 renameMatrix = {renameMatrix}
                 saveToLocalStorage = {saveToLocalStorage}
-                deleteAllMatrices = {deleteAllMatrices}
+                deleteSelectedMatrices = {deleteSelectedMatrices}
 
                 username = {username}
                 updateUserInfo = {updateUserInfo}

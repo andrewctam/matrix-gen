@@ -67,6 +67,7 @@ const Box = (props) => {
         } 
     }
 
+
     return <td className={styles.box} style = {boxStyle}>
         <input
             type={props.numbersOnly ? "number" : "text"}

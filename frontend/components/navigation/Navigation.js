@@ -4,20 +4,16 @@ import ParameterTextInput from '../inputs/ParameterTextInput';
 
 import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
-import SelectorButton from './buttons/SelectorButton';
 import MenuButton from './buttons/MenuButton';
 import TextActionButton from "../editor/matrixTools/TextActionButton"
 import styles from "./Navigation.module.css";
 
+import MatrixSelector from './MatrixSelector';
 
 import {cloneMatrix, createIdentity} from '../matrixFunctions';
 import Toggle from './Toggle';
 
 const Navigation = (props) => {
-    const [selectors, setSelectors] = useState([]);
-    const [searchName, setSearchName] = useState("");
-    const [searchSize, setSearchSize] = useState("");
-
     const [showSettings, setShowSettings] = useState(false);
     const [showPresets, setShowPresets] = useState(false);
     const [showTutorial, setShowTutorial] = useState(props.firstVisit);
@@ -30,56 +26,7 @@ const Navigation = (props) => {
 
     const navigationRef = useRef(null);
 
-
-    useEffect(() => {
-        const sizeFilters = [];
-        const split = searchSize.split("x"); //extrcat numbers from n x m
-        if (searchSize !== "") {
-            for (let i = 0; i < split.length; i++) {
-                const temp = parseInt(split[i])
-                if (!isNaN(temp))
-                    sizeFilters.push(temp)
-            }
-        }
-
-        if (props.showMerge) {
-            var intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
-        }
-
-        //map matrices to selectors
-        const tempSelectors = []
-        for (const matrixName in props.matrices) {
-            if ((searchName === "" || matrixName.startsWith(searchName)) &&
-                (searchSize === "" || verifySize(matrixName, sizeFilters)))
-                tempSelectors.push(
-                    <SelectorButton
-                        key={matrixName}
-                        name={matrixName}
-                        matrices={props.matrices}
-                        matrix = {props.matrix}
-
-                        setSelection={props.setSelection}
-                        updateMatrix = {props.updateMatrix}
-                        renameMatrix={props.renameMatrix}
-                        active={props.selection === matrixName}
-
-                        intersectionMerge={props.showMerge && intersection.includes(matrixName)}
-                    />
-                )
-        }
-
-
-        if (tempSelectors.length === 0)
-            if (props.matrices)
-                tempSelectors.push(<div key="noMatrices" className={styles.noMatrices}>{"No Matrices Found"}</div>);
-            else
-                tempSelectors.sort((selector1, selector2) => {
-                    return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
-                });
-
-        setSelectors(tempSelectors);
-        // eslint-disable-next-line
-    }, [props.matrices, props.selection, searchName, searchSize]);
+    const [multiSelected, setMultiSelected] = useState([]);
 
     const updatePresetParameter = (parameterName, updated) => {
         switch (parameterName) {
@@ -91,32 +38,6 @@ const Navigation = (props) => {
             default: break;
         }
     }
-    const updateSearchName = (e) => {
-        const updated = e.target.value;
-        if (/^[A-Za-z_]*$/.test(updated)) //only allow letters and underscores
-            setSearchName(updated);
-    }
-
-    const updateSearchSize = (e) => {
-        const updated = e.target.value;
-        if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) //only allow digits and one instance of "x"
-            setSearchSize(updated);
-    }
-
-
-    const verifySize = (name, sizeFilters) => {
-        const matrix = props.matrices[name];
-        const rows = matrix.length - 1;
-        const cols = matrix[0].length - 1;
-
-        if (sizeFilters.length === 1) //only a number entered
-            return rows === sizeFilters[0] || cols === sizeFilters[0]
-        else //n x m entered
-            return rows === sizeFilters[0] && cols === sizeFilters[1];
-
-    }
-
-
 
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;
@@ -178,8 +99,6 @@ const Navigation = (props) => {
 
             {showGeneralTools ?
             <div id="selectors" className="list-group">
-
-
                 <MenuButton
                     text={showSaveMenu ? "Hide Save Menu" : "Save Matrices"}
                     buttonStyle={"info"}
@@ -235,8 +154,6 @@ const Navigation = (props) => {
 
             </div>: null}
 
-
-
         </div>
 
 
@@ -267,13 +184,13 @@ const Navigation = (props) => {
                         action={() => { props.updateMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
                     : null}
 
-                {props.selection !== "0" ?
+                {props.selection !== "0"?
                     <MenuButton
                         key="deleteButton"
                         buttonStyle={"danger"}
                         text={`Delete Matrix ${props.selection}`}
                         action={() => {
-                            if (props.selection !== "0" && window.confirm("Are you sure you want to delete " + props.selection + "?")) {
+                           if (props.selection !== "0" && window.confirm(`Are you sure you want to delete ${props.selection}?`)) {
                                 props.deleteMatrix(props.selection);
                                 props.setSelection("0");
                             }
@@ -282,9 +199,12 @@ const Navigation = (props) => {
 
                 {props.matrices && Object.keys(props.matrices).length > 0 ?
                     <MenuButton
-                        text={"Delete All Matrices"}
                         buttonStyle={"danger"}
-                        action={props.deleteAllMatrices}
+                        text={`Delete ${multiSelected.length > 0 ? "Selected (Pink)" : "All"} Matrices`}
+                        action={() => {
+                            if (props.deleteSelectedMatrices(multiSelected))
+                                setMultiSelected([])
+                        }}
                     />
                 : null}
 
@@ -295,9 +215,18 @@ const Navigation = (props) => {
 
 
         <div className={"col-sm-4 order-sm-2 " + styles.selectors}>
-            <input className={styles.nameSearchBar} onChange={updateSearchName} value={searchName} placeholder='Search by Name'></input>
-            <input className={styles.sizeSearchBar} onChange={updateSearchSize} value={searchSize} placeholder='Search by Size'></input>
-            <div id="selectors" className={"list-group " + styles.matrixSelectorContainer}> {selectors} </div>
+            <MatrixSelector 
+                matrices={props.matrices}
+                userMatrices={props.userMatrices}
+                name = {props.name}
+                setSelection={props.setSelection}
+                selection = {props.selection}
+                updateMatrix={props.updateMatrix}
+                renameMatrix={props.renameMatrix}
+                showMerge = {props.showMerge}
+                multiSelected = {multiSelected}
+                setMultiSelected = {setMultiSelected}
+            />
         </div>
 
 

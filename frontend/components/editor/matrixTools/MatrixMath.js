@@ -1,4 +1,4 @@
-import React, { memo, useState, useMemo  } from 'react';
+import React, { useState, useMemo  } from 'react';
 import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
 import useExpand from './useExpand';
@@ -28,12 +28,12 @@ const MatrixMath = (props) => {
                 }
                 break;
             case "resultName":
-                if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
+                if (/^[a-zA-Z_]*$/.test(updated)) {
                     setResultName(updated);
                 }
                 break;
             case "reductionName":
-                if (/^[a-zA-Z0-9._\s]*$/.test(updated)) {
+                if (/^[a-zA-Z_]*$/.test(updated)) {
                     setReductionName(updated);
                 }
                 break;
@@ -430,7 +430,6 @@ const MatrixMath = (props) => {
     else
         newName = reductionName
 
-    console.log("render math")
     return <div ref={matrixMath} className={"fixed-bottom " + styles.matrixMathContainer}>
        
         <div className="row">
@@ -518,4 +517,4 @@ const MatrixMath = (props) => {
 
 
 
-export default memo(MatrixMath);
+export default MatrixMath;

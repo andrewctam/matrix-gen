@@ -105,18 +105,6 @@ li {
     overflow-y: auto;
     width: 100%;
     margin-bottom: 10px;
-  }
-
-.list-group > .active {
-    color: black;
-    background-color: rgb(198, 231, 231);
-    border-color: rgb(185, 225, 225);
-}
-
-.list-group > button > input {
-    border: none;
-    background: none;
-    width: 25%;
 }
 
 .list-group-item {

@@ -1,5 +1,5 @@
 import styles from "./Table.module.css"
-import { memo, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import Box from './Box.js'; 
 
@@ -136,39 +136,25 @@ const Table = (props) => {
     }, [props.matrix, props.name, props.updateMatrix])
 
 
-    const inSelection = (x, y) => {        
+    const inSelection = (x, y) => {       
         let x1 = props.boxSelectionStart["x"]
         let y1 = props.boxSelectionStart["y"]
         let x2 = props.boxSelectionEnd["x"]
         let y2 = props.boxSelectionEnd["y"]
 
-        if (x1 <= x2 && y1 <= y2) {//quadrant 1
-            return x1 <= x && x <= x2 && 
-                   y1 <= y && y <= y2;
-        
+        let minX = Math.min(x1, x2)
+        let maxX = Math.max(x1, x2)
+        let minY = Math.min(y1, y2)
+        let maxY = Math.max(y1, y2)
 
-        } else if (x1 >= x2 && y1 <= y2) {//quadrant 2
-            return x2 <= x && x <= x1 && 
-                   y1 <= y && y <= y2;
-
-        } else if (x1 <= x2 && y1 <= y2) {//quadrant 3
-            return x2 <= x && x <= x1 &&
-                   y2 <= y && y <= y1;
-
-        } else if (x1 <= x2 && y1 >= y2) {//quadrant 4
-            return x1 <= x && x <= x2 && 
-                   y2 <= y && y <= y1;
-        }
-        
-
-        return false;
+        return (minX <= x && x <= maxX &&
+                minY <= y && y <= maxY)
     }
 
     const cols = Math.min(50, props.matrix[0].length);
     const rows = Math.min(50, props.matrix.length);
 
     const tableRows = Array(rows).fill(Array(cols));
-    
     
     for (let i = 0; i < rows; i++) {
         const eachRow = Array(cols);
@@ -201,7 +187,6 @@ const Table = (props) => {
         tableRows[i] = <tr key = {"row" + i} className = {styles.tableRow}>{eachRow}</tr>
     }
 
-    console.log("hi")
     return (
         <div className = {"d-flex justify-content-center" } id = "hide" onClick = {(e) => {
             if (e.target.id === "hide") {

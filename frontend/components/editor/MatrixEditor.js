@@ -90,7 +90,7 @@ const MatrixEditor = (props) => {
 
 
 
-    const toStringUpdateMatrix = useCallback((name, matrix) => {
+    const toStringUpdateMatrix = (name, matrix) => {
         for (let i = 0; i < matrix.length - 1; i++) {
             for (let j = 0; j < matrix[i].length - 1; j++) {
                 if (props.rounding !== "") {
@@ -100,12 +100,8 @@ const MatrixEditor = (props) => {
             }
         }
         props.updateMatrix(name, matrix);
+    }
 
-    }, [props.rounding, props.updateMatrix]);
-
-    const closeMath = useCallback(() => {
-        setShowMath(false);
-    }, []);
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }} >
@@ -166,7 +162,7 @@ const MatrixEditor = (props) => {
                     name = {props.name}
                     toStringUpdateMatrix={toStringUpdateMatrix}
                     sparseVal={props.sparseVal}
-                    close={closeMath}
+                    close={() => { setShowMath(false)}}
                     active={showMath}
                     rounding = {props.rounding}
                     optionsBarRef = {optionsBarRef}

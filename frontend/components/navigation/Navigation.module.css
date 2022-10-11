@@ -40,58 +40,12 @@
 }
 
 
-.nameSearchBar {
-  width: 45%;
-  margin-left: 5%;
-  margin-bottom: 3px;
-  margin-top: 5px;
-  border-radius: 10px;
-  padding: 5px;
-  background-color: rgba(255, 255, 255, 0.25)
-}
-
-.sizeSearchBar {
-  width: 45%;
-  margin-right: 5%;
-  margin-bottom: 3px;
-  margin-top: 5px;
-  border-radius: 10px;
-  padding: 5px;
-  background-color: rgba(255, 255, 255, 0.25)
-}
-
-.nameSearchBar::placeholder, .sizeSearchBar::placeholder {
-  color: rgba(255, 255, 255, 0.8);
-  text-align: center;
-}
-
-
-.noMatrices {
-  text-align: center;
-  width: 50%;
-  margin-left: 25%;
-  margin-right: 25%;
-  margin-top: 10px;
-  color: white;
-  border-radius: 5px;
-
-}
-
 .settingsMenu {
   background-color: rgb(88, 91, 96);
   border-radius: 15px;
   width: 95%;
   margin: 2.5%;
   padding: 10px;
-}
-
-.matrixSelectorContainer {
-  min-height: 45px;
-  height: 175px;
-  max-height: fit-content;
-  resize: vertical;
-  background-color: rgba(255, 255, 255, 0.1);
-
 }
 
 .toolToggle {
