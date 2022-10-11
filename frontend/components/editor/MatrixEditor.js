@@ -238,6 +238,7 @@ const MatrixEditor = (props) => {
                     updateMatrix={props.updateMatrix}
 
                     selectable={props.selectable}
+                    darkModeTable = {props.darkModeTable}
 
                     boxesSelected={boxesSelected}
                     updateBoxesSelected={updateBoxesSelected}

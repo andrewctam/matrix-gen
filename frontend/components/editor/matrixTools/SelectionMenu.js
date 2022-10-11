@@ -76,14 +76,14 @@ const SelectionMenu = (props) => {
                 <TextActionButton
                     name={"Save Selection as New Matrix: "}
                     action={() => {
+                        debugger;
                         props.updateMatrix(spliceName ? spliceName : generatedName, spliceMatrix(props.matrix,
                             props.boxesSelected["startX"],
                             props.boxesSelected["startY"],
                             props.boxesSelected["endX"],
                             props.boxesSelected["endY"],
                             spliceName))
-                    }
-                    }
+                    }}
 
                     updateParameter={updateName}
                     width={"75px"}
@@ -94,6 +94,14 @@ const SelectionMenu = (props) => {
                 <TextActionButton
                     name={"Paste Another Matrix Into Selection: "}
                     action={() => {
+                        if (pasteName === "") {
+                            alert("Please enter a matrix name to paste.");
+                            return;
+                        } else if (!(pasteName in props.matrices)) {
+                            alert("Matrix not found");
+                            return;
+                        }
+                        debugger;
                         const pasted = pasteMatrix(
                             props.matrices[props.name], //matrix to paste on
                             props.matrices[pasteName],  //matrix to copy from

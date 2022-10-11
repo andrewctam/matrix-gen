@@ -159,11 +159,10 @@ const Table = (props) => {
         }
     }
 
-    const cols = props.matrix[0].length;
-    const rows = props.matrix.length;
+    const cols = Math.min(50, props.matrix[0].length);
+    const rows = Math.min(50, props.matrix.length);
 
     const tableRows = Array(rows).fill(Array(cols));
-
     
     for (let i = 0; i < rows; i++) {
         const eachRow = Array(cols);
@@ -176,12 +175,14 @@ const Table = (props) => {
                         addCol = {addCol}
                         addBoth = {addBoth}
                         update = {update}
+
+                        darkModeTable = {props.darkModeTable}
                         
                         keyDown = {keyDown}
                         updateBoxesSelected = {props.updateBoxesSelected}
 
-                        rows = {rows}
-                        cols = {cols}
+                        rows = {props.matrix.length}
+                        cols = {props.matrix[0].length}
                         row = {i} 
                         col = {j}
                         val = {props.matrix[i][j]} 

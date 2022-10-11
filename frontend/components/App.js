@@ -18,7 +18,8 @@ const App = (props) => {
     const [numbersOnly, setNumbersOnly] = useState(false);
     const [sparseVal, setSparseVal] = useState("0"); 
     const [rounding, setRounding] = useState(8);
-    
+    const [darkModeTable, setDarkModeTable] = useState(false);
+
     const [username, setUsername] = useState(null);
     const [saveToLocal, setSaveToLocal] = useState(false);
     
@@ -62,6 +63,7 @@ const App = (props) => {
         setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
         setMirror(window.localStorage.getItem("Mirror Inputs") === "1");
         setNumbersOnly(window.localStorage.getItem("Numbers Only Input") === "1");
+        setDarkModeTable(window.localStorage.getItem("Dark Mode Table") === "1");
 
         const round = window.localStorage.getItem("Rounding");
         if (round !== null)
@@ -192,7 +194,10 @@ const App = (props) => {
                     }
                 }
                 break;
-                
+            case "Dark Mode Table":
+                setDarkModeTable(updated);
+                window.localStorage.setItem("Dark Mode Table", updated ? "1" : "0");
+                break;
             case "Show Merge":
                 setShowMerge(updated);
                 window.localStorage.setItem("Show Merge", updated ? "1" : "0");
@@ -484,6 +489,7 @@ const App = (props) => {
                 sparseVal = {sparseVal}
                 selectable = {selectable}
                 rounding = {rounding}
+                darkModeTable = {darkModeTable}
 
                 updateMatrix = {updateMatrix}
                 deleteMatrix = {deleteMatrix}
@@ -502,6 +508,7 @@ const App = (props) => {
                 userMatrices = {userMatrices}
                 dataTooLarge = {dataTooLarge}
                 
+
                 firstVisit = {firstVisit}
             />
 
@@ -524,6 +531,7 @@ const App = (props) => {
                 firstVisit = {firstVisit}
                 rounding = {rounding}
 
+                darkModeTable = {darkModeTable}
 
                 undo = {undo}
                 canUndo = {undoStack.length > 0}

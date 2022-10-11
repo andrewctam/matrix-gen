@@ -412,7 +412,6 @@ export const spliceMatrix = (matrix, x1, y1, x2, y2) => {
 }
 
 export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
-   
     if (x1 > x2) { //x1 to smaller
         var temp = x1;
         x1 = x2;

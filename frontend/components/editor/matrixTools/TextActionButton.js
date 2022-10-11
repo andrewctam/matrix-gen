@@ -6,7 +6,7 @@ const TextActionButton = (props) => {
     return <form className = {styles.textActionButton} onSubmit = {(e) => {e.preventDefault(); props.action();}}>
         <button 
             className = "btn btn-primary" 
-            onClick = {props.action}>
+            onClick = {(e) => {e.preventDefault(); props.action()}}>
             {props.name}
         </button>
 

@@ -5,7 +5,8 @@
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 0px;
-    
+    border-spacing: 5px;
+    border-collapse: separate;
 }
 
 .tableContainer {
@@ -20,23 +21,10 @@
     margin-right: 5px;
 }
 
-
 .tableRow {
     margin: 0px;
     padding: 0px;
 }
-
-.tableRow:nth-last-child(1) > td {
-    height: 29px;
-    max-height: 29px;
-}
-
-.tableRow:nth-last-child(1) > td > input {
-    background-color: rgb(188, 146, 146);
-    height: 25px;
-    max-height: 25px;
-}
-
 
 .bracket {
     height: 100%;
@@ -59,7 +47,6 @@
 .arrowLeft {
     padding-left: 5px;
 }
-
 
 
 .helperRight {
