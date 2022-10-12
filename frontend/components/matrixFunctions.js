@@ -84,49 +84,22 @@ export const resizeMatrix = (matrix, rows, cols) => {
     return resized;
 }
 
-export const tryToDelete = (matrix, row, col) => {
+export const deleteRowCol = (matrix, row, col) => {
     //Can not delete the red row/column
     if (row === matrix.length - 1 || col === matrix[0].length - 1) 
         return null;
         
     const clone = cloneMatrix(matrix);
-    var toDelete = true;
     
-    //{{1,1,1,1},
-    // {0,0,0,0}, row
-    // {1,1,1,1}}
-    //Try to Delete an Empty Row
-    if (matrix.length > 2) {
-        for (let i = 0; i < matrix[0].length; i++) {
-            if (matrix[row][i] !== "") {
-                toDelete = false;
-                break;
-            }
-        }
-        if (toDelete)
-            clone.splice(row, 1);
+    if (matrix.length > 2 && row !== -1) {
+        clone.splice(row, 1); //delete row
     }
 
-    //     col
-    //{{1,1,0,1},
-    // {1,1,0,1},
-    // {1,1,0,1}}
-    toDelete = true;
-    if (matrix[0].length > 2) {
-        for (let i = 0; i < matrix.length; i++) {
-            if (matrix[i][col] !== "") {
-                toDelete = false;
-                break;
-            }
-        }
-
-        if (toDelete) {
-            for (let i = 0; i < clone.length; i++) {
-                clone[i].splice(col, 1); //delete cols
-            } 
-        }
+    if (matrix[0].length > 2 && col !== -1) {
+        for (let i = 0; i < clone.length; i++) {
+            clone[i].splice(col, 1); //delete col
+        } 
     }
-
 
     return clone;
 }
@@ -139,11 +112,11 @@ export const updateEntry = (matrix, i, j, val, mirror) => {
         //add enough rows/cols in order to update the correct  j, i
 
         if (i >= matrix[0].length - 1 && j >= matrix.length - 1) {
-            matrix = addRowsAndCols(matrix, j - matrix.length + 2, i - matrix[0].length + 2, false)
+            matrix = addRowsAndCols(matrix, j - matrix.length + 2, i - matrix[0].length + 2)
         } else if (j >= matrix.length - 1) {
-            matrix = addRows(matrix, j - matrix.length + 2, false)
+            matrix = addRows(matrix, j - matrix.length + 2)
         } else if (i >= matrix[0].length - 1) {
-            matrix = addCols(matrix, i - matrix[0].length + 2, false)
+            matrix = addCols(matrix, i - matrix[0].length + 2)
         }
         
         matrix[j][i] = val;
@@ -154,21 +127,28 @@ export const updateEntry = (matrix, i, j, val, mirror) => {
     return matrix        
 }
 
-export const addCols = (matrix, numToAdd) => {
+export const addCols = (matrix, numToAdd, pos = null) => {
+    if (pos === null)
+        pos = matrix[0].length - 1;
+        
     //does not make a clone to prevent unnecessary cloning if we use multiple functions 
     for (let i = 0; i < matrix.length; i++) {
-        for (let j = 0; j < numToAdd; j++)
+        for (let j = pos; j < pos+ numToAdd; j++)
             //Add ""s to each row
-            matrix[i].push("");
+            matrix[i].splice(j, 0, "");
     }
 
     return matrix;
 }
 
-export const addRows = (matrix, numToAdd) => {
+export const addRows = (matrix, numToAdd, pos = null) => {
+    if (pos === null)
+        pos = matrix.length - 1;
+    
+
     //does not make a clone to prevent unnecessary cloning if we use multiple functions 
-    for (let i = 0; i < numToAdd; i++) {
-        matrix.push(new Array(matrix[0].length).fill(""));
+    for (let i = pos; i < pos + numToAdd; i++) {
+        matrix.splice(i, 0, Array(matrix[0].length).fill(""));
     }
     
     return matrix; 
@@ -191,10 +171,10 @@ export const addRowsAndCols = (matrix, rowsToAdd, colsToAdd) => {
 export const mirrorRowsCols = (matrix, mirrorRowsToCols) => { 
 
     if (matrix.length > matrix[0].length) { //more rows than cols 
-        matrix = addCols(matrix, matrix.length - matrix[0].length, false);
+        matrix = addCols(matrix, matrix.length - matrix[0].length);
         
     } else if (matrix.length < matrix[0].length) {
-        matrix = addRows(matrix, matrix[0].length - matrix.length, false)  
+        matrix = addRows(matrix, matrix[0].length - matrix.length)  
     }  else {
         matrix = cloneMatrix(matrix)
     }

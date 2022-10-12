@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 
 import Box from './Box.js'; 
 
-import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete, cloneMatrix} from '../../matrixFunctions.js';
+import { addRows, addCols, addRowsAndCols, updateEntry, deleteRowCol, cloneMatrix} from '../../matrixFunctions.js';
 
 const Table = (props) => {
     const [showHelpers, setShowHelpers] = useState(window.innerWidth > 576 && props.firstVisit);
@@ -73,7 +73,7 @@ const Table = (props) => {
 
     const keyDown = useCallback((row, col, e) => {
         if (e.keyCode === 16) { //shift
-            if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) //add botj
+            if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) //add both
                 props.updateMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
             else if (props.matrix.length === (row + 1)) //add row
                 props.updateMatrix(props.name, addRows(props.matrix, 1))
@@ -81,11 +81,35 @@ const Table = (props) => {
                 props.updateMatrix(props.name, addCols(props.matrix, 1))
 
         } else if (e.keyCode === 8 && e.target.value === "") { //delete
-            const result = tryToDelete(props.matrix, row, col)
+            e.preventDefault();
+
+            let result = null
+            if (row === props.matrix.length - 1 && col === props.matrix[0].length - 1) {//delete both
+                result = deleteRowCol(props.matrix, row - 1, col - 1)
+                document.getElementById((row - 1) + ":" + (col - 1)).focus();
+            } else if (col === props.matrix[0].length - 1) //last col, so delete row
+                result = deleteRowCol(props.matrix, row, -1)
+            else if (row === props.matrix.length - 1) //last row, so delete delete col
+                result = deleteRowCol(props.matrix, -1, col)
 
             if (result)
                 props.updateMatrix(props.name, result); 
 
+        } else if (e.keyCode === 13) {//enter
+            e.preventDefault();
+            if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) { //add both if just on corner box
+                props.updateMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
+            } else if (col === props.matrix[0].length - 1) { //add row at this pos
+                if (e.metaKey)
+                    props.updateMatrix(props.name, addRows(props.matrix, 1, row - 1))
+                else
+                    props.updateMatrix(props.name, addRows(props.matrix, 1, row + 1))
+            } else if (row === props.matrix.length - 1) { //add col at this pos
+                if (e.metaKey)
+                    props.updateMatrix(props.name, addCols(props.matrix, 1, col - 1))
+                else
+                    props.updateMatrix(props.name, addCols(props.matrix, 1, col + 1))
+            }
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             e.preventDefault();
 
@@ -97,9 +121,7 @@ const Table = (props) => {
             else if (row !== 0) {  //Wrap
                 document.getElementById((row - 1) + ":" + (props.matrix[0].length - 1)).focus();
             }
-        } 
-        
-        else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) { //Right
+        } else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) { //Right
             e.preventDefault();
 
             if (col !== props.matrix[0].length - 1) { 
@@ -109,9 +131,7 @@ const Table = (props) => {
             } else if (row !== props.matrix.length - 1) { //Wrap
                 document.getElementById((row + 1) + ":0").focus();
             }
-        }
-
-        else if (e.keyCode === 40) { //Down
+        } else if (e.keyCode === 40) { //Down
             e.preventDefault();
 
             if (row !== props.matrix.length - 1) {
