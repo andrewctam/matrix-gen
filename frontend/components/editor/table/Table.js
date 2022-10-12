@@ -82,15 +82,46 @@ const Table = (props) => {
 
         } else if (e.keyCode === 8 && e.target.value === "") { //delete
             e.preventDefault();
-
             let result = null
+
             if (row === props.matrix.length - 1 && col === props.matrix[0].length - 1) {//delete both
-                result = deleteRowCol(props.matrix, row - 1, col - 1)
-                document.getElementById((row - 1) + ":" + (col - 1)).focus();
-            } else if (col === props.matrix[0].length - 1) //last col, so delete row
-                result = deleteRowCol(props.matrix, row, -1)
-            else if (row === props.matrix.length - 1) //last row, so delete delete col
-                result = deleteRowCol(props.matrix, -1, col)
+                    if (props.matrix.length === 2 && col > 1) {//2 rows, so delete columns
+                        result = deleteRowCol(props.matrix, -1, col - 1)
+                        document.getElementById((row) + ":" + (col - 1)).focus();
+                    } else if (props.matrix[0].length === 2 && row > 1) { //2 cols, so delete rows
+                        result = deleteRowCol(props.matrix, row - 1, -1)
+                        document.getElementById((row - 1) + ":" + (col)).focus();
+
+                    } else if (row > 1 && col > 1) {  
+                        result = deleteRowCol(props.matrix, row - 1, col - 1)
+                        document.getElementById((row - 1) + ":" + (col - 1)).focus();
+                    }
+                
+            } else if (col === props.matrix[0].length - 1) {//last col
+                if (e.metaKey) { //delete this row
+                    if (props.matrix.length > 2)
+                        result = deleteRowCol(props.matrix, row, -1)
+                    if (row > 0)
+                        document.getElementById((row - 1) + ":" + (col)).focus();
+                } else { //delete last col
+                    if (props.matrix[0].length > 2) {
+                        result = deleteRowCol(props.matrix, -1, col - 1)
+                        document.getElementById((row) + ":" + (col - 1)).focus();
+                    }
+                }
+            } else if (row === props.matrix.length - 1) { //last row
+                if (e.metaKey) { //delete this col
+                    if (props.matrix[0].length > 2)
+                        result = deleteRowCol(props.matrix, -1, col)
+                    if (col > 0)
+                        document.getElementById((row) + ":" + (col - 1)).focus();
+                } else { //delete last row
+                    if (props.matrix.length > 2) {
+                        result = deleteRowCol(props.matrix, row - 1, -1)
+                        document.getElementById((row - 1) + ":" + (col)).focus();
+                    }
+                }
+            }
 
             if (result)
                 props.updateMatrix(props.name, result); 
@@ -100,15 +131,17 @@ const Table = (props) => {
             if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) { //add both if just on corner box
                 props.updateMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
             } else if (col === props.matrix[0].length - 1) { //add row at this pos
-                if (e.metaKey)
+                if (e.metaKey) {
                     props.updateMatrix(props.name, addRows(props.matrix, 1, row - 1))
-                else
+                } else {
                     props.updateMatrix(props.name, addRows(props.matrix, 1, row + 1))
+                }
             } else if (row === props.matrix.length - 1) { //add col at this pos
-                if (e.metaKey)
+                if (e.metaKey) {
                     props.updateMatrix(props.name, addCols(props.matrix, 1, col - 1))
-                else
+                } else {
                     props.updateMatrix(props.name, addCols(props.matrix, 1, col + 1))
+                }
             }
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
             e.preventDefault();

@@ -15,7 +15,7 @@ const Tutorial = (props) => {
                     <ul className={styles.tutorialList}>
                         <li>Typing in a white box will update the corresponding entry. </li>
                         <li>Typing in a red box will add a row/column to the matrix. They are not part of the matrix until you type in them.</li>
-                        <li>You can delete rows/columns by clicking Backspace on the red box on the row/column .</li>
+                        <li>You can delete the last rows/columns by clicking Backspace on the red boxes. If you want to delete a specific row/column, hold down CTRL/CMD and press Backspace on the red box on the row/column.</li>
                         <li>You can add a row/column in front of the current row/column using Enter on a red box. Simultaneously hold down CTRL/CMD to add one behind the current row/col.</li>
                         <li>Empty boxes will be filled with a sparse value when exporting or doing math. You can edit this value in the settings.</li>
                         <li>If you want to mirror your inputs, you can enable this in the settings. Typing in box (i, j) will also edit in box (j, i).</li>
