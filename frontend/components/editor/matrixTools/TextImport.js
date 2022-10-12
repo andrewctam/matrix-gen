@@ -1,13 +1,16 @@
 import React, {useEffect, useState, useRef} from "react";
+import styles from "./TextImport.module.css"
+import { generateUniqueName } from "../../matrixFunctions";
+
 import ParameterBoxInput from "../../inputs/ParameterBoxInput";
 import ParameterTextInput from "../../inputs/ParameterTextInput";
-import ActiveButton from "../ActiveButton";
+import ActiveButton from '../../buttons/ActiveButton'
 
-import styles from "./TextImport.module.css"
-import OverwriteInput from "./OverwriteInput";
-import { generateUniqueName } from "../../matrixFunctions";
-import Toggle from "../../navigation/Toggle";
-import useExpand from "./useExpand";
+import OverwriteInput from '../../inputs/OverwriteInput'
+
+import Toggle from '../../buttons/Toggle';
+import useExpand from "../../../hooks/useExpand";
+
 const TextImport = (props) => {
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);

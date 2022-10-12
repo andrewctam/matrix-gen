@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
+
 import MatrixEditor from './editor/MatrixEditor.js';
 import Navigation from "./navigation/Navigation.js"
 import matrixEditorStyles from './editor/MatrixEditor.module.css';
-
-import ActiveButton from './editor/ActiveButton.js';
-import BasicActionButton from './editor/matrixTools/BasicActionButton.js';
+import ActiveButton from './buttons/ActiveButton.js';
+import BasicActionButton from './buttons/BasicActionButton.js';
 import TextImport from './editor/matrixTools/TextImport.js';
 
 import { generateUniqueName } from './matrixFunctions.js';

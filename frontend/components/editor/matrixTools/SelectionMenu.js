@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import TextActionButton from "./TextActionButton";
+
 import styles from "./SelectionMenu.module.css"
 
-
 import { generateUniqueName, spliceMatrix, pasteMatrix, editSelection } from "../../matrixFunctions";
-import Toggle from "../../navigation/Toggle";
-import useExpand from "./useExpand";
+
+import TextActionButton from '../../buttons/TextActionButton'
+import Toggle from '../../buttons/Toggle';
+import useExpand from "../../../hooks/useExpand";
 
 const SelectionMenu = (props) => {
     const [spliceName, setSpliceName] = useState("");

@@ -1,13 +1,11 @@
-import React from 'react';
+
 const ParameterBoxInput = (props) =>{
     
     const handleChange = (e) =>{
         props.updateParameter(props.name, e.target.checked)
     }
 
-
-
-    return  <div className = "form-check-prepend">
+    return (<div className = "form-check-prepend">
                 <label className = "form-check-label" htmlFor={props.name}> {props.name}</label>
 
                 <input className = "form-check-input pull-right" 
@@ -16,14 +14,8 @@ const ParameterBoxInput = (props) =>{
                     type = "checkbox" 
                     id = {props.name} 
                 />
-
-
-            </div>  
-    
-
+            </div>)
     
 }
-
-
 
 export default ParameterBoxInput;

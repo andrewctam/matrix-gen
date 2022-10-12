@@ -1,4 +1,4 @@
-import ParameterBoxInput from "../../inputs/ParameterBoxInput";
+import ParameterBoxInput from "./ParameterBoxInput";
 
 
 const OverwriteInput = (props) => {

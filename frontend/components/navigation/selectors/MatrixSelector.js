@@ -1,8 +1,8 @@
 import { useState } from "react";
-import SelectorButton from './SelectorButton';
+import SelectorButton from "./SelectorButton";
 import styles from "./Selectors.module.css"
 
-import {resizeMatrix} from '../matrixFunctions'
+import {resizeMatrix} from '../../matrixFunctions'
 
 const MatrixSelector = (props) => {
     const [searchName, setSearchName] = useState("");

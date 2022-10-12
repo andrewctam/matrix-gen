@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput.js';
 import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
-import ActiveButton from '../ActiveButton.js';
+import ActiveButton from '../../buttons/ActiveButton.js';
 
 import styles from "./MatrixExport.module.css"
-import Toggle from '../../navigation/Toggle.js';
-import useExpand from './useExpand.js';
+import Toggle from '../../buttons/Toggle.js';
+
+import useExpand from '../../../hooks/useExpand'
 
 const MatrixExport = (props) => {    
     const [exportOption, setExportOption] = useState("2D Arrays");

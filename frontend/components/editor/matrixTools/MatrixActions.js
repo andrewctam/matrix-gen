@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
-import BasicActionButton from './BasicActionButton';
-import TextActionButton from './TextActionButton';
-import TwoTextActionButton from './TwoTextActionButton';
-
+import {transpose, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, reshapeMatrix, resizeMatrix} from '../../matrixFunctions';
 import styles from "./MatrixActions.module.css"
 
-import {transpose, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, reshapeMatrix, resizeMatrix} from '../../matrixFunctions';
-import Toggle from '../../navigation/Toggle';
-import useExpand from './useExpand';
+import BasicActionButton from '../../buttons/BasicActionButton.js';
+import TextActionButton from '../../buttons/TextActionButton';
+import TwoTextActionButton from '../../buttons/TwoTextActionButton';
+
+import Toggle from '../../buttons/Toggle';
+import useExpand from "../../../hooks/useExpand";
 
 const MatrixActions = (props) => {
     const [randomLow, setRandomLow] = useState("1");

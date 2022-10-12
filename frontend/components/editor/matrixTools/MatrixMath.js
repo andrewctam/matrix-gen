@@ -1,11 +1,12 @@
 import React, { useState, useMemo  } from 'react';
-import Toggle from '../../navigation/Toggle';
 import styles from "./MatrixMath.module.css"
-import useExpand from './useExpand';
 
 import { generateUniqueName, cloneMatrix, gaussian, LUDecomposition, inverse, createIdentity} from '../../matrixFunctions';
-import BasicActionButton from './BasicActionButton';
-import OverwriteInput from './OverwriteInput';
+import Toggle from '../../buttons/Toggle';
+import useExpand from "../../../hooks/useExpand";
+import BasicActionButton from '../../buttons/BasicActionButton';
+import OverwriteInput from '../../inputs/OverwriteInput'
+
 const MatrixMath = (props) => {
     const [expression, setExpression] = useState("");
     const [resultName, setResultName] = useState("");
@@ -430,7 +431,7 @@ const MatrixMath = (props) => {
     else
         newName = reductionName
 
-    return <div ref={matrixMath} className={"fixed-bottom " + styles.matrixMathContainer}>
+    return <div ref={matrixMath} className={"fixed-bottom " + styles.matrixMathContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
        
         <div className="row">
             <form onSubmit={calculate} className="col-sm-6">

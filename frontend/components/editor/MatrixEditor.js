@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
-import Table from "./Table.js"
+import Table from "./table/Table.js"
 
 import MatrixExport from "./matrixTools/MatrixExport.js"
 import MatrixMath from './matrixTools/MatrixMath.js';
@@ -8,12 +8,12 @@ import MatrixActions from './matrixTools/MatrixActions.js';
 import TextImport from './matrixTools/TextImport.js';
 import SelectionMenu from './matrixTools/SelectionMenu.js';
 
-import styles from "./MatrixEditor.module.css"
-
-import ActiveButton from './ActiveButton.js';
-import BasicActionButton from './matrixTools/BasicActionButton.js';
+import ActiveButton from '../buttons/ActiveButton.js';
+import BasicActionButton from '../buttons/BasicActionButton.js';
 
 import { cloneMatrix, updateEntry } from '../matrixFunctions.js';
+import styles from "./MatrixEditor.module.css"
+
 const MatrixEditor = (props) => {
     const [boxSelectionStart, setBoxSelectionStart] = useState({
         "x": -1,
@@ -103,16 +103,17 @@ const MatrixEditor = (props) => {
         props.updateMatrix(name, matrix);
     }
 
-    const showFullInput = document.activeElement && 
-                        document.activeElement.tagName === "INPUT" &&
-                        boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1 && 
-                        (props.matrix[boxSelectionStart.x][boxSelectionStart.y].toString().length > 5 || document.activeElement.id === "fullInput")
+    const showFullInput = (document.activeElement && document.activeElement.id === "fullInput" || (
+                            document.activeElement.tagName === "INPUT" &&
+                            /^[\d]+:[\d]+$/.test(document.activeElement.id) && //num:num
+                            boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1 && 
+                            (props.matrix[boxSelectionStart.x][boxSelectionStart.y].toString().length > 3)
+                            ))
 
     if (showFullInput)  {        
         const x = boxSelectionStart["x"];
         const y = boxSelectionStart["y"];
         
-
         var fullInput = 
             <input className = {"fixed-bottom " + styles.fullInput} 
                 value = {props.matrix[x][y]}
@@ -124,8 +125,9 @@ const MatrixEditor = (props) => {
     } else {
         fullInput = null
     }
+
     return (
-        <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }} style = {{"bottom": props.showFullInput ? "28px" : "0"}} >
+        <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
             <div ref = {optionsBarRef} className={styles.optionsBar}>
                 <ActiveButton
                     name="Matrix Actions"

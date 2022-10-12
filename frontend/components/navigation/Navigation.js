@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import ParameterBoxInput from '../inputs/ParameterBoxInput';
 import ParameterTextInput from '../inputs/ParameterTextInput';
-
 import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
-import MenuButton from './buttons/MenuButton';
-import TextActionButton from "../editor/matrixTools/TextActionButton"
+import MenuButton from '../buttons/MenuButton';
+import TextActionButton from '../buttons/TextActionButton';
+import MatrixSelector from './selectors/MatrixSelector';
+import Toggle from '../buttons/Toggle';
+
 import styles from "./Navigation.module.css";
-
-import MatrixSelector from './MatrixSelector';
-
 import {cloneMatrix, createIdentity} from '../matrixFunctions';
-import Toggle from './Toggle';
 
 const Navigation = (props) => {
     const [showSettings, setShowSettings] = useState(false);

@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 
 import Box from './Box.js'; 
 
-import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete, cloneMatrix} from '../matrixFunctions.js';
+import { addRows, addCols, addRowsAndCols, updateEntry, tryToDelete, cloneMatrix} from '../../matrixFunctions.js';
 
 const Table = (props) => {
     const [showHelpers, setShowHelpers] = useState(window.innerWidth > 576 && props.firstVisit);

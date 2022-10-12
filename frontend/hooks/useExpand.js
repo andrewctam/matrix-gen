@@ -10,7 +10,7 @@ const useExpand = (scrollToRef) => {
 
 
         return () => {
-            document.body.style.paddingBottom = "0px";
+            document.body.style.paddingBottom = "48px";
             //undo the expand
         }
     }, [expandRef, scrollToRef])
