@@ -452,10 +452,6 @@ export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
         y2 = temp;
     }
 
-    console.log(pasteMatrix)
-    console.log(copyMatrix)
-
-    
     if (x2 - x1 + 2 !== copyMatrix.length || y2 - y1 + 2 !== copyMatrix[0].length) {
         alert("Error: selection dimensions and pasted matrix dimensions must match.")
         return null;
@@ -478,7 +474,6 @@ const closeToZero = (n) => {
 
 
 export const LUDecomposition = (matrix) => {
-    console.log("computing LU decomposition")
     const size = matrix.length - 1;
     const L = new Array(matrix.length).fill().map(()=>new Array(matrix.length).fill(""));
     

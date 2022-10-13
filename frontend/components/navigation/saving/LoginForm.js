@@ -92,7 +92,8 @@ const LoginForm = (props) => {
             body: JSON.stringify({
                 username: usernameInput,
                 password: passwordInput,
-                matrix_data: JSON.stringify(props.matrices)
+                matrix_data: JSON.stringify(props.matrices),
+                settings: props.settings
             })
 
         }).then((response) => {

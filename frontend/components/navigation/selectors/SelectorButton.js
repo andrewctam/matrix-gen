@@ -47,7 +47,6 @@ const SelectorButton = (props) => {
         className += styles.multiSelected;
 
 
-    console.log(props)
     return <button type="button"
         className={className}
         onClick={handleClick}>

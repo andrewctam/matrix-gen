@@ -9,7 +9,7 @@ import TextImport from './editor/matrixTools/TextImport.js';
 
 import { generateUniqueName } from './matrixFunctions.js';
 
-const App = (props) => {
+const App = () => {
     const [matrices, setMatrices] = useState(null);
     const [selection, setSelection] = useState("0"); //0 for no selection
     
@@ -46,6 +46,7 @@ const App = (props) => {
         }); 
         
         const username = localStorage.getItem("username");
+        setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
         
         if (username !== null) {
             setUsername(username);
@@ -60,224 +61,59 @@ const App = (props) => {
             updateParameter("Show Merge", false);
         }
 
-        setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
-        setMirror(window.localStorage.getItem("Mirror Inputs") === "1");
-        setNumbersOnly(window.localStorage.getItem("Numbers Only Input") === "1");
-        setDarkModeTable(window.localStorage.getItem("Dark Mode Table") === "1");
-
-        const round = window.localStorage.getItem("Rounding");
-        if (round !== null)
-            setRounding(round);
-        else
-            setRounding(8);
-
-        const sparse = window.localStorage.getItem("Empty Element");
-        if (sparse !== null)
-            setSparseVal(sparse)
-        else
-            setSparseVal("0")
-
-        const disableSelection = window.localStorage.getItem("Disable Selection");
-
-        if (disableSelection === null)
-            setSelectable(true);
-        else
-            setSelectable(disableSelection === "0");
-
         if (window.localStorage.getItem("First Visit") === null) {
             setFirstVisit(true);
             window.localStorage.setItem("First Visit", "0");
-        }
-
-        
+        }     
 
     // eslint-disable-next-line
     }, []);
 
     //send updates to server
-    useEffect( () => {
+    useEffect(() => {
         if (!showMerge && username)
             updateAccountMatrices();
        
     // eslint-disable-next-line
-    }, [matrices]);
+    }, [matrices]); //only need to send if matrices change
 
     //if a new user is logged in, get their matrices
     useEffect(() => {
-        if (username)
+        if (username) {
             getMatrixData();
+            getMatrixSettings();
+        }
       
     // eslint-disable-next-line
     }, [username])
 
-    //save matrices to local storage
-    useEffect(() => {
+    useEffect(() => { //save matrices to local storage
         if (matrices && saveToLocal)
             saveToLocalStorage();   
-    // eslint-disable-next-line 
+    // eslint-disable-next-line
     }, [matrices, saveToLocal])
     
+    useEffect(() => { //update settings
+        if (saveToLocal) {
+            window.localStorage.setItem("Empty Element", sparseVal);
+            window.localStorage.setItem("Mirror Inputs", mirror ? "1" : "0");
+            window.localStorage.setItem("Disable Selection", selectable ? "0" : "1");
+            window.localStorage.setItem("Numbers Only", numbersOnly ? "1" : "0");
+            window.localStorage.setItem("Rounding", rounding);
+            window.localStorage.setItem("Dark Mode Table", darkModeTable ? "1" : "0");
+        }
+
+        if (username)
+            updateMatrixSettings();
+    }, [sparseVal, mirror, selectable, numbersOnly, rounding, darkModeTable, username, saveToLocal]);
     
-    const undo = () => {
-        if (undoStack.length > 0) {
-            setRedoStack([...redoStack, JSON.stringify(matrices)]);
-            setMatrices(JSON.parse(undoStack.pop()))
-        } else {
-            alert("Nothing to undo");
-        }
-    }
 
-    const redo = () => {
-        if (redoStack.length > 0) {
-            setUndoStack([...undoStack, JSON.stringify(matrices)]);
-            setMatrices(JSON.parse(redoStack.pop()));
-        } else {
-            alert("Nothing to redo");
-        }
-    }
 
-    //set matrices and update undo stack
-    const updateMatrices = (updated) => {
-        const current = JSON.stringify(matrices)
-        if (current !== "null") {
-            setUndoStack([...undoStack, current]);
-            setRedoStack([]);
-        }
-        
-        setMatrices(updated);
-
-    }
-
-   
-    //used for updating state and local storage
-    const updateParameter = (parameterName, updated) => {
-        switch (parameterName) {
-            case "Empty Element":
-                setSparseVal(updated);
-                window.localStorage.setItem("Empty Element", updated); 
-                break;
-            case "Mirror Inputs":
-                setMirror(updated);  
-                window.localStorage.setItem("Mirror Inputs", updated ? "1" : "0");
-                break; 
-            case "Disable Selection":
-                setSelectable(!updated);
-                window.localStorage.setItem("Disable Selection", updated ? "1" : "0");
-                break;
-            case "Save To Local":
-                setSaveToLocal(updated);
-                window.localStorage.setItem("Save To Local", updated ? "1" : "0");                
-                if (!updated)
-                    localStorage.removeItem("matrices");
-
-                break;
-            case "Numbers Only Input":
-                setNumbersOnly(updated);
-                window.localStorage.setItem("Numbers Only Input", updated ? "1" : "0");
-                
-                break;
-            case "Decimals To Round":
-                if (updated === "") {
-                    setRounding(updated);
-                    window.localStorage.setItem("Rounding", updated);
-                } else if (/^\d+$/.test(updated)) {
-                    let num = parseInt(updated);
-                    if (!isNaN(num)) {
-                        if (num > 16)
-                            num = 16;
-                        else if (num < 0)
-                            num = 0;
-
-                        setRounding(num);   
-                        window.localStorage.setItem("Rounding", updated);
-                    }
-                }
-                break;
-            case "Dark Mode Table":
-                setDarkModeTable(updated);
-                window.localStorage.setItem("Dark Mode Table", updated ? "1" : "0");
-                break;
-            case "Show Merge":
-                setShowMerge(updated);
-                window.localStorage.setItem("Show Merge", updated ? "1" : "0");
-                break;
-
-            default: 
-                console.log("Invalid?:" + parameterName);
-  
-        }
-    
-    }
-
-    //functions related to matrix editing
-    const renameMatrix = (oldName, newName) => {     
-        if (newName in matrices)
-            return false;
-        
-        const tempObj = {...matrices};
-        //rename and delete old one
-        tempObj[newName] = tempObj[oldName]; 
-        delete tempObj[oldName];
-
-        updateMatrices(tempObj);
-
-        return true;
-    }
-    
-    const updateMatrix = (name = undefined, matrix = undefined) => {
-        const tempObj = {...matrices};
-        if (name === undefined) { //no name, generate one
-            name = generateUniqueName(matrices);
-        }
-        
-        if (matrix === undefined) { //no matrix, generate 1 x 1 one
-            tempObj[name] = [["", ""], ["", ""]];
-        } else {
-            tempObj[name] = matrix;
-        }
-        
-        updateMatrices(tempObj);
-        return name; //return name of matrix (mainly for input is undefined)
-    }
-
-    const deleteMatrix = (name) => {
-        const tempObj = {...matrices};
-        delete tempObj[name];
-        updateMatrices(tempObj);
-    }
-       
-
-    const deleteSelectedMatrices = (matricesToDelete) => {
-        if (matricesToDelete.length === 0 && window.confirm("Are you sure you want to delete all of your matrices?")) { //if input is empty, delete all
-            setSelection("0");
-            updateMatrices({});
-
-            localStorage.removeItem("matrices");
-            return true;
-        } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
-            const tempObj = {...matrices};
-
-            for (let i = 0; i < matricesToDelete.length; i++) {
-                if (selection === matricesToDelete[i])
-                    setSelection("0");
-
-                delete tempObj[matricesToDelete[i]];
-            }
-            updateMatrices(tempObj);
-            return true;
-        }
-
-        return false;
-
-    }
 
     //functions related to saving
     const saveToLocalStorage = () => {
         saving.current = true
         window.localStorage.setItem("matrices", JSON.stringify(matrices))
-        window.localStorage.setItem("Save To Local", saveToLocal ? "1" : "0")
-        window.localStorage.setItem("Disable Selection;", selectable ? "1" : "0");
-        window.localStorage.setItem("Empty Element", sparseVal)
         saving.current = false
     }
 
@@ -300,9 +136,21 @@ const App = (props) => {
                     setSelection(localMatrices[0]);
                 else
                     setSelection("0");
-                
-            }
 
+                setMirror(window.localStorage.getItem("Mirror Inputs") === "1");
+                setNumbersOnly(window.localStorage.getItem("Numbers Only Input") === "1");
+                setDarkModeTable(window.localStorage.getItem("Dark Mode Table") === "1");
+
+                setRounding(window.localStorage.getItem("Rounding") ?? 8);
+                setSparseVal(window.localStorage.getItem("Empty Element") ?? "0");
+
+                const disableSelection = window.localStorage.getItem("Disable Selection");
+                if (disableSelection === null)
+                    setSelectable(true);
+                else
+                    setSelectable(disableSelection === "0");
+            }
+              
         } catch (error) {
             console.log(error)
             localStorage.removeItem("matrices");
@@ -311,6 +159,13 @@ const App = (props) => {
                 "A": [["", ""], ["", ""]]
             });;
             setSelection("A");  
+
+            setMirror(false);
+            setSelectable(true);
+            setNumbersOnly(false);
+            setDarkModeTable(false);
+            setRounding(8);
+            setSparseVal("0");
         }
 
     }
@@ -416,7 +271,6 @@ const App = (props) => {
                 "Authorization": "Bearer " + localStorage.getItem("access_token")
             },
             body: JSON.stringify({
-                username: username,
                 matrix_data: JSON.stringify(matrices)
             })
         }).then((response) => {
@@ -482,6 +336,232 @@ const App = (props) => {
             return false; //failed to refresh tokens
         }
     }
+
+    const getMatrixSettings = async () => {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/settings`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("access_token")
+            }
+        }).then((response) => {
+            if (response.status === 401) {
+                return null; //invalid access token
+            } else {
+                return response.json()
+            }
+
+        }).catch (error => {
+            console.log(error)
+        })
+
+        if (response === null) {
+            if (await refreshTokens()) {
+                return getMatrixSettings(); //retry
+            } else { //refresh token invalid
+                console.log("Unauthorized. Refresh token invalid.");
+                return;
+            }
+        }   
+
+        const settings = JSON.parse(response["settings"]);
+        setMirror(settings["mirror"] === "1");
+        setSelectable(settings["selectable"] === "1");
+        setNumbersOnly(settings["numbersOnly"] === "1");
+        setDarkModeTable(settings["darkModeTable"] === "1");
+        setSparseVal(settings["sparseVal"]);
+        setRounding(settings["rounding"]);
+        
+    }
+
+    const updateMatrixSettings = async () => {
+        const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/settings`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("access_token")
+            },
+            body: JSON.stringify({
+                settings: JSON.stringify({
+                    mirror: mirror ? "1" : "0",
+                    selectable: selectable ? "1" : "0",
+                    numbersOnly: numbersOnly ? "1" : "0",
+                    darkModeTable: darkModeTable ? "1" : "0",
+                    sparseVal: sparseVal,
+                    rounding: rounding
+                })
+            })
+        }).then((response) => {
+            if (response.status === 401) {
+                return null; //invalid access token
+            } else {
+                return response.json()
+            }
+
+        }).catch (error => {
+            console.log(error)
+        })
+
+        if (response === null) {
+            if (await refreshTokens()) {
+                return updateMatrixSettings(); //retry
+            } else { //refresh token invalid
+                console.log("Unauthorized. Refresh token invalid.");
+                return;
+            }
+        }
+    }
+
+
+    const undo = () => {
+        if (undoStack.length > 0) {
+            setRedoStack([...redoStack, JSON.stringify(matrices)]);
+            setMatrices(JSON.parse(undoStack.pop()))
+        } else {
+            alert("Nothing to undo");
+        }
+    }
+
+    const redo = () => {
+        if (redoStack.length > 0) {
+            setUndoStack([...undoStack, JSON.stringify(matrices)]);
+            setMatrices(JSON.parse(redoStack.pop()));
+        } else {
+            alert("Nothing to redo");
+        }
+    }
+
+    //set matrices and update undo stack
+    const updateMatrices = (updated) => {
+        const current = JSON.stringify(matrices)
+        if (current !== "null") {
+            setUndoStack([...undoStack, current]);
+            setRedoStack([]);
+        }
+        
+        setMatrices(updated);
+    }
+   
+    //used for updating state and local storage
+    const updateParameter = (parameterName, updated) => {
+        switch (parameterName) {
+            case "Empty Element":
+                setSparseVal(updated);
+                break;
+            case "Mirror Inputs":
+                setMirror(updated);
+                break; 
+            case "Disable Selection":
+                setSelectable(!updated);
+                break;
+            case "Save To Local":
+                setSaveToLocal(updated);
+                window.localStorage.setItem("Save To Local", updated ? "1" : "0");               
+
+                if (!updated)
+                    localStorage.removeItem("matrices");
+               
+                break;
+            case "Numbers Only Input":
+                setNumbersOnly(updated);    
+                break;
+            case "Decimals To Round":
+                if (updated === "") {
+                    setRounding(updated);
+                } else if (/^\d+$/.test(updated)) {
+                    let num = parseInt(updated);
+                    if (!isNaN(num)) {
+                        num = Math.min(num, 16);
+                        num = Math.max(num, 0);
+                        setRounding(num);
+                    }
+                }
+                break;
+            case "Dark Mode Table":
+                setDarkModeTable(updated);
+                
+                break;
+            case "Show Merge":
+                setShowMerge(updated);
+                if (saveToLocal)
+                    window.localStorage.setItem("Show Merge", updated ? "1" : "0");
+               
+                break;
+
+            default: 
+                console.log("Invalid?:" + parameterName);
+  
+        }
+    
+    }
+
+    //functions related to matrix editing
+    const renameMatrix = (oldName, newName) => {     
+        if (newName in matrices)
+            return false;
+        
+        const tempObj = {...matrices};
+        //rename and delete old one
+        tempObj[newName] = tempObj[oldName]; 
+        delete tempObj[oldName];
+
+        updateMatrices(tempObj);
+
+        return true;
+    }
+    
+    const updateMatrix = (name = undefined, matrix = undefined) => {
+        const tempObj = {...matrices};
+        if (name === undefined) { //no name, generate one
+            name = generateUniqueName(matrices);
+        }
+        
+        if (matrix === undefined) { //no matrix, generate 1 x 1 one
+            tempObj[name] = [["", ""], ["", ""]];
+        } else {
+            tempObj[name] = matrix;
+        }
+        
+        updateMatrices(tempObj);
+        return name; //return name of matrix (mainly for input is undefined)
+    }
+
+    const deleteMatrix = (name) => {
+        const tempObj = {...matrices};
+        delete tempObj[name];
+        updateMatrices(tempObj);
+    }
+       
+
+    const deleteSelectedMatrices = (matricesToDelete) => {
+        if (matricesToDelete.length === 0 && window.confirm("Are you sure you want to delete all of your matrices?")) { //if input is empty, delete all
+            setSelection("0");
+            updateMatrices({});
+
+            localStorage.removeItem("matrices");
+            return true;
+        } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
+            const tempObj = {...matrices};
+
+            for (let i = 0; i < matricesToDelete.length; i++) {
+                if (selection === matricesToDelete[i])
+                    setSelection("0");
+
+                delete tempObj[matricesToDelete[i]];
+            }
+            updateMatrices(tempObj);
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+
        
     if (!matrices)
         return <div />
@@ -503,6 +583,7 @@ const App = (props) => {
                 selectable = {selectable}
                 rounding = {rounding}
                 darkModeTable = {darkModeTable}
+                updateMatrixSettings = {updateMatrixSettings}
 
                 updateMatrix = {updateMatrix}
                 deleteMatrix = {deleteMatrix}

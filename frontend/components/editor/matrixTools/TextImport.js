@@ -273,8 +273,7 @@ const TextImport = (props) => {
                         break;
                 }
 
-                console.log(elements)
-                console.log(matrix)
+
                 props.updateMatrix(name, matrix);
                 break;
 

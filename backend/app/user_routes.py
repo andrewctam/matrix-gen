@@ -1,4 +1,3 @@
-from importlib import invalidate_caches
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
@@ -17,19 +16,19 @@ router = APIRouter()
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-class UserName(BaseModel):
-    username: str
 
-class UserPassword(BaseModel):
-    username: str
-    password: str
-class UserUpdate(BaseModel):
+class UserInfo(BaseModel): #info given after token is verified
     username: str
     matrix_data: str
-class UserData(BaseModel):
+    settings: str
+class LoginUser(BaseModel):
+    username: str
+    password: str
+class RegisterUser(BaseModel):
     username: str
     password: str
     matrix_data: str
+    settings: str
 class ChangeUserPassword(BaseModel):
     username: str
     current_password: str
@@ -82,7 +81,6 @@ async def authenticate_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="
     except:
         raise invalidate_credentials_exception
 
-
     username: str = payload.get("sub")
     if not username:
         raise invalidate_credentials_exception
@@ -132,7 +130,7 @@ async def username_taken(username: str):
 
 
 @router.post("/api/login")
-async def login_user(user: UserPassword):
+async def login_user(user: LoginUser):
     #check username and password
     if not await check_credentials(user.username, user.password):
         raise invalid_password_exception
@@ -144,13 +142,17 @@ async def login_user(user: UserPassword):
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
 @router.post("/api/register")
-async def register_new_user(user: UserData):
+async def register_new_user(user: RegisterUser):
     #check if username is already taken
     if await username_taken(user.username):
         raise HTTPException(status_code=400, detail="Username already taken")
 
     #add user data to databse
-    query = users.insert().values(username = user.username, hashed_password = pwd_context.hash(user.password), matrix_data = user.matrix_data)
+    query = users.insert().values(username = user.username, 
+                                    hashed_password = pwd_context.hash(user.password), 
+                                    matrix_data = user.matrix_data, 
+                                    settings = user.settings)
+
     await database.execute(query)
 
     #create tokens
@@ -161,7 +163,7 @@ async def register_new_user(user: UserData):
 
 
 @router.delete("/api/delete")
-async def delete_user(user: UserPassword, current_user: UserUpdate = Depends(authenticate_user)):
+async def delete_user(user: LoginUser, current_user: UserInfo = Depends(authenticate_user)):
     #check if username and password are correct
     if (await check_credentials(user.username, user.password)):
         query = users.delete().where(users.c.username == current_user.username)
@@ -174,7 +176,7 @@ async def delete_user(user: UserPassword, current_user: UserUpdate = Depends(aut
 
 
 @router.put("/api/password")
-async def change_password(user: ChangeUserPassword, current_user: UserUpdate = Depends(authenticate_user)):
+async def change_password(user: ChangeUserPassword, current_user: UserInfo = Depends(authenticate_user)):
     #check if username and password are correct
     if (await check_credentials(user.username, user.current_password)):
         query = users.update().where(users.c.username == user.username).values(hashed_password = pwd_context.hash(user.new_password))

@@ -18,6 +18,7 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("hashed_password", sqlalchemy.VARCHAR),
     sqlalchemy.Column("created_at", sqlalchemy.DateTime),
     sqlalchemy.Column("matrix_data", sqlalchemy.VARCHAR),
+    sqlalchemy.Column("settings", sqlalchemy.VARCHAR),
     sqlalchemy.Column("refresh_token", sqlalchemy.VARCHAR)
 )
 

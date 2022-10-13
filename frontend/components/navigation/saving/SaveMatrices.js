@@ -30,8 +30,10 @@ const SaveMatrices = (props) => {
                     :
                     <LoginForm
                         matrices = {props.matrices}
+                        settings = {props.settings}
                         updateUserInfo = {props.updateUserInfo}
                         setShowWelcome = {setShowWelcome}
+
                    />
                 }
 
@@ -47,7 +49,11 @@ const SaveMatrices = (props) => {
                     <input className="form-check-input pull-right"
                         onChange={() => { 
                             props.updateParameter("Save To Local", !props.saveToLocal) 
-                            setShowLocalStorageWarning(props.saveToLocal); //set to true if currently saving to local (which will become false after this)
+                            if (props.saveToLocal) {//if currently saving to local (which will become false after this)
+                                setShowLocalStorageWarning(true); 
+                                localStorage.clear();
+                                localStorage.setItem("First Visit" , "0")
+                            }
                         }}
                         checked={props.saveToLocal}
                         type="checkbox"

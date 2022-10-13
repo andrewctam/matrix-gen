@@ -70,6 +70,14 @@ const Navigation = (props) => {
                 username={props.username}
                 updateUserInfo={props.updateUserInfo}
                 saveToLocal={props.saveToLocal}
+                settings = {JSON.stringify({
+                    mirror: props.mirror ? "1" : "0",
+                    selectable: props.selectable ? "1" : "0",
+                    numbersOnly: props.numbersOnly ? "1" : "0",
+                    darkModeTable: props.darkModeTable ? "1" : "0",
+                    sparseVal: props.sparseVal,
+                    rounding: props.rounding
+                })}
                 updateParameter={props.updateParameter}
                 matrices={props.matrices}
                 refreshTokens={props.refreshTokens}
