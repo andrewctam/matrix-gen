@@ -365,13 +365,15 @@ const App = () => {
             }
         }   
 
-        const settings = JSON.parse(response["settings"]);
-        setMirror(settings["mirror"] === "1");
-        setSelectable(settings["selectable"] === "1");
-        setNumbersOnly(settings["numbersOnly"] === "1");
-        setDarkModeTable(settings["darkModeTable"] === "1");
-        setSparseVal(settings["sparseVal"]);
-        setRounding(settings["rounding"]);
+        if (response) {
+            const settings = JSON.parse(response["settings"]);
+            setMirror(settings["mirror"] === "1");
+            setSelectable(settings["selectable"] === "1");
+            setNumbersOnly(settings["numbersOnly"] === "1");
+            setDarkModeTable(settings["darkModeTable"] === "1");
+            setSparseVal(settings["sparseVal"]);
+            setRounding(settings["rounding"]);
+        }
         
     }
 

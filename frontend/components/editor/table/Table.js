@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 
 import Box from './Box.js'; 
 
-import { addRows, addCols, addRowsAndCols, updateEntry, deleteRowCol, cloneMatrix} from '../../matrixFunctions.js';
+import { addRows, addCols, addRowsAndCols, updateEntry, deleteRowCol, cloneMatrix, editSelection} from '../../matrixFunctions.js';
 
 const Table = (props) => {
     const [showHelpers, setShowHelpers] = useState(window.innerWidth > 576 && props.firstVisit);
@@ -35,7 +35,7 @@ const Table = (props) => {
             const max = Math.max(rows, cols + 1)
 
             clone = addRowsAndCols(clone, max - rows, max - cols);
-            tempMatrix[col][row] = updated;
+            clone[col][row] = updated;
         } else {
             clone = addCols(clone, 1);
         }
@@ -54,7 +54,7 @@ const Table = (props) => {
             const max = Math.max(rows + 1, cols + 1);
 
             clone = addRowsAndCols(clone, max - rows, max - cols);
-            tempMatrix[col][row] = updated;
+            clone[col][row] = updated;
 
         } else {
             clone = addRowsAndCols(clone, 1, 1);
@@ -66,10 +66,26 @@ const Table = (props) => {
     }, [props.matrix, props.mirror, props.name, props.updateMatrix])
 
     const update = useCallback((row, col, updated) => {
-        var clone = cloneMatrix(props.matrix)
-        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
         setShowHelpers(false)
-    }, [props.matrix, props.name, props.updateMatrix])
+
+        if (props.selectable && (props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"]) || (props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) {
+            if (updated.length < props.matrix[row][col].length)
+                return;
+            
+            let difference = "";
+            for (let i = 0; i < updated.length; i++) {
+                if (updated.charAt(i) !== props.matrix[row][col].charAt(i)) {
+                    difference += updated.charAt(i);
+                } else if (difference !== "")
+                    break; //stop once we have found the first difference
+            }
+            props.updateMatrix(props.name, editSelection(props.matrix, difference, props.boxSelectionStart["x"], props.boxSelectionStart["y"], props.boxSelectionEnd["x"], props.boxSelectionEnd["y"]));            
+        } else {
+            var clone = cloneMatrix(props.matrix)
+            props.updateMatrix(props.name, updateEntry(clone, row, col, updated, props.mirror));
+        }
+        
+    }, [props.matrix, props.mirror, props.name, props.updateMatrix, props.selectable, props.boxSelectionStart, props.boxSelectionEnd])
 
     const keyDown = useCallback((row, col, e) => {
         if (e.keyCode === 16) { //shift
@@ -80,10 +96,20 @@ const Table = (props) => {
             else if (props.matrix[0].length === (col + 1)) //add col
                 props.updateMatrix(props.name, addCols(props.matrix, 1))
 
-        } else if (e.keyCode === 8 && e.target.value === "") { //delete
+        } else if (e.keyCode === 8) { //delete
+            
             e.preventDefault();
-            let result = null
+            console.log(props.boxSelectionStart)
+            console.log(props.boxSelectionEnd)
+            if (props.selectable && (
+                props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"] || 
+                props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) { 
 
+                props.updateMatrix(props.name, editSelection(props.matrix, 8, props.boxSelectionStart["x"], props.boxSelectionStart["y"], props.boxSelectionEnd["x"], props.boxSelectionEnd["y"]));            
+                return;
+            }
+
+            let result = null
             if (row === props.matrix.length - 1 && col === props.matrix[0].length - 1) {//delete both
                     if (props.matrix.length === 2 && col > 1) {//2 rows, so delete columns
                         result = deleteRowCol(props.matrix, -1, col - 1)
@@ -183,10 +209,8 @@ const Table = (props) => {
             else if (col !== 0) { //Wrap
                 document.getElementById(props.matrix.length - 1 +  ":" + (col - 1)).focus();
             }
-        }
-
-        
-    }, [props.matrix, props.name, props.updateMatrix])
+        } 
+    }, [props.matrix, props.name, props.updateMatrix, props.boxSelectionStart, props.boxSelectionEnd, props.updateBoxSelectionStart, props.updateBoxSelectionEnd])
 
 
     const inSelection = (x, y) => {       

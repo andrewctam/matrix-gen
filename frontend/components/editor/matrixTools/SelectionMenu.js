@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import styles from "./SelectionMenu.module.css"
 
-import { generateUniqueName, spliceMatrix, pasteMatrix, editSelection } from "../../matrixFunctions";
+import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../matrixFunctions";
 
 import TextActionButton from '../../buttons/TextActionButton'
 import Toggle from '../../buttons/Toggle';
@@ -28,28 +28,6 @@ const SelectionMenu = (props) => {
             }
     }
 
-    const handleChange = (e) => {
-        props.updateMatrix(props.name, editSelection(props.matrix,
-            e.target.value,
-            props.boxSelectionStart["x"],
-            props.boxSelectionStart["y"],
-            props.boxSelectionEnd["x"],
-            props.boxSelectionEnd["y"]));
-
-        e.target.value = "";
-    }
-
-    const handleKeyDown = (e) => {
-        if (e.keyCode === 8)
-            props.updateMatrix(props.name, editSelection(props.matrix,
-                8,
-                props.boxSelectionStart["x"],
-                props.boxSelectionStart["y"],
-                props.boxSelectionEnd["x"],
-                props.boxSelectionEnd["y"]));
-    }
-
-
 
     var generatedName = generateUniqueName(props.matrices);
     const noBoxesSelected = props.boxSelectionStart["x"] === -1 &&
@@ -70,11 +48,7 @@ const SelectionMenu = (props) => {
 
                 <div>{"End: Row " + (props.boxSelectionEnd["x"] + " Column " + props.boxSelectionEnd["y"])}</div>
 
-                <input className={styles.editSelectedInput}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type Here to Edit All Selected Boxes" /> <br />
-
+               
 
                 <TextActionButton
                     name={"Save Selection as New Matrix: "}
