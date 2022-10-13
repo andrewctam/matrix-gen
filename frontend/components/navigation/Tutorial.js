@@ -16,7 +16,8 @@ const Tutorial = (props) => {
                         <li>Typing in a white box will update the corresponding entry. </li>
                         <li>Typing in a red box will add a row/column to the matrix. They are not part of the matrix until you type in them.</li>
                         <li>You can delete the last rows/columns by clicking Backspace on the red boxes. If you want to delete a specific row/column, hold down CTRL/CMD and press Backspace on the red box on the row/column.</li>
-                        <li>You can add a row/column in front of the current row/column using Enter on a red box. Simultaneously hold down CTRL/CMD to add one behind the current row/col.</li>
+                        <li>You can add a row/column in front of the current row/column using Enter on a red box. Simultaneously hold down CTRL/CMD to add one behind the current row/column.</li>
+                        <li>Use Tab or the arrow keys to navigate the boxes. Tab will only move to white boxes (except the red box on the first row to allow you to quickly specify the number of columns, and the red boxes on the last row to allow you to expand the number of rows).</li>
                         <li>Empty boxes will be filled with a sparse value when exporting or doing math. You can edit this value in the settings.</li>
                         <li>If you want to mirror your inputs, you can enable this in the settings. Typing in box (i, j) will also edit in box (j, i).</li>
                     </ul>
@@ -37,15 +38,17 @@ const Tutorial = (props) => {
                 inside = <div>
                     Matrix Actions allows you to modify your matrix quickly.
                     <ul className={styles.tutorialList}>
-                        <li>Transpose will switch your matrices rows and columns</li>
+                        <li>{"Transpose will switch the matrix's rows and columns"}</li>
                         <li>Mirroring your matrix will copy elements (i, j) over the diagonal to (j, i). Mirroring Rows will copy the elements above the diagonal onto those below the diagonal. Mirroring Columns does the opposite.</li>
                         <li>Fill Empty With will replace all empty boxes with the inputted element.</li>
+                        <li>Shuffle will move the elements of the matrix to random positions</li>
                         <li>Fill All With will replace all boxes with the inputted element.</li>
                         <li>Replace X with Y will find and replace all instances of X with Y.</li>
                         <li>Fill Diagonal with replace all entires (i, i) with the inputted element.</li>
-                        <li>Randomize Elements will replace all entries with a random integer between the specified range inclusive.</li>
                         <li>{"Reshape Matrix will change the dimensions of the matrix and rearrange the entries similar to NumPy reshape. The matrix is resized to the inputted dimensions n x m, and the elements' positions will be rearranged based on their position in row major order (i * m + j). If the new dimensions are less than the old ones, extra elements are discarded."}</li>
                         <li>{"Resize Matrix will resize your matrix's dimentions while keeping elements at their positions. Out of bounds elements are deleted. This action is the same as the one in the selector menu."}</li>
+                        <li>Scatter Numbers randomly scatter the elements in the specified range inclusive onto your matrix.</li>
+                        <li>Randomize Elements will replace all entries with a random integer between the specified range inclusive.</li>
                     </ul>
                 </div>
                 break;

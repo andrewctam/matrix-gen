@@ -3,9 +3,7 @@ import styles from "./TextActionButton.module.css"
 
 const TwoTextActionButton = (props) => {
     return <form className={styles.textActionButton} onSubmit={(e) => { e.preventDefault(); props.action() }}>
-        <button
-            className="btn btn-primary"
-            onClick={props.action}>
+        <button className="btn btn-primary" type = "submit">
             {props.name}
         </button>
 

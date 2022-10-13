@@ -53,6 +53,11 @@ export const resizeMatrix = (matrix, rows, cols) => {
         return null;
     }
 
+    if (rows > 101)
+        rows = 101;
+    if (cols > 101)
+        cols = 101;
+
     //check to make new and old dimensions are different
     if (matrix.length === rows && matrix[0].length === cols)
         return null;
@@ -207,21 +212,64 @@ export const transpose = (matrix) => {
 }       
 
 export const randomMatrix = (matrix, randomLow, randomHigh) => {        
-    if (randomLow <= randomHigh) {
-        const clone = cloneMatrix(matrix)
-        
-        for (let i = 0; i < clone.length - 1; i++)
-            for (let j = 0; j < clone[0].length - 1; j++)
-                clone[i][j] = (Math.floor(Math.random() * (randomHigh - randomLow)) + randomLow).toString();
-        
-        return clone;
-    }
-    else {
-        alert("Invalid range")
+    if (isNaN(randomLow) || isNaN(randomHigh)) {
         return null;
     }
 
+    if (randomLow > randomHigh) {
+        alert(`Invalid range. ${randomLow} is greater than ${randomHigh}`);
+        return null;
+    }
+
+    const clone = cloneMatrix(matrix)
+    
+    for (let i = 0; i < clone.length - 1; i++)
+        for (let j = 0; j < clone[0].length - 1; j++)
+            clone[i][j] = (Math.floor(Math.random() * (randomHigh - randomLow)) + randomLow).toString();
+    
+    return clone;
 }
+
+export const scatter = (matrix, scatterLow, scatterHigh) => {
+
+    if (isNaN(scatterLow) || isNaN(scatterHigh)) {
+        return null;
+    }
+
+    if (scatterLow > scatterHigh) {
+        alert(`Invalid range. ${scatterLow} is greater than ${scatterHigh}`);
+        return null;
+    }
+
+    const clone = cloneMatrix(matrix)
+
+    for (let i = scatterLow; i <= scatterHigh; i++) {
+        let randomRow = Math.floor(Math.random() * (clone.length - 1));
+        let randomCol = Math.floor(Math.random() * (clone[0].length - 1));
+        
+        clone[randomRow][randomCol] = i;
+    }
+
+    return clone
+}
+
+export const shuffle = (matrix) => {
+    const clone = cloneMatrix(matrix);
+
+    for (let i = 0; i < clone.length - 1; i++) {
+        for (let j = 0; j < clone[0].length - 1; j++) {
+            const randRow = Math.floor(Math.random() * (clone.length - 1));
+            const randCol = Math.floor(Math.random() * (clone[0].length - 1));
+            const temp = clone[i][j];
+            clone[i][j] = clone[randRow][randCol];
+            clone[randRow][randCol] = temp;
+        }
+    }
+
+    return clone
+}
+    
+
 
 export const reshapeMatrix = (matrix, rowCount, colCount) => {
     const numElements = (matrix.length - 1) * (matrix[0].length - 1);

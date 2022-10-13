@@ -418,7 +418,7 @@ const MatrixMath = (props) => {
 
         return [numMatrix, L, U, determinant]
 
-    }, [props.matrix]);
+    }, [props.matrix, props.sparseVal]);
     
     
     const placeholderName = generateUniqueName(props.matrices);

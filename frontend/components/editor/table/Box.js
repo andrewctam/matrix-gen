@@ -71,12 +71,13 @@ const Box = (props) => {
     return <td className={styles.box} style = {boxStyle}>
         <input
             type={props.numbersOnly ? "number" : "text"}
-            pattern={props.numbersOnly ? "[0-9]*" : null}
+            step={props.numbersOnly ? "any" : ""}
+            pattern={props.numbersOnly ? "[0-9.-]*" : null}
             autoComplete="off"
             id={props.row + ":" + props.col}
             value={props.val}
             style = {{"color": textColor}} 
-            tabIndex={props.row !== 0 && lastCol ? -1 : ""}
+            tabIndex={props.row !== 0 && !lastRow && lastCol ? -1 : ""}
             onChange={(lastRow && lastCol ? (e) => { props.addBoth(props.row, props.col, e.target.value) } :
                                   lastRow ? (e) => { props.addRow(props.row, props.col, e.target.value) }  :
                                   lastCol ? (e) => { props.addCol(props.row, props.col, e.target.value) }  :
