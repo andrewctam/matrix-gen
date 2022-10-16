@@ -514,7 +514,7 @@ const App = () => {
         return true;
     }
     
-    const updateMatrix = (name = undefined, matrix = undefined) => {
+    const updateMatrix = (name = undefined, matrix = undefined, switchTo = false) => {
         const tempObj = {...matrices};
         if (name === undefined) { //no name, generate one
             name = generateUniqueName(matrices);
@@ -527,6 +527,10 @@ const App = () => {
         }
         
         updateMatrices(tempObj);
+        
+        if (switchTo)
+            setSelection(name);
+
         return name; //return name of matrix (mainly for input is undefined)
     }
 

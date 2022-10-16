@@ -177,8 +177,7 @@ const Navigation = (props) => {
                     text={"Create New Empty Matrix"}
                     buttonStyle={"secondary"}
                     action={() => {
-                        var newName = props.updateMatrix(); //generates a new matrix and returns name
-                        props.setSelection(newName);
+                        props.updateMatrix(undefined, undefined, true); //generates a new matrix
                     }}
                 />
 

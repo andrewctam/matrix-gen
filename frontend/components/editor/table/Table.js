@@ -69,15 +69,17 @@ const Table = (props) => {
         setShowHelpers(false)
 
         if (props.selectable && (props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"]) || (props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) {
-            if (updated.length < props.matrix[row][col].length)
+            const lenDiff = updated.length - props.matrix[row][col].length;
+            if (lenDiff <= 0)
                 return;
+                
             
             let difference = "";
             for (let i = 0; i < updated.length; i++) {
                 if (updated.charAt(i) !== props.matrix[row][col].charAt(i)) {
-                    difference += updated.charAt(i);
-                } else if (difference !== "")
-                    break; //stop once we have found the first difference
+                    difference = updated.substring(i, i + lenDiff); 
+                    break;
+                }
             }
             props.updateMatrix(props.name, editSelection(props.matrix, difference, props.boxSelectionStart["x"], props.boxSelectionStart["y"], props.boxSelectionEnd["x"], props.boxSelectionEnd["y"]));            
         } else {
@@ -96,11 +98,8 @@ const Table = (props) => {
             else if (props.matrix[0].length === (col + 1)) //add col
                 props.updateMatrix(props.name, addCols(props.matrix, 1))
 
-        } else if (e.keyCode === 8) { //delete
+        } else if (e.keyCode === 8) { //delete            
             
-            e.preventDefault();
-            console.log(props.boxSelectionStart)
-            console.log(props.boxSelectionEnd)
             if (props.selectable && (
                 props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"] || 
                 props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) { 

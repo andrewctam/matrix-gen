@@ -100,14 +100,13 @@ const MatrixEditor = (props) => {
                     matrix[i][j] = matrix[i][j].toString();
             }
         }
-        props.updateMatrix(name, matrix);
+        props.updateMatrix(name, matrix, true);
     }
 
     const showFullInput = (document.activeElement && document.activeElement.id === "fullInput" || (
                             document.activeElement.tagName === "INPUT" &&
                             /^[\d]+:[\d]+$/.test(document.activeElement.id) && //num:num
-                            boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1 && 
-                            (props.matrix[boxSelectionStart.x][boxSelectionStart.y].toString().length > 3)
+                            boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1
                             ))
 
     if (showFullInput)  {        
@@ -117,6 +116,7 @@ const MatrixEditor = (props) => {
         var fullInput = 
             <input className = {"fixed-bottom " + styles.fullInput} 
                 value = {props.matrix[x][y]}
+                placeholder={`Row ${x} Column ${y}`}
                 id = {"fullInput"}
                 onChange = {(e) => {
                     var clone = cloneMatrix(props.matrix)

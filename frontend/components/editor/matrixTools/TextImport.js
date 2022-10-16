@@ -330,7 +330,7 @@ const TextImport = (props) => {
                             });
                     }
                 }
-                props.updateMatrix(name, matrix);
+                props.updateMatrix(name, matrix, true);
                 break;
 
             default: break;

@@ -70,11 +70,11 @@ const Tutorial = (props) => {
                 inside = <div>
                     You can drag your mouse over boxes to select a sub matrix. Then, you can edit all the elements in the selection, save the selection to another matrix, or paste another matrix of the same size into the selection.
                     <ul className={styles.tutorialList}>
-                        <li>You can enable/disable selection in the settings.</li>
                         <li>Drag your mouse over boxes to select them.</li>
-                        <li>Type in the box to edit all selected boxes. You can type characters or use backspace.</li>
+                        <li>Type in a box while you have a selection to edit all selected boxes. You can type characters or use backspace.</li>
                         <li>You can save the selected matrix as a new matrix. If no name is provided, a unique name is automatically generated.</li>
                         <li>You can paste another matrix into the selection by entering its name. The matrix and selection must have the same dimensions.</li>
+                        <li>You can disable selection in the settings.</li>
                     </ul>
                 </div>
                 break;
