@@ -542,12 +542,15 @@ const App = () => {
        
 
     const deleteSelectedMatrices = (matricesToDelete) => {
-        if (matricesToDelete.length === 0 && window.confirm("Are you sure you want to delete all of your matrices?")) { //if input is empty, delete all
-            setSelection("0");
-            updateMatrices({});
+        if (matricesToDelete.length === 0) { //if input is empty, delete all
+            if (window.confirm("Are you sure you want to delete all of your matrices?")) {
+                setSelection("0");
+                updateMatrices({});
 
-            localStorage.removeItem("matrices");
-            return true;
+                localStorage.removeItem("matrices");
+                return true;
+            }
+            return false;
         } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
             const tempObj = {...matrices};
 

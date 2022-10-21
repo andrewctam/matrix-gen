@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import {transpose, shuffle, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, scatter, reshapeMatrix, resizeMatrix} from '../../matrixFunctions';
+import { transpose, shuffle, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, scatter, rotate90Degrees, reshapeMatrix, resizeMatrix } from '../../matrixFunctions';
 import styles from "./MatrixActions.module.css"
 
 import BasicActionButton from '../../buttons/BasicActionButton.js';
@@ -31,37 +31,37 @@ const MatrixActions = (props) => {
         switch (parameterName) {
             case "Fill Empty With: ":
                 setFillEmptyWithThis(updated);
-                break; 
+                break;
             case "Fill All With: ":
                 setFillAllWithThis(updated);
-                break; 
+                break;
             case "Fill Diagonal With: ":
                 setFillDiagonalWithThis(updated);
-                break; 
+                break;
             case "randomLow":
-                if (/^-?[0-9 \s]*$/.test(updated)) 
+                if (/^-?[0-9 \s]*$/.test(updated))
                     setRandomLow(updated);
                 break;
             case "randomHigh":
-                if (/^-?[0-9 \s]*$/.test(updated)) 
+                if (/^-?[0-9 \s]*$/.test(updated))
                     setRandomHigh(updated);
                 break;
             case "scatterLow":
                 if (/^-?[0-9 \s]*$/.test(updated))
                     setScatterLow(updated);
-                    break;
+                break;
             case "scatterHigh":
                 if (/^-?[0-9 \s]*$/.test(updated))
                     setScatterHigh(updated);
-                    break;
+                break;
             case "reshapeRows":
-                if (/^[0-9 \s]*$/.test(updated)) 
+                if (/^[0-9 \s]*$/.test(updated))
                     setReshapeRows(updated);
                 break;
             case "reshapeCols":
-                if (/^[0-9 \s]*$/.test(updated)) 
+                if (/^[0-9 \s]*$/.test(updated))
                     setReshapeCols(updated);
-                break; 
+                break;
             case "resizeRows":
                 if (/^[0-9 \s]*$/.test(updated))
                     setResizeRows(updated);
@@ -78,168 +78,183 @@ const MatrixActions = (props) => {
                 break;
 
 
-                
+
             default: break;
-  
+
         }
-    
+
     }
 
 
-    return <div ref = {matrixActions} className = {"fixed-bottom " + styles.matrixActionsContainer} 
-    style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
-        <BasicActionButton 
-            action = {() => {
-                props.updateMatrix(props.name, transpose(props.matrix))
-            }}
-            name = {"Transpose"}
-        />
-        <BasicActionButton 
-            action={() => {
-                props.updateMatrix(props.name, mirrorRowsCols(props.matrix, true))
-            }}
-            name = {"Mirror Rows Across Diagonal"}
-        />
-        <BasicActionButton 
-            action={() => {
-                props.updateMatrix(props.name, mirrorRowsCols(props.matrix, false)) //false means cols to rows
-            }}
-            name = {"Mirror Columns Across Diagonal"}
-        />
+    return <div ref={matrixActions} className={"fixed-bottom row " + styles.matrixActionsContainer}
+        style={{ "bottom": props.showFullInput ? "28px" : "0" }}>
+        <div className="col-sm-4">
+            <BasicActionButton
+                action={() => {
+                    props.updateMatrix(props.name, transpose(props.matrix))
+                }}
+                name={"Transpose"}
+            />
+            <BasicActionButton
+                action={() => {
+                    props.updateMatrix(props.name, rotate90Degrees(props.matrix)) //false means cols to rows
+                }}
+                name={"Rotate 90 ↻"}
+            />
 
-        <BasicActionButton 
-            action={() => {
-                props.updateMatrix(props.name, shuffle(props.matrix)) //false means cols to rows
-            }}
-            name = {"Shuffle"}
-        />
-        
-        
-        <TextActionButton 
-            name = "Fill Empty With: "
-            action = {() => {
-                props.updateMatrix(props.name, fillEmpty(props.matrix, fillEmptyWithThis))
-            }}
-            updateParameter = {updateParameter}
-            width = {"40px"}
-            value = {fillEmptyWithThis}
-        />
+            <BasicActionButton
+                action={() => {
+                    props.updateMatrix(props.name, shuffle(props.matrix)) //false means cols to rows
+                }}
+                name={"Shuffle"}
+            />
 
-        <TextActionButton 
-            name = "Fill All With: "
-            action = {() => {
-                props.updateMatrix(props.name, fillAll(props.matrix, fillAllWithThis))
-            }}
-            updateParameter = {updateParameter}
-            width = {"40px"}
-            value = {fillAllWithThis}
-        />
-
-        <TwoTextActionButton
-            name = "Replace X With Y: "
-            action = {() => {
-                props.updateMatrix(props.name, fillXY(props.matrix, replaceX, replaceY))
-            }}
-            updateParameter = {updateParameter}
-            id1 = {"replaceX"}
-            placeholder1 = {"X"}
-            id2 = {"replaceY"}
-            placeholder2 = {"Y"}
-            value1 = {replaceX}
-            value2 = {replaceY}
-            separator = {" → "}
-            width = {"40px"}
-        />
+            <BasicActionButton
+                action={() => {
+                    props.updateMatrix(props.name, mirrorRowsCols(props.matrix, true))
+                }}
+                name={"Mirror Rows Across Diagonal"}
+            />
+            <BasicActionButton
+                action={() => {
+                    props.updateMatrix(props.name, mirrorRowsCols(props.matrix, false)) //false means cols to rows
+                }}
+                name={"Mirror Columns Across Diagonal"}
+            />
 
 
-        <TextActionButton 
-            name = "Fill Diagonal With: "
-            action = {() => {
-                props.updateMatrix(props.name, fillDiagonal(props.matrix, fillDiagonalWithThis))
-            }}
-            updateParameter = {updateParameter}
-            width = {"40px"}
-            value = {fillDiagonalWithThis}
-        />
+        </div>
 
-        <TwoTextActionButton 
-            name = "Reshape To: "
-            action = {() => {
-                if (reshapeRows > 100 || reshapeCols > 100) {
-                    alert("The max matrix size is 100 x 100")
-                    return;
-                }
-                const reshaped = reshapeMatrix(props.matrix, parseInt(reshapeRows), parseInt(reshapeCols))
-                if (reshaped)
-                    props.updateMatrix(props.name, reshaped)
-            }}
-            updateParameter = {updateParameter}
-            id1 = {"reshapeRows"}
-            id2 = {"reshapeCols"}
-            value1 = {reshapeRows}
-            value2 = {reshapeCols}
-            separator = {" x "}
-            width = {"40px"}
-        />
+        <div className="col-sm-4">
 
-        <TwoTextActionButton
-            name = "Resize To: "
-            action = {() => {
-                if (resizeRows > 100 || resizeCols > 100) {
-                    alert("The max matrix size is 100 x 100")
-                    return;
-                }
-                const resized = resizeMatrix(props.matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
-                if (resized)
-                    props.updateMatrix(props.name, resized)
-            }}
-            updateParameter = {updateParameter}
-            id1 = {"resizeRows"}
-            id2 = {"resizeCols"}
-            value1 = {resizeRows}
-            value2 = {resizeCols}
-            separator = {" x "}
-            width = {"40px"}
-        />
+            <TextActionButton
+                name="Fill Empty With: "
+                action={() => {
+                    props.updateMatrix(props.name, fillEmpty(props.matrix, fillEmptyWithThis))
+                }}
+                updateParameter={updateParameter}
+                width={"40px"}
+                value={fillEmptyWithThis}
+            />
 
+            <TextActionButton
+                name="Fill All With: "
+                action={() => {
+                    props.updateMatrix(props.name, fillAll(props.matrix, fillAllWithThis))
+                }}
+                updateParameter={updateParameter}
+                width={"40px"}
+                value={fillAllWithThis}
+            />
 
-        <TwoTextActionButton 
-            name = "Randomize Elements: "
-            action = {() => {
-                const random = randomMatrix(props.matrix, parseInt(randomLow), parseInt(randomHigh))
+            <TextActionButton
+                name="Fill Diagonal With: "
+                action={() => {
+                    props.updateMatrix(props.name, fillDiagonal(props.matrix, fillDiagonalWithThis))
+                }}
+                updateParameter={updateParameter}
+                width={"40px"}
+                value={fillDiagonalWithThis}
+            />
 
-                if (random)
-                    props.updateMatrix(props.name, random)
-            }}
-            updateParameter = {updateParameter}
-            id1 = {"randomLow"}
-            id2 = {"randomHigh"}
-            value1 = {randomLow}
-            value2 = {randomHigh}
-            separator = {" to "}
-            width = {"40px"}
-        />
-
-        <TwoTextActionButton 
-            name = "Scatter These Numbers: "
-            action = {() => {
-                const scattered = scatter(props.matrix, parseInt(scatterLow), parseInt(scatterHigh), 0.25)
-
-                if (scattered)
-                    props.updateMatrix(props.name, scattered)
-            }}
-            updateParameter = {updateParameter}
-            id1 = {"scatterLow"}
-            id2 = {"scatterHigh"}
-            value1 = {scatterLow}
-            value2 = {scatterHigh}
-            separator = {" to "}
-            width = {"40px"}
-        />
+            <TwoTextActionButton
+                name="Replace X With Y: "
+                action={() => {
+                    props.updateMatrix(props.name, fillXY(props.matrix, replaceX, replaceY))
+                }}
+                updateParameter={updateParameter}
+                id1={"replaceX"}
+                placeholder1={"X"}
+                id2={"replaceY"}
+                placeholder2={"Y"}
+                value1={replaceX}
+                value2={replaceY}
+                separator={" → "}
+                width={"40px"}
+            />
 
 
+        </div>
+        <div className="col-sm-4">
 
-        <Toggle toggle = {props.close} show = {!props.active} />
+            <TwoTextActionButton
+                name="Reshape To: "
+                action={() => {
+                    if (reshapeRows > 100 || reshapeCols > 100) {
+                        alert("The max matrix size is 100 x 100")
+                        return;
+                    }
+                    const reshaped = reshapeMatrix(props.matrix, parseInt(reshapeRows), parseInt(reshapeCols))
+                    if (reshaped)
+                        props.updateMatrix(props.name, reshaped)
+                }}
+                updateParameter={updateParameter}
+                id1={"reshapeRows"}
+                id2={"reshapeCols"}
+                value1={reshapeRows}
+                value2={reshapeCols}
+                separator={" x "}
+                width={"40px"}
+            />
+
+            <TwoTextActionButton
+                name="Resize To: "
+                action={() => {
+                    if (resizeRows > 100 || resizeCols > 100) {
+                        alert("The max matrix size is 100 x 100")
+                        return;
+                    }
+                    const resized = resizeMatrix(props.matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
+                    if (resized)
+                        props.updateMatrix(props.name, resized)
+                }}
+                updateParameter={updateParameter}
+                id1={"resizeRows"}
+                id2={"resizeCols"}
+                value1={resizeRows}
+                value2={resizeCols}
+                separator={" x "}
+                width={"40px"}
+            />
+
+            <TwoTextActionButton
+                name="Randomize Elements: "
+                action={() => {
+                    const random = randomMatrix(props.matrix, parseInt(randomLow), parseInt(randomHigh))
+
+                    if (random)
+                        props.updateMatrix(props.name, random)
+                }}
+                updateParameter={updateParameter}
+                id1={"randomLow"}
+                id2={"randomHigh"}
+                value1={randomLow}
+                value2={randomHigh}
+                separator={" to "}
+                width={"40px"}
+            />
+
+            <TwoTextActionButton
+                name="Scatter These Numbers: "
+                action={() => {
+                    const scattered = scatter(props.matrix, parseInt(scatterLow), parseInt(scatterHigh), 0.25)
+
+                    if (scattered)
+                        props.updateMatrix(props.name, scattered)
+                }}
+                updateParameter={updateParameter}
+                id1={"scatterLow"}
+                id2={"scatterHigh"}
+                value1={scatterLow}
+                value2={scatterHigh}
+                separator={" to "}
+                width={"40px"}
+            />
+        </div>
+
+
+
+        <Toggle toggle={props.close} show={!props.active} />
 
     </div>
 }

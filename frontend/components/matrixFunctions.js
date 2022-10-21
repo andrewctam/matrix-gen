@@ -377,6 +377,28 @@ export const fillDiagonal = (matrix, fill) => {
     return clone;    
 }
 
+export const rotate90Degrees = (matrix) => {
+    const transposed = transpose(matrix);
+
+
+    //reverse each row
+    for (let i = 0; i < transposed.length - 1; i++) {
+        let start = 0;
+        let end = transposed[0].length - 2;
+        while (start < end) {
+            let temp = transposed[i][start];
+            transposed[i][start] = transposed[i][end]
+            transposed[i][end] = temp;
+            start++;
+            end--;
+        }
+    }
+
+    return transposed;
+
+}
+
+
 export const createIdentity = (size) => {
     if (size === null || isNaN(size) || size <= 0)
         return null;
