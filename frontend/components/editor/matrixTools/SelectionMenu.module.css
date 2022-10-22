@@ -5,7 +5,7 @@
     text-align: center;
     --bs-gutter-x: 0px;
     pointer-events: none;
-    max-height: 50vh;
+    max-height: 60vh;
     border-top: 1px solid black;
     overflow-y: auto;
     padding-top: 5px;

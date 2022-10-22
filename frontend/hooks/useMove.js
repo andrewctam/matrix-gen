@@ -36,7 +36,7 @@ const useMove = (element, relElement) => {
             const newX = elementStartX.current + e.clientX - mouseStartX.current //element start + deltaX
             const newY = elementStartY.current + e.clientY - mouseStartY.current //element start + deltaY
 
-            setX(Math.max(0, Math.min(newX, document.documentElement.clientWidth - element.current.offsetWidth))); //exclude scrollbar
+            setX(Math.max(0, Math.min(newX, document.documentElement.clientWidth - element.current.offsetWidth))); //exclude 
             setY(Math.max(0, Math.min(newY, window.innerHeight - element.current.offsetHeight)));
         }
     }

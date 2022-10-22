@@ -10,7 +10,7 @@ const Navigation = (props) => {
     const [showTutorial, setShowTutorial] = useState(props.firstVisit);
     const [showSaveMenu, setShowSaveMenu] = useState(false);
 
-    const [hoveringSettings, setHoveringSettings] = useState(false);
+    const [hovering, setHovering] = useState(false);
 
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;
@@ -39,9 +39,9 @@ const Navigation = (props) => {
         <div className={styles.topBar}
             onClick={(e) => { e.stopPropagation(); setShowSaveMenu(!showSaveMenu) }}>
             <div
-                style={{ color: hoveringSettings ? (props.saveToLocal || props.username ? "rgb(147, 221, 165)" : "rgb(247, 198, 198)") : "white" }}
-                onMouseEnter={() => { setHoveringSettings(true) }}
-                onMouseLeave={() => { setHoveringSettings(false) }}
+                style={{ color: hovering ? (props.saveToLocal || props.username ? "rgb(147, 221, 165)" : "rgb(247, 198, 198)") : "white" }}
+                onMouseEnter={() => { setHovering(true) }}
+                onMouseLeave={() => { setHovering(false) }}
             >
                 <div className={styles.savingInfo}>
                     {saving + (showSaveMenu ? " Click to close the save menu ↑" : " Click to open the save menu ↓")}
@@ -83,7 +83,9 @@ const Navigation = (props) => {
                         closeSaveMenu={() => { setShowSaveMenu(false) }}
                     /> : null}
 
-                {showTutorial ? <Tutorial closeTutorial={() => { setShowTutorial(false) }} /> : null}
+                {showTutorial ?
+                     <Tutorial closeTutorial={() => { setShowTutorial(false) }} /> 
+                : null}
             </div> : null}
 
     </div>

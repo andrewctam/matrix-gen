@@ -1,15 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
-import MatrixEditor from './editor/MatrixEditor.js';
 import Navigation from "./navigation/Navigation.js"
-import matrixEditorStyles from './editor/MatrixEditor.module.css';
-import ActiveButton from './buttons/ActiveButton.js';
-import BasicActionButton from './buttons/BasicActionButton.js';
-import TextImport from './editor/matrixTools/TextImport.js';
-
-import { generateUniqueName } from './matrixFunctions.js';
-import FloatingMenu from './selectors/FloatingMenu.js';
 import MatrixGenerator from './MatrixGenerator.js';
+import { generateUniqueName } from './matrixFunctions.js';
 
 const App = () => {
     const [matrices, setMatrices] = useState(null);
@@ -35,6 +28,8 @@ const App = () => {
 
     const [undoStack, setUndoStack] = useState([]);
     const [redoStack, setRedoStack] = useState([]);
+
+
 
 
     //load from local storage and set up app

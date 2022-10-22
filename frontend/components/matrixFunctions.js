@@ -7,11 +7,11 @@ export const cloneMatrix = (matrix) => {
         }
     }
 
-    return clone;   
+    return clone;
 }
 
 export const generateUniqueName = (matrices) => {
-    const name = ["A"]; 
+    const name = ["A"];
     var willExitFromZ = false;
     var pointer = 0;
 
@@ -21,7 +21,7 @@ export const generateUniqueName = (matrices) => {
     //Z...Z that converted to A...A, so we add a new letter to start at A...AA
     while (name.join("") in matrices) { //go until name is unique
         while (true) {
-        
+
             if (pointer < 0) { //reached start of string
                 name.push("@"); //'A' - 1, will be incremeneted to 'A' after loop breaks
                 pointer = name.length - 1; //go to end of string
@@ -61,41 +61,41 @@ export const resizeMatrix = (matrix, rows, cols) => {
     //check to make new and old dimensions are different
     if (matrix.length === rows && matrix[0].length === cols)
         return null;
-        
+
     //get the smaller of each dimension in case new > old
-        const lessRows = Math.min(rows, matrix.length)
-        const lessCols = Math.min(cols, matrix[0].length)
+    const lessRows = Math.min(rows, matrix.length)
+    const lessCols = Math.min(cols, matrix[0].length)
 
 
-        const resized = Array(rows).fill(null)
-        for (let i = 0; i < lessRows - 1; i++) { //fill in the rows up to the smaller of the two
-            const row = Array(cols).fill("") 
+    const resized = Array(rows).fill(null)
+    for (let i = 0; i < lessRows - 1; i++) { //fill in the rows up to the smaller of the two
+        const row = Array(cols).fill("")
 
-            for (let j = 0; j < lessCols - 1; j++) { //fill in the columns up to the smaller of the two
-                row[j] = matrix[i][j]
-            }
-
-            for (let j = lessCols - 1; j < cols; j++) { //fill in the rest of the columns with empty strings
-                row[j] = "";
-            }
-            
-            resized[i] = row;
+        for (let j = 0; j < lessCols - 1; j++) { //fill in the columns up to the smaller of the two
+            row[j] = matrix[i][j]
         }
 
-        //fill in rest of row with empty strings
-        for (let i = lessRows - 1; i < rows; i++) 
-            resized[i] = Array(cols).fill("");
+        for (let j = lessCols - 1; j < cols; j++) { //fill in the rest of the columns with empty strings
+            row[j] = "";
+        }
+
+        resized[i] = row;
+    }
+
+    //fill in rest of row with empty strings
+    for (let i = lessRows - 1; i < rows; i++)
+        resized[i] = Array(cols).fill("");
 
     return resized;
 }
 
 export const deleteRowCol = (matrix, row, col) => {
     //Can not delete the red row/column
-    if (row === matrix.length - 1 || col === matrix[0].length - 1) 
+    if (row === matrix.length - 1 || col === matrix[0].length - 1)
         return null;
-        
+
     const clone = cloneMatrix(matrix);
-    
+
     if (matrix.length > 2 && row !== -1) {
         clone.splice(row, 1); //delete row
     }
@@ -103,7 +103,7 @@ export const deleteRowCol = (matrix, row, col) => {
     if (matrix[0].length > 2 && col !== -1) {
         for (let i = 0; i < clone.length; i++) {
             clone[i].splice(col, 1); //delete col
-        } 
+        }
     }
 
     return clone;
@@ -123,22 +123,22 @@ export const updateEntry = (matrix, i, j, val, mirror) => {
         } else if (i >= matrix[0].length - 1) {
             matrix = addCols(matrix, i - matrix[0].length + 2)
         }
-        
+
         matrix[j][i] = val;
     }
 
     matrix[i][j] = val;
 
-    return matrix        
+    return matrix
 }
 
 export const addCols = (matrix, numToAdd, pos = null) => {
     if (pos === null)
         pos = matrix[0].length - 1;
-        
+
     //does not make a clone to prevent unnecessary cloning if we use multiple functions 
     for (let i = 0; i < matrix.length; i++) {
-        for (let j = pos; j < pos+ numToAdd; j++)
+        for (let j = pos; j < pos + numToAdd; j++)
             //Add ""s to each row
             matrix[i].splice(j, 0, "");
     }
@@ -149,14 +149,14 @@ export const addCols = (matrix, numToAdd, pos = null) => {
 export const addRows = (matrix, numToAdd, pos = null) => {
     if (pos === null)
         pos = matrix.length - 1;
-    
+
 
     //does not make a clone to prevent unnecessary cloning if we use multiple functions 
     for (let i = pos; i < pos + numToAdd; i++) {
         matrix.splice(i, 0, Array(matrix[0].length).fill(""));
     }
-    
-    return matrix; 
+
+    return matrix;
 }
 
 export const addRowsAndCols = (matrix, rowsToAdd, colsToAdd) => {
@@ -165,37 +165,34 @@ export const addRowsAndCols = (matrix, rowsToAdd, colsToAdd) => {
         for (let j = 0; j < colsToAdd; j++)
             matrix[i].push("");
     }
-    
+
     for (let i = 0; i < rowsToAdd; i++)
         matrix.push(new Array(matrix[0].length).fill(""));
 
-    return matrix; 
+    return matrix;
 }
 
 //functions related to matrix actions
-export const mirrorRowsCols = (matrix, mirrorRowsToCols) => { 
-
+export const mirrorRowsCols = (matrix, mirrorRowsToCols) => {
+    const clone = cloneMatrix(matrix);
     if (matrix.length > matrix[0].length) { //more rows than cols 
-        matrix = addCols(matrix, matrix.length - matrix[0].length);
-        
-    } else if (matrix.length < matrix[0].length) {
-        matrix = addRows(matrix, matrix[0].length - matrix.length)  
-    }  else {
-        matrix = cloneMatrix(matrix)
-    }
+        clone = addCols(clone, matrix.length - matrix[0].length);
 
+    } else if (matrix.length < matrix[0].length) {
+        clone = addRows(clone, matrix[0].length - matrix.length)
+    }
 
     for (let row = 0; row < matrix.length; row++) {
         for (let col = row + 1; col < matrix.length; col++) {
             if (mirrorRowsToCols)
-                matrix[col][row] = matrix[row][col];
+                clone[col][row] = clone[row][col];
             else //mirrorColsToRows
-                matrix[row][col] = matrix[col][row];
+                clone[row][col] = clone[col][row];
 
         }
     }
 
-    return matrix;
+    return clone;
 }
 
 export const transpose = (matrix) => {
@@ -205,13 +202,13 @@ export const transpose = (matrix) => {
         const row = new Array(matrix.length).fill(0);
         for (let j = 0; j < row.length; j++)
             row[j] = matrix[j][i];
-        transposed[i] = row;       
+        transposed[i] = row;
     }
 
     return transposed;
-}       
+}
 
-export const randomMatrix = (matrix, randomLow, randomHigh) => {        
+export const randomMatrix = (matrix, randomLow, randomHigh) => {
     if (isNaN(randomLow) || isNaN(randomHigh)) {
         return null;
     }
@@ -222,11 +219,11 @@ export const randomMatrix = (matrix, randomLow, randomHigh) => {
     }
 
     const clone = cloneMatrix(matrix)
-    
+
     for (let i = 0; i < clone.length - 1; i++)
         for (let j = 0; j < clone[0].length - 1; j++)
             clone[i][j] = (Math.floor(Math.random() * (randomHigh - randomLow)) + randomLow).toString();
-    
+
     return clone;
 }
 
@@ -246,7 +243,7 @@ export const scatter = (matrix, scatterLow, scatterHigh) => {
     for (let i = scatterLow; i <= scatterHigh; i++) {
         let randomRow = Math.floor(Math.random() * (clone.length - 1));
         let randomCol = Math.floor(Math.random() * (clone[0].length - 1));
-        
+
         clone[randomRow][randomCol] = i;
     }
 
@@ -268,7 +265,7 @@ export const shuffle = (matrix) => {
 
     return clone
 }
-    
+
 
 
 export const reshapeMatrix = (matrix, rowCount, colCount) => {
@@ -282,23 +279,23 @@ export const reshapeMatrix = (matrix, rowCount, colCount) => {
                 alert("Invalid number of rows");
                 return null;
             }
-            
+
             colCount = numElements / rowCount;
         } else if (!isNaN(colCount)) { //infer rows based on cols
             if (numElements % colCount !== 0) {
                 alert("Invalid number of columns");
                 return null;
             }
-            
+
             rowCount = numElements / colCount;
-        } 
+        }
     }
     if (rowCount <= 0 || colCount <= 0) {
         alert("Dimensions must be positive");
         return null;
     }
 
-    const reshaped = Array(rowCount + 1).fill([]).map(()=>Array(colCount + 1).fill(""))
+    const reshaped = Array(rowCount + 1).fill([]).map(() => Array(colCount + 1).fill(""))
 
     //pointers for reshaped matrix
     var reshapedI = 0;
@@ -312,11 +309,11 @@ export const reshapeMatrix = (matrix, rowCount, colCount) => {
                 reshapedJ = 0; //wrap back to first col
                 reshapedI++;
             }
-            
+
             if (reshapedI >= rowCount)
                 break; //reached end of reshaped matrix
 
-            reshaped[reshapedI][reshapedJ] = matrix[i][j]; 
+            reshaped[reshapedI][reshapedJ] = matrix[i][j];
 
             reshapedJ++;
         }
@@ -330,37 +327,37 @@ export const reshapeMatrix = (matrix, rowCount, colCount) => {
 
 export const fillEmpty = (matrix, fillEmptyWithThis) => {
     const clone = cloneMatrix(matrix)
-    
+
     for (let i = 0; i < clone.length - 1; i++)
         for (let j = 0; j < clone[0].length - 1; j++) {
             if (clone[i][j] === "")
                 clone[i][j] = fillEmptyWithThis;
         }
-    
+
     return clone;
 }
 
 
 export const fillXY = (matrix, X, Y) => {
     const clone = cloneMatrix(matrix)
-    
+
     for (let i = 0; i < clone.length - 1; i++)
         for (let j = 0; j < clone[0].length - 1; j++) {
             if (clone[i][j] === X)
                 clone[i][j] = Y;
         }
-    
+
     return clone;
 }
 
 export const fillAll = (matrix, fill) => {
     const clone = cloneMatrix(matrix)
-    
+
     for (let i = 0; i < clone.length - 1; i++)
         for (let j = 0; j < clone[0].length - 1; j++) {
             clone[i][j] = fill;
         }
-    
+
     return clone;
 }
 
@@ -368,13 +365,13 @@ export const fillAll = (matrix, fill) => {
 
 export const fillDiagonal = (matrix, fill) => {
     const clone = cloneMatrix(matrix)
-    
-    const smaller = Math.min(clone.length - 1,clone[0].length - 1);
+
+    const smaller = Math.min(clone.length - 1, clone[0].length - 1);
 
     for (let i = 0; i < smaller; i++)
         clone[i][i] = fill;
-    
-    return clone;    
+
+    return clone;
 }
 
 export const rotate90Degrees = (matrix) => {
@@ -402,18 +399,18 @@ export const rotate90Degrees = (matrix) => {
 export const createIdentity = (size) => {
     if (size === null || isNaN(size) || size <= 0)
         return null;
-        
-    const matrix = Array(size + 1).fill().map(()=>Array(size + 1).fill(""))
+
+    const matrix = Array(size + 1).fill().map(() => Array(size + 1).fill(""))
 
     for (let i = 0; i < size; i++)
         matrix[i][i] = "1";
-    
+
     return matrix
 }
 
 //functions related to matrix selection
 export const editSelection = (matrix, text, x1, y1, x2, y2) => {
-    
+
     if (x1 > x2) { //x1 to smaller
         var temp = x1;
         x1 = x2;
@@ -452,7 +449,7 @@ export const spliceMatrix = (matrix, x1, y1, x2, y2) => {
     }
 
 
-    const spliced = Array(x2 - x1 + 2).fill().map(()=>Array(y2 - y1 + 2).fill("")) //new matrix of appropriate size
+    const spliced = Array(x2 - x1 + 2).fill().map(() => Array(y2 - y1 + 2).fill("")) //new matrix of appropriate size
 
     for (let i = x1; i <= x2; i++) //deep copy
         for (let j = y1; j <= y2; j++)
@@ -480,11 +477,11 @@ export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
     }
 
     const clone = cloneMatrix(pasteMatrix)
-    
+
     for (let i = x1; i <= x2; i++) //paste into matrix
         for (let j = y1; j <= y2; j++)
             clone[i][j] = copyMatrix[i - x1][j - y1];
-        
+
 
     return clone;
 }
@@ -497,8 +494,8 @@ const closeToZero = (n) => {
 
 export const LUDecomposition = (matrix) => {
     const size = matrix.length - 1;
-    const L = new Array(matrix.length).fill().map(()=>new Array(matrix.length).fill(""));
-    
+    const L = new Array(matrix.length).fill().map(() => new Array(matrix.length).fill(""));
+
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
             if (i === j)
@@ -507,11 +504,11 @@ export const LUDecomposition = (matrix) => {
                 L[i][j] = 0;
         }
     }
-    
-    const U = cloneMatrix(matrix);    
+
+    const U = cloneMatrix(matrix);
     let sign = 1;
     for (let k = 0; k < size - 1; k++) {
-        for (let i = k + 1; i < size; i++) {    
+        for (let i = k + 1; i < size; i++) {
             if (closeToZero(U[k][k])) {
                 //find a non zero pivot to swap with
                 for (let j = k + 1; j < size; j++) {
@@ -529,7 +526,7 @@ export const LUDecomposition = (matrix) => {
             if (closeToZero(U[k][k])) {
                 return [null, null, 0]
             }
-                
+
 
             L[i][k] = U[i][k] / U[k][k];
             for (let j = k; j < size; j++) {
@@ -565,7 +562,7 @@ export const gaussian = (matrix) => {
         }
 
         for (let j = 0; j < matrix.length - 1; j++) {
-            if (j === i) 
+            if (j === i)
                 continue;
 
             const ratio = matrix[j][i];
@@ -579,7 +576,7 @@ export const gaussian = (matrix) => {
     }
 
     return matrix
-    
+
 }
 
 
@@ -598,7 +595,7 @@ export const inverse = (matrix) => {
     //extend last row
     clone[size] = clone[size].concat(Array(size).fill(""));
 
-    return(gaussian(clone).map(row => row.slice(size)));
+    return (gaussian(clone).map(row => row.slice(size)));
 
-    
+
 }

@@ -148,7 +148,7 @@ const LoginForm = (props) => {
                 />
 
                 {showLogin ?
-                    <button onClick={handleLogin} className={"btn btn-secondary " + styles.loginRegisterButton}>Sign in</button>
+                    <button onClick={handleLogin} className={"btn btn-secondary " + styles.loginRegisterButton}>Sign In</button>
                     :
                     <button onClick={handleRegister} className={"btn btn-secondary " + styles.loginRegisterButton}>Register</button>
                 }
