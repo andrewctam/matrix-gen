@@ -25,13 +25,13 @@ const MatrixGenerator = (props) => {
             case "Matrix Math":
                 setShowMath(!showMath);
                 break;
-            case "Import Matrix From Text":
+            case "Import From Text":
                 setShowImport(!showImport);
                 break;
             case "Export Matrix":
                 setShowExport(!showExport);
                 break;
-            case "Selection Settings":
+            case "Selection":
                 setShowSelectionMenu(!showSelectionMenu);
                 break;
 

@@ -1,19 +1,19 @@
 import { useEffect, useRef } from "react";
 
-const useExpand = (scrollToRef) => {
+const useExpand = () => {
     const expandRef = useRef(null);
 
     useEffect(() => {
-        //auto pads the body and scrolls to the specified ref
+        //pads the body
         document.body.style.paddingBottom = (expandRef.current.offsetHeight + 10) + "px";
-
 
         return () => {
             document.body.style.paddingBottom = "48px";
             //undo the expand
         }
-    }, [expandRef, scrollToRef])
+    }, [expandRef])
 
+    //returns a ref where the expand grabs the height from
     return expandRef;
 }
 

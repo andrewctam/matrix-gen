@@ -2,7 +2,7 @@
     width: 100%;
     background-color: rgba(50, 50, 50, 0.8);
     --bs-gutter-x: 0px;
-    max-height: 75vh;
+    max-height: 50vh;
     overflow-y: auto;
     margin-left: auto;
     margin-right: auto;

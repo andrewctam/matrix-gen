@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import styles from "./SelectionMenu.module.css"
 
@@ -6,12 +6,12 @@ import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../matrixFunct
 
 import TextActionButton from '../../buttons/TextActionButton'
 import Toggle from '../../buttons/Toggle';
-
+import useExpand from '../../../hooks/useExpand.js';
 const SelectionMenu = (props) => {
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
 
-
+    const selectionMenu = useExpand();
 
     const updateName = (parameterName, updated) => {
         if (/^[A-Za-z_]*$/.test(updated)) // only update if chars are letters or underscores
@@ -32,7 +32,7 @@ const SelectionMenu = (props) => {
                             props.boxSelectionStart["y"] === -1 && 
                             props.boxSelectionEnd["x"] === -1 && 
                             props.boxSelectionEnd["y"] === -1;
-    return <div className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
+    return <div className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {selectionMenu}>
         {noBoxesSelected ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
             : <div>
                 <div>

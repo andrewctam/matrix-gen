@@ -1,9 +1,23 @@
+.matrixSelectorContainer {
+    min-height: 45px;
+    height: 175px;
+    max-height: fit-content;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-left: 5%;
+    margin-right: 5%;
+    width: 90%;
+    overflow-y: auto;
+    margin-bottom: 10px;
+
+}
+
 .sizeInput {
     color: black;
     width: 25%;
     float: right;
     text-align: right;
 }
+
 
 .renameInput {
     color: black;
@@ -19,6 +33,9 @@
 .matrixSelector {
     width: 100%;
     background-color: rgb(236, 236, 236);
+    margin-left: auto;
+    margin-right: auto;
+    color: black;
 }
 
 .matrixSelector:hover {
@@ -33,18 +50,17 @@
     background-color: rgb(240, 193, 193) !important;
 }
 
-.multiSelected.active  {
+.multiSelected.active {
     background-color: rgb(232, 168, 190) !important;
 }
 
 
-.matrixSelector > input {
+.matrixSelector>input {
     color: black;
     border: none;
     background: none;
     width: 25%;
 }
-
 
 .nameSearchBar {
     width: 40%;
@@ -53,7 +69,7 @@
     margin-top: 5px;
     border-radius: 5px;
     padding: 5px;
-    background-color: rgba(255, 255, 255, 0.25)
+    background-color: rgba(54, 51, 51, 0.5)
 }
 
 .sizeSearchBar {
@@ -63,7 +79,13 @@
     margin-top: 5px;
     border-radius: 5px;
     padding: 5px;
-    background-color: rgba(255, 255, 255, 0.25)
+    background-color: rgba(54, 51, 51, 0.5)
+}
+
+@media screen and (max-width: 1133px) {
+    .sizeSearchBar, .nameSearchBar {
+        font-size: small;
+    }
 }
 
 .nameSearchBar::placeholder, .sizeSearchBar::placeholder {
@@ -81,16 +103,3 @@
     color: white;
     border-radius: 5px;
 }
-
-
-.matrixSelectorContainer {
-    min-height: 45px;
-    height: 175px;
-    max-height: fit-content;
-    resize: vertical;
-    background-color: rgba(255, 255, 255, 0.1);
-    margin-left: 5%;
-    margin-right: 5%;
-    width: 90%;
-}
-

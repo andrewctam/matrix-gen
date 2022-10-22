@@ -53,12 +53,12 @@ const FloatingMenu = (props) => {
                     <ActiveButton name="Matrix Math" active={props.showMath} action={props.toggleShown} />
 
                     {props.selectable ?
-                        <ActiveButton name="Selection Settings" active={props.showSelectionMenu} action={props.toggleShown} />
+                        <ActiveButton name="Selection" active={props.showSelectionMenu} action={props.toggleShown} />
                         : null}
 
                     <ActiveButton name="Export Matrix" active={props.showExport} action={props.toggleShown} />
                 </> : null}
-            <ActiveButton name="Import Matrix From Text" active={props.showImport} action={props.toggleShown} />
+            <ActiveButton name="Import From Text" active={props.showImport} action={props.toggleShown} />
 
 
 

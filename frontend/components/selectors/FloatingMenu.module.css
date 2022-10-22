@@ -7,22 +7,20 @@
 }
 
 .selectors {
-    width: 45vw;
+    width: 42vw;
     overflow: auto;
     background-color: rgba(62, 63, 65, 0.95);
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px;
     position: absolute;
     z-index: 3;
     cursor: grab;
-
-
 }
-
 
 @media screen and (max-width: 1133px) {
     .selectors {
         width: 60vw;
+
     }
 
     .selectors, .settingsMenu {
@@ -31,6 +29,13 @@
         margin-right: auto;
         display: block;
         left: 0;
+        margin-top: 5px;
+        cursor: auto;
+    }
+
+    .floatingMenu {
+        position: relative;
+        top: 0;
     }
 
 }

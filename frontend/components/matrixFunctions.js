@@ -394,6 +394,8 @@ export const rotate90Degrees = (matrix) => {
         }
     }
 
+    return transposed;
+
 
 }
 

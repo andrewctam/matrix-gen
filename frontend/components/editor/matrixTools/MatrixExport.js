@@ -1,11 +1,11 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput.js';
 import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import ActiveButton from '../../buttons/ActiveButton.js';
 
 import styles from "./MatrixExport.module.css"
 import Toggle from '../../buttons/Toggle.js';
-
+import useExpand from '../../../hooks/useExpand.js';
 const MatrixExport = (props) => {    
     const [exportOption, setExportOption] = useState("2D Arrays");
 
@@ -21,7 +21,9 @@ const MatrixExport = (props) => {
         "^":"\\char94",
         "~":"\\char126",
         "\\":"\\char92"
-    })
+    })  
+
+    const matrixExport = useExpand(matrixExport);
 
 
 
@@ -195,7 +197,7 @@ const MatrixExport = (props) => {
     }
 
   
-    return <div className = {"fixed-bottom row " + styles.exportContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
+    return <div className = {"fixed-bottom row " + styles.exportContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {matrixExport}>
             <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
 
             <div className = "col-sm-4">

@@ -20,6 +20,7 @@ const Tutorial = (props) => {
                         <li>Use Tab or the arrow keys to navigate the boxes. Tab will only move to white boxes (except the red box on the first row to allow you to quickly specify the number of columns, and the red boxes on the last row to allow you to expand the number of rows).</li>
                         <li>Empty boxes will be filled with a sparse value when exporting or doing math. You can edit this value in the settings.</li>
                         <li>If you want to mirror your inputs, you can enable this in the settings. Typing in box (i, j) will also edit in box (j, i).</li>
+                        <li>You can create more matrices and swap between them using the Matrices menu. Click the Matrices button to open the menu, and you can drag the menu around if desired.</li>
                     </ul>
                 </div>
                 break;
@@ -29,7 +30,7 @@ const Tutorial = (props) => {
                     <ul className={styles.tutorialList}>
                         <li>All matrices must have a name. Valid characters are uppercase and lowercase letters and underscores.</li>
                         <li>You can rename a matrix by clicking its name on the selector buttons. You can also resize it by clicking the size and entering new dimensions.</li>
-                        <li>Save matrices to your local storage and/or online to an account using the Save Matrices button.</li>
+                        <li>You can save matrices to your local storage and/or online to an account. Click the top bar to open the save menu.</li>
                         <li>If there is a conflict between your local and account matrix storage, (e.g. you make edits before logging in) you must choose to merge them, or to discard your local matrices. If you merge them, the matrices are combined, and duplicate names are automatically renamed.</li>
                     </ul>
                 </div>
@@ -120,7 +121,7 @@ const Tutorial = (props) => {
        
 
         <h1>Matrix Generator</h1>
-        <p className={styles.tutorialBody}>This Matrix Generator web app can help you quickly create and modify matrices.
+        <p className={styles.tutorialBody}>This app can help you quickly create and modify matrices.
             It features an interactive table to quickly modify your matrices, quick actions such as transpose
             to modify the entire matrix, and export options to quickly save your matrix as plain text.
             You can also import matrices from text. The app has numerous uses, such as quickly creating LaTeX matrices,

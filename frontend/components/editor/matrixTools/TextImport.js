@@ -9,6 +9,7 @@ import ActiveButton from '../../buttons/ActiveButton'
 import OverwriteInput from '../../inputs/OverwriteInput'
 
 import Toggle from '../../buttons/Toggle';
+import useExpand from '../../../hooks/useExpand.js';
 
 const TextImport = (props) => {
     const [overwrite, setOverwrite] = useState(true);
@@ -32,6 +33,7 @@ const TextImport = (props) => {
     const [settingC, setSettingC] = useState(" "); //separator
     const [settingD, setSettingD] = useState("\n"); //new line separator
 
+    const textImport = useExpand(textImport);
     useEffect(() => {
         //if one of the setting changes, update if we should display a warning
         switch(importFormat) {
@@ -355,7 +357,7 @@ const TextImport = (props) => {
     }
 
 
-    return <div className = {"fixed-bottom row " + styles.importContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
+    return <div className = {"fixed-bottom row " + styles.importContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {textImport}>
          <textarea id = "importTextArea" className = {styles.importTextArea} placeholder = {inputMatrixPlaceholder}></textarea>
 
         <div className = "col-sm-4">

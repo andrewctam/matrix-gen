@@ -35,8 +35,8 @@ const useMove = (element, relElement) => {
         if (mouseDown.current) {
             const newX = elementStartX.current + e.clientX - mouseStartX.current //element start + deltaX
             const newY = elementStartY.current + e.clientY - mouseStartY.current //element start + deltaY
-            console.log(element.current.offsetWidth)
-            setX(Math.max(0, Math.min(newX, window.innerWidth - element.current.offsetWidth)));
+
+            setX(Math.max(0, Math.min(newX, document.documentElement.clientWidth - element.current.offsetWidth))); //exclude scrollbar
             setY(Math.max(0, Math.min(newY, window.innerHeight - element.current.offsetHeight)));
         }
     }
@@ -44,8 +44,8 @@ const useMove = (element, relElement) => {
     useEffect(() => {
         if (relElement.current) {
             const rect = relElement.current.getBoundingClientRect();
-            setX(rect.left);
-            setY(rect.top + rect.height/2 - 2);
+            setX(rect.left - 10);
+            setY(rect.top + rect.height / 2 - 2);
             
         }
     }, [relElement, relElement.current, element, element.current]) //reset position when opened/closed

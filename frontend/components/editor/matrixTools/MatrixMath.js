@@ -1,11 +1,11 @@
-import React, { useState, useMemo  } from 'react';
+import React, { useState, useMemo, useRef  } from 'react';
 import styles from "./MatrixMath.module.css"
 
 import { generateUniqueName, cloneMatrix, gaussian, LUDecomposition, inverse, createIdentity} from '../../matrixFunctions';
 import Toggle from '../../buttons/Toggle';
 import BasicActionButton from '../../buttons/BasicActionButton';
 import OverwriteInput from '../../inputs/OverwriteInput'
-
+import useExpand from '../../../hooks/useExpand.js';
 const MatrixMath = (props) => {
     const [expression, setExpression] = useState("");
     const [resultName, setResultName] = useState("");
@@ -13,7 +13,7 @@ const MatrixMath = (props) => {
     const [overwrite, setOverwrite] = useState(true);
     const [reductionName, setReductionName] = useState("");
 
-
+    const matrixMath = useExpand();
 
     const updateParameter = (parameterName, updated) => {
         switch(parameterName) {
@@ -429,7 +429,7 @@ const MatrixMath = (props) => {
     else
         newName = reductionName
 
-    return <div className={"fixed-bottom " + styles.matrixMathContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
+    return <div className={"fixed-bottom " + styles.matrixMathContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {matrixMath}>
        
         <div className="row">
             <form onSubmit={calculate} className="col-sm-6">

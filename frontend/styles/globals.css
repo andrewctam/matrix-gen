@@ -1,5 +1,5 @@
 body {
-    overflow-y: scroll;
+    overflow-y: auto;
     margin: 0px;
     padding: 0px 0px 48px 0px;
     color: white;
@@ -17,7 +17,6 @@ h1 {
     font-size: x-large;
     text-align: center;
     display: inline-block;
-    
 }
 
 h2 {
@@ -48,7 +47,6 @@ input[type=number] {
 input::placeholder {
     color: rgba(255, 255, 255, 0.5);
 }
-
 
 ul {
     list-style-type: none;
@@ -84,7 +82,7 @@ li {
 }
 
 .btn-info, .btn-info:hover, .btn-info:active {
-    background-color: rgb(112, 199, 231) !important;
+    background-color: rgb(140, 188, 206) !important;
     border-color: black;
 }
 
@@ -94,40 +92,13 @@ li {
 
 }
 .btn-danger, .btn-danger:hover, .btn-danger:active {
-    background-color: rgb(240, 162, 162) !important;
+    background-color: rgb(232, 177, 177) !important;
     border-color: black;
     color: black !important;
 }
 
 .btn-success, .btn-success:hover, .btn-success:active {
-    background-color: rgb(138 201 130) !important;
+    background-color: rgb(152, 201, 146) !important;
     border-color: black;
     color: black !important;
-}
-
-.list-group {
-    overflow-y: auto;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.list-group-item {
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    color: black;
-}
-
-.list-group-item-primary {
-    background-color: rgb(180, 189, 219);
-}
-.list-group-item-info {
-    background-color: rgb(174, 218, 227);
-}
-
-.list-group-item-secondary {
-    background-color: rgb(196, 244, 191);
-}
-.list-group-item-danger {
-    background-color: rgb(239, 203, 203); 
 }

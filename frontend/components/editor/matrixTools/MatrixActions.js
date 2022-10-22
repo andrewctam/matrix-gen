@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { transpose, shuffle, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, scatter, rotate90Degrees, reshapeMatrix, resizeMatrix } from '../../matrixFunctions';
 import styles from "./MatrixActions.module.css"
@@ -8,6 +8,7 @@ import TextActionButton from '../../buttons/TextActionButton';
 import TwoTextActionButton from '../../buttons/TwoTextActionButton';
 
 import Toggle from '../../buttons/Toggle';
+import useExpand from '../../../hooks/useExpand';
 
 const MatrixActions = (props) => {
     const [randomLow, setRandomLow] = useState("1");
@@ -23,6 +24,8 @@ const MatrixActions = (props) => {
     const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
     const [replaceX, setReplaceX] = useState("");
     const [replaceY, setReplaceY] = useState("");
+
+    const matrixActions = useExpand();
 
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
@@ -84,6 +87,7 @@ const MatrixActions = (props) => {
 
 
     return <div className={"fixed-bottom row " + styles.matrixActionsContainer}
+        ref = {matrixActions}
         style={{ "bottom": props.showFullInput ? "28px" : "0" }}>
         <div className="col-sm-4">
             <BasicActionButton
