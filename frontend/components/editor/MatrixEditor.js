@@ -10,9 +10,6 @@ import MatrixActions from './matrixTools/MatrixActions.js';
 import TextImport from './matrixTools/TextImport.js';
 import SelectionMenu from './matrixTools/SelectionMenu.js';
 
-import ActiveButton from '../buttons/ActiveButton.js';
-import BasicActionButton from '../buttons/BasicActionButton.js';
-
 import { cloneMatrix, updateEntry } from '../matrixFunctions.js';
 
 
@@ -28,47 +25,11 @@ const MatrixEditor = (props) => {
     });
 
 
-    const [showActions, setShowActions] = useState(false);
-    const [showExport, setShowExport] = useState(false);
-    const [showMath, setShowMath] = useState(false);
-    const [showImport, setShowImport] = useState(false);
-    const [showSelectionMenu, setShowSelectionMenu] = useState(false);
-
-
-    const optionsBarRef = useRef(null)
     const mouseDown = useRef(false);
 
     useEffect(() => {
         updateBoxesSelected(-1, -1, -1, -1, true)
     }, [props.name]);
-
-    const toggleShown = (e) => {
-        setShowImport(false);
-        setShowActions(false);
-        setShowExport(false);
-        setShowMath(false);
-        setShowSelectionMenu(false);
-
-        switch (e.target.id) {
-            case "Matrix Actions":
-                setShowActions(!showActions);
-                break;
-            case "Matrix Math":
-                setShowMath(!showMath);
-                break;
-            case "Import Matrix From Text":
-                setShowImport(!showImport);
-                break;
-            case "Export Matrix":
-                setShowExport(!showExport);
-                break;
-            case "Selection Settings":
-                setShowSelectionMenu(!showSelectionMenu);
-                break;
-
-            default: break;
-        }
-    }
 
     const updateBoxesSelected = useCallback((x1, y1, x2, y2, clear = false) => {
         if (clear) {
@@ -92,7 +53,6 @@ const MatrixEditor = (props) => {
                 "y": y2
             });
     }, [props.selectable]);
-
 
 
     const toStringUpdateMatrix = (name, matrix) => {
@@ -133,60 +93,34 @@ const MatrixEditor = (props) => {
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
-
-            <div ref={optionsBarRef} className={styles.optionsBar}>
-                
-
-                <ActiveButton name="Matrix Actions" active={showActions} action={toggleShown} />
-
-                <ActiveButton name="Matrix Math" active={showMath} action={toggleShown} />
-
-                {props.selectable ?
-                    <ActiveButton name="Selection Settings" active={showSelectionMenu} action={toggleShown} />
-                    : null}
-
-                <ActiveButton name="Export Matrix" active={showExport} action={toggleShown} />
-
-                <ActiveButton name="Import Matrix From Text" active={showImport} action={toggleShown}
-                />
-
-                <div className={styles.undoRedo}>
-                    <BasicActionButton buttonStyle={"primary"} disabled={!props.canUndo} name="↺" action={props.undo} />
-                    <BasicActionButton buttonStyle={"primary"} disabled={!props.canRedo} name="↻" action={props.redo} />
-                </div>
-
-            </div>
-
-
-            {showActions ?
+            {props.showActions ?
                 <MatrixActions
                     name={props.name}
                     matrix={props.matrix}
                     updateMatrix={props.updateMatrix}
-                    close={() => { setShowActions(false) }}
-                    active={showActions}
-                    optionsBarRef={optionsBarRef}
+                    close={() => { props.setShowActions(false) }}
+                    active={props.showActions}
+                    floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
-
                 />
                 : null}
 
-            {showMath ?
+            {props.showMath ?
                 <MatrixMath
                     matrices={props.matrices}
                     matrix={props.matrix}
                     name={props.name}
                     toStringUpdateMatrix={toStringUpdateMatrix}
                     sparseVal={props.sparseVal}
-                    close={() => { setShowMath(false) }}
-                    active={showMath}
+                    close={() => { props.setShowMath(false) }}
+                    active={props.showMath}
                     rounding={props.rounding}
-                    optionsBarRef={optionsBarRef}
+                    floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
                 />
                 : null}
 
-            {props.selectable && showSelectionMenu ?
+            {props.selectable && props.showSelectionMenu ?
                 <SelectionMenu
                     matrices={props.matrices}
                     name={props.name}
@@ -196,40 +130,40 @@ const MatrixEditor = (props) => {
                     boxSelectionEnd={boxSelectionEnd}
                     editSelection={props.editSelection}
                     updateBoxesSelected={updateBoxesSelected}
-                    close={() => { setShowSelectionMenu(false) }}
-                    active={showSelectionMenu}
-                    optionsBarRef={optionsBarRef}
+                    close={() => { props.setShowSelectionMenu(false) }}
+                    active={props.showSelectionMenu}
+                    floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
                 />
                 : null}
 
-            {showImport ?
+            {props.showImport ?
                 <TextImport
                     updateMatrix={props.updateMatrix}
                     matrices={props.matrices}
                     currentName={props.name}
-                    close={() => { setShowImport(false) }}
-                    active={showImport}
-                    optionsBarRef={optionsBarRef}
+                    close={() => { props.setShowImport(false) }}
+                    active={props.showImport}
+                    floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
 
                 />
                 : null}
 
-            {showExport ?
+            {props.showExport ?
                 <MatrixExport
                     matrix={props.matrix}
                     sparseVal={props.sparseVal}
-                    close={() => { setShowExport(false) }}
-                    active={showExport}
-                    optionsBarRef={optionsBarRef}
+                    close={() => { props.setShowExport(false) }}
+                    active={props.showExport}
+                    floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
                 />
                 : null}
 
 
-
-            {(props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
+            {!props.matrix ? null :
+            (props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
                 <Table
                     mirror={props.mirror}
                     numbersOnly={props.numbersOnly}

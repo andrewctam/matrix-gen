@@ -1,33 +1,27 @@
-.floatingMenu {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    
-    align-content: space-between;
-}
-
-.matrices {
-    position: sticky;
-    top: 10px;
-    left: 10px;
-  }
 
 .selectors {
     width: 40vw;
-    margin-left: auto;
-    margin-right: auto;
     overflow: auto;
     background-color: rgba(62, 63, 65, 0.95);
     border-radius: 10px;
-    border-bottom-left-radius: 0px;
     padding: 20px;
-
+    position: absolute;
 }
 
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1133px) {
     .selectors {
         width: 60vw;
+    }
+
+    .selectors, .settingsMenu {
+        position: relative !important;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        background-color: rgba(0, 0, 0, 0) ;
+
+        left: 0;
     }
 }
 
@@ -45,53 +39,43 @@
 }
 
 
-
-
 .toggleSelectors {
     padding: 10px;
-    background-color: rgba(62, 63, 65);
+    background-color: rgb(185, 207, 221);
+    margin: 1px;
+    color: black;
     width: fit-content;
     border-radius: 10px;
-    
+
 }
 
 .selectors>button {
     width: fit-content;
-}
-
-
-
-.buttons {
     text-align: center;
-  }
-  
-  
-.settings {
-    position: sticky;
-    top: 10px;
-    right: 10px;
+
 }
+
+
 
 .toggleSettings {
     padding: 20px;
     border-radius: 10px;
     width: fit-content;
     height: fit-content;
-    background-color: rgb(62, 63, 65);
+    background-color: rgb(185, 207, 221);
+    color: black;
+    margin: 1px;
     padding: 10px;
 }
 
 .settingsMenu {
+    position: absolute;
     background-color: rgba(62, 63, 65, 0.95);
-    width: fit-content;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 15px;
-    padding-right: 20px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     border-radius: 15px;
-    border-bottom-right-radius: 0px;
+    width: 240px;
 }
 
 .settingsMenu>div {
@@ -102,4 +86,30 @@
 
 .settingsMenu>div>input {
     margin-left: 5px;
+}
+
+.floatingMenu {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    position: sticky;
+    top: 10px;
+}
+
+.bar {
+    margin-left: 5px;
+    margin-right: 5px;
+    width: fit-content;
+    padding: 5px;
+    background-color: rgba(50, 50, 50, 0.5);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    text-align: center;
+    display: inline-block;
+    position: sticky;
+}
+
+.undoRedo {
+    display: inline-block;
 }

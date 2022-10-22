@@ -9,6 +9,7 @@ import TextImport from './editor/matrixTools/TextImport.js';
 
 import { generateUniqueName } from './matrixFunctions.js';
 import FloatingMenu from './selectors/FloatingMenu.js';
+import MatrixGenerator from './MatrixGenerator.js';
 
 const App = () => {
     const [matrices, setMatrices] = useState(null);
@@ -32,12 +33,9 @@ const App = () => {
 
     const [firstVisit, setFirstVisit] = useState(false);
 
-    const [showImport, setShowImport] = useState(false);
-
     const [undoStack, setUndoStack] = useState([]);
     const [redoStack, setRedoStack] = useState([]);
 
-    const optionsBarRef = useRef(null);
 
     //load from local storage and set up app
     useEffect(() => {
@@ -571,11 +569,8 @@ const App = () => {
 
 
 
-
-
     if (!matrices)
         return <div />
-
     return (
         <div>
             <Navigation
@@ -604,7 +599,7 @@ const App = () => {
             />
 
 
-            <FloatingMenu
+           <MatrixGenerator 
                 matrices={matrices}
                 selection={selection}
                 matrix={matrices[selection]}
@@ -626,61 +621,18 @@ const App = () => {
                 selectable={selectable}
                 rounding={rounding}
 
-            />
+                name={selection}
 
+                firstVisit={firstVisit}
 
-            {(selection in matrices) ?
-                <MatrixEditor
-                matrices={matrices}
-                    matrix={matrices[selection]}
-                    name={selection}
-                    setSelection={setSelection}
+                darkModeTable={darkModeTable}
 
-                    deleteMatrix={deleteMatrix}
-                    renameMatrix={renameMatrix}
-
-                    updateParameter={updateParameter}
-                    mirror={mirror}
-                    sparseVal={sparseVal}
-                    numbersOnly={numbersOnly}
-                    selectable={selectable}
-
-                    updateMatrix={updateMatrix}
-
-                    firstVisit={firstVisit}
-                    rounding={rounding}
-
-                    darkModeTable={darkModeTable}
-
-                    undo={undo}
-                    canUndo={undoStack.length > 0}
-                    redo={redo}
-                    canRedo={redoStack.length > 0}
-
-                />
-                :
-                <div ref={optionsBarRef} className={matrixEditorStyles.optionsBar}>
-                    <ActiveButton
-                        name="Import Matrix From Text"
-                        active={showImport}
-                        action={() => { setShowImport(!showImport) }}
-                    />
-
-                    {showImport ?
-                        <TextImport
-                            updateMatrix={updateMatrix}
-                            matrices={matrices}
-                            currentName={null}
-                            close={() => { setShowImport(false) }}
-                            active={showImport}
-                            optionsBarRef={optionsBarRef}
-                        />
-                        : null}
-
-                    <BasicActionButton buttonStyle={"primary"} disabled={undoStack.length === 0} name="↺" action={undo} />
-                    <BasicActionButton buttonStyle={"primary"} disabled={redoStack.length === 0} name="↻" action={redo} />
-
-                </div>}
+                undo={undo}
+                canUndo={undoStack.length > 0}
+                redo={redo}
+                canRedo={redoStack.length > 0}
+       
+           />
 
 
         </div>);

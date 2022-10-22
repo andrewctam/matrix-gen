@@ -6,20 +6,31 @@ import ParameterBoxInput from '../inputs/ParameterBoxInput.js';
 import ParameterTextInput from '../inputs/ParameterTextInput.js';
 
 import BasicActionButton from '../buttons/BasicActionButton';
+import ActiveButton from '../buttons/ActiveButton';
 import styles from "./FloatingMenu.module.css"
 
 import { cloneMatrix } from '../matrixFunctions';
-const FloatingMenu = (props) => {
+const   FloatingMenu = (props) => {
 
     const [showSelectors, setShowSelectors] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [multiSelected, setMultiSelected] = useState([]);
 
-    return (<div className={styles.floatingMenu}>
-        <div className={styles.matrices}>
-            <div className={styles.toggleSelectors} onClick={() => { setShowSelectors(!showSelectors) }}
-                style={showSelectors ? { borderTopLeftRadius: "0px", borderTopRightRadius: "0px" } : null}>
-                Matrices
+    return (<div className={styles.floatingMenu} ref={props.floatingMenuRef}>
+
+
+        <div className={styles.bar}>
+            <BasicActionButton
+                name={"Matrices"} buttonStyle={showSelectors ? "info": "primary"}
+                action={() => { setShowSelectors(!showSelectors); setShowSettings(false) }}
+            />
+            <BasicActionButton
+                name={"Settings"} buttonStyle={showSettings ? "info": "primary"}
+                action={() => { setShowSettings(!showSettings); setShowSelectors(false) }}
+            />
+            <div className={styles.undoRedo}>
+                <BasicActionButton buttonStyle={"primary"} disabled={!props.canUndo} name="↺" action={props.undo} />
+                <BasicActionButton buttonStyle={"primary"} disabled={!props.canRedo} name="↻" action={props.redo} />
             </div>
 
             {showSelectors ?
@@ -37,9 +48,9 @@ const FloatingMenu = (props) => {
                         setMultiSelected={setMultiSelected}
                     />
 
-                    <div className={styles.buttons}>
+                    <div>
                         <BasicActionButton
-                            key="addButton" name={"New Matrix"} buttonStyle={"primary"}
+                            key="addButton" name={"New Matrix"} buttonStyle={"success"}
                             action={() => {
                                 props.updateMatrix(undefined, undefined, true); //generates a new matrix
                             }}
@@ -47,7 +58,7 @@ const FloatingMenu = (props) => {
 
                         {props.selection !== "0" ?
                             <BasicActionButton
-                                key="duplicateButton" buttonStyle={"primary"} name={`Duplicate ${props.selection}`}
+                                key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${props.selection}`}
                                 action={() => { props.updateMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
                             : null}
 
@@ -71,19 +82,12 @@ const FloatingMenu = (props) => {
                                     setMultiSelected([])
                             }}
                         />
-
-
                     </div>
                 </div> : null}
 
 
-        </div>
 
-        <div className={styles.settings}>
-            <div onClick={() => { setShowSettings(!showSettings) }} className={styles.toggleSettings}
-                style={showSettings ? { borderTopLeftRadius: "0px", borderTopRightRadius: "0px" } : null}>
-                Settings
-            </div>
+
             {showSettings ?
                 <div className={styles.settingsMenu}>
                     <ParameterBoxInput isChecked={props.mirror} name={"Mirror Inputs"} updateParameter={props.updateParameter} />
@@ -95,6 +99,30 @@ const FloatingMenu = (props) => {
 
                 </div>
                 : null}
+
+
+
+
+        </div>
+        <div className={styles.bar}>
+
+
+            {props.selection in props.matrices ?
+            <>
+            <ActiveButton name="Matrix Actions" active={props.showActions} action={props.toggleShown} />
+
+            <ActiveButton name="Matrix Math" active={props.showMath} action={props.toggleShown} />
+
+            {props.selectable ?
+                <ActiveButton name="Selection Settings" active={props.showSelectionMenu} action={props.toggleShown} />
+                : null}
+
+            <ActiveButton name="Export Matrix" active={props.showExport} action={props.toggleShown} />
+            </>: null}
+            <ActiveButton name="Import Matrix From Text" active={props.showImport} action={props.toggleShown}/>
+
+
+
         </div>
 
     </div>)

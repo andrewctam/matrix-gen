@@ -6,13 +6,11 @@ import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../matrixFunct
 
 import TextActionButton from '../../buttons/TextActionButton'
 import Toggle from '../../buttons/Toggle';
-import useExpand from "../../../hooks/useExpand";
 
 const SelectionMenu = (props) => {
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
 
-    const selectionMenu = useExpand(props.optionsBarRef);
 
 
     const updateName = (parameterName, updated) => {
@@ -34,7 +32,7 @@ const SelectionMenu = (props) => {
                             props.boxSelectionStart["y"] === -1 && 
                             props.boxSelectionEnd["x"] === -1 && 
                             props.boxSelectionEnd["y"] === -1;
-    return <div ref={selectionMenu} className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
+    return <div className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
         {noBoxesSelected ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
             : <div>
                 <div>

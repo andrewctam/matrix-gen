@@ -3,23 +3,6 @@
   margin-right: auto;
 }
 
-.optionsBar {
-  margin-left: auto;
-  margin-right: auto;
-  width: fit-content;
-  padding: 5px;
-  background-color: rgba(50, 50, 50, 0.5);
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  text-align: center;
-
-}
-
-.undoRedo {
-  display: inline-block;
-}
-
 .bigMatrixInfo {
   width: fit-content;
   margin-left: auto;

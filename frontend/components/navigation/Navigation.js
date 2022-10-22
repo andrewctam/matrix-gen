@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
@@ -44,12 +44,10 @@ const Navigation = (props) => {
                 onMouseLeave={() => { setHoveringSettings(false) }}
             >
                 <div className={styles.savingInfo}>
-                    {saving}
+                    {saving + (showSaveMenu ? " Click to close the save menu ↑" : " Click to open the save menu ↓")}
                 </div>
-                <div className={styles.savingInfo}>
-                    {showSaveMenu ? " Click to close the save menu ↑" : " Click to open the save menu ↓"}
-                    {""}
-                </div>
+          
+
             </div>
 
             {!showTutorial ?

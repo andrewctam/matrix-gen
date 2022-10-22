@@ -6,8 +6,6 @@ import ActiveButton from '../../buttons/ActiveButton.js';
 import styles from "./MatrixExport.module.css"
 import Toggle from '../../buttons/Toggle.js';
 
-import useExpand from '../../../hooks/useExpand'
-
 const MatrixExport = (props) => {    
     const [exportOption, setExportOption] = useState("2D Arrays");
 
@@ -26,7 +24,6 @@ const MatrixExport = (props) => {
     })
 
 
-    const matrixExport = useExpand(props.optionsBarRef);
 
     const handleFocus = (e) => {
         e.target.select();
@@ -198,7 +195,7 @@ const MatrixExport = (props) => {
     }
 
   
-    return <div ref = {matrixExport} className = {"fixed-bottom row " + styles.exportContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
+    return <div className = {"fixed-bottom row " + styles.exportContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}}>
             <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
 
             <div className = "col-sm-4">

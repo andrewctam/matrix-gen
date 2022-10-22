@@ -8,7 +8,6 @@ import TextActionButton from '../../buttons/TextActionButton';
 import TwoTextActionButton from '../../buttons/TwoTextActionButton';
 
 import Toggle from '../../buttons/Toggle';
-import useExpand from "../../../hooks/useExpand";
 
 const MatrixActions = (props) => {
     const [randomLow, setRandomLow] = useState("1");
@@ -24,8 +23,6 @@ const MatrixActions = (props) => {
     const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
     const [replaceX, setReplaceX] = useState("");
     const [replaceY, setReplaceY] = useState("");
-
-    const matrixActions = useExpand(props.optionsBarRef);
 
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
@@ -86,7 +83,7 @@ const MatrixActions = (props) => {
     }
 
 
-    return <div ref={matrixActions} className={"fixed-bottom row " + styles.matrixActionsContainer}
+    return <div className={"fixed-bottom row " + styles.matrixActionsContainer}
         style={{ "bottom": props.showFullInput ? "28px" : "0" }}>
         <div className="col-sm-4">
             <BasicActionButton
