@@ -1,11 +1,22 @@
+.floatingMenu {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    position: sticky;
+    top: 30px;
+}
 
 .selectors {
-    width: 40vw;
+    width: 45vw;
     overflow: auto;
     background-color: rgba(62, 63, 65, 0.95);
     border-radius: 10px;
     padding: 20px;
     position: absolute;
+    z-index: 3;
+    cursor: grab;
+
+
 }
 
 
@@ -19,10 +30,9 @@
         margin-left: auto;
         margin-right: auto;
         display: block;
-        background-color: rgba(0, 0, 0, 0) ;
-
         left: 0;
     }
+
 }
 
 @media screen and (max-width: 800px) {
@@ -57,6 +67,20 @@
 
 
 
+
+.settingsMenu {
+    position: absolute;
+    background-color: rgba(62, 63, 65, 0.95);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    width: 240px;
+    z-index: 4;
+    cursor: grab;
+
+}
+
 .toggleSettings {
     padding: 20px;
     border-radius: 10px;
@@ -68,16 +92,6 @@
     padding: 10px;
 }
 
-.settingsMenu {
-    position: absolute;
-    background-color: rgba(62, 63, 65, 0.95);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 15px;
-    width: 240px;
-}
-
 .settingsMenu>div {
     display: flex;
     justify-content: space-between;
@@ -86,14 +100,6 @@
 
 .settingsMenu>div>input {
     margin-left: 5px;
-}
-
-.floatingMenu {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    position: sticky;
-    top: 10px;
 }
 
 .bar {

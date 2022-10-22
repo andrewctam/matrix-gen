@@ -394,10 +394,8 @@ export const rotate90Degrees = (matrix) => {
         }
     }
 
-    return transposed;
 
 }
-
 
 export const createIdentity = (size) => {
     if (size === null || isNaN(size) || size <= 0)

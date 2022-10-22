@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import FloatingMenu from "./selectors/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
+
 const MatrixGenerator = (props) => {
 
     const [showActions, setShowActions] = useState(false);
@@ -9,8 +10,7 @@ const MatrixGenerator = (props) => {
     const [showImport, setShowImport] = useState(false);
     const [showSelectionMenu, setShowSelectionMenu] = useState(false);
 
-    const floatingMenuRef = useRef(null);
-
+    
     const toggleShown = (e) => {
         setShowImport(false);
         setShowActions(false);
@@ -63,7 +63,6 @@ const MatrixGenerator = (props) => {
             selectable={props.selectable}
             rounding={props.rounding}
 
-            floatingMenuRef={floatingMenuRef}
 
             undo={props.undo}
             canUndo={props.canUndo}
@@ -118,7 +117,6 @@ const MatrixGenerator = (props) => {
             showSelectionMenu={showSelectionMenu}
             setShowSelectionMenu={setShowSelectionMenu}
 
-            floatingMenuRef={floatingMenuRef}
 
 
         />

@@ -60,7 +60,6 @@ const MatrixSelector = (props) => {
     }
 
     const pushNewSize = (name, newSize) => {
-        debugger;
         if (/[0-9]* ?x ?[0-9]*/.test(newSize)) {
             const rows = parseInt(newSize.substring(0, newSize.indexOf("x")));
             const cols = parseInt(newSize.substring(newSize.indexOf("x") + 1));
