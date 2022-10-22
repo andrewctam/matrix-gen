@@ -37,6 +37,10 @@ input::-webkit-inner-spin-button {
   margin: 0px;
 }
 
+button:disabled {
+    border: none;
+}
+
 input[type=number] {
   -moz-appearance: textfield;
 }

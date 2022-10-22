@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
+import styles from "./MatrixEditor.module.css"
+
 import Table from "./table/Table.js"
 
 import MatrixExport from "./matrixTools/MatrixExport.js"
@@ -12,7 +14,7 @@ import ActiveButton from '../buttons/ActiveButton.js';
 import BasicActionButton from '../buttons/BasicActionButton.js';
 
 import { cloneMatrix, updateEntry } from '../matrixFunctions.js';
-import styles from "./MatrixEditor.module.css"
+
 
 const MatrixEditor = (props) => {
     const [boxSelectionStart, setBoxSelectionStart] = useState({
@@ -32,8 +34,10 @@ const MatrixEditor = (props) => {
     const [showImport, setShowImport] = useState(false);
     const [showSelectionMenu, setShowSelectionMenu] = useState(false);
 
+
     const optionsBarRef = useRef(null)
     const mouseDown = useRef(false);
+
     useEffect(() => {
         updateBoxesSelected(-1, -1, -1, -1, true)
     }, [props.name]);
@@ -68,8 +72,8 @@ const MatrixEditor = (props) => {
 
     const updateBoxesSelected = useCallback((x1, y1, x2, y2, clear = false) => {
         if (clear) {
-            setBoxSelectionEnd({ "x": -1, "y": -1});
-            setBoxSelectionStart({ "x": -1, "y": -1});
+            setBoxSelectionEnd({ "x": -1, "y": -1 });
+            setBoxSelectionStart({ "x": -1, "y": -1 });
             return;
         }
 
@@ -104,65 +108,53 @@ const MatrixEditor = (props) => {
     }
 
     const showFullInput = (document.activeElement && document.activeElement.id === "fullInput" || (
-                            document.activeElement.tagName === "INPUT" &&
-                            /^[\d]+:[\d]+$/.test(document.activeElement.id) && //num:num
-                            boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1
-                            ))
+        document.activeElement.tagName === "INPUT" &&
+        /^[\d]+:[\d]+$/.test(document.activeElement.id) && //num:num
+        boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1
+    ))
 
-    if (showFullInput)  {        
+    if (showFullInput) {
         const x = boxSelectionStart["x"];
         const y = boxSelectionStart["y"];
-        
-        var fullInput = 
-            <input className = {"fixed-bottom " + styles.fullInput} 
-                value = {props.matrix[x][y]}
+
+        var fullInput =
+            <input className={"fixed-bottom " + styles.fullInput}
+                value={props.matrix[x][y]}
                 placeholder={`Row ${x} Column ${y}`}
-                id = {"fullInput"}
-                onChange = {(e) => {
+                id={"fullInput"}
+                onChange={(e) => {
                     var clone = cloneMatrix(props.matrix)
                     props.updateMatrix(props.name, updateEntry(clone, x, y, e.target.value));
-                }}/>
+                }} />
     } else {
         fullInput = null
     }
 
+
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
-            <div ref = {optionsBarRef} className={styles.optionsBar}>
-                <ActiveButton
-                    name="Matrix Actions"
-                    active={showActions}
-                    action={toggleShown}
-                />
 
-                <ActiveButton
-                    name="Matrix Math"
-                    active={showMath}
-                    action={toggleShown}
-                />
+            <div ref={optionsBarRef} className={styles.optionsBar}>
+                
+
+                <ActiveButton name="Matrix Actions" active={showActions} action={toggleShown} />
+
+                <ActiveButton name="Matrix Math" active={showMath} action={toggleShown} />
+
                 {props.selectable ?
-                    <ActiveButton
-                        name="Selection Settings"
-                        active={showSelectionMenu}
-                        action={toggleShown}
-                    /> : null}
+                    <ActiveButton name="Selection Settings" active={showSelectionMenu} action={toggleShown} />
+                    : null}
 
-                <ActiveButton
-                    name="Export Matrix"
-                    active={showExport}
-                    action={toggleShown}
-                />
+                <ActiveButton name="Export Matrix" active={showExport} action={toggleShown} />
 
-                <ActiveButton
-                    name="Import Matrix From Text"
-                    active={showImport}
-                    action={toggleShown}
+                <ActiveButton name="Import Matrix From Text" active={showImport} action={toggleShown}
                 />
 
                 <div className={styles.undoRedo}>
-                    <BasicActionButton disabled = {!props.canUndo} name = "↺" action = {props.undo} />   
-                    <BasicActionButton disabled = {!props.canRedo} name = "↻" action = {props.redo} />
+                    <BasicActionButton buttonStyle={"primary"} disabled={!props.canUndo} name="↺" action={props.undo} />
+                    <BasicActionButton buttonStyle={"primary"} disabled={!props.canRedo} name="↻" action={props.redo} />
                 </div>
+
             </div>
 
 
@@ -171,10 +163,10 @@ const MatrixEditor = (props) => {
                     name={props.name}
                     matrix={props.matrix}
                     updateMatrix={props.updateMatrix}
-                    close={() => { setShowActions(false)}}
+                    close={() => { setShowActions(false) }}
                     active={showActions}
-                    optionsBarRef = {optionsBarRef}
-                    showFullInput = {showFullInput}
+                    optionsBarRef={optionsBarRef}
+                    showFullInput={showFullInput}
 
                 />
                 : null}
@@ -183,14 +175,14 @@ const MatrixEditor = (props) => {
                 <MatrixMath
                     matrices={props.matrices}
                     matrix={props.matrix}
-                    name = {props.name}
+                    name={props.name}
                     toStringUpdateMatrix={toStringUpdateMatrix}
                     sparseVal={props.sparseVal}
-                    close={() => { setShowMath(false)}}
+                    close={() => { setShowMath(false) }}
                     active={showMath}
-                    rounding = {props.rounding}
-                    optionsBarRef = {optionsBarRef}
-                    showFullInput = {showFullInput}
+                    rounding={props.rounding}
+                    optionsBarRef={optionsBarRef}
+                    showFullInput={showFullInput}
                 />
                 : null}
 
@@ -206,10 +198,11 @@ const MatrixEditor = (props) => {
                     updateBoxesSelected={updateBoxesSelected}
                     close={() => { setShowSelectionMenu(false) }}
                     active={showSelectionMenu}
-                    optionsBarRef = {optionsBarRef}
-                    showFullInput = {showFullInput}
-                /> : null
-            }
+                    optionsBarRef={optionsBarRef}
+                    showFullInput={showFullInput}
+                />
+                : null}
+
             {showImport ?
                 <TextImport
                     updateMatrix={props.updateMatrix}
@@ -217,8 +210,8 @@ const MatrixEditor = (props) => {
                     currentName={props.name}
                     close={() => { setShowImport(false) }}
                     active={showImport}
-                    optionsBarRef = {optionsBarRef}
-                    showFullInput = {showFullInput}
+                    optionsBarRef={optionsBarRef}
+                    showFullInput={showFullInput}
 
                 />
                 : null}
@@ -229,13 +222,13 @@ const MatrixEditor = (props) => {
                     sparseVal={props.sparseVal}
                     close={() => { setShowExport(false) }}
                     active={showExport}
-                    optionsBarRef = {optionsBarRef}
-                    showFullInput = {showFullInput}
+                    optionsBarRef={optionsBarRef}
+                    showFullInput={showFullInput}
                 />
                 : null}
 
 
-                
+
             {(props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
                 <Table
                     mirror={props.mirror}
@@ -243,18 +236,14 @@ const MatrixEditor = (props) => {
                     name={props.name}
                     matrix={props.matrix}
                     updateMatrix={props.updateMatrix}
-
                     selectable={props.selectable}
-                    darkModeTable = {props.darkModeTable}
-
+                    darkModeTable={props.darkModeTable}
                     boxSelectionStart={boxSelectionStart}
                     boxSelectionEnd={boxSelectionEnd}
                     updateBoxesSelected={updateBoxesSelected}
-                    
                     mouseDown={mouseDown}
                     editSelection={props.editSelection}
-                    
-                    firstVisit = {props.firstVisit}
+                    firstVisit={props.firstVisit}
                 />
                 : <div className={styles.bigMatrixInfo}>
                     Matrices larger than 50 x 50 are too big to be displayed<br />
@@ -262,7 +251,7 @@ const MatrixEditor = (props) => {
                     Use Export Matrix to view the matrix
                 </div>}
 
-        {fullInput}
+            {fullInput}
 
         </div>)
 

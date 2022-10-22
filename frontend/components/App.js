@@ -8,21 +8,22 @@ import BasicActionButton from './buttons/BasicActionButton.js';
 import TextImport from './editor/matrixTools/TextImport.js';
 
 import { generateUniqueName } from './matrixFunctions.js';
+import FloatingMenu from './selectors/FloatingMenu.js';
 
 const App = () => {
     const [matrices, setMatrices] = useState(null);
     const [selection, setSelection] = useState("0"); //0 for no selection
-    
+
     const [mirror, setMirror] = useState(false);
     const [selectable, setSelectable] = useState(true);
     const [numbersOnly, setNumbersOnly] = useState(false);
-    const [sparseVal, setSparseVal] = useState("0"); 
+    const [sparseVal, setSparseVal] = useState("0");
     const [rounding, setRounding] = useState(8);
     const [darkModeTable, setDarkModeTable] = useState(false);
 
     const [username, setUsername] = useState(null);
     const [saveToLocal, setSaveToLocal] = useState(false);
-    
+
     const [showMerge, setShowMerge] = useState(null);
     const [userMatrices, setUserMatrices] = useState(null);
 
@@ -43,18 +44,18 @@ const App = () => {
         window.addEventListener("beforeunload", (e) => {
             if (saving.current)
                 e.returnValue = "";
-        }); 
-        
+        });
+
         const username = localStorage.getItem("username");
         setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
-        
+
         if (username !== null) {
             setUsername(username);
         } else if (localStorage.getItem("matrices") !== null) {
             loadFromLocalStorage();
             updateParameter("Show Merge", false);
         } else {
-            setMatrices( {
+            setMatrices({
                 "A": [["", ""], ["", ""]]
             });
             setSelection("A");
@@ -64,17 +65,17 @@ const App = () => {
         if (window.localStorage.getItem("First Visit") === null) {
             setFirstVisit(true);
             window.localStorage.setItem("First Visit", "0");
-        }     
+        }
 
-    // eslint-disable-next-line
+        // eslint-disable-next-line
     }, []);
 
     //send updates to server
     useEffect(() => {
         if (!showMerge && username)
             updateAccountMatrices();
-       
-    // eslint-disable-next-line
+
+        // eslint-disable-next-line
     }, [matrices]); //only need to send if matrices change
 
     //if a new user is logged in, get their matrices
@@ -83,16 +84,16 @@ const App = () => {
             getMatrixData();
             getMatrixSettings();
         }
-      
-    // eslint-disable-next-line
+
+        // eslint-disable-next-line
     }, [username])
 
     useEffect(() => { //save matrices to local storage
         if (matrices && saveToLocal)
-            saveToLocalStorage();   
-    // eslint-disable-next-line
+            saveToLocalStorage();
+        // eslint-disable-next-line
     }, [matrices, saveToLocal])
-    
+
     useEffect(() => { //update settings
         if (saveToLocal) {
             window.localStorage.setItem("Empty Element", sparseVal);
@@ -106,7 +107,7 @@ const App = () => {
         if (username)
             updateMatrixSettings();
     }, [sparseVal, mirror, selectable, numbersOnly, rounding, darkModeTable, username, saveToLocal]);
-    
+
 
 
 
@@ -125,7 +126,7 @@ const App = () => {
             if (matrices === null)
                 throw new Error("No matrices found in local storage");
 
-            const parsed = JSON.parse(matrices);            
+            const parsed = JSON.parse(matrices);
             if (parsed.length === 0) { //if {} is saved, it will be parsed to []
                 throw new Error("No matrices found in local storage");
             } else {
@@ -150,15 +151,15 @@ const App = () => {
                 else
                     setSelectable(disableSelection === "0");
             }
-              
+
         } catch (error) {
             console.log(error)
             localStorage.removeItem("matrices");
 
-            setMatrices( {
+            setMatrices({
                 "A": [["", ""], ["", ""]]
             });;
-            setSelection("A");  
+            setSelection("A");
 
             setMirror(false);
             setSelectable(true);
@@ -175,9 +176,9 @@ const App = () => {
 
         if (username)
             localStorage.setItem("username", username);
-        else 
+        else
             localStorage.removeItem("username");
-        
+
         if (access_token && refresh_token) {
             localStorage.setItem("access_token", access_token);
             localStorage.setItem("refresh_token", refresh_token);
@@ -190,18 +191,18 @@ const App = () => {
         if (!username && !access_token && !refresh_token) {
             setUndoStack([]);
             setRedoStack([]);
-            loadFromLocalStorage(); 
+            loadFromLocalStorage();
         }
 
     }
 
-    const getMatrixData = async () => {        
+    const getMatrixData = async () => {
         const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/matrix`;
         const response = await fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " +  localStorage.getItem("access_token")
+                "Authorization": "Bearer " + localStorage.getItem("access_token")
             }
         }).then((response) => {
             if (response.status === 401) { //invalid access token
@@ -216,17 +217,17 @@ const App = () => {
         });
 
         if (response === null) {
-            if (await refreshTokens()) { 
+            if (await refreshTokens()) {
                 return getMatrixData(); //retry
             } else { //refresh token invalid
-                console.log("Unauthorized. Refresh token invalid."); 
+                console.log("Unauthorized. Refresh token invalid.");
                 return;
             }
         }
 
-        
+
         const userMatrices = JSON.parse(response["matrix_data"]); //matrices saved in database
-        var localMatricesStr = localStorage.getItem("matrices"); 
+        var localMatricesStr = localStorage.getItem("matrices");
 
         if (localMatricesStr === null) { //saving to local storage is disabled so no matrices were found
             if (matrices === null) //page is loading, so its null
@@ -237,27 +238,27 @@ const App = () => {
 
         //if the local matries are default, trivial, or the same as the user's matrices, merging is unnecessary
         const mergeUnnecessary = (localMatricesStr === null ||
-                                localMatricesStr === "{}" ||
-                                localMatricesStr === JSON.stringify({"A": [["", ""], ["", ""]]}) ||
-                                localMatricesStr === response["matrix_data"])
-        
-        if (mergeUnnecessary)  { 
+            localMatricesStr === "{}" ||
+            localMatricesStr === JSON.stringify({ "A": [["", ""], ["", ""]] }) ||
+            localMatricesStr === response["matrix_data"])
+
+        if (mergeUnnecessary) {
             updateParameter("Show Merge", false);
             setMatrices(userMatrices)
             if (Object.keys(userMatrices).length > 0)
                 setSelection(Object.keys(userMatrices)[0])
             else
                 setSelection("0");
-           
+
         } else {
             updateParameter("Show Merge", true);
             setUserMatrices(userMatrices);
-            
+
             if (!matrices || saveToLocal) //if the page is loading, load from local storage if enabled.
                 loadFromLocalStorage();
             //otherwise, the merge request was made after the page finished laoding, so don't re load from local storage
 
-           
+
         }
     }
 
@@ -274,9 +275,9 @@ const App = () => {
                 matrix_data: JSON.stringify(matrices)
             })
         }).then((response) => {
-           if (response.status === 413) { //data too large
-               if (!dataTooLarge) { //only show the alert the first time
-                   alert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.");
+            if (response.status === 413) { //data too large
+                if (!dataTooLarge) { //only show the alert the first time
+                    alert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.");
                 }
                 setDataTooLarge(true)
                 return response.json();
@@ -290,12 +291,12 @@ const App = () => {
                 return response.json()
             }
 
-        }).catch (error => {
+        }).catch(error => {
             console.log(error)
         })
 
-        if (response === null) { 
-            if (await refreshTokens()) { 
+        if (response === null) {
+            if (await refreshTokens()) {
                 return updateAccountMatrices(); //retry
             } else { //refresh token invalid
                 console.log("Unauthorized. Refresh token invalid.");
@@ -320,7 +321,7 @@ const App = () => {
             }
 
             return response.json()
-        }).catch (error => {
+        }).catch(error => {
             console.log(error)
         })
 
@@ -352,7 +353,7 @@ const App = () => {
                 return response.json()
             }
 
-        }).catch (error => {
+        }).catch(error => {
             console.log(error)
         })
 
@@ -363,7 +364,7 @@ const App = () => {
                 console.log("Unauthorized. Refresh token invalid.");
                 return;
             }
-        }   
+        }
 
         if (response) {
             const settings = JSON.parse(response["settings"]);
@@ -374,7 +375,7 @@ const App = () => {
             setSparseVal(settings["sparseVal"]);
             setRounding(settings["rounding"]);
         }
-        
+
     }
 
     const updateMatrixSettings = async () => {
@@ -402,7 +403,7 @@ const App = () => {
                 return response.json()
             }
 
-        }).catch (error => {
+        }).catch(error => {
             console.log(error)
         })
 
@@ -442,10 +443,10 @@ const App = () => {
             setUndoStack([...undoStack, current]);
             setRedoStack([]);
         }
-        
+
         setMatrices(updated);
     }
-   
+
     //used for updating state and local storage
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
@@ -454,20 +455,20 @@ const App = () => {
                 break;
             case "Mirror Inputs":
                 setMirror(updated);
-                break; 
+                break;
             case "Disable Selection":
                 setSelectable(!updated);
                 break;
             case "Save To Local":
                 setSaveToLocal(updated);
-                window.localStorage.setItem("Save To Local", updated ? "1" : "0");               
+                window.localStorage.setItem("Save To Local", updated ? "1" : "0");
 
                 if (!updated)
                     localStorage.removeItem("matrices");
-               
+
                 break;
             case "Numbers Only Input":
-                setNumbersOnly(updated);    
+                setNumbersOnly(updated);
                 break;
             case "Decimals To Round":
                 if (updated === "") {
@@ -483,51 +484,51 @@ const App = () => {
                 break;
             case "Dark Mode Table":
                 setDarkModeTable(updated);
-                
+
                 break;
             case "Show Merge":
                 setShowMerge(updated);
                 if (saveToLocal)
                     window.localStorage.setItem("Show Merge", updated ? "1" : "0");
-               
+
                 break;
 
-            default: 
+            default:
                 console.log("Invalid?:" + parameterName);
-  
+
         }
-    
+
     }
 
     //functions related to matrix editing
-    const renameMatrix = (oldName, newName) => {     
+    const renameMatrix = (oldName, newName) => {
         if (newName in matrices)
             return false;
-        
-        const tempObj = {...matrices};
+
+        const tempObj = { ...matrices };
         //rename and delete old one
-        tempObj[newName] = tempObj[oldName]; 
+        tempObj[newName] = tempObj[oldName];
         delete tempObj[oldName];
 
         updateMatrices(tempObj);
 
         return true;
     }
-    
+
     const updateMatrix = (name = undefined, matrix = undefined, switchTo = false) => {
-        const tempObj = {...matrices};
+        const tempObj = { ...matrices };
         if (name === undefined) { //no name, generate one
             name = generateUniqueName(matrices);
         }
-        
+
         if (matrix === undefined) { //no matrix, generate 1 x 1 one
             tempObj[name] = [["", ""], ["", ""]];
         } else {
             tempObj[name] = matrix;
         }
-        
+
         updateMatrices(tempObj);
-        
+
         if (switchTo)
             setSelection(name);
 
@@ -535,11 +536,11 @@ const App = () => {
     }
 
     const deleteMatrix = (name) => {
-        const tempObj = {...matrices};
+        const tempObj = { ...matrices };
         delete tempObj[name];
         updateMatrices(tempObj);
     }
-       
+
 
     const deleteSelectedMatrices = (matricesToDelete) => {
         if (matricesToDelete.length === 0) { //if input is empty, delete all
@@ -552,7 +553,7 @@ const App = () => {
             }
             return false;
         } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
-            const tempObj = {...matrices};
+            const tempObj = { ...matrices };
 
             for (let i = 0; i < matricesToDelete.length; i++) {
                 if (selection === matricesToDelete[i])
@@ -571,101 +572,116 @@ const App = () => {
 
 
 
-       
+
     if (!matrices)
         return <div />
-        
+
     return (
-        <div> 
-            <Navigation 
-                matrices = {matrices} 
-                selection = {selection}
-                matrix = {matrices[selection]}
+        <div>
+            <Navigation
+                matrices={matrices}
 
-                updateParameter = {updateParameter}
-                setSelection = {setSelection}
-                updateMatrices = {updateMatrices}
+                updateParameter={updateParameter}
+                setSelection={setSelection}
+                updateMatrices={updateMatrices}
 
-                mirror = {mirror}
-                numbersOnly = {numbersOnly}
-                sparseVal = {sparseVal}
-                selectable = {selectable}
-                rounding = {rounding}
-                darkModeTable = {darkModeTable}
-                updateMatrixSettings = {updateMatrixSettings}
+                updateMatrixSettings={updateMatrixSettings}
 
-                updateMatrix = {updateMatrix}
-                deleteMatrix = {deleteMatrix}
-                renameMatrix = {renameMatrix}
-                saveToLocalStorage = {saveToLocalStorage}
-                deleteSelectedMatrices = {deleteSelectedMatrices}
+                saveToLocalStorage={saveToLocalStorage}
 
-                username = {username}
-                updateUserInfo = {updateUserInfo}
-                refreshTokens = {refreshTokens}
-                saveToLocal = {saveToLocal}
-                setSaveToLocal = {setSaveToLocal}
+                username={username}
+                updateUserInfo={updateUserInfo}
+                refreshTokens={refreshTokens}
+                saveToLocal={saveToLocal}
+                setSaveToLocal={setSaveToLocal}
 
-                showMerge = {showMerge}
-                setShowMerge = {setShowMerge}
-                userMatrices = {userMatrices}
-                dataTooLarge = {dataTooLarge}
-                
+                showMerge={showMerge}
+                setShowMerge={setShowMerge}
+                userMatrices={userMatrices}
+                dataTooLarge={dataTooLarge}
 
-                firstVisit = {firstVisit}
+                firstVisit={firstVisit}
             />
 
-        
 
-            {(selection in matrices) ? 
-            <MatrixEditor
-                matrix = {matrices[selection]} 
-                matrices = {matrices}
-                name = {selection} 
-                
-                updateParameter = {updateParameter}
-                mirror = {mirror}
-                sparseVal = {sparseVal}
-                numbersOnly = {numbersOnly}
-                selectable = {selectable}
+            <FloatingMenu
+                matrices={matrices}
+                selection={selection}
+                matrix={matrices[selection]}
 
-                updateMatrix = {updateMatrix}
+                updateParameter={updateParameter}
+                setSelection={setSelection}
+                updateMatrices={updateMatrices}
+                deleteSelectedMatrices={deleteSelectedMatrices}
 
-                firstVisit = {firstVisit}
-                rounding = {rounding}
+                updateMatrixSettings={updateMatrixSettings}
 
-                darkModeTable = {darkModeTable}
+                updateMatrix={updateMatrix}
+                deleteMatrix={deleteMatrix}
+                renameMatrix={renameMatrix}
 
-                undo = {undo}
-                canUndo = {undoStack.length > 0}
-                redo = {redo} 
-                canRedo = {redoStack.length > 0}
-                                
-            /> 
-            : 
-            <div ref = {optionsBarRef} className={matrixEditorStyles.optionsBar}>
-                 <ActiveButton
-                    name="Import Matrix From Text"
-                    active={showImport}
-                    action={() => {setShowImport(!showImport)}}
-                />
+                mirror={mirror}
+                sparseVal={sparseVal}
+                numbersOnly={numbersOnly}
+                selectable={selectable}
+                rounding={rounding}
 
-                {showImport ?
-                <TextImport
+            />
+
+
+            {(selection in matrices) ?
+                <MatrixEditor
+                matrices={matrices}
+                    matrix={matrices[selection]}
+                    name={selection}
+                    setSelection={setSelection}
+
+                    deleteMatrix={deleteMatrix}
+                    renameMatrix={renameMatrix}
+
+                    updateParameter={updateParameter}
+                    mirror={mirror}
+                    sparseVal={sparseVal}
+                    numbersOnly={numbersOnly}
+                    selectable={selectable}
+
                     updateMatrix={updateMatrix}
-                    matrices={matrices}
-                    currentName={null}
-                    close={() => { setShowImport(false) }}
-                    active={showImport}
-                    optionsBarRef = {optionsBarRef}
+
+                    firstVisit={firstVisit}
+                    rounding={rounding}
+
+                    darkModeTable={darkModeTable}
+
+                    undo={undo}
+                    canUndo={undoStack.length > 0}
+                    redo={redo}
+                    canRedo={redoStack.length > 0}
+
                 />
-                : null}
+                :
+                <div ref={optionsBarRef} className={matrixEditorStyles.optionsBar}>
+                    <ActiveButton
+                        name="Import Matrix From Text"
+                        active={showImport}
+                        action={() => { setShowImport(!showImport) }}
+                    />
 
-                <BasicActionButton disabled = {undoStack.length === 0} name = "↺" action = {undo} />   
-                <BasicActionButton disabled = {redoStack.length === 0} name = "↻" action = {redo} />
+                    {showImport ?
+                        <TextImport
+                            updateMatrix={updateMatrix}
+                            matrices={matrices}
+                            currentName={null}
+                            close={() => { setShowImport(false) }}
+                            active={showImport}
+                            optionsBarRef={optionsBarRef}
+                        />
+                        : null}
 
-            </div>} 
-    
+                    <BasicActionButton buttonStyle={"primary"} disabled={undoStack.length === 0} name="↺" action={undo} />
+                    <BasicActionButton buttonStyle={"primary"} disabled={redoStack.length === 0} name="↻" action={redo} />
+
+                </div>}
+
 
         </div>);
 

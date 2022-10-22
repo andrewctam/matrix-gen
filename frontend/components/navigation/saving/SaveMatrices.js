@@ -9,32 +9,32 @@ const SaveMatrices = (props) => {
     const [showLocalStorageWarning, setShowLocalStorageWarning] = useState(false);
 
     return <div className={styles.saveMatrices}>
-       
+
         <div className="row">
             <div className="col-sm-6">
                 <h1>Save Matrices Online</h1>
-                    {props.username ?
-                    <UserPanel 
+                {props.username ?
+                    <UserPanel
                         username={props.username}
-                        showWelcome = {showWelcome}
-                        setShowWelcome = {setShowWelcome}
-                        showMerge = {props.showMerge}
+                        showWelcome={showWelcome}
+                        setShowWelcome={setShowWelcome}
+                        showMerge={props.showMerge}
                         matrices={props.matrices}
                         userMatrices={props.userMatrices}
                         updateMatrices={props.updateMatrices}
                         setSelection={props.setSelection}
                         updateParameter={props.updateParameter}
-                        updateUserInfo = {props.updateUserInfo}
-                        refreshTokens = {props.refreshTokens}
+                        updateUserInfo={props.updateUserInfo}
+                        refreshTokens={props.refreshTokens}
                     />
                     :
                     <LoginForm
-                        matrices = {props.matrices}
-                        settings = {props.settings}
-                        updateUserInfo = {props.updateUserInfo}
-                        setShowWelcome = {setShowWelcome}
+                        matrices={props.matrices}
+                        settings={props.settings}
+                        updateUserInfo={props.updateUserInfo}
+                        setShowWelcome={setShowWelcome}
 
-                   />
+                    />
                 }
 
 
@@ -47,10 +47,10 @@ const SaveMatrices = (props) => {
                     <label className="form-check-label" htmlFor={"saveToLocalSwitch"}>Save To Browser Storage</label>
 
                     <input className="form-check-input pull-right"
-                        onChange={() => { 
-                            props.updateParameter("Save To Local", !props.saveToLocal) 
+                        onChange={() => {
+                            props.updateParameter("Save To Local", !props.saveToLocal)
                             if (props.saveToLocal) {//if currently saving to local (which will become false after this)
-                                setShowLocalStorageWarning(true); 
+                                setShowLocalStorageWarning(true);
 
                                 localStorage.removeItem("matrices");
 
@@ -62,7 +62,7 @@ const SaveMatrices = (props) => {
                                 localStorage.removeItem("Mirror Inputs")
 
 
-                                localStorage.setItem("First Visit" , "0")
+                                localStorage.setItem("First Visit", "0")
                             }
                         }}
                         checked={props.saveToLocal}
@@ -72,19 +72,22 @@ const SaveMatrices = (props) => {
                     />
                 </div>
                 <p>{"If this option is enabled, your matrices will automatically be saved to your browser's local storage after making any edits, even when logged out."}</p>
-                
-                {showLocalStorageWarning ? 
-                <p className = {styles.localWarning}>WARNING: Your matrices in local storage will be deleted once you refresh this page.</p>
-                : null}
+
+                {showLocalStorageWarning ?
+                    <p className={styles.localWarning}>WARNING: Your matrices in local storage will be deleted once you refresh this page.</p>
+                    : null}
+
+
             </div>
+
+            <button
+                onClick={props.closeSaveMenu}
+                className={"btn btn-danger " + styles.closeButton}>
+                {"Close"}
+            </button>
 
         </div>
 
-        <button
-            onClick={props.closeSaveMenu}
-            className={"btn btn-danger " + styles.closeButton}>
-            {"Close"}
-        </button>
 
 
     </div>

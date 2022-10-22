@@ -474,20 +474,20 @@ const MatrixMath = (props) => {
         
 
                 <ul>
-                    <BasicActionButton name = "RREF" action = {() => {
+                    <BasicActionButton buttonStyle = {"primary"} name = "RREF" action = {() => {
                         props.toStringUpdateMatrix(newName, gaussian(numMatrix))
                     }}/>
                     
                     {isSquare && determinant !== 0 ?
                     <>
-                        <BasicActionButton name = "L" action = {() => {
+                        <BasicActionButton buttonStyle = {"primary"} name = "L" action = {() => {
                             props.toStringUpdateMatrix(newName, L)
                         }}/>
-                        <BasicActionButton name = "U" action = {() => {
+                        <BasicActionButton buttonStyle = {"primary"} name = "U" action = {() => {
                             props.toStringUpdateMatrix(newName, U);
                         }}/>
 
-                        <BasicActionButton name = "Inverse" action = {() => {
+                        <BasicActionButton buttonStyle = {"primary"} name = "Inverse" action = {() => {
                             props.toStringUpdateMatrix(newName, inverse(numMatrix))
                         }}/>
                     </>

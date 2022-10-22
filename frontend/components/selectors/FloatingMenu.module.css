@@ -1,0 +1,105 @@
+.floatingMenu {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    
+    align-content: space-between;
+}
+
+.matrices {
+    position: sticky;
+    top: 10px;
+    left: 10px;
+  }
+
+.selectors {
+    width: 40vw;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+    background-color: rgba(62, 63, 65, 0.95);
+    border-radius: 10px;
+    border-bottom-left-radius: 0px;
+    padding: 20px;
+
+}
+
+
+@media screen and (max-width: 1000px) {
+    .selectors {
+        width: 60vw;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .selectors {
+        width: 80vw;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .selectors {
+        width: 95vw;
+    }
+
+}
+
+
+
+
+.toggleSelectors {
+    padding: 10px;
+    background-color: rgba(62, 63, 65);
+    width: fit-content;
+    border-radius: 10px;
+    
+}
+
+.selectors>button {
+    width: fit-content;
+}
+
+
+
+.buttons {
+    text-align: center;
+  }
+  
+  
+.settings {
+    position: sticky;
+    top: 10px;
+    right: 10px;
+}
+
+.toggleSettings {
+    padding: 20px;
+    border-radius: 10px;
+    width: fit-content;
+    height: fit-content;
+    background-color: rgb(62, 63, 65);
+    padding: 10px;
+}
+
+.settingsMenu {
+    background-color: rgba(62, 63, 65, 0.95);
+    width: fit-content;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    border-bottom-right-radius: 0px;
+}
+
+.settingsMenu>div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settingsMenu>div>input {
+    margin-left: 5px;
+}

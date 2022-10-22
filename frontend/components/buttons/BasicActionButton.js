@@ -1,7 +1,7 @@
 
 const BasicActionButton = (props) => {
     return <button
-            className="btn btn-primary inline"
+            className={`btn btn-${props.buttonStyle} inline`}
             onClick={props.action}
             disabled={props.disabled}
         >

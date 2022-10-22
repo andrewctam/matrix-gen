@@ -3,19 +3,16 @@
   margin-top: 0px;
   margin-bottom: 1px;
   width: 100%;
+  height: fit-content;
+  padding-top: 10px;
+  padding-bottom: 10px;
 
 }
 
-
-@media (max-width: 576px) {
-  .navigateBar {
-    grid-template-columns: 1fr;
-    grid-template-rows: 3;
-    grid-template-areas: "col-1" "col-3" "col-2";
-
-  }
-
+.navigation {
+  position: relative
 }
+
 
 .mainBar {
   margin-top: 10px;
@@ -23,14 +20,7 @@
 
 .generalTools {
   grid-area: col-1;
-  overflow: auto;
-  
-}
-
-.selectors {
-  grid-area: col-2;
-  overflow: auto;
-
+  overflow: auto; 
 }
 
 .matrixTools {
@@ -39,14 +29,6 @@
 
 }
 
-
-.settingsMenu {
-  background-color: rgb(88, 91, 96);
-  border-radius: 15px;
-  width: 95%;
-  margin: 2.5%;
-  padding: 10px;
-}
 
 .toolToggle {
   display: block;
@@ -65,11 +47,26 @@
   height: fit-content;
   background-color: rgb(47, 45, 45);
   border-bottom: 1px solid rgb(39, 37, 37);
+  cursor: grab;
+  display: flex;
+  justify-content: center;
+  
 }
 
 .savingInfo {
   text-align: center;
   padding: 3px;
-  margin: 0px;
+  margin-left: 3px;
   height: fit-content;  
+  display: inline-block;
 }
+
+.toggleTutorial {
+  position: absolute;
+  padding-left: 10px;
+  padding-right: 10px;
+  top: 5px;
+  right: 10px;
+}
+
+

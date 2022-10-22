@@ -90,12 +90,14 @@ const MatrixActions = (props) => {
         style={{ "bottom": props.showFullInput ? "28px" : "0" }}>
         <div className="col-sm-4">
             <BasicActionButton
+                buttonStyle = {"primary"} 
                 action={() => {
                     props.updateMatrix(props.name, transpose(props.matrix))
                 }}
                 name={"Transpose"}
             />
             <BasicActionButton
+                buttonStyle = {"primary"} 
                 action={() => {
                     props.updateMatrix(props.name, rotate90Degrees(props.matrix)) //false means cols to rows
                 }}
@@ -103,6 +105,7 @@ const MatrixActions = (props) => {
             />
 
             <BasicActionButton
+                buttonStyle = {"primary"} 
                 action={() => {
                     props.updateMatrix(props.name, shuffle(props.matrix)) //false means cols to rows
                 }}
@@ -110,12 +113,14 @@ const MatrixActions = (props) => {
             />
 
             <BasicActionButton
+                buttonStyle = {"primary"} 
                 action={() => {
                     props.updateMatrix(props.name, mirrorRowsCols(props.matrix, true))
                 }}
                 name={"Mirror Rows Across Diagonal"}
             />
             <BasicActionButton
+                buttonStyle = {"primary"} 
                 action={() => {
                     props.updateMatrix(props.name, mirrorRowsCols(props.matrix, false)) //false means cols to rows
                 }}

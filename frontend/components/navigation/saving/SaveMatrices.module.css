@@ -2,9 +2,11 @@
     background-color: rgb(88, 91, 96);
     border-radius: 15px;
     width: 95%;
+    height: fit-content;
     margin: 2.5%;
     margin-top: 1%;
-    padding: 20px;
+    padding: 40px;
+    position: relative;
 }
 
 .loginForm {
@@ -53,7 +55,9 @@
 
 
 .closeButton {
-    float: right;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
     width: fit-content;
     height: fit-content;
 }

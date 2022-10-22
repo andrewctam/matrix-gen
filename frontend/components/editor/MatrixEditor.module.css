@@ -13,7 +13,9 @@
   margin-bottom: 10px;
   border-radius: 10px;
   text-align: center;
+
 }
+
 .undoRedo {
   display: inline-block;
 }
@@ -29,7 +31,7 @@
   background-color: rgba(48, 50, 51, 0.49);
   border-radius: 10px;
 
-  
+
 }
 
 .fullInput {

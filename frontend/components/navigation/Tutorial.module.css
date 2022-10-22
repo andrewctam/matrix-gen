@@ -5,10 +5,13 @@
     margin: 2.5%;
     margin-top: 1%;
     padding: 20px;
+    position: relative;
 }
 
 .closeTutorial {
-    float: right;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
     width: fit-content;
     height: fit-content;
 }
