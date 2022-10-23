@@ -7,13 +7,12 @@
 }
 
 .selectors {
-    width: 42vw;
+    width: 35vw;
     overflow: auto;
     background-color: rgba(62, 63, 65, 0.95);
     border-radius: 10px;
     padding: 10px;
     position: absolute;
-    z-index: 3;
     cursor: grab;
 }
 
@@ -81,7 +80,6 @@
     flex-direction: column;
     border-radius: 15px;
     width: 240px;
-    z-index: 4;
     cursor: grab;
 
 }
@@ -121,6 +119,6 @@
     position: sticky;
 }
 
-.undoRedo {
+.pair {
     display: inline-block;
 }

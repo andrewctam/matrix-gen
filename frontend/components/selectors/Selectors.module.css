@@ -3,9 +3,9 @@
     height: 175px;
     max-height: fit-content;
     background-color: rgba(255, 255, 255, 0.1);
-    margin-left: 5%;
-    margin-right: 5%;
-    width: 90%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    width: 95%;
     overflow-y: auto;
     margin-bottom: 10px;
 
@@ -65,28 +65,23 @@
 .nameSearchBar {
     width: 40%;
     margin-left: 10%;
-    margin-bottom: 3px;
-    margin-top: 5px;
-    border-radius: 5px;
+    margin: 5px;
     padding: 5px;
-    background-color: rgba(54, 51, 51, 0.5)
+    background-color: rgba(93, 89, 89, 0.75);
+    font-size: small;
+
 }
 
 .sizeSearchBar {
     width: 40%;
     margin-right: 10%;
-    margin-bottom: 3px;
-    margin-top: 5px;
-    border-radius: 5px;
+    margin: 5px;
     padding: 5px;
-    background-color: rgba(54, 51, 51, 0.5)
+    background-color: rgba(93, 89, 89, 0.75);
+    font-size: small;
+
 }
 
-@media screen and (max-width: 1133px) {
-    .sizeSearchBar, .nameSearchBar {
-        font-size: small;
-    }
-}
 
 .nameSearchBar::placeholder, .sizeSearchBar::placeholder {
     color: rgb(255, 255, 255);

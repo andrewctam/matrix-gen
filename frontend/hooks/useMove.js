@@ -37,7 +37,7 @@ const useMove = (element, relElement) => {
             const newY = elementStartY.current + e.clientY - mouseStartY.current //element start + deltaY
 
             setX(Math.max(0, Math.min(newX, document.documentElement.clientWidth - element.current.offsetWidth))); //exclude 
-            setY(Math.max(0, Math.min(newY, window.innerHeight - element.current.offsetHeight)));
+            setY(Math.max(0, Math.min(newY, window.innerHeight - element.current.offsetHeight - 31)));
         }
     }
 
@@ -45,8 +45,7 @@ const useMove = (element, relElement) => {
         if (relElement.current) {
             const rect = relElement.current.getBoundingClientRect();
             setX(rect.left - 10);
-            setY(rect.top + rect.height / 2 - 2);
-            
+            setY(2 * rect.height);
         }
     }, [relElement, relElement.current, element, element.current]) //reset position when opened/closed
     

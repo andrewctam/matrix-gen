@@ -25,20 +25,20 @@ const FloatingMenu = (props) => {
     const [selectorsX, selectorsY] = useMove(selectors, selectorsToggle);
     const [settingsX, settingsY] = useMove(settings, settingsToggle);
 
-
+    const [lastClicked, setLastClicked] = useState(null);
     return (<div className={styles.floatingMenu}>
         <div className={styles.bar}>
             <BasicActionButton
                 innerRef={selectorsToggle}
                 name={"Matrices"} buttonStyle={showSelectors ? "info" : "primary"}
-                action={() => { setShowSelectors(!showSelectors) }}
+                action={() => {setShowSelectors(!showSelectors); }}
             />
             <BasicActionButton
                 innerRef={settingsToggle}
                 name={"Settings"} buttonStyle={showSettings ? "info" : "primary"}
-                action={() => { setShowSettings(!showSettings) }}
+                action={() => { setShowSettings(!showSettings); setLastClicked("settings");}}
             />
-            <div className={styles.undoRedo}>
+            <div className={styles.pair}>
                 <BasicActionButton buttonStyle={"primary"} disabled={!props.canUndo} name="↺" action={props.undo} />
                 <BasicActionButton buttonStyle={"primary"} disabled={!props.canRedo} name="↻" action={props.redo} />
             </div>
@@ -65,7 +65,15 @@ const FloatingMenu = (props) => {
         </div>
 
         {showSelectors ?
-            <div className={styles.selectors} style={window.innerWidth < 1133 ? null : { left: selectorsX, top: selectorsY }} ref={selectors}>
+            <div className={styles.selectors} 
+                style={
+                    window.innerWidth < 1133 ? null : { 
+                        left: selectorsX, 
+                        top: selectorsY, 
+                        zIndex: lastClicked === "selectors" ? 5 : 4 
+                }} 
+                ref={selectors}
+                onMouseDown = {() => {setLastClicked("selectors")}}>
                 <MatrixSelector
                     matrices={props.matrices}
                     userMatrices={props.userMatrices}
@@ -80,39 +88,42 @@ const FloatingMenu = (props) => {
                 />
 
                 <div>
-                    <BasicActionButton
-                        key="addButton" name={"New Matrix"} buttonStyle={"success"}
-                        action={() => {
-                            props.updateMatrix(undefined, undefined, true); //generates a new matrix
-                        }}
-                    />
-
-                    {props.selection !== "0" ?
+                    <div className = {styles.pair}>
                         <BasicActionButton
-                            key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${props.selection}`}
-                            action={() => { props.updateMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
-                        : null}
-
-                    {props.selection !== "0" ?
-                        <BasicActionButton
-                            key="deleteButton" buttonStyle={"danger"} name={`Delete ${props.selection}`}
+                            key="addButton" name={"New Matrix"} buttonStyle={"success"}
                             action={() => {
-                                if (props.selection !== "0" && window.confirm(`Are you sure you want to delete ${props.selection}?`)) {
-                                    props.deleteMatrix(props.selection);
-                                    props.setSelection("0");
-                                }
-                            }} />
-                        : null}
+                                props.updateMatrix(undefined, undefined, true); //generates a new matrix
+                            }}
+                        />
+
+                        {props.selection !== "0" ?
+                            <BasicActionButton
+                                key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${props.selection}`}
+                                action={() => { props.updateMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
+                            : null}
+                    </div>
+                    <div className = {styles.pair}>
+                        {props.selection !== "0" ?
+                            <BasicActionButton
+                                key="deleteButton" buttonStyle={"danger"} name={`Delete ${props.selection}`}
+                                action={() => {
+                                    if (props.selection !== "0" && window.confirm(`Are you sure you want to delete ${props.selection}?`)) {
+                                        props.deleteMatrix(props.selection);
+                                        props.setSelection("0");
+                                    }
+                                }} />
+                            : null}
 
 
-                    <BasicActionButton
-                        buttonStyle={"danger"} name={`Delete ${multiSelected.length > 0 ? "Selected" : "All"}`}
-                        disabled={!(props.matrices && Object.keys(props.matrices).length) > 0}
-                        action={() => {
-                            if (props.deleteSelectedMatrices(multiSelected))
-                                setMultiSelected([])
-                        }}
-                    />
+                        <BasicActionButton
+                            buttonStyle={"danger"} name={`Delete ${multiSelected.length > 0 ? "Selected" : "All"}`}
+                            disabled={!(props.matrices && Object.keys(props.matrices).length) > 0}
+                            action={() => {
+                                if (props.deleteSelectedMatrices(multiSelected))
+                                    setMultiSelected([])
+                            }}
+                        />
+                    </div>
                 </div>
             </div> : null}
 
@@ -120,7 +131,15 @@ const FloatingMenu = (props) => {
 
 
         {showSettings ?
-            <div className={styles.settingsMenu} ref={settings} style={window.innerWidth < 1133 ? null : { left: settingsX, top: settingsY }}>
+            <div 
+            className={styles.settingsMenu} 
+            ref={settings}
+            style={window.innerWidth < 1133 ? null : { 
+                left: settingsX,
+                top: settingsY, 
+                zIndex: lastClicked === "settings" ? 5 : 4 }}
+                onMouseDown = {() => {setLastClicked("settings")}}
+                >
                 <ParameterBoxInput isChecked={props.mirror} name={"Mirror Inputs"} updateParameter={props.updateParameter} />
                 <ParameterBoxInput isChecked={!props.selectable} name={"Disable Selection"} updateParameter={props.updateParameter} />
                 <ParameterBoxInput isChecked={props.numbersOnly} name={"Numbers Only Input"} updateParameter={props.updateParameter} />
