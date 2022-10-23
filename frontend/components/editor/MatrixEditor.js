@@ -38,7 +38,7 @@ const MatrixEditor = (props) => {
             return;
         }
 
-        if (!props.selectable)
+        if (props.settings["Disable Selection"])
             return;
 
         if (x1 !== -1 && y1 !== -1)
@@ -52,14 +52,14 @@ const MatrixEditor = (props) => {
                 "x": x2,
                 "y": y2
             });
-    }, [props.selectable]);
+    }, [props.settings["Disable Selection"]]);
 
 
     const toStringUpdateMatrix = (name, matrix) => {
         for (let i = 0; i < matrix.length - 1; i++) {
             for (let j = 0; j < matrix[i].length - 1; j++) {
-                if (props.rounding !== "") {
-                    matrix[i][j] = parseFloat(matrix[i][j].toFixed(props.rounding)).toString(); //round then remove trailing zeros
+                if (props.settings["Decimals To Round"] !== "") {
+                    matrix[i][j] = parseFloat(matrix[i][j].toFixed(props.settings["Decimals To Round"])).toString(); //round then remove trailing zeros
                 } else
                     matrix[i][j] = matrix[i][j].toString();
             }
@@ -90,37 +90,37 @@ const MatrixEditor = (props) => {
         fullInput = null
     }
 
+    const close = () => {
+        props.toolDispatch({"type": "CLOSE"})
+    }
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
-            {props.showActions ?
+            {props.toolActive["Matrix Actions"] ?
                 <MatrixActions
                     name={props.name}
                     matrix={props.matrix}
                     matrixDispatch={props.matrixDispatch}
-                    close={() => { props.setShowActions(false) }}
-                    active={props.showActions}
+                    close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
                 />
                 : null}
 
-            {props.showMath ?
+            {props.toolActive["Matrix Math"] ?
                 <MatrixMath
                     matrices={props.matrices}
                     matrix={props.matrix}
                     name={props.name}
                     toStringUpdateMatrix={toStringUpdateMatrix}
-                    sparseVal={props.sparseVal}
-                    close={() => { props.setShowMath(false) }}
-                    active={props.showMath}
-                    rounding={props.rounding}
+                    settings = {props.settings}
+                    close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
                 />
                 : null}
 
-            {props.selectable && props.showSelectionMenu ?
+            {!props.settings["Disable Selection"] && props.toolActive["Selection"] ?
                 <SelectionMenu
                     matrices={props.matrices}
                     name={props.name}
@@ -130,32 +130,29 @@ const MatrixEditor = (props) => {
                     boxSelectionEnd={boxSelectionEnd}
                     editSelection={props.editSelection}
                     updateBoxesSelected={updateBoxesSelected}
-                    close={() => { props.setShowSelectionMenu(false) }}
-                    active={props.showSelectionMenu}
+                    close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
                 />
                 : null}
 
-            {props.showImport ?
+            {props.toolActive["Import From Text"] ?
                 <TextImport
                     matrixDispatch={props.matrixDispatch}
                     matrices={props.matrices}
                     currentName={props.name}
-                    close={() => { props.setShowImport(false) }}
-                    active={props.showImport}
+                    close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
 
                 />
                 : null}
 
-            {props.showExport ?
+            {props.toolActive["Export Matrix"] ?
                 <MatrixExport
                     matrix={props.matrix}
-                    sparseVal={props.sparseVal}
-                    close={() => { props.setShowExport(false) }}
-                    active={props.showExport}
+                    settings = {props.settings}
+                    close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
                 />
@@ -165,13 +162,10 @@ const MatrixEditor = (props) => {
             {!props.matrix ? null :
             (props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
                 <Table
-                    mirror={props.mirror}
-                    numbersOnly={props.numbersOnly}
+                    settings = {props.settings}
                     name={props.name}
                     matrix={props.matrix}
                     matrixDispatch={props.matrixDispatch}
-                    selectable={props.selectable}
-                    darkModeTable={props.darkModeTable}
                     boxSelectionStart={boxSelectionStart}
                     boxSelectionEnd={boxSelectionEnd}
                     updateBoxesSelected={updateBoxesSelected}

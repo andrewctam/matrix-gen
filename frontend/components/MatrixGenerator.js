@@ -1,44 +1,37 @@
-import { useState } from "react";
+import { useState, useReducer } from "react";
 import FloatingMenu from "./selectors/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
 
 const MatrixGenerator = (props) => {
 
-    const [showActions, setShowActions] = useState(false);
-    const [showExport, setShowExport] = useState(false);
-    const [showMath, setShowMath] = useState(false);
-    const [showImport, setShowImport] = useState(false);
-    const [showSelectionMenu, setShowSelectionMenu] = useState(false);
-
-    
-    const toggleShown = (e) => {
-        setShowImport(false);
-        setShowActions(false);
-        setShowExport(false);
-        setShowMath(false);
-        setShowSelectionMenu(false);
-
-        switch (e.target.id) {
-            case "Matrix Actions":
-                setShowActions(!showActions);
-                break;
-            case "Matrix Math":
-                setShowMath(!showMath);
-                break;
-            case "Import From Text":
-                setShowImport(!showImport);
-                break;
-            case "Export Matrix":
-                setShowExport(!showExport);
-                break;
-            case "Selection":
-                setShowSelectionMenu(!showSelectionMenu);
-                break;
-
-            default: break;
+    const [toolActive, toolDispatch] = useReducer((state, action) => {
+        const disabled = {
+            "Matrix Actions": false,
+            "Export Matrix": false,
+            "Matrix Math": false,
+            "Import From Text": false,
+            "Selection": false
         }
-    }
-    
+
+        switch (action.type) {
+            case "TOGGLE":
+                disabled[action.payload.name] = !state[action.payload.name];
+                return disabled;
+            case "CLOSE":
+                return disabled;
+            default:
+                return state;
+        }
+    }, {
+        "Matrix Actions": false,
+        "Export Matrix": false,
+        "Matrix Math": false,
+        "Import From Text": false,
+        "Selection": false
+    });
+
+
+
     return (<>
         <FloatingMenu
             matrices={props.matrices}
@@ -52,69 +45,37 @@ const MatrixGenerator = (props) => {
 
             updateMatrixSettings={props.updateMatrixSettings}
 
-            matrixDispatch = {props.matrixDispatch}
+            matrixDispatch={props.matrixDispatch}
 
-            toggleShown={toggleShown}
-
-            mirror={props.mirror}
-            sparseVal={props.sparseVal}
-            numbersOnly={props.numbersOnly}
-            selectable={props.selectable}
-            rounding={props.rounding}
-
+            settings={props.settings}
+            settingsDispatch={props.settingsDispatch}
 
             undo={props.undo}
             canUndo={props.canUndo}
             redo={props.redo}
             canRedo={props.canRedo}
 
-            showActions={showActions}
-            setShowActions={setShowActions}
-            showExport={showExport}
-            setShowExport={setShowExport}
-            showMath={showMath}
-            setShowMath={setShowMath}
-            showImport={showImport}
-            setShowImport={setShowImport}
-            showSelectionMenu={showSelectionMenu}
-            setShowSelectionMenu={setShowSelectionMenu}
-            
+            toolActive={toolActive}
+            toolDispatch={toolDispatch}
+
         />
 
-        
+
         <MatrixEditor
             matrices={props.matrices}
             matrix={props.matrix}
             name={props.selection}
             setSelection={props.setSelection}
 
-            updateParameter={props.updateParameter}
-            mirror={props.mirror}
-            sparseVal={props.sparseVal}
-            numbersOnly={props.numbersOnly}
-            selectable={props.selectable}
-
             matrixDispatch={props.matrixDispatch}
 
             firstVisit={props.firstVisit}
-            rounding={props.rounding}
 
-            darkModeTable={props.darkModeTable}
-
-
-            showActions={showActions}
-            setShowActions={setShowActions}
-            showExport={showExport}
-            setShowExport={setShowExport}
-            showMath={showMath}
-            setShowMath={setShowMath}
-            showImport={showImport}
-            setShowImport={setShowImport}
-            showSelectionMenu={showSelectionMenu}
-            setShowSelectionMenu={setShowSelectionMenu}
+            settings={props.settings}
 
 
-
+            toolActive={toolActive}
+            toolDispatch={toolDispatch}
         />
 
     </>)

@@ -262,7 +262,7 @@ const MatrixActions = (props) => {
 
 
 
-        <Toggle toggle={props.close} show={!props.active} />
+        <Toggle toggle={props.close} show={false} />
 
     </div>
 }

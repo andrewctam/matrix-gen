@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
@@ -7,10 +7,16 @@ import styles from "./Navigation.module.css";
 
 
 const Navigation = (props) => {
-    const [showTutorial, setShowTutorial] = useState(props.firstVisit);
+    const [showTutorial, setShowTutorial] = useState(false);
     const [showSaveMenu, setShowSaveMenu] = useState(false);
 
     const [hovering, setHovering] = useState(false);
+
+    useEffect(() => {
+        if (props.firstVisit)
+            setShowTutorial(true);
+            
+    }, [props.firstVisit]);
 
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;
@@ -63,14 +69,7 @@ const Navigation = (props) => {
                         username={props.username}
                         updateUserInfo={props.updateUserInfo}
                         saveToLocal={props.saveToLocal}
-                        settings={JSON.stringify({
-                            mirror: props.mirror ? "1" : "0",
-                            selectable: props.selectable ? "1" : "0",
-                            numbersOnly: props.numbersOnly ? "1" : "0",
-                            darkModeTable: props.darkModeTable ? "1" : "0",
-                            sparseVal: props.sparseVal,
-                            rounding: props.rounding
-                        })}
+                        settings={props.settings}
                         updateParameter={props.updateParameter}
                         matrices={props.matrices}
                         refreshTokens={props.refreshTokens}

@@ -11,7 +11,6 @@ const App = () => {
     const [selection, setSelection] = useState("0"); //0 for no selection
 
     const matrixReducer = (state, action) => {
-
         if (!action.payload.DO_NOT_UPDATE_UNDO_STACK) {
             const current = JSON.stringify(state)
             if (current !== "null") {
@@ -21,7 +20,7 @@ const App = () => {
         }
 
         const tempObj = { ...state };
-        
+
         switch (action.type) {
             case 'UPDATE_ALL':
                 return action.payload.matrices;
@@ -65,15 +64,49 @@ const App = () => {
         }
     }
 
+
     const [matrices, matrixDispatch] = useReducer(matrixReducer, { "A": [["", ""], ["", ""]] });
 
 
-    const [mirror, setMirror] = useState(false);
-    const [selectable, setSelectable] = useState(true);
-    const [numbersOnly, setNumbersOnly] = useState(false);
-    const [sparseVal, setSparseVal] = useState("0");
-    const [rounding, setRounding] = useState(8);
-    const [darkModeTable, setDarkModeTable] = useState(false);
+    const settingsReducer = (state, action) => {
+        switch (action.type) {
+            case 'UPDATE_ALL':
+                return action.payload.settings;
+            case 'UPDATE_SETTING':
+                const tempObj = { ...state };
+                let value = action.payload.value;
+
+                if (action.payload.name === "Decimals to Round") {
+                    if (value === "") {
+                        ; //empty string = no rounding
+                    } else if (/^\d+$/.test(num)) {
+                        let num = parseInt(updated);
+                        if (!isNaN(num)) {
+                            value = Math.max(0, Math.min(num, 16))
+                        }
+                    }
+                }
+
+                tempObj[action.payload.name] = value;
+                return tempObj;
+
+            case 'TOGGLE_SETTING':
+                tempObj = { ...state };
+                tempObj[action.payload.name] = !tempObj[action.payload.name];
+                return tempObj;
+            default:
+                return state;
+        }
+    }
+
+    const [settings, settingsDispatch] = useReducer(settingsReducer, {
+        "Mirror Inputs": false,
+        "Disable Selection": false,
+        "Numbers Only Input": false,
+        "Dark Mode Table": false,
+        "Empty Element": "0",
+        "Decimals To Round": 8
+    });
 
     const [username, setUsername] = useState(null);
     const [saveToLocal, setSaveToLocal] = useState(false);
@@ -96,7 +129,12 @@ const App = () => {
         });
 
         const username = localStorage.getItem("username");
+
         setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
+        if (window.localStorage.getItem("First Visit") === null) {
+            setFirstVisit(true);
+            window.localStorage.setItem("First Visit", "0");
+        }
 
         if (username !== null) {
             setUsername(username);
@@ -104,26 +142,15 @@ const App = () => {
             loadFromLocalStorage();
             updateParameter("Show Merge", false);
         } else {
-            matrixDispatch({ type: 'UPDATE_ALL', payload: { "matrices": { "A": [["", ""], ["", ""]] } } })
+            matrixDispatch({ type: 'UPDATE_ALL', payload: { "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO_STACK": true } })
             setSelection("A");
             updateParameter("Show Merge", false);
-        }
-
-        if (window.localStorage.getItem("First Visit") === null) {
-            setFirstVisit(true);
-            window.localStorage.setItem("First Visit", "0");
         }
 
         // eslint-disable-next-line
     }, []);
 
-    //send updates to server
-    useEffect(() => {
-        if (!showMerge && username)
-            updateAccountMatrices();
 
-        // eslint-disable-next-line
-    }, [matrices]); //only need to send if matrices change
 
     //if a new user is logged in, get their matrices
     useEffect(() => {
@@ -133,27 +160,23 @@ const App = () => {
         }
 
         // eslint-disable-next-line
-    }, [username])
+    }, [username]) //get new matrices if user changes account
 
-    useEffect(() => { //save matrices to local storage
+    //send updates to server
+    useEffect(() => {
+        if (!showMerge && username)
+            updateAccountMatrices();
+
         if (matrices && saveToLocal)
             saveToLocalStorage();
+
         // eslint-disable-next-line
-    }, [matrices, saveToLocal])
+    }, [matrices, saveToLocal, settings]); //only need to send if matrices change
 
     useEffect(() => { //update settings
-        if (saveToLocal) {
-            window.localStorage.setItem("Empty Element", sparseVal);
-            window.localStorage.setItem("Mirror Inputs", mirror ? "1" : "0");
-            window.localStorage.setItem("Disable Selection", selectable ? "0" : "1");
-            window.localStorage.setItem("Numbers Only", numbersOnly ? "1" : "0");
-            window.localStorage.setItem("Rounding", rounding);
-            window.localStorage.setItem("Dark Mode Table", darkModeTable ? "1" : "0");
-        }
-
         if (username)
             updateMatrixSettings();
-    }, [sparseVal, mirror, selectable, numbersOnly, rounding, darkModeTable, username, saveToLocal]);
+    }, [settings]);
 
 
 
@@ -162,6 +185,7 @@ const App = () => {
     const saveToLocalStorage = () => {
         saving.current = true
         window.localStorage.setItem("matrices", JSON.stringify(matrices))
+        window.localStorage.setItem("settings", JSON.stringify(settings))
         saving.current = false
     }
 
@@ -177,7 +201,7 @@ const App = () => {
             if (parsed.length === 0) { //if {} is saved, it will be parsed to []
                 throw new Error("No matrices found in local storage");
             } else {
-                matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": parsed , DO_NOT_UPDATE_UNDO_STACK: true }});
+                matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": parsed, DO_NOT_UPDATE_UNDO_STACK: true } });
 
                 const localMatrices = Object.keys(parsed);
                 if (localMatrices.length > 0)
@@ -185,32 +209,29 @@ const App = () => {
                 else
                     setSelection("0");
 
-                setMirror(window.localStorage.getItem("Mirror Inputs") === "1");
-                setNumbersOnly(window.localStorage.getItem("Numbers Only Input") === "1");
-                setDarkModeTable(window.localStorage.getItem("Dark Mode Table") === "1");
-
-                setRounding(window.localStorage.getItem("Rounding") ?? 8);
-                setSparseVal(window.localStorage.getItem("Empty Element") ?? "0");
-
-                const disableSelection = window.localStorage.getItem("Disable Selection");
-                if (disableSelection === null)
-                    setSelectable(true);
-                else
-                    setSelectable(disableSelection === "0");
+                const settings = localStorage.getItem("settings");
+                if (settings !== null) {
+                    settingsDispatch({ type: "UPDATE_ALL", payload: { "settings": JSON.parse(settings) } });
+                }
             }
 
         } catch (error) {
             console.log(error)
             localStorage.removeItem("matrices");
-            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": { "A": [["", ""], ["", ""]] } } });
             setSelection("A");
-
-            setMirror(false);
-            setSelectable(true);
-            setNumbersOnly(false);
-            setDarkModeTable(false);
-            setRounding(8);
-            setSparseVal("0");
+            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": { "A": [["", ""], ["", ""]] }, DO_NOT_UPDATE_UNDO_STACK: true } });
+            settingsDispatch({
+                type: "UPDATE_ALL", payload: {
+                    "settings": {
+                        "Mirror Inputs": false,
+                        "Disable Selection": false,
+                        "Numbers Only Input": false,
+                        "Dark Mode Table": false,
+                        "Empty Element": "0",
+                        "Decimals To Round": 8
+                    }
+                }
+            });
         }
 
     }
@@ -288,7 +309,7 @@ const App = () => {
 
         if (mergeUnnecessary) {
             updateParameter("Show Merge", false);
-            matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": userMatrices, "DO_NOT_UPDATE_UNDO_STACK": true} });
+            matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": userMatrices, "DO_NOT_UPDATE_UNDO_STACK": true } });
             if (Object.keys(userMatrices).length > 0)
                 setSelection(Object.keys(userMatrices)[0])
             else
@@ -412,12 +433,8 @@ const App = () => {
 
         if (response) {
             const settings = JSON.parse(response["settings"]);
-            setMirror(settings["mirror"] === "1");
-            setSelectable(settings["selectable"] === "1");
-            setNumbersOnly(settings["numbersOnly"] === "1");
-            setDarkModeTable(settings["darkModeTable"] === "1");
-            setSparseVal(settings["sparseVal"]);
-            setRounding(settings["rounding"]);
+            if (settings)
+                settingsDispatch({ type: "UPDATE_ALL", payload: { "settings": settings } });
         }
 
     }
@@ -430,16 +447,7 @@ const App = () => {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + localStorage.getItem("access_token")
             },
-            body: JSON.stringify({
-                settings: JSON.stringify({
-                    mirror: mirror ? "1" : "0",
-                    selectable: selectable ? "1" : "0",
-                    numbersOnly: numbersOnly ? "1" : "0",
-                    darkModeTable: darkModeTable ? "1" : "0",
-                    sparseVal: sparseVal,
-                    rounding: rounding
-                })
-            })
+            body: JSON.stringify({ settings: JSON.stringify(settings) })
         }).then((response) => {
             if (response.status === 401) {
                 return null; //invalid access token
@@ -484,15 +492,6 @@ const App = () => {
     //used for updating state and local storage
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
-            case "Empty Element":
-                setSparseVal(updated);
-                break;
-            case "Mirror Inputs":
-                setMirror(updated);
-                break;
-            case "Disable Selection":
-                setSelectable(!updated);
-                break;
             case "Save To Local":
                 setSaveToLocal(updated);
                 window.localStorage.setItem("Save To Local", updated ? "1" : "0");
@@ -500,26 +499,6 @@ const App = () => {
                 if (!updated)
                     localStorage.removeItem("matrices");
 
-                break;
-            case "Numbers Only Input":
-                setNumbersOnly(updated);
-                break;
-            case "Decimals To Round":
-                if (updated === "") {
-                    setRounding(updated);
-                } else if (/^\d+$/.test(updated)) {
-                    let num = parseInt(updated);
-                    if (!isNaN(num)) {
-                        num = Math.min(num, 16);
-                        num = Math.max(num, 0);
-                        setRounding(num);
-                    }
-                }
-                break;
-            case "Dark Mode Table":
-                setDarkModeTable(updated);
-
-                break;
             case "Show Merge":
                 setShowMerge(updated);
                 if (saveToLocal)
@@ -569,10 +548,10 @@ const App = () => {
             <Navigation
                 matrices={matrices}
                 matrixDispatch={matrixDispatch}
-
                 updateParameter={updateParameter}
                 setSelection={setSelection}
 
+                settings = {settings}
                 updateMatrixSettings={updateMatrixSettings}
 
                 saveToLocalStorage={saveToLocalStorage}
@@ -594,29 +573,25 @@ const App = () => {
 
             <MatrixGenerator
                 matrices={matrices}
+                matrixDispatch={matrixDispatch}
+
                 selection={selection}
+                name={selection}
+
                 matrix={selection in matrices ? matrices[selection] : null}
 
-                matrixDispatch={matrixDispatch}
 
                 updateParameter={updateParameter}
                 setSelection={setSelection}
 
-
                 deleteSelectedMatrices={deleteSelectedMatrices}
                 updateMatrixSettings={updateMatrixSettings}
 
-                mirror={mirror}
-                sparseVal={sparseVal}
-                numbersOnly={numbersOnly}
-                selectable={selectable}
-                rounding={rounding}
+                settings={settings}
+                settingsDispatch={settingsDispatch}
 
-                name={selection}
 
                 firstVisit={firstVisit}
-
-                darkModeTable={darkModeTable}
 
                 undo={undo}
                 canUndo={undoStack.length > 0}

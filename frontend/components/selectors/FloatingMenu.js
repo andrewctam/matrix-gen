@@ -26,6 +26,16 @@ const FloatingMenu = (props) => {
     const [settingsX, settingsY] = useMove(settings, settingsToggle);
 
     const [lastClicked, setLastClicked] = useState(null);
+
+    const updateSetting = (name, value) => {
+        props.settingsDispatch({ "type": "UPDATE_SETTING", "payload": {"name": name, "value": value }});
+    }
+
+    const toggleTool = (e) => {
+        debugger;
+        props.toolDispatch({ "type": "TOGGLE", payload: {"name": e.target.id } });
+    }
+
     return (<div className={styles.floatingMenu}>
         <div className={styles.bar}>
             <BasicActionButton
@@ -48,17 +58,17 @@ const FloatingMenu = (props) => {
 
             {props.selection in props.matrices ?
                 <>
-                    <ActiveButton name="Matrix Actions" active={props.showActions} action={props.toggleShown} />
+                    <ActiveButton name="Matrix Actions" id = {"Matrix Actions"}  active={props.toolActive["Matrix Actions"]} action={toggleTool} />
 
-                    <ActiveButton name="Matrix Math" active={props.showMath} action={props.toggleShown} />
+                    <ActiveButton name="Matrix Math" id = {"Matrix Math"} active={props.toolActive["Matrix Math"]} action={toggleTool} />
 
-                    {props.selectable ?
-                        <ActiveButton name="Selection" active={props.showSelectionMenu} action={props.toggleShown} />
+                    {!props.settings["Disable Selection"] ?
+                        <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} />
                         : null}
 
-                    <ActiveButton name="Export Matrix" active={props.showExport} action={props.toggleShown} />
+                    <ActiveButton name="Export Matrix" id = {"Export Matrix"} active={props.toolActive["Export Matrix"]} action={toggleTool} />
                 </> : null}
-            <ActiveButton name="Import From Text" active={props.showImport} action={props.toggleShown} />
+            <ActiveButton name="Import From Text" id = {"Import From Text"} active={props.toolActive["Import From Text"]} action={toggleTool} />
 
 
 
@@ -141,12 +151,16 @@ const FloatingMenu = (props) => {
                 zIndex: lastClicked === "settings" ? 5 : 4 }}
                 onMouseDown = {() => {setLastClicked("settings")}}
                 >
-                <ParameterBoxInput isChecked={props.mirror} name={"Mirror Inputs"} updateParameter={props.updateParameter} />
-                <ParameterBoxInput isChecked={!props.selectable} name={"Disable Selection"} updateParameter={props.updateParameter} />
-                <ParameterBoxInput isChecked={props.numbersOnly} name={"Numbers Only Input"} updateParameter={props.updateParameter} />
-                <ParameterBoxInput isChecked={props.darkModeTable} name={"Dark Mode Table"} updateParameter={props.updateParameter} />
-                <div>{"Empty Element: "} <ParameterTextInput width={"30px"} text={props.sparseVal} id={"Empty Element"} updateParameter={props.updateParameter} /></div>
-                <div>{"Decimals To Round: "} <ParameterTextInput width={"30px"} text={props.rounding} id={"Decimals To Round"} updateParameter={props.updateParameter} placeholder={props.rounding === "" ? "None" : ""} /></div>
+                <ParameterBoxInput isChecked={props.settings["Mirror Inputs"]} name={"Mirror Inputs"} updateParameter={updateSetting} />
+                <ParameterBoxInput isChecked={props.settings["Disable Selection"]} name={"Disable Selection"} updateParameter={updateSetting} />
+                <ParameterBoxInput isChecked={props.settings["Numbers Only Input"]} name={"Numbers Only Input"} updateParameter={updateSetting} />
+                <ParameterBoxInput isChecked={props.settings["Dark Mode Table"]} name={"Dark Mode Table"} updateParameter={updateSetting} />
+                <div>{"Empty Element: "} 
+                    <ParameterTextInput width={"30px"} text={props.settings["Empty Element"]} id={"Empty Element"} updateParameter={updateSetting} />
+                </div>
+                <div>{"Decimals To Round: "} 
+                    <ParameterTextInput width={"30px"} text={props.settings["Decimals To Round"]} id={"Decimals To Round"} updateParameter={updateSetting} placeholder={props.settings["Decimals To Round"] === "" ? "None" : ""} />
+                </div>
 
             </div>
             : null}

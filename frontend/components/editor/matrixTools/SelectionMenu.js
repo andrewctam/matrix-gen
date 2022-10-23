@@ -96,7 +96,7 @@ const SelectionMenu = (props) => {
 
             </div>}
 
-        <Toggle toggle={props.close} show={!props.active} />
+        <Toggle toggle={props.close} show={false} />
 
     </div>
 

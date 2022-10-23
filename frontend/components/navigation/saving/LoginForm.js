@@ -93,7 +93,7 @@ const LoginForm = (props) => {
                 username: usernameInput,
                 password: passwordInput,
                 matrix_data: JSON.stringify(props.matrices),
-                settings: props.settings
+                settings: JSON.stringify(props.settings)
             })
 
         }).then((response) => {
@@ -106,7 +106,7 @@ const LoginForm = (props) => {
             setPasswordError("Unable to connect to server");
 
         })
-
+    console.log(response)
         if (response === null) {
             setUsernameError("Username already exists");
             return;

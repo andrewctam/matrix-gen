@@ -38,7 +38,7 @@ const Box = (props) => {
     var textColor = "black";
 
     //assign special styles
-    if (props.darkModeTable) {
+    if (props.settings["Dark Mode Table"]) {
         textColor = "white";
         
         if (props.boxSelected && !lastRow && !lastCol) {
@@ -70,9 +70,9 @@ const Box = (props) => {
 
     return <td className={styles.box} style = {boxStyle}>
         <input
-            type={props.numbersOnly ? "number" : "text"}
-            step={props.numbersOnly ? "any" : ""}
-            pattern={props.numbersOnly ? "[0-9.-]*" : null}
+            type={props.settings["Numbers Only Input"] ? "number" : "text"}
+            step={props.settings["Numbers Only Input"] ? "any" : ""}
+            pattern={props.settings["Numbers Only Input"] ? "[0-9.-]*" : null}
             autoComplete="off"
             id={props.row + ":" + props.col}
             value={props.val}

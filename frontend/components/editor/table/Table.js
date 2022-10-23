@@ -1,17 +1,22 @@
 import styles from "./Table.module.css"
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import Box from './Box.js'; 
 
 import { addRows, addCols, addRowsAndCols, updateEntry, deleteRowCol, cloneMatrix, editSelection} from '../../matrixFunctions.js';
 
 const Table = (props) => {
-    const [showHelpers, setShowHelpers] = useState(window.innerWidth > 576 && props.firstVisit);
+    const [showHelpers, setShowHelpers] = useState(false);
+
+    useEffect(() => {
+        if (window.innerWidth > 576 && props.firstVisit)
+            setShowHelpers(true)
+    }, [props.firstVisit]);
 
     //add Row/Col/Both and update matrix[row][col]
     const addRow = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix);
-        if (props.mirror) {
+        if (props.settings["Mirror Inputs"]) {
             const cols = clone[0].length;
             const rows = clone.length
             const max = Math.max(rows + 1, cols)
@@ -26,11 +31,11 @@ const Table = (props) => {
 
         setShowHelpers(false)
 
-    }, [props.matrix, props.mirror, props.name, props.matrixDispatch]);
+    }, [props.matrix, props.settings["Mirror Inputs"], props.name, props.matrixDispatch]);
 
     const addCol = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix);
-        if (props.mirror) {
+        if (props.settings["Mirror Inputs"]) {
             const cols = clone[0].length;
             const rows = clone.length
             const max = Math.max(rows, cols + 1)
@@ -43,13 +48,13 @@ const Table = (props) => {
         props.updateBoxesSelected(row, col, row, col);
         props.matrixDispatch({"type" : "UPDATE_MATRIX", payload:{ "name" : props.name, "matrix" : updateEntry(clone, row, col, updated)}});
         setShowHelpers(false)
-    }, [props.matrix, props.mirror, props.name, props.matrixDispatch])
+    }, [props.matrix, props.settings["Mirror Inputs"], props.name, props.matrixDispatch])
 
 
     const addBoth = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix)
 
-        if (props.mirror) {
+        if (props.settings["Mirror Inputs"]) {
             const cols = clone[0].length;
             const rows = clone.length
             const max = Math.max(rows + 1, cols + 1);
@@ -64,12 +69,12 @@ const Table = (props) => {
         props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : updateEntry(clone, row, col, updated)}});
         setShowHelpers(false)
 
-    }, [props.matrix, props.mirror, props.name, props.matrixDispatch])
+    }, [props.matrix, props.settings["Mirror Inputs"], props.name, props.matrixDispatch])
 
     const update = useCallback((row, col, updated) => {
         setShowHelpers(false)
 
-        if (props.selectable && (props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"]) || (props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) {
+        if (!props.settings["Disable Selection"] && (props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"]) || (props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) {
             const lenDiff = updated.length - props.matrix[row][col].length;
             if (lenDiff <= 0)
                 return;
@@ -90,11 +95,11 @@ const Table = (props) => {
                                 props.boxSelectionEnd["y"])}});
         } else {
             var clone = cloneMatrix(props.matrix)
-            props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: { "name" : props.name, "matrix" : updateEntry(clone, row, col, updated, props.mirror)}});
+            props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: { "name" : props.name, "matrix" : updateEntry(clone, row, col, updated, props.settings["Mirror Inputs"])}});
             
         }
         
-    }, [props.matrix, props.mirror, props.name, props.matrixDispatch, props.selectable, props.boxSelectionStart, props.boxSelectionEnd])
+    }, [props.matrix, props.settings["Mirror Inputs"], props.name, props.matrixDispatch, props.settings["Disable Selection"], props.boxSelectionStart, props.boxSelectionEnd])
 
     const keyDown = useCallback((row, col, e) => {
         if (e.keyCode === 16) { //shift
@@ -107,7 +112,7 @@ const Table = (props) => {
 
         } else if (e.keyCode === 8) { //delete            
             
-            if (props.selectable && (
+            if (!props.settings["Disable Selection"] && (
                 props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"] || 
                 props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) { 
 
@@ -252,8 +257,7 @@ const Table = (props) => {
         for (let j = 0; j < cols; j++) {   
             eachRow[j] = <Box 
                         name = {props.name}
-                        numbersOnly = {props.numbersOnly}
-                        darkModeTable = {props.darkModeTable}
+                        settings = {props.settings}
 
                         addRow = {addRow} 
                         addCol = {addCol}
@@ -269,7 +273,7 @@ const Table = (props) => {
                         val = {props.matrix[i][j]} 
                         key = {i + ";" + j}
 
-                        boxSelected = {props.selectable ? inSelection(i, j) : false}
+                        boxSelected = {!props.settings["Disable Selection"] ? inSelection(i, j) : false}
                         mouseDown = {props.mouseDown} 
                 />
         }

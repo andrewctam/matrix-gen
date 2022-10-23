@@ -377,7 +377,7 @@ const MatrixMath = (props) => {
         for (let i = 0; i < clone.length - 1; i++) {
             for (let j = 0; j < clone[0].length - 1; j++) {
                 if (clone[i][j] === "")
-                    clone[i][j] = props.sparseVal
+                    clone[i][j] = props.settings["Empty Element"]
     
                 if (/^[-]?([0-9]*[.])?[0-9]+$/.test(clone[i][j])) {
                     clone[i][j] = parseFloat(clone[i][j])
@@ -416,7 +416,7 @@ const MatrixMath = (props) => {
 
         return [numMatrix, L, U, determinant]
 
-    }, [props.matrix, props.sparseVal]);
+    }, [props.matrix, props.settings["Empty Element"]]);
     
     
     const placeholderName = generateUniqueName(props.matrices);
@@ -506,7 +506,7 @@ const MatrixMath = (props) => {
             }
 
         </div>
-        <Toggle toggle={props.close} show={!props.active} />
+        <Toggle toggle={props.close} show={false} />
     </div>
 
 

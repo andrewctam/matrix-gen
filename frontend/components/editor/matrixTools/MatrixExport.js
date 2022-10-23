@@ -39,7 +39,7 @@ const MatrixExport = (props) => {
                 for (let i = 0; i < props.matrix.length - 1; i++) {
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
                         if (props.matrix[i][j] === "") {
-                            result += props.sparseVal;        
+                            result += props.settings["Empty Element"];        
                         } else {
                             var text = props.matrix[i][j];
                             if (latexEscape) {
@@ -87,7 +87,7 @@ const MatrixExport = (props) => {
                         if (props.matrix[i][j] !== "")
                             result += props.matrix[i][j];
                         else
-                            result += props.sparseVal;
+                            result += props.settings["Empty Element"];
                             
                         if (j !== props.matrix[0].length - 2) {
                             result += delim;
@@ -275,7 +275,7 @@ const MatrixExport = (props) => {
 
             </div>
 
-            <Toggle toggle = {props.close} show = {!props.active}/>
+            <Toggle toggle = {props.close} show = {false}/>
 
     </div>    
 }
