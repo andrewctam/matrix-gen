@@ -52,7 +52,7 @@ const MatrixSelector = (props) => {
             alert(`The name ${displayName} already exists!`)
             return false;
         } else {         
-            props.renameMatrix(oldName, newName)
+            props.matrixDispatch({"type": "RENAME_MATRIX", payload: {"oldName": oldName, "newName": newName}})
             props.setSelection(newName)
             return true;
         }
@@ -67,7 +67,7 @@ const MatrixSelector = (props) => {
             if (rows > 0 && cols > 0) {
                 const resized = resizeMatrix(props.matrices[name], rows + 1, cols + 1)
                 if (resized) {
-                    props.updateMatrix(name, resized);
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {"name": name, "matrix": resized}});
                     return true;
                 } else {
                     return false;

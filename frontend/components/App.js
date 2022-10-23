@@ -1,12 +1,72 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useReducer } from 'react';
 
 import Navigation from "./navigation/Navigation.js"
 import MatrixGenerator from './MatrixGenerator.js';
 import { generateUniqueName } from './matrixFunctions.js';
 
+
 const App = () => {
-    const [matrices, setMatrices] = useState(null);
+    const [undoStack, setUndoStack] = useState([]);
+    const [redoStack, setRedoStack] = useState([]);
     const [selection, setSelection] = useState("0"); //0 for no selection
+
+    const matrixReducer = (state, action) => {
+
+        if (!action.payload.DO_NOT_UPDATE_UNDO_STACK) {
+            const current = JSON.stringify(state)
+            if (current !== "null") {
+                setUndoStack([...undoStack, current]);
+                setRedoStack([]);
+            }
+        }
+
+        const tempObj = { ...state };
+        
+        switch (action.type) {
+            case 'UPDATE_ALL':
+                return action.payload.matrices;
+            case 'UPDATE_MATRIX':
+                const name = action.payload.name;
+                if (name === undefined) { //no name, generate one
+                    name = generateUniqueName(state);
+                }
+
+                const matrix = action.payload.matrix;
+                if (matrix === undefined) { //no matrix, generate 1 x 1 one
+                    tempObj[name] = [["", ""], ["", ""]];
+                } else {
+                    tempObj[name] = matrix;
+                }
+
+                if (action.payload.switch)
+                    setSelection(name);
+
+                return tempObj;
+            case 'RENAME_MATRIX':
+                const oldName = action.payload.oldName;
+                const newName = action.payload.newName;
+
+                if (newName in state) {
+                    return state;
+                }
+
+                tempObj[newName] = state[oldName];
+                delete tempObj[oldName];
+                setSelection(newName);
+
+                return tempObj;
+            case 'DELETE_MATRIX':
+                delete tempObj[action.payload.name];
+                return tempObj;
+
+            default:
+                return state;
+
+        }
+    }
+
+    const [matrices, matrixDispatch] = useReducer(matrixReducer, { "A": [["", ""], ["", ""]] });
+
 
     const [mirror, setMirror] = useState(false);
     const [selectable, setSelectable] = useState(true);
@@ -26,10 +86,6 @@ const App = () => {
 
     const [firstVisit, setFirstVisit] = useState(false);
 
-    const [undoStack, setUndoStack] = useState([]);
-    const [redoStack, setRedoStack] = useState([]);
-
-
 
 
     //load from local storage and set up app
@@ -48,9 +104,7 @@ const App = () => {
             loadFromLocalStorage();
             updateParameter("Show Merge", false);
         } else {
-            setMatrices({
-                "A": [["", ""], ["", ""]]
-            });
+            matrixDispatch({ type: 'UPDATE_ALL', payload: { "matrices": { "A": [["", ""], ["", ""]] } } })
             setSelection("A");
             updateParameter("Show Merge", false);
         }
@@ -123,7 +177,7 @@ const App = () => {
             if (parsed.length === 0) { //if {} is saved, it will be parsed to []
                 throw new Error("No matrices found in local storage");
             } else {
-                setMatrices(parsed);
+                matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": parsed , DO_NOT_UPDATE_UNDO_STACK: true }});
 
                 const localMatrices = Object.keys(parsed);
                 if (localMatrices.length > 0)
@@ -148,10 +202,7 @@ const App = () => {
         } catch (error) {
             console.log(error)
             localStorage.removeItem("matrices");
-
-            setMatrices({
-                "A": [["", ""], ["", ""]]
-            });;
+            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": { "A": [["", ""], ["", ""]] } } });
             setSelection("A");
 
             setMirror(false);
@@ -237,7 +288,7 @@ const App = () => {
 
         if (mergeUnnecessary) {
             updateParameter("Show Merge", false);
-            setMatrices(userMatrices)
+            matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": userMatrices, "DO_NOT_UPDATE_UNDO_STACK": true} });
             if (Object.keys(userMatrices).length > 0)
                 setSelection(Object.keys(userMatrices)[0])
             else
@@ -414,7 +465,7 @@ const App = () => {
     const undo = () => {
         if (undoStack.length > 0) {
             setRedoStack([...redoStack, JSON.stringify(matrices)]);
-            setMatrices(JSON.parse(undoStack.pop()))
+            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": JSON.parse(undoStack.pop()), "DO_NOT_UPDATE_UNDO_STACK": true } })
         } else {
             alert("Nothing to undo");
         }
@@ -423,21 +474,11 @@ const App = () => {
     const redo = () => {
         if (redoStack.length > 0) {
             setUndoStack([...undoStack, JSON.stringify(matrices)]);
-            setMatrices(JSON.parse(redoStack.pop()));
+            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": JSON.parse(redoStack.pop()), "DO_NOT_UPDATE_UNDO_STACK": true } })
+
         } else {
             alert("Nothing to redo");
         }
-    }
-
-    //set matrices and update undo stack
-    const updateMatrices = (updated) => {
-        const current = JSON.stringify(matrices)
-        if (current !== "null") {
-            setUndoStack([...undoStack, current]);
-            setRedoStack([]);
-        }
-
-        setMatrices(updated);
     }
 
     //used for updating state and local storage
@@ -493,53 +534,11 @@ const App = () => {
 
     }
 
-    //functions related to matrix editing
-    const renameMatrix = (oldName, newName) => {
-        if (newName in matrices)
-            return false;
-
-        const tempObj = { ...matrices };
-        //rename and delete old one
-        tempObj[newName] = tempObj[oldName];
-        delete tempObj[oldName];
-
-        updateMatrices(tempObj);
-
-        return true;
-    }
-
-    const updateMatrix = (name = undefined, matrix = undefined, switchTo = false) => {
-        const tempObj = { ...matrices };
-        if (name === undefined) { //no name, generate one
-            name = generateUniqueName(matrices);
-        }
-
-        if (matrix === undefined) { //no matrix, generate 1 x 1 one
-            tempObj[name] = [["", ""], ["", ""]];
-        } else {
-            tempObj[name] = matrix;
-        }
-
-        updateMatrices(tempObj);
-
-        if (switchTo)
-            setSelection(name);
-
-        return name; //return name of matrix (mainly for input is undefined)
-    }
-
-    const deleteMatrix = (name) => {
-        const tempObj = { ...matrices };
-        delete tempObj[name];
-        updateMatrices(tempObj);
-    }
-
-
     const deleteSelectedMatrices = (matricesToDelete) => {
         if (matricesToDelete.length === 0) { //if input is empty, delete all
             if (window.confirm("Are you sure you want to delete all of your matrices?")) {
                 setSelection("0");
-                updateMatrices({});
+                matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": {} } });
 
                 localStorage.removeItem("matrices");
                 return true;
@@ -554,7 +553,8 @@ const App = () => {
 
                 delete tempObj[matricesToDelete[i]];
             }
-            updateMatrices(tempObj);
+
+            matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": tempObj } });
             return true;
         }
 
@@ -562,18 +562,16 @@ const App = () => {
 
     }
 
-
-
     if (!matrices)
         return <div />
     return (
         <div>
             <Navigation
                 matrices={matrices}
+                matrixDispatch={matrixDispatch}
 
                 updateParameter={updateParameter}
                 setSelection={setSelection}
-                updateMatrices={updateMatrices}
 
                 updateMatrixSettings={updateMatrixSettings}
 
@@ -594,21 +592,19 @@ const App = () => {
             />
 
 
-           <MatrixGenerator 
+            <MatrixGenerator
                 matrices={matrices}
                 selection={selection}
-                matrix={matrices[selection]}
+                matrix={selection in matrices ? matrices[selection] : null}
+
+                matrixDispatch={matrixDispatch}
 
                 updateParameter={updateParameter}
                 setSelection={setSelection}
-                updateMatrices={updateMatrices}
+
+
                 deleteSelectedMatrices={deleteSelectedMatrices}
-
                 updateMatrixSettings={updateMatrixSettings}
-
-                updateMatrix={updateMatrix}
-                deleteMatrix={deleteMatrix}
-                renameMatrix={renameMatrix}
 
                 mirror={mirror}
                 sparseVal={sparseVal}
@@ -626,8 +622,8 @@ const App = () => {
                 canUndo={undoStack.length > 0}
                 redo={redo}
                 canRedo={redoStack.length > 0}
-       
-           />
+
+            />
 
 
         </div>);

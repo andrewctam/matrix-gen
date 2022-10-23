@@ -51,12 +51,14 @@ const SelectionMenu = (props) => {
                 <TextActionButton
                     name={"Save Selection as New Matrix: "}
                     action={() => {
-                        props.updateMatrix(spliceName ? spliceName : generatedName, spliceMatrix(props.matrix,
+                        const spliced = spliceMatrix(props.matrix,
                             props.boxSelectionStart["x"],
                             props.boxSelectionStart["y"],
                             props.boxSelectionEnd["x"],
                             props.boxSelectionEnd["y"],
-                            spliceName))
+                            spliceName)
+
+                        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": spliceName ? spliceName : generatedName, "matrix": spliced, "switch": false }});
                     }}
 
                     updateParameter={updateName}
@@ -84,7 +86,7 @@ const SelectionMenu = (props) => {
                             props.boxSelectionEnd["y"])
 
                         if (pasted)
-                            props.updateMatrix(props.name, pasted)
+                            props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": pasted, "switch": false }});
                     }}
 
                     updateParameter={updateName}

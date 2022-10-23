@@ -181,7 +181,7 @@ const TextImport = (props) => {
 
                 //remove empty rows
                 matrix.push(Array(maxLen).fill(""));
-                props.updateMatrix(name, matrix); //override existing (or non existing) matrix
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : name, "matrix" : matrix}});
                 
                 break;
                 
@@ -219,7 +219,7 @@ const TextImport = (props) => {
 
                 //add empty row
                 matrix.push(Array(maxLen).fill(""));
-                props.updateMatrix(name, matrix);
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : name, "matrix" : matrix}});
 
                 } catch (error) {
                     console.log(error); 
@@ -273,7 +273,7 @@ const TextImport = (props) => {
                 }
 
 
-                props.updateMatrix(name, matrix);
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload:  {"name" : name, "matrix" : matrix}});
                 break;
 
             case "LaTeX":
@@ -329,7 +329,7 @@ const TextImport = (props) => {
                             });
                     }
                 }
-                props.updateMatrix(name, matrix, true);
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : name, "matrix" : matrix, "switch": true}});
                 break;
 
             default: break;

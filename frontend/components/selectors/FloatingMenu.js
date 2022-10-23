@@ -80,8 +80,7 @@ const FloatingMenu = (props) => {
                     name={props.selection}
                     setSelection={props.setSelection}
                     selection={props.selection}
-                    updateMatrix={props.updateMatrix}
-                    renameMatrix={props.renameMatrix}
+                    matrixDispatch={props.matrixDispatch}
                     showMerge={props.showMerge}
                     multiSelected={multiSelected}
                     setMultiSelected={setMultiSelected}
@@ -92,14 +91,16 @@ const FloatingMenu = (props) => {
                         <BasicActionButton
                             key="addButton" name={"New Matrix"} buttonStyle={"success"}
                             action={() => {
-                                props.updateMatrix(undefined, undefined, true); //generates a new matrix
+                                props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: undefined, matrix: undefined}}); //new matrix
                             }}
                         />
 
                         {props.selection !== "0" ?
                             <BasicActionButton
                                 key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${props.selection}`}
-                                action={() => { props.updateMatrix(undefined, cloneMatrix(props.matrices[props.selection])) }} />
+                                action={() => { 
+                                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: undefined, matrix: cloneMatrix(props.matrices[props.selection])}});
+                                }} />
                             : null}
                     </div>
                     <div className = {styles.pair}>
@@ -108,7 +109,7 @@ const FloatingMenu = (props) => {
                                 key="deleteButton" buttonStyle={"danger"} name={`Delete ${props.selection}`}
                                 action={() => {
                                     if (props.selection !== "0" && window.confirm(`Are you sure you want to delete ${props.selection}?`)) {
-                                        props.deleteMatrix(props.selection);
+                                        props.matrixDispatch({type: "DELETE_MATRIX", payload: {name: props.selection}});
                                         props.setSelection("0");
                                     }
                                 }} />

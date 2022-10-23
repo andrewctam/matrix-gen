@@ -64,27 +64,27 @@ const MatrixEditor = (props) => {
                     matrix[i][j] = matrix[i][j].toString();
             }
         }
-        props.updateMatrix(name, matrix, true);
+        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": name, "matrix": matrix, "switch": true} });
     }
 
-    const showFullInput = (document.activeElement && document.activeElement.id === "fullInput" || (
+    const showFullInput = process.browser && (document.activeElement && document.activeElement.id === "fullInput" || (
         document.activeElement.tagName === "INPUT" &&
         /^[\d]+:[\d]+$/.test(document.activeElement.id) && //num:num
         boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1
     ))
 
-    if (showFullInput) {
+    if (showFullInput && props.matrix) {
         const x = boxSelectionStart["x"];
         const y = boxSelectionStart["y"];
-
+        console.log(props.matrices)
         var fullInput =
             <input className={"fixed-bottom " + styles.fullInput}
                 value={props.matrix[x][y]}
                 placeholder={`Row ${x} Column ${y}`}
                 id={"fullInput"}
                 onChange={(e) => {
-                    var clone = cloneMatrix(props.matrix)
-                    props.updateMatrix(props.name, updateEntry(clone, x, y, e.target.value));
+                    const changed = updateEntry(cloneMatrix(props.matrix), x, y, e.target.value);
+                    props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": changed, "switch": false }});
                 }} />
     } else {
         fullInput = null
@@ -97,7 +97,7 @@ const MatrixEditor = (props) => {
                 <MatrixActions
                     name={props.name}
                     matrix={props.matrix}
-                    updateMatrix={props.updateMatrix}
+                    matrixDispatch={props.matrixDispatch}
                     close={() => { props.setShowActions(false) }}
                     active={props.showActions}
                     floatingMenuRef={props.floatingMenuRef}
@@ -125,7 +125,7 @@ const MatrixEditor = (props) => {
                     matrices={props.matrices}
                     name={props.name}
                     matrix={props.matrix}
-                    updateMatrix={props.updateMatrix}
+                    matrixDispatch={props.matrixDispatch}
                     boxSelectionStart={boxSelectionStart}
                     boxSelectionEnd={boxSelectionEnd}
                     editSelection={props.editSelection}
@@ -139,7 +139,7 @@ const MatrixEditor = (props) => {
 
             {props.showImport ?
                 <TextImport
-                    updateMatrix={props.updateMatrix}
+                    matrixDispatch={props.matrixDispatch}
                     matrices={props.matrices}
                     currentName={props.name}
                     close={() => { props.setShowImport(false) }}
@@ -169,7 +169,7 @@ const MatrixEditor = (props) => {
                     numbersOnly={props.numbersOnly}
                     name={props.name}
                     matrix={props.matrix}
-                    updateMatrix={props.updateMatrix}
+                    matrixDispatch={props.matrixDispatch}
                     selectable={props.selectable}
                     darkModeTable={props.darkModeTable}
                     boxSelectionStart={boxSelectionStart}

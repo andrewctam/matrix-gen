@@ -93,14 +93,14 @@ const MatrixActions = (props) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.updateMatrix(props.name, transpose(props.matrix))
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: transpose(props.matrix)}})
                 }}
                 name={"Transpose"}
             />
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.updateMatrix(props.name, rotate90Degrees(props.matrix)) //false means cols to rows
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: rotate90Degrees(props.matrix)}})
                 }}
                 name={"Rotate 90 ↻"}
             />
@@ -108,7 +108,8 @@ const MatrixActions = (props) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.updateMatrix(props.name, shuffle(props.matrix)) //false means cols to rows
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: shuffle(props.matrix)}})
+
                 }}
                 name={"Shuffle"}
             />
@@ -116,14 +117,14 @@ const MatrixActions = (props) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.updateMatrix(props.name, mirrorRowsCols(props.matrix, true))
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: mirrorRowsCols(props.matrix, true)}}) //true = rows to cols
                 }}
                 name={"Mirror Rows Across Diagonal"}
             />
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.updateMatrix(props.name, mirrorRowsCols(props.matrix, false)) //false means cols to rows
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: mirrorRowsCols(props.matrix, false)}}) //false = cols to rows
                 }}
                 name={"Mirror Columns Across Diagonal"}
             />
@@ -136,7 +137,7 @@ const MatrixActions = (props) => {
             <TextActionButton
                 name="Fill Empty With: "
                 action={() => {
-                    props.updateMatrix(props.name, fillEmpty(props.matrix, fillEmptyWithThis))
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillEmpty(props.matrix, fillEmptyWithThis)}})
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -146,7 +147,7 @@ const MatrixActions = (props) => {
             <TextActionButton
                 name="Fill All With: "
                 action={() => {
-                    props.updateMatrix(props.name, fillAll(props.matrix, fillAllWithThis))
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillAll(props.matrix, fillAllWithThis)}})
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -156,7 +157,7 @@ const MatrixActions = (props) => {
             <TextActionButton
                 name="Fill Diagonal With: "
                 action={() => {
-                    props.updateMatrix(props.name, fillDiagonal(props.matrix, fillDiagonalWithThis))
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillDiagonal(props.matrix, fillDiagonalWithThis)}})
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -166,7 +167,7 @@ const MatrixActions = (props) => {
             <TwoTextActionButton
                 name="Replace X With Y: "
                 action={() => {
-                    props.updateMatrix(props.name, fillXY(props.matrix, replaceX, replaceY))
+                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillXY(props.matrix, replaceX, replaceY)}})
                 }}
                 updateParameter={updateParameter}
                 id1={"replaceX"}
@@ -192,7 +193,7 @@ const MatrixActions = (props) => {
                     }
                     const reshaped = reshapeMatrix(props.matrix, parseInt(reshapeRows), parseInt(reshapeCols))
                     if (reshaped)
-                        props.updateMatrix(props.name, reshaped)
+                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: reshaped}})
                 }}
                 updateParameter={updateParameter}
                 id1={"reshapeRows"}
@@ -212,7 +213,7 @@ const MatrixActions = (props) => {
                     }
                     const resized = resizeMatrix(props.matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
                     if (resized)
-                        props.updateMatrix(props.name, resized)
+                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: resized}})
                 }}
                 updateParameter={updateParameter}
                 id1={"resizeRows"}
@@ -229,7 +230,7 @@ const MatrixActions = (props) => {
                     const random = randomMatrix(props.matrix, parseInt(randomLow), parseInt(randomHigh))
 
                     if (random)
-                        props.updateMatrix(props.name, random)
+                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: random}})
                 }}
                 updateParameter={updateParameter}
                 id1={"randomLow"}
@@ -246,7 +247,8 @@ const MatrixActions = (props) => {
                     const scattered = scatter(props.matrix, parseInt(scatterLow), parseInt(scatterHigh), 0.25)
 
                     if (scattered)
-                        props.updateMatrix(props.name, scattered)
+                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: scattered}})
+                        
                 }}
                 updateParameter={updateParameter}
                 id1={"scatterLow"}

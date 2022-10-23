@@ -22,10 +22,11 @@ const Table = (props) => {
             clone = addRows(clone, 1);
         }
         props.updateBoxesSelected(row, col, row, col);
-        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
+        props.matrixDispatch({"type" : "UPDATE_MATRIX", payload : {"name" : props.name, "matrix" : updateEntry(clone, row, col, updated)}});
+
         setShowHelpers(false)
 
-    }, [props.matrix, props.mirror, props.name, props.updateMatrix]);
+    }, [props.matrix, props.mirror, props.name, props.matrixDispatch]);
 
     const addCol = useCallback((row, col, updated) => {
         var clone = cloneMatrix(props.matrix);
@@ -40,9 +41,9 @@ const Table = (props) => {
             clone = addCols(clone, 1);
         }
         props.updateBoxesSelected(row, col, row, col);
-        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
+        props.matrixDispatch({"type" : "UPDATE_MATRIX", payload:{ "name" : props.name, "matrix" : updateEntry(clone, row, col, updated)}});
         setShowHelpers(false)
-    }, [props.matrix, props.mirror, props.name, props.updateMatrix])
+    }, [props.matrix, props.mirror, props.name, props.matrixDispatch])
 
 
     const addBoth = useCallback((row, col, updated) => {
@@ -60,10 +61,10 @@ const Table = (props) => {
             clone = addRowsAndCols(clone, 1, 1);
         }
         props.updateBoxesSelected(row, col, row, col);
-        props.updateMatrix(props.name, updateEntry(clone, row, col, updated));
+        props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : updateEntry(clone, row, col, updated)}});
         setShowHelpers(false)
 
-    }, [props.matrix, props.mirror, props.name, props.updateMatrix])
+    }, [props.matrix, props.mirror, props.name, props.matrixDispatch])
 
     const update = useCallback((row, col, updated) => {
         setShowHelpers(false)
@@ -81,22 +82,28 @@ const Table = (props) => {
                     break;
                 }
             }
-            props.updateMatrix(props.name, editSelection(props.matrix, difference, props.boxSelectionStart["x"], props.boxSelectionStart["y"], props.boxSelectionEnd["x"], props.boxSelectionEnd["y"]));            
+        
+            props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : 
+                                editSelection(props.matrix, difference, props.boxSelectionStart["x"],
+                                props.boxSelectionStart["y"],
+                                props.boxSelectionEnd["x"],
+                                props.boxSelectionEnd["y"])}});
         } else {
             var clone = cloneMatrix(props.matrix)
-            props.updateMatrix(props.name, updateEntry(clone, row, col, updated, props.mirror));
+            props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: { "name" : props.name, "matrix" : updateEntry(clone, row, col, updated, props.mirror)}});
+            
         }
         
-    }, [props.matrix, props.mirror, props.name, props.updateMatrix, props.selectable, props.boxSelectionStart, props.boxSelectionEnd])
+    }, [props.matrix, props.mirror, props.name, props.matrixDispatch, props.selectable, props.boxSelectionStart, props.boxSelectionEnd])
 
     const keyDown = useCallback((row, col, e) => {
         if (e.keyCode === 16) { //shift
             if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) //add both
-                props.updateMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addRowsAndCols(props.matrix, 1, 1)}});
             else if (props.matrix.length === (row + 1)) //add row
-                props.updateMatrix(props.name, addRows(props.matrix, 1))
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addRows(props.matrix, 1)}});
             else if (props.matrix[0].length === (col + 1)) //add col
-                props.updateMatrix(props.name, addCols(props.matrix, 1))
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addCols(props.matrix, 1)}});
 
         } else if (e.keyCode === 8) { //delete            
             
@@ -104,7 +111,13 @@ const Table = (props) => {
                 props.boxSelectionStart["x"] !== props.boxSelectionEnd["x"] || 
                 props.boxSelectionStart["y"] !== props.boxSelectionEnd["y"])) { 
 
-                props.updateMatrix(props.name, editSelection(props.matrix, 8, props.boxSelectionStart["x"], props.boxSelectionStart["y"], props.boxSelectionEnd["x"], props.boxSelectionEnd["y"]));            
+                
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload:{"name" : props.name, "matrix" :
+                                editSelection(props.matrix, 8, 
+                                props.boxSelectionStart["x"], 
+                                props.boxSelectionStart["y"], 
+                                props.boxSelectionEnd["x"], 
+                                props.boxSelectionEnd["y"])}});
                 return;
             }
 
@@ -149,23 +162,24 @@ const Table = (props) => {
             }
 
             if (result)
-                props.updateMatrix(props.name, result); 
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : result}});
 
         } else if (e.keyCode === 13) {//enter
             e.preventDefault();
             if (props.matrix.length === (row + 1) && props.matrix[0].length === (col + 1)) { //add both if just on corner box
-                props.updateMatrix(props.name, addRowsAndCols(props.matrix, 1, 1))
+                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addRowsAndCols(props.matrix, 1, 1)}});
             } else if (col === props.matrix[0].length - 1) { //add row at this pos
                 if (e.metaKey) {
-                    props.updateMatrix(props.name, addRows(props.matrix, 1, row - 1))
+                    props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addRows(props.matrix, 1, row - 1)}});
                 } else {
-                    props.updateMatrix(props.name, addRows(props.matrix, 1, row + 1))
+                    props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addRows(props.matrix, 1, row)}});
                 }
             } else if (row === props.matrix.length - 1) { //add col at this pos
                 if (e.metaKey) {
-                    props.updateMatrix(props.name, addCols(props.matrix, 1, col - 1))
+                    props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addCols(props.matrix, 1, col - 1)}});
                 } else {
-                    props.updateMatrix(props.name, addCols(props.matrix, 1, col + 1))
+                
+                    props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : props.name, "matrix" : addCols(props.matrix, 1, col)}});
                 }
             }
         } else if (e.target.selectionStart === 0 && e.keyCode === 37)  { //Left
@@ -209,7 +223,7 @@ const Table = (props) => {
                 document.getElementById(props.matrix.length - 1 +  ":" + (col - 1)).focus();
             }
         } 
-    }, [props.matrix, props.name, props.updateMatrix, props.boxSelectionStart, props.boxSelectionEnd, props.updateBoxSelectionStart, props.updateBoxSelectionEnd])
+    }, [props.matrix, props.name, props.matrixDispatch, props.boxSelectionStart, props.boxSelectionEnd, props.updateBoxSelectionStart, props.updateBoxSelectionEnd])
 
 
     const inSelection = (x, y) => {       
