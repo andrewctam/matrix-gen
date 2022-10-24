@@ -9,9 +9,10 @@ const Table = (props) => {
     const [showHelpers, setShowHelpers] = useState(false);
 
     useEffect(() => {
-        if (window.innerWidth > 576 && props.firstVisit)
+        if (window.innerWidth > 576 && localStorage.getItem("First Visit") === null) {
             setShowHelpers(true)
-    }, [props.firstVisit]);
+        }
+    }, []);
 
     //add Row/Col/Both and update matrix[row][col]
     const addRow = useCallback((row, col, updated) => {

@@ -67,7 +67,6 @@ const App = () => {
 
     const [matrices, matrixDispatch] = useReducer(matrixReducer, { "A": [["", ""], ["", ""]] });
 
-
     const settingsReducer = (state, action) => {
         switch (action.type) {
             case 'UPDATE_ALL':
@@ -108,17 +107,19 @@ const App = () => {
         "Decimals To Round": 8
     });
 
+
+    //state for saving online/local
     const [username, setUsername] = useState(null);
     const [saveToLocal, setSaveToLocal] = useState(false);
 
+    //state related to storing
     const [showMerge, setShowMerge] = useState(null);
     const [userMatrices, setUserMatrices] = useState(null);
-
-    const saving = useRef(false);
     const [dataTooLarge, setDataTooLarge] = useState(false);
-
-    const [firstVisit, setFirstVisit] = useState(false);
-
+    
+    //state related to loading
+    const [doneLoading, setDoneLoading] = useState(false);
+    const saving = useRef(false);
 
 
     //load from local storage and set up app
@@ -128,27 +129,28 @@ const App = () => {
                 e.returnValue = "";
         });
 
-        const username = localStorage.getItem("username");
-
         setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
-        if (window.localStorage.getItem("First Visit") === null) {
-            setFirstVisit(true);
-            window.localStorage.setItem("First Visit", "0");
-        }
+        const username = localStorage.getItem("username");
 
         if (username !== null) {
             setUsername(username);
         } else if (localStorage.getItem("matrices") !== null) {
             loadFromLocalStorage();
             updateParameter("Show Merge", false);
-        } else {
+        } else { //default
             matrixDispatch({ type: 'UPDATE_ALL', payload: { "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO_STACK": true } })
             setSelection("A");
             updateParameter("Show Merge", false);
+            setDoneLoading(true);
         }
 
         // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        if (doneLoading)
+            window.localStorage.setItem("First Visit", "0");
+    }, [doneLoading])
 
 
 
@@ -233,6 +235,8 @@ const App = () => {
                 }
             });
         }
+
+        setDoneLoading(true);
 
     }
 
@@ -325,6 +329,7 @@ const App = () => {
 
 
         }
+        setDoneLoading(true);
     }
 
     const updateAccountMatrices = async () => {
@@ -498,7 +503,7 @@ const App = () => {
 
                 if (!updated)
                     localStorage.removeItem("matrices");
-
+                break;
             case "Show Merge":
                 setShowMerge(updated);
                 if (saveToLocal)
@@ -541,7 +546,7 @@ const App = () => {
 
     }
 
-    if (!matrices)
+    if (!matrices || !doneLoading)
         return <div />
     return (
         <div>
@@ -567,7 +572,6 @@ const App = () => {
                 userMatrices={userMatrices}
                 dataTooLarge={dataTooLarge}
 
-                firstVisit={firstVisit}
             />
 
 
@@ -591,7 +595,6 @@ const App = () => {
                 settingsDispatch={settingsDispatch}
 
 
-                firstVisit={firstVisit}
 
                 undo={undo}
                 canUndo={undoStack.length > 0}

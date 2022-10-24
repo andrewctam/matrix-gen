@@ -13,10 +13,10 @@ const Navigation = (props) => {
     const [hovering, setHovering] = useState(false);
 
     useEffect(() => {
-        if (props.firstVisit)
+        if (localStorage.getItem("First Visit") === null) {
             setShowTutorial(true);
-            
-    }, [props.firstVisit]);
+        }   
+    }, []);
 
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;

@@ -52,16 +52,7 @@ const SaveMatrices = (props) => {
                             if (props.saveToLocal) {//if currently saving to local (which will become false after this)
                                 setShowLocalStorageWarning(true);
 
-                                localStorage.removeItem("matrices");
-
-                                localStorage.removeItem("Numbers Only")
-                                localStorage.removeItem("Empty Element")
-                                localStorage.removeItem("Rounding")
-                                localStorage.removeItem("Disable Selection")
-                                localStorage.removeItem("Dark Mode Table")
-                                localStorage.removeItem("Mirror Inputs")
-
-
+                                localStorage.removeItem("settings");
                                 localStorage.setItem("First Visit", "0")
                             }
                         }}

@@ -171,7 +171,6 @@ const MatrixEditor = (props) => {
                     updateBoxesSelected={updateBoxesSelected}
                     mouseDown={mouseDown}
                     editSelection={props.editSelection}
-                    firstVisit={props.firstVisit}
                 />
                 : <div className={styles.bigMatrixInfo}>
                     Matrices larger than 50 x 50 are too big to be displayed<br />

@@ -35,17 +35,13 @@ const MatrixGenerator = (props) => {
     return (<>
         <FloatingMenu
             matrices={props.matrices}
-            selection={props.selection}
-            matrix={props.matrices[props.selection]}
-
-            updateParameter={props.updateParameter}
-            setSelection={props.setSelection}
-            updateMatrices={props.updateMatrices}
-            deleteSelectedMatrices={props.deleteSelectedMatrices}
-
-            updateMatrixSettings={props.updateMatrixSettings}
-
             matrixDispatch={props.matrixDispatch}
+
+            matrix={props.matrices[props.selection]}
+            selection={props.selection}
+            setSelection={props.setSelection}
+
+            deleteSelectedMatrices={props.deleteSelectedMatrices}
 
             settings={props.settings}
             settingsDispatch={props.settingsDispatch}
@@ -57,7 +53,6 @@ const MatrixGenerator = (props) => {
 
             toolActive={toolActive}
             toolDispatch={toolDispatch}
-
         />
 
 
@@ -69,7 +64,6 @@ const MatrixGenerator = (props) => {
 
             matrixDispatch={props.matrixDispatch}
 
-            firstVisit={props.firstVisit}
 
             settings={props.settings}
 
