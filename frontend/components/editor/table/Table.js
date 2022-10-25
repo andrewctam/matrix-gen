@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import Box from './Box.js';
 
-import { deleteRowCol, editSelection } from '../../matrixFunctions.js';
+import { editSelection } from '../../matrixFunctions.js';
 
 const Table = (props) => {
     const [showHelpers, setShowHelpers] = useState(false);
@@ -15,45 +15,17 @@ const Table = (props) => {
     }, []);
 
     //add Row/Col/Both and update matrix[row][col]
-    const addRow = useCallback((row, col, updated) => {
+    const addRowCol = useCallback((row, col, updated, type) => {
         setShowHelpers(false)
 
-        props.boxSelectionDispatch({
+        props.boxSelectionDispatch({ //select this box
             type: "SET_BOTH", payload: {
                 start: { x: row, y: col },
                 end: { x: row, y: col }
             }
         });
 
-        props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
-
-    }, [props.name]);
-
-    const addCol = useCallback((row, col, updated) => {
-        setShowHelpers(false)
-
-        props.boxSelectionDispatch({
-            type: "SET_BOTH", payload: {
-                start: { x: row, y: col },
-                end: { x: row, y: col }
-            }
-        });
-
-        props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
-    }, [props.name]);
-
-
-    const addBoth = useCallback((row, col, updated) => {
-        setShowHelpers(false)
-
-        props.boxSelectionDispatch({
-            type: "SET_BOTH", payload: {
-                start: { x: row, y: col },
-                end: { x: row, y: col }
-            }
-        });
-
-        props.matrixDispatch({ "type": "ADD_ROW_AND_COL", payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
+        props.matrixDispatch({ "type": type, payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
     }, [props.name]);
 
     const update = useCallback((row, col, updated) => {
@@ -63,10 +35,10 @@ const Table = (props) => {
     }, [props.name]);
 
     const backspaceSelection = (e) => {
-        if (e.keyCode !== 8)
+        if (e.keyCode !== 8 || !props.settings["Disable Selection"])
             return
 
-        if (!props.settings["Disable Selection"] && props.boxSelection && (
+        if (props.boxSelection && ( //only delete if there is a selection larger than 1x1
             props.boxSelection.start.x !== props.boxSelection.end.x ||
             props.boxSelection.start.y !== props.boxSelection.end.y)) {
 
@@ -107,13 +79,15 @@ const Table = (props) => {
                 addBoth(row + 1, col + 1, "");
             } else if (lastCol) { //add row at this pos
                 if (e.metaKey) {
-                    props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row - 1 } })
+                    props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row } })
+                    document.getElementById((row + 1) + ":" + (col)).focus();
                 } else {
                     props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row + 1} })
                 }
             } else if (lastRow) { //add col at this pos
                 if (e.metaKey) {
-                    props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col - 1 } })
+                    props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col } })
+                    document.getElementById((row) + ":" + (col + 1)).focus();
                 } else {
                     props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col + 1} })
                 }
@@ -266,6 +240,8 @@ const Table = (props) => {
             minY <= y && y <= maxY)
     }
 
+
+    
     const cols = Math.min(50, props.matrix[0].length);
     const rows = Math.min(50, props.matrix.length);
 
@@ -279,9 +255,7 @@ const Table = (props) => {
                 name={props.name}
                 settings={props.settings}
 
-                addRow={addRow}
-                addCol={addCol}
-                addBoth={addBoth}
+                addRowCol={addRowCol}
                 update={update}
                 keyDown={keyDown}
 

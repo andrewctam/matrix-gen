@@ -192,8 +192,6 @@ const App = () => {
 
         }
     }
-
-
     const [matrices, matrixDispatch] = useReducer(matrixReducer, { "A": [["", ""], ["", ""]] });
 
 
@@ -582,7 +580,7 @@ const App = () => {
         }
     }
 
-    //used for updating state and local storage
+    //used for updating local storage
     const updateParameter = (parameterName, updated) => {
         switch (parameterName) {
             case "Save To Local":

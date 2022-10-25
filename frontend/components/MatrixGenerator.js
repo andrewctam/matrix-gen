@@ -1,11 +1,11 @@
-import { useState, useReducer } from "react";
+import { useReducer } from "react";
 import FloatingMenu from "./selectors/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
 
 const MatrixGenerator = (props) => {
 
     const [toolActive, toolDispatch] = useReducer((state, action) => {
-        const disabled = {
+        const disabled = { //only one can be active at a time
             "Matrix Actions": false,
             "Export Matrix": false,
             "Matrix Math": false,
@@ -36,9 +36,9 @@ const MatrixGenerator = (props) => {
     return (<>
         <FloatingMenu
             matrices={props.matrices}
+            matrix={props.matrix}
             matrixDispatch={props.matrixDispatch}
 
-            matrix={props.matrices[props.selection]}
             selection={props.selection}
             setSelection={props.setSelection}
 
@@ -61,11 +61,8 @@ const MatrixGenerator = (props) => {
             matrices={props.matrices}
             matrix={props.matrix}
             name={props.selection}
-            setSelection={props.setSelection}
 
             matrixDispatch={props.matrixDispatch}
-
-
             settings={props.settings}
 
             undoStack = {props.undoStack}

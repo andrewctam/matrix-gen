@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, useReducer } from 'react';
+import React, { useEffect, useRef, useReducer } from 'react';
 
 import styles from "./MatrixEditor.module.css"
 
@@ -93,8 +93,11 @@ const MatrixEditor = (props) => {
 
     console.log(props.matrices)
     let lastValue = null;
-    if (boxSelection && props.undoStack.length > 0 && props.name in props.undoStack[props.undoStack.length - 1])
+    if (boxSelection && props.undoStack.length > 0 && props.name in props.undoStack[props.undoStack.length - 1]
+        && (boxSelection.start.x !== boxSelection.end.x || boxSelection.start.y !== boxSelection.end.y)) {
+            
         lastValue = props.undoStack[props.undoStack.length - 1][props.name] [boxSelection.start.x][boxSelection.start.y] 
+    }
         
 
     return (

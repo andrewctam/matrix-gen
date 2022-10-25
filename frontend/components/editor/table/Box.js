@@ -90,9 +90,9 @@ const Box = (props) => {
             value={props.val}
             style = {{"color": textColor}} 
             tabIndex={props.row !== 0 && !lastRow && lastCol ? -1 : ""}
-            onChange={(lastRow && lastCol ? (e) => { props.addBoth(props.row, props.col, e.target.value) } :
-                                  lastRow ? (e) => { props.addRow(props.row, props.col, e.target.value) }  :
-                                  lastCol ? (e) => { props.addCol(props.row, props.col, e.target.value) }  :
+            onChange={(lastRow && lastCol ? (e) => { props.addRowCol(props.row, props.col, e.target.value, "ADD_ROW_AND_COL") } :
+                                  lastRow ? (e) => { props.addRowCol(props.row, props.col, e.target.value, "ADD_ROW") }  :
+                                  lastCol ? (e) => { props.addRowCol(props.row, props.col, e.target.value, "ADD_COL") }  :
                                             (e) => { props.update(props.row, props.col, e.target.value) }
             )}
 
