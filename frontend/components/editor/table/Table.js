@@ -27,7 +27,7 @@ const Table = (props) => {
 
         props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
 
-    }, [props.name, props.matrixDispatch, props.boxSelectionDispatch]);
+    }, [props.name]);
 
     const addCol = useCallback((row, col, updated) => {
         setShowHelpers(false)
@@ -40,7 +40,7 @@ const Table = (props) => {
         });
 
         props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
-    }, [props.name, props.matrixDispatch, props.boxSelectionDispatch]);
+    }, [props.name]);
 
 
     const addBoth = useCallback((row, col, updated) => {
@@ -54,13 +54,13 @@ const Table = (props) => {
         });
 
         props.matrixDispatch({ "type": "ADD_ROW_AND_COL", payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
-    }, [props.name, props.matrixDispatch, props.boxSelectionDispatch]);
+    }, [props.name]);
 
     const update = useCallback((row, col, updated) => {
         setShowHelpers(false)
         props.matrixDispatch({ "type": "UPDATE_ENTRY", payload: { "name": props.name, "row": row, "col": col, "updated": updated } });
 
-    }, [props.name, props.matrixDispatch]);
+    }, [props.name]);
 
     const backspaceSelection = (e) => {
         if (e.keyCode !== 8)
@@ -109,13 +109,13 @@ const Table = (props) => {
                 if (e.metaKey) {
                     props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row - 1 } })
                 } else {
-                    props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row } })
+                    props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row + 1} })
                 }
             } else if (lastRow) { //add col at this pos
                 if (e.metaKey) {
                     props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col - 1 } })
                 } else {
-                    props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col } })
+                    props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col + 1} })
                 }
             }
         }
@@ -201,7 +201,6 @@ const Table = (props) => {
             } else if (!lastCol) { //Wrap
                 document.getElementById("0:" + (col + 1)).focus();
             }
-
         }
 
         //Up arrow
@@ -214,12 +213,11 @@ const Table = (props) => {
                 document.getElementById(props.matrix.length - 1 + ":" + (col - 1)).focus();
             }
         }
-    }, [props.matrix.length, props.matrix[0].length, props.name, props.matrixDispatch]);
-
+    }, [props.name, props.matrix.length, props.matrix[0].length]); //don't care about the matrix itself for this function. resizing will cause an entire rerender, but that is ok since it is infrequent
 
     useEffect(() => { //if the user changed a box and they have a selection, update the entire selection
         if (props.lastValue !== null && !props.settings["Disable Selection"] && props.boxSelection &&
-            props.boxSelection.start.x !== props.boxSelection.end.x && props.boxSelection.start.y !== props.boxSelection.end.y &&
+            (props.boxSelection.start.x !== props.boxSelection.end.x || props.boxSelection.start.y !== props.boxSelection.end.y) &&
             props.lastValue !== props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]) {
 
             const updated = props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]

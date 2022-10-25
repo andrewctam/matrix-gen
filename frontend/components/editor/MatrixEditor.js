@@ -14,7 +14,6 @@ import { cloneMatrix, updateEntry } from '../matrixFunctions.js';
 
 
 const MatrixEditor = (props) => {
-
     const boxSelectionReducer = (state, action) => {
         if (props.settings["Disable Selection"])
             return null;
@@ -45,9 +44,6 @@ const MatrixEditor = (props) => {
 
     const [boxSelection, boxSelectionDispatch]  = useReducer(boxSelectionReducer, null);
     const mouseDown = useRef(false);
-
-
-
 
     useEffect(() => {
         boxSelectionDispatch({type: "CLEAR"});
@@ -94,14 +90,16 @@ const MatrixEditor = (props) => {
     const close = () => {
         props.toolDispatch({"type": "CLOSE"})
     }
-    console.log(props.undoStack)
-    const lastValue = boxSelection && props.undoStack.length > 0 ? 
-        props.undoStack[props.undoStack.length - 1][props.name][boxSelection.start.x][boxSelection.start.y] 
-        : null;
+
+    console.log(props.matrices)
+    let lastValue = null;
+    if (boxSelection && props.undoStack.length > 0 && props.name in props.undoStack[props.undoStack.length - 1])
+        lastValue = props.undoStack[props.undoStack.length - 1][props.name] [boxSelection.start.x][boxSelection.start.y] 
+        
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
-            {props.toolActive["Matrix Actions"] ?
+            {props.matrix && props.toolActive["Matrix Actions"] ?
                 <MatrixActions
                     name={props.name}
                     matrix={props.matrix}
@@ -112,7 +110,7 @@ const MatrixEditor = (props) => {
                 />
                 : null}
 
-            {props.toolActive["Matrix Math"] ?
+            {props.matrix && props.toolActive["Matrix Math"] ?
                 <MatrixMath
                     matrices={props.matrices}
                     matrix={props.matrix}
@@ -125,7 +123,7 @@ const MatrixEditor = (props) => {
                 />
                 : null}
 
-            {!props.settings["Disable Selection"] && props.toolActive["Selection"] ?
+            {props.matrix && !props.settings["Disable Selection"] && props.toolActive["Selection"] ?
                 <SelectionMenu
                     matrices={props.matrices}
                     name={props.name}
@@ -153,7 +151,7 @@ const MatrixEditor = (props) => {
                 />
                 : null}
 
-            {props.toolActive["Export Matrix"] ?
+            {props.matrix && props.toolActive["Export Matrix"] ?
                 <MatrixExport
                     matrix={props.matrix}
                     settings = {props.settings}
@@ -164,23 +162,24 @@ const MatrixEditor = (props) => {
                 : null}
 
 
-            {!props.matrix ? null :
-            (props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
-                <Table
-                    settings = {props.settings}
-                    name={props.name}
-                    matrix={props.matrix}
-                    matrixDispatch={props.matrixDispatch}
-                    boxSelection = {boxSelection}
-                    boxSelectionDispatch = {boxSelectionDispatch}
-                    mouseDown={mouseDown}
-                    lastValue={lastValue}
-                />
-                : <div className={styles.bigMatrixInfo}>
-                    Matrices larger than 50 x 50 are too big to be displayed<br />
-                    Use Import From Text or Matrix Actions to edit the matrix<br />
-                    Use Export Matrix to view the matrix
-                </div>}
+            {props.matrix ?
+                (props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
+                    <Table
+                        settings = {props.settings}
+                        name={props.name}
+                        matrix={props.matrix}
+                        matrixDispatch={props.matrixDispatch}
+                        boxSelection = {boxSelection}
+                        boxSelectionDispatch = {boxSelectionDispatch}
+                        mouseDown={mouseDown}
+                        lastValue={lastValue}
+                    />
+                    : <div className={styles.bigMatrixInfo}>
+                        Matrices larger than 50 x 50 are too big to be displayed<br />
+                        Use Import From Text or Matrix Actions to edit the matrix<br />
+                        Use Export Matrix to view the matrix
+                    </div> 
+            : null}
 
             {fullInput}
 

@@ -32,7 +32,6 @@ const FloatingMenu = (props) => {
     }
 
     const toggleTool = (e) => {
-        debugger;
         props.toolDispatch({ "type": "TOGGLE", payload: {"name": e.target.id } });
     }
 

@@ -242,8 +242,6 @@ const App = () => {
             window.localStorage.setItem("First Visit", "0");
     }, [doneLoading])
 
-
-
     //if a new user is logged in, get their matrices
     useEffect(() => {
         if (username) {
@@ -263,12 +261,13 @@ const App = () => {
             saveToLocalStorage();
 
         // eslint-disable-next-line
-    }, [matrices, saveToLocal, settings]); //only need to send if matrices change
+    }, [matrices, saveToLocal]); //only need to send if matrices change
 
     useEffect(() => { //update settings
         if (username)
             updateMatrixSettings();
-    }, [settings]);
+    // eslint-disable-next-line
+    }, [settings]); //only send settings if they change
 
 
 
@@ -327,7 +326,6 @@ const App = () => {
         }
 
         setDoneLoading(true);
-
     }
 
     const updateUserInfo = (username, access_token, refresh_token) => {

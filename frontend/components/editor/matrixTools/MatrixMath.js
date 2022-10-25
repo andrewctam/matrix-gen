@@ -390,7 +390,6 @@ const MatrixMath = (props) => {
                 }
             }
     
-    
         }
 
         return clone;
@@ -404,7 +403,6 @@ const MatrixMath = (props) => {
             return [null, null, null, null]
         }
 
-    
         const [L, U, sign] = LUDecomposition(numMatrix)
         let determinant = sign;
         if (L === null || U === null) {
@@ -415,7 +413,7 @@ const MatrixMath = (props) => {
         }
 
         return [numMatrix, L, U, determinant]
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.matrix, props.settings["Empty Element"]]);
     
     
