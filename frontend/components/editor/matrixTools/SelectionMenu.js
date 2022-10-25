@@ -28,23 +28,21 @@ const SelectionMenu = (props) => {
 
 
     var generatedName = generateUniqueName(props.matrices);
-    const noBoxesSelected = props.boxSelectionStart["x"] === -1 &&
-                            props.boxSelectionStart["y"] === -1 && 
-                            props.boxSelectionEnd["x"] === -1 && 
-                            props.boxSelectionEnd["y"] === -1;
+    const noBoxesSelected = props.boxSelection === null;
+    
     return <div className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {selectionMenu}>
         {noBoxesSelected ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
             : <div>
                 <div>
                     {"Selection Size: " +
-                        (Math.abs(props.boxSelectionStart["x"] - props.boxSelectionEnd["x"]) + 1)
+                        (Math.abs(props.boxSelection.start.x - props.boxSelection.end.x) + 1)
                         + " x " +
-                        (Math.abs(props.boxSelectionStart["y"] - props.boxSelectionEnd["y"]) + 1)}
+                        (Math.abs(props.boxSelection.start.y - props.boxSelection.end.y) + 1)}
                 </div>
 
-                <div>{"Start: Row " + (props.boxSelectionStart["x"] + " Column " + props.boxSelectionStart["y"])}</div>
+                <div>{"Start: Row " + (props.boxSelection.start.x + " Column " + props.boxSelection.start.y)}</div>
 
-                <div>{"End: Row " + (props.boxSelectionEnd["x"] + " Column " + props.boxSelectionEnd["y"])}</div>
+                <div>{"End: Row " + (props.boxSelection.end.x + " Column " + props.boxSelection.end.y)}</div>
 
                
 
@@ -52,10 +50,10 @@ const SelectionMenu = (props) => {
                     name={"Save Selection as New Matrix: "}
                     action={() => {
                         const spliced = spliceMatrix(props.matrix,
-                            props.boxSelectionStart["x"],
-                            props.boxSelectionStart["y"],
-                            props.boxSelectionEnd["x"],
-                            props.boxSelectionEnd["y"],
+                            props.boxSelection.start.x,
+                            props.boxSelection.start.y,
+                            props.boxSelection.end.x,
+                            props.boxSelection.end.y,
                             spliceName)
 
                         props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": spliceName ? spliceName : generatedName, "matrix": spliced, "switch": false }});
@@ -80,10 +78,10 @@ const SelectionMenu = (props) => {
                         const pasted = pasteMatrix(
                             props.matrices[props.name], //matrix to paste on
                             props.matrices[pasteName],  //matrix to copy from
-                            props.boxSelectionStart["x"],
-                            props.boxSelectionStart["y"],
-                            props.boxSelectionEnd["x"],
-                            props.boxSelectionEnd["y"])
+                            props.boxSelection.start.x,
+                            props.boxSelection.start.y,
+                            props.boxSelection.end.x,
+                            props.boxSelection.end.y)
 
                         if (pasted)
                             props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": pasted, "switch": false }});

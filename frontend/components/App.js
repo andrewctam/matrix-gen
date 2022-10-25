@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useReducer } from 'react';
 
 import Navigation from "./navigation/Navigation.js"
 import MatrixGenerator from './MatrixGenerator.js';
-import { generateUniqueName } from './matrixFunctions.js';
+import { generateUniqueName, cloneMatrix, addRowsAndCols, addRows, addCols, updateEntry, deleteRowCol } from './matrixFunctions.js';
 
 
 const App = () => {
@@ -10,62 +10,6 @@ const App = () => {
     const [redoStack, setRedoStack] = useState([]);
     const [selection, setSelection] = useState("0"); //0 for no selection
 
-    const matrixReducer = (state, action) => {
-        if (!action.payload.DO_NOT_UPDATE_UNDO_STACK) {
-            const current = JSON.stringify(state)
-            if (current !== "null") {
-                setUndoStack([...undoStack, current]);
-                setRedoStack([]);
-            }
-        }
-
-        const tempObj = { ...state };
-
-        switch (action.type) {
-            case 'UPDATE_ALL':
-                return action.payload.matrices;
-            case 'UPDATE_MATRIX':
-                const name = action.payload.name;
-                if (name === undefined) { //no name, generate one
-                    name = generateUniqueName(state);
-                }
-
-                const matrix = action.payload.matrix;
-                if (matrix === undefined) { //no matrix, generate 1 x 1 one
-                    tempObj[name] = [["", ""], ["", ""]];
-                } else {
-                    tempObj[name] = matrix;
-                }
-
-                if (action.payload.switch)
-                    setSelection(name);
-
-                return tempObj;
-            case 'RENAME_MATRIX':
-                const oldName = action.payload.oldName;
-                const newName = action.payload.newName;
-
-                if (newName in state) {
-                    return state;
-                }
-
-                tempObj[newName] = state[oldName];
-                delete tempObj[oldName];
-                setSelection(newName);
-
-                return tempObj;
-            case 'DELETE_MATRIX':
-                delete tempObj[action.payload.name];
-                return tempObj;
-
-            default:
-                return state;
-
-        }
-    }
-
-
-    const [matrices, matrixDispatch] = useReducer(matrixReducer, { "A": [["", ""], ["", ""]] });
 
     const settingsReducer = (state, action) => {
         switch (action.type) {
@@ -107,6 +51,152 @@ const App = () => {
         "Decimals To Round": 8
     });
 
+    const matrixReducer = (state, action) => {
+        if (!action.payload.DO_NOT_UPDATE_UNDO_STACK) {
+
+            if (state) {
+                setUndoStack([...undoStack, state]);
+                setRedoStack([]);
+            }
+        }
+
+        const tempObj = { ...state };
+
+        switch (action.type) {
+            case 'UPDATE_ALL': { //use blocks to scope variables
+                return action.payload.matrices;
+            }
+            case 'UPDATE_MATRIX': {
+                let { name, matrix } = action.payload;
+                if (name === undefined) { //no name, generate one
+                    name = generateUniqueName(state);
+                }
+
+                if (matrix === undefined) { //no matrix, generate 1 x 1 one
+                    tempObj[name] = [["", ""], ["", ""]];
+                } else {
+                    tempObj[name] = matrix;
+                }
+
+                if (action.payload.switch)
+                    setSelection(name);
+
+                return tempObj;
+            }
+
+            case "ADD_ROW": {
+                let { name, row, col, updated, pos } = action.payload;
+
+                let clone = cloneMatrix(state[name]);
+
+                if (pos !== undefined) {
+                    clone = addRows(clone, 1, pos);
+                } else if (settings["Mirror Inputs"]) {
+                    const cols = clone[0].length;
+                    const rows = clone.length
+                    const max = Math.max(rows + 1, cols)
+
+                    clone = addRowsAndCols(clone, max - rows, max - cols);
+                    clone[col][row] = updated;
+                } else {
+                    clone = addRows(clone, 1);
+                }
+                
+                clone[row][col] = updated;
+                tempObj[name] = clone;
+                return tempObj;
+            }
+            case "ADD_COL": {
+                let { name, row, col, updated, pos} = action.payload;
+
+                let clone = cloneMatrix(state[name]);
+
+                if (pos !== undefined) {
+                    clone = addCols(clone, 1, pos);
+                } else if (settings["Mirror Inputs"]) {
+                    const cols = clone[0].length;
+                    const rows = clone.length
+                    const max = Math.max(rows, cols + 1)
+
+                    clone = addRowsAndCols(clone, max - rows, max - cols);
+                    clone[col][row] = updated;
+                } else {
+                    clone = addCols(clone, 1);
+                }
+
+                clone[row][col] = updated;
+                tempObj[name] = clone;
+                return tempObj;
+
+            }
+            case 'ADD_ROW_AND_COL': {
+                const { name, row, col, updated, pos } = action.payload;
+
+                let clone = cloneMatrix(state[name])
+
+                if (settings["Mirror Inputs"]) {
+                    const cols = clone[0].length;
+                    const rows = clone.length
+                    const max = Math.max(rows + 1, cols + 1);
+
+                    clone = addRowsAndCols(clone, max - rows, max - cols);
+                    clone[col][row] = updated;
+
+                } else {
+                    clone = addRowsAndCols(clone, 1, 1, pos);
+                }
+
+                clone[row][col] = updated;
+                tempObj[name] = clone;
+                return tempObj;
+            }
+            case "DELETE_ROW_COL": {
+                const { name, row, col } = action.payload;
+
+                let clone = cloneMatrix(state[name]);
+                let deleted = deleteRowCol(clone, row, col);
+                
+                if (deleted)
+                    tempObj[name] = deleted;
+
+                return tempObj;
+
+            } case 'UPDATE_ENTRY': {
+                const { name, row, col, updated } = action.payload;
+
+                const modified = updateEntry(cloneMatrix(state[name]), row, col, updated, settings["Mirror Inputs"])
+                tempObj[name] = modified;
+                return tempObj;
+
+            }
+            case 'RENAME_MATRIX': {
+                let { oldName, newName } = action.payload;
+
+                if (newName in state) {
+                    return state;
+                }
+
+                tempObj[newName] = state[oldName];
+                delete tempObj[oldName];
+                setSelection(newName);
+
+                return tempObj;
+            }
+            case 'DELETE_MATRIX': {
+                let { name } = action.payload;
+                delete tempObj[name];
+                return tempObj;
+            }
+            default:
+                return state;
+
+        }
+    }
+
+
+    const [matrices, matrixDispatch] = useReducer(matrixReducer, { "A": [["", ""], ["", ""]] });
+
+
 
     //state for saving online/local
     const [username, setUsername] = useState(null);
@@ -116,7 +206,7 @@ const App = () => {
     const [showMerge, setShowMerge] = useState(null);
     const [userMatrices, setUserMatrices] = useState(null);
     const [dataTooLarge, setDataTooLarge] = useState(false);
-    
+
     //state related to loading
     const [doneLoading, setDoneLoading] = useState(false);
     const saving = useRef(false);
@@ -477,8 +567,8 @@ const App = () => {
 
     const undo = () => {
         if (undoStack.length > 0) {
-            setRedoStack([...redoStack, JSON.stringify(matrices)]);
-            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": JSON.parse(undoStack.pop()), "DO_NOT_UPDATE_UNDO_STACK": true } })
+            setRedoStack([...redoStack, matrices]);
+            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": undoStack.pop(), "DO_NOT_UPDATE_UNDO_STACK": true } })
         } else {
             alert("Nothing to undo");
         }
@@ -486,8 +576,8 @@ const App = () => {
 
     const redo = () => {
         if (redoStack.length > 0) {
-            setUndoStack([...undoStack, JSON.stringify(matrices)]);
-            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": JSON.parse(redoStack.pop()), "DO_NOT_UPDATE_UNDO_STACK": true } })
+            setUndoStack([...undoStack, matrices]);
+            matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": redoStack.pop(), "DO_NOT_UPDATE_UNDO_STACK": true } })
 
         } else {
             alert("Nothing to redo");
@@ -556,15 +646,15 @@ const App = () => {
                 updateParameter={updateParameter}
                 setSelection={setSelection}
 
-                settings = {settings}
+                settings={settings}
                 updateMatrixSettings={updateMatrixSettings}
-
-                saveToLocalStorage={saveToLocalStorage}
 
                 username={username}
                 updateUserInfo={updateUserInfo}
                 refreshTokens={refreshTokens}
+
                 saveToLocal={saveToLocal}
+                saveToLocalStorage={saveToLocalStorage}
                 setSaveToLocal={setSaveToLocal}
 
                 showMerge={showMerge}
@@ -580,10 +670,7 @@ const App = () => {
                 matrixDispatch={matrixDispatch}
 
                 selection={selection}
-                name={selection}
-
                 matrix={selection in matrices ? matrices[selection] : null}
-
 
                 updateParameter={updateParameter}
                 setSelection={setSelection}
@@ -594,12 +681,11 @@ const App = () => {
                 settings={settings}
                 settingsDispatch={settingsDispatch}
 
-
-
                 undo={undo}
-                canUndo={undoStack.length > 0}
                 redo={redo}
-                canRedo={redoStack.length > 0}
+                undoStack={undoStack}
+                redoStack={redoStack}
+
 
             />
 

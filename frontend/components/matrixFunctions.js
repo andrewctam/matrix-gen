@@ -96,11 +96,11 @@ export const deleteRowCol = (matrix, row, col) => {
 
     const clone = cloneMatrix(matrix);
 
-    if (matrix.length > 2 && row !== -1) {
+    if (matrix.length > 2 && row !== undefined) {
         clone.splice(row, 1); //delete row
     }
 
-    if (matrix[0].length > 2 && col !== -1) {
+    if (matrix[0].length > 2 && col !== undefined) {
         for (let i = 0; i < clone.length; i++) {
             clone[i].splice(col, 1); //delete col
         }
@@ -111,7 +111,7 @@ export const deleteRowCol = (matrix, row, col) => {
 
 
 
-export const updateEntry = (matrix, i, j, val, mirror) => {
+export const updateEntry = (matrix, i, j, value, mirror) => {
     //does not make a clone to prevent unnecessary cloning if we use multiple functions 
     if (mirror) {
         //add enough rows/cols in order to update the correct  j, i
@@ -124,10 +124,10 @@ export const updateEntry = (matrix, i, j, val, mirror) => {
             matrix = addCols(matrix, i - matrix[0].length + 2)
         }
 
-        matrix[j][i] = val;
+        matrix[j][i] = value;
     }
 
-    matrix[i][j] = val;
+    matrix[i][j] = value;
 
     return matrix
 }

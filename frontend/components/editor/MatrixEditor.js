@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useReducer } from 'react';
 
 import styles from "./MatrixEditor.module.css"
 
@@ -14,45 +14,44 @@ import { cloneMatrix, updateEntry } from '../matrixFunctions.js';
 
 
 const MatrixEditor = (props) => {
-    const [boxSelectionStart, setBoxSelectionStart] = useState({
-        "x": -1,
-        "y": -1
-    });
 
-    const [boxSelectionEnd, setBoxSelectionEnd] = useState({
-        "x": -1,
-        "y": -1
-    });
+    const boxSelectionReducer = (state, action) => {
+        if (props.settings["Disable Selection"])
+            return null;
 
+        switch (action.type) {
+            case "CLEAR":
+                return null;
+    
+            case "SET_START":
+                return {
+                    start: action.payload.start,
+                    end: state.end,
+                }
+            
+            case "SET_END":
+                return {
+                    start: state.start,
+                    end: action.payload.end,
+                }
 
+            case "SET_BOTH":
+                return {
+                    start: action.payload.start,
+                    end: action.payload.end,
+                }
+       }
+    }
+
+    const [boxSelection, boxSelectionDispatch]  = useReducer(boxSelectionReducer, null);
     const mouseDown = useRef(false);
 
+
+
+
     useEffect(() => {
-        updateBoxesSelected(-1, -1, -1, -1, true)
+        boxSelectionDispatch({type: "CLEAR"});
     }, [props.name]);
-
-    const updateBoxesSelected = useCallback((x1, y1, x2, y2, clear = false) => {
-        if (clear) {
-            setBoxSelectionEnd({ "x": -1, "y": -1 });
-            setBoxSelectionStart({ "x": -1, "y": -1 });
-            return;
-        }
-
-        if (props.settings["Disable Selection"])
-            return;
-
-        if (x1 !== -1 && y1 !== -1)
-            setBoxSelectionStart({
-                "x": x1,
-                "y": y1
-            });
-
-        if (x2 !== -1 && y2 !== -1)
-            setBoxSelectionEnd({
-                "x": x2,
-                "y": y2
-            });
-    }, [props.settings["Disable Selection"]]);
 
 
     const toStringUpdateMatrix = (name, matrix) => {
@@ -67,16 +66,18 @@ const MatrixEditor = (props) => {
         props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": name, "matrix": matrix, "switch": true} });
     }
 
-    const showFullInput = process.browser && (document.activeElement && document.activeElement.id === "fullInput" || (
+    const showFullInput = process.browser && boxSelection && ( props.matrix &&
+        document.activeElement && document.activeElement.id === "fullInput" || (
         document.activeElement.tagName === "INPUT" &&
-        /^[\d]+:[\d]+$/.test(document.activeElement.id) && //num:num
-        boxSelectionStart.x !== -1 && boxSelectionStart.y !== -1
+        /^[\d]+:[\d]+$/.test(document.activeElement.id)//num:num
     ))
 
-    if (showFullInput && props.matrix) {
-        const x = boxSelectionStart["x"];
-        const y = boxSelectionStart["y"];
+    if (showFullInput) {
         console.log(props.matrices)
+        const x = boxSelection.start.x;
+        const y = boxSelection.start.y;
+
+        
         var fullInput =
             <input className={"fixed-bottom " + styles.fullInput}
                 value={props.matrix[x][y]}
@@ -93,6 +94,10 @@ const MatrixEditor = (props) => {
     const close = () => {
         props.toolDispatch({"type": "CLOSE"})
     }
+    console.log(props.undoStack)
+    const lastValue = boxSelection && props.undoStack.length > 0 ? 
+        props.undoStack[props.undoStack.length - 1][props.name][boxSelection.start.x][boxSelection.start.y] 
+        : null;
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
@@ -126,10 +131,10 @@ const MatrixEditor = (props) => {
                     name={props.name}
                     matrix={props.matrix}
                     matrixDispatch={props.matrixDispatch}
-                    boxSelectionStart={boxSelectionStart}
-                    boxSelectionEnd={boxSelectionEnd}
-                    editSelection={props.editSelection}
-                    updateBoxesSelected={updateBoxesSelected}
+                    boxSelection={boxSelection}
+                    boxSelectionDispatch={boxSelectionDispatch}
+        
+                    
                     close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
@@ -166,11 +171,10 @@ const MatrixEditor = (props) => {
                     name={props.name}
                     matrix={props.matrix}
                     matrixDispatch={props.matrixDispatch}
-                    boxSelectionStart={boxSelectionStart}
-                    boxSelectionEnd={boxSelectionEnd}
-                    updateBoxesSelected={updateBoxesSelected}
+                    boxSelection = {boxSelection}
+                    boxSelectionDispatch = {boxSelectionDispatch}
                     mouseDown={mouseDown}
-                    editSelection={props.editSelection}
+                    lastValue={lastValue}
                 />
                 : <div className={styles.bigMatrixInfo}>
                     Matrices larger than 50 x 50 are too big to be displayed<br />

@@ -32,6 +32,7 @@ const MatrixGenerator = (props) => {
 
 
 
+
     return (<>
         <FloatingMenu
             matrices={props.matrices}
@@ -47,9 +48,9 @@ const MatrixGenerator = (props) => {
             settingsDispatch={props.settingsDispatch}
 
             undo={props.undo}
-            canUndo={props.canUndo}
             redo={props.redo}
-            canRedo={props.canRedo}
+            canUndo={props.undoStack.length > 0}
+            canRedo={props.redoStack.length > 0}
 
             toolActive={toolActive}
             toolDispatch={toolDispatch}
@@ -67,7 +68,8 @@ const MatrixGenerator = (props) => {
 
             settings={props.settings}
 
-
+            undoStack = {props.undoStack}
+            redoStack = {props.redoStack}
             toolActive={toolActive}
             toolDispatch={toolDispatch}
         />

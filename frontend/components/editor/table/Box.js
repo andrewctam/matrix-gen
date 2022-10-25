@@ -5,22 +5,32 @@ const Box = (props) => {
         //set the start of the selection
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             props.mouseDown.current = true
+            props.boxSelectionDispatch({type: "SET_BOTH", payload: {
+                start: {x: props.row, y: props.col}, 
+                end: {x: props.row, y: props.col}
+            }});
         }
+
     }
     const handleFocus = (e) => {
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             //select this one box
-            props.updateBoxesSelected(props.row, props.col, props.row, props.col);
+            props.boxSelectionDispatch({type: "SET_BOTH", payload: {
+                start: {x: props.row, y: props.col}, 
+                end: {x: props.row, y: props.col}
+            }});
         } else {
             //no selection for the last row/col
-            props.updateBoxesSelected(-1, -1, -1, -1, true);
+            props.boxSelectionDispatch({type: "CLEAR"});
         }
     }
 
     const handleMouseEnter = (e) => {
         //if mouse is enters and is down (i.e. dragging) set this to the end of the selection
         if (props.mouseDown.current && props.rows !== props.row + 1 && props.cols !== props.col + 1)
-            props.updateBoxesSelected(-1, -1, props.row, props.col);
+            props.boxSelectionDispatch({type: "SET_END", payload: {
+                end: {x: props.row, y: props.col}
+            }});
     }
 
     const lastRow = props.rows === props.row + 1;
@@ -66,6 +76,8 @@ const Box = (props) => {
                 boxStyle["width"] = "25px"
         } 
     }
+
+    console.log(props.row, props.col)
 
 
     return <td className={styles.box} style = {boxStyle}>
