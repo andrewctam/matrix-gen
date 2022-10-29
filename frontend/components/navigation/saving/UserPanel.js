@@ -201,9 +201,9 @@ const UserPanel = (props) => {
         <MergeStorage
             matrices={props.matrices}
             userMatrices={props.userMatrices}
-            updateMatrices={props.updateMatrices}
+            matrixDispatch={props.matrixDispatch}
             setSelection={props.setSelection}
-            updateParameter={props.updateParameter}
+            setShowMerge={props.setShowMerge}
             addAlert={props.addAlert}
 
         /> : null}

@@ -19,7 +19,7 @@ const Navigation = (props) => {
     }, []);
 
     if (props.showMerge) {
-        var saving = `Logged in as ${props.username}. There is currently a storage conflict. Please see Save Matrices.`;
+        var saving = `Logged in as ${props.username}. There is currently a storage conflict.`;
     } else if (props.username) {
         if (props.dataTooLarge) {
             if (props.saveToLocal) {
@@ -74,13 +74,15 @@ const Navigation = (props) => {
                         matrices={props.matrices}
                         refreshTokens={props.refreshTokens}
 
-                        updateMatrices={props.updateMatrices}
+                        matrixDispatch={props.matrixDispatch}
                         setSelection={props.setSelection}
                         showMerge={props.showMerge}
-                        userMatrices={props.userMatrices}
                         setShowMerge={props.setShowMerge}
+                        userMatrices={props.userMatrices}
                         closeSaveMenu={() => { setShowSaveMenu(false) }}
                         addAlert={props.addAlert}
+
+                        setSaveToLocal = {props.setSaveToLocal}
                     /> : null}
 
                 {showTutorial ?

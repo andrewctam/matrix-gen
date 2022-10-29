@@ -237,7 +237,7 @@ const MatrixActions = (props) => {
                     if (random)
                         props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: random}})
                     else
-                        props.addAlert(`Invalid range: ${randomLow} is greater than ${randomHigh}`, 5000, "error");
+                        props.addAlert(`Invalid range`, 5000, "error");
 
                 }}
                 updateParameter={updateParameter}
@@ -257,7 +257,7 @@ const MatrixActions = (props) => {
                     if (scattered)
                         props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: scattered}})
                     else   
-                        props.addAlert(`Invalid range: ${scatterLow} is greater than ${scatterHigh}`, 5000, "error");
+                        props.addAlert(`Invalid range`, 5000, "error");
 
                         
                 }}

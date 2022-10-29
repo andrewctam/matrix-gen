@@ -44,6 +44,9 @@ const MatrixGenerator = (props) => {
 
             deleteSelectedMatrices={props.deleteSelectedMatrices}
 
+            showMerge={props.showMerge}
+            userMatrices = {props.userMatrices}
+
             settings={props.settings}
             settingsDispatch={props.settingsDispatch}
 

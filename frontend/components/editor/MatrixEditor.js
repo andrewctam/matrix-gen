@@ -69,7 +69,6 @@ const MatrixEditor = (props) => {
     ))
 
     if (showFullInput) {
-        console.log(props.matrices)
         const x = boxSelection.start.x;
         const y = boxSelection.start.y;
 
@@ -91,7 +90,6 @@ const MatrixEditor = (props) => {
         props.toolDispatch({"type": "CLOSE"})
     }
 
-    console.log(props.matrices)
     let lastValue = null;
     if (boxSelection && props.undoStack.length > 0 && props.name in props.undoStack[props.undoStack.length - 1]
         && (boxSelection.start.x !== boxSelection.end.x || boxSelection.start.y !== boxSelection.end.y)) {

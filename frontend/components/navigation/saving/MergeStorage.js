@@ -24,12 +24,13 @@ const MergeStorage = (props) => {
             return;
         }
 
-        props.updateMatrices(union);
-        props.updateParameter("Show Merge", false)
+        props.matrixDispatch({"type": "UPDATE_ALL", "payload": {"matrices": union}});
+        
+        props.setShowMerge(false);
     }
 
     const overwriteLocal = () => {
-        props.updateMatrices(props.userMatrices);
+        props.matrixDispatch({"type": "UPDATE_ALL", "payload": {"matrices": props.userMatrices}});
         const accountMatrices = Object.keys(props.userMatrices)
         if (accountMatrices.length > 0) {
             props.setSelection(Object.keys(props.userMatrices)[0]);
@@ -37,7 +38,7 @@ const MergeStorage = (props) => {
             props.setSelection("0");
         }
 
-        props.updateParameter("Show Merge", false)
+        props.setShowMerge(false);  
     }
 
 

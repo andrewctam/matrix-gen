@@ -21,12 +21,13 @@ const SaveMatrices = (props) => {
                         showMerge={props.showMerge}
                         matrices={props.matrices}
                         userMatrices={props.userMatrices}
-                        updateMatrices={props.updateMatrices}
+                        matrixDispatch={props.matrixDispatch}
                         setSelection={props.setSelection}
                         updateParameter={props.updateParameter}
                         updateUserInfo={props.updateUserInfo}
                         refreshTokens={props.refreshTokens}
                         addAlert={props.addAlert}
+                        setShowMerge={props.setShowMerge}
                     />
                     :
                     <LoginForm
@@ -49,11 +50,14 @@ const SaveMatrices = (props) => {
 
                     <input className="form-check-input pull-right"
                         onChange={() => {
-                            props.updateParameter("Save To Local", !props.saveToLocal)
+                            props.setSaveToLocal(!props.saveToLocal);
+                            window.localStorage.setItem("Save To Local", !props.saveToLocal ? "1" : "0");
+            
                             if (props.saveToLocal) {//if currently saving to local (which will become false after this)
                                 setShowLocalStorageWarning(true);
+                                localStorage.removeItem("matrices");
+                                localStorage.removeItem("settings");
 
-                                localStorage.setItem("First Visit", "0")
                             } else 
                                 setShowLocalStorageWarning(false);
 

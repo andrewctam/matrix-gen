@@ -107,7 +107,7 @@ li {
 .alertContainer {
     position: fixed;
     top: 4px;
-    right: 4px;
+    left: 4px;
     margin: 1px;
     z-index: 20;
 }
@@ -130,9 +130,9 @@ li {
 
 
 .error-alert {
-    background-color: rgb(232, 177, 177);
+    background-color: rgba(232, 177, 177, 0.95);
 }
 
 .normal-alert {
-    background-color: rgb(175, 202, 211);
+    background-color: rgba(175, 202, 211, 0.95);
 }

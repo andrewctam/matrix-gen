@@ -224,11 +224,11 @@ const App = () => {
             setUsername(username);
         } else if (localStorage.getItem("matrices") !== null) {
             loadFromLocalStorage();
-            updateParameter("Show Merge", false);
+            setShowMerge(false)
         } else { //default
             matrixDispatch({ type: 'UPDATE_ALL', payload: { "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO_STACK": true } })
             setSelection("A");
-            updateParameter("Show Merge", false);
+            setShowMerge(false)
             setDoneLoading(true);
         }
 
@@ -252,11 +252,13 @@ const App = () => {
 
     //send updates to server
     useEffect(() => {
-        if (!showMerge && username)
-            updateAccountMatrices();
+        if (doneLoading) {
+            if (!showMerge && username)
+                updateAccountMatrices();
 
-        if (matrices && saveToLocal)
-            saveToLocalStorage();
+            if (matrices && saveToLocal)
+                saveToLocalStorage();
+        }
 
         // eslint-disable-next-line
     }, [matrices, saveToLocal, settings]); //only need to send if matrices or settings change
@@ -398,7 +400,7 @@ const App = () => {
             localMatricesStr === response["matrix_data"])
 
         if (mergeUnnecessary) {
-            updateParameter("Show Merge", false);
+            setShowMerge(false)
             matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": userMatrices, "DO_NOT_UPDATE_UNDO_STACK": true } });
             if (Object.keys(userMatrices).length > 0)
                 setSelection(Object.keys(userMatrices)[0])
@@ -406,7 +408,8 @@ const App = () => {
                 setSelection("0");
 
         } else {
-            updateParameter("Show Merge", true);
+            setShowMerge(true)
+            addAlert("You have matrices saved locally that conflict with your account's matrices. Please see the save menu for more info.", 5000, "error")
             setUserMatrices(userMatrices);
 
             if (!matrices || saveToLocal) //if the page is loading, load from local storage if enabled.
@@ -580,31 +583,7 @@ const App = () => {
         }
     }
 
-    //used for updating local storage
-    const updateParameter = (parameterName, updated) => {
-        switch (parameterName) {
-            case "Save To Local":
-                setSaveToLocal(updated);
-                window.localStorage.setItem("Save To Local", updated ? "1" : "0");
 
-                if (!updated) {
-                    localStorage.removeItem("matrices");
-                    localStorage.removeItem("settings");
-                }
-                break;
-            case "Show Merge":
-                setShowMerge(updated);
-                if (saveToLocal)
-                    window.localStorage.setItem("Show Merge", updated ? "1" : "0");
-
-                break;
-
-            default:
-                console.log("Invalid?:" + parameterName);
-
-        }
-
-    }
 
     const deleteSelectedMatrices = (matricesToDelete) => {
         if (matricesToDelete.length === 0) { //if input is empty, delete all
@@ -644,7 +623,6 @@ const App = () => {
             <Navigation
                 matrices={matrices}
                 matrixDispatch={matrixDispatch}
-                updateParameter={updateParameter}
                 setSelection={setSelection}
 
                 settings={settings}
@@ -674,7 +652,6 @@ const App = () => {
                 selection={selection}
                 matrix={selection in matrices ? matrices[selection] : null}
 
-                updateParameter={updateParameter}
                 setSelection={setSelection}
 
                 deleteSelectedMatrices={deleteSelectedMatrices}
@@ -682,7 +659,9 @@ const App = () => {
 
                 settings={settings}
                 settingsDispatch={settingsDispatch}
-
+                
+                showMerge={showMerge}
+                userMatrices={userMatrices}
                 undo={undo}
                 redo={redo}
                 undoStack={undoStack}

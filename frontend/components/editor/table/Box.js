@@ -77,8 +77,6 @@ const Box = (props) => {
         } 
     }
 
-    console.log(props.row, props.col)
-
 
     return <td className={styles.box} style = {boxStyle}>
         <input
