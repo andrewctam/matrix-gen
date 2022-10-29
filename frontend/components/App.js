@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useReducer } from 'react';
 import Navigation from "./navigation/Navigation.js"
 import MatrixGenerator from './MatrixGenerator.js';
 import { generateUniqueName, cloneMatrix, addRowsAndCols, addRows, addCols, updateEntry, deleteRowCol } from './matrixFunctions.js';
-
+import useAlert from '../hooks/useAlert.js';
 
 const App = () => {
     const [undoStack, setUndoStack] = useState([]);
@@ -259,7 +259,7 @@ const App = () => {
             saveToLocalStorage();
 
         // eslint-disable-next-line
-    }, [matrices, saveToLocal]); //only need to send if matrices change
+    }, [matrices, saveToLocal, settings]); //only need to send if matrices or settings change
 
     useEffect(() => { //update settings
         if (username)
@@ -367,7 +367,7 @@ const App = () => {
             return response.json()
         }).catch((error) => {
             console.log(error)
-            alert("Error connecting to server")
+            addAlert("Error connecting to server.", 10000, "error");
             return null;
         });
 
@@ -433,7 +433,7 @@ const App = () => {
         }).then((response) => {
             if (response.status === 413) { //data too large
                 if (!dataTooLarge) { //only show the alert the first time
-                    alert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.");
+                    addAlert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.", 5000, "error");
                 }
                 setDataTooLarge(true)
                 return response.json();
@@ -566,7 +566,7 @@ const App = () => {
             setRedoStack([...redoStack, matrices]);
             matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": undoStack.pop(), "DO_NOT_UPDATE_UNDO_STACK": true } })
         } else {
-            alert("Nothing to undo");
+            addAlert("Nothing to undo", 1000);
         }
     }
 
@@ -576,7 +576,7 @@ const App = () => {
             matrixDispatch({ "type": "UPDATE_ALL", "payload": { "matrices": redoStack.pop(), "DO_NOT_UPDATE_UNDO_STACK": true } })
 
         } else {
-            alert("Nothing to redo");
+            addAlert("Nothing to redo", 1000);
         }
     }
 
@@ -587,8 +587,10 @@ const App = () => {
                 setSaveToLocal(updated);
                 window.localStorage.setItem("Save To Local", updated ? "1" : "0");
 
-                if (!updated)
+                if (!updated) {
                     localStorage.removeItem("matrices");
+                    localStorage.removeItem("settings");
+                }
                 break;
             case "Show Merge":
                 setShowMerge(updated);
@@ -632,10 +634,13 @@ const App = () => {
 
     }
 
+    const [alerts, addAlert] = useAlert();
     if (!matrices || !doneLoading)
-        return <div />
+        return <div/>
     return (
         <div>
+            {alerts}
+
             <Navigation
                 matrices={matrices}
                 matrixDispatch={matrixDispatch}
@@ -657,6 +662,7 @@ const App = () => {
                 setShowMerge={setShowMerge}
                 userMatrices={userMatrices}
                 dataTooLarge={dataTooLarge}
+                addAlert={addAlert}
 
             />
 
@@ -681,6 +687,8 @@ const App = () => {
                 redo={redo}
                 undoStack={undoStack}
                 redoStack={redoStack}
+
+                addAlert={addAlert}
 
 
             />

@@ -110,6 +110,8 @@ const MatrixEditor = (props) => {
                     close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
+
+                    addAlert = {props.addAlert}
                 />
                 : null}
 
@@ -123,6 +125,8 @@ const MatrixEditor = (props) => {
                     close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
+
+                    addAlert = {props.addAlert}
                 />
                 : null}
 
@@ -139,6 +143,9 @@ const MatrixEditor = (props) => {
                     close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
+
+                    addAlert = {props.addAlert}
+
                 />
                 : null}
 
@@ -150,6 +157,9 @@ const MatrixEditor = (props) => {
                     close={close}
                     floatingMenuRef={props.floatingMenuRef}
                     showFullInput={showFullInput}
+
+                    addAlert = {props.addAlert}
+
 
                 />
                 : null}

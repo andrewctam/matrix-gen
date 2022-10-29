@@ -45,7 +45,7 @@ const MatrixMath = (props) => {
         e.preventDefault();
 
         if (expression === "") {
-            alert("Please enter an expression using matrix names and these operators: + - * ^");
+            props.addAlert("Please enter an expression using matrix names and these operators: + - * ^", 5000, "error");
             return;
         }
 
@@ -56,7 +56,7 @@ const MatrixMath = (props) => {
             if (matrix !== null)
                 props.toStringUpdateMatrix(resultName === "" ? undefined : resultName, matrix)
         } catch (error) {
-            alert("Error in expression.");
+            props.addAlert("Error in expression.", 5000, "error");
             console.log(error);
         }
 
@@ -301,7 +301,7 @@ const MatrixMath = (props) => {
                     var a = stack.pop()
                     var result = matrixMultiplication(a, b)
                     if (result === null) {
-                        alert("Error in input. Matrices have different rows and column dimensions")
+                        props.addAlert("Error in input. Matrices have different rows and column dimensions", 5000, "error")
                         return null
                     }
 
@@ -312,7 +312,7 @@ const MatrixMath = (props) => {
                     a = stack.pop()
                     result = matrixPower(a, b)
                     if (result === null) {
-                        alert("Error in input. Matrices have different rows and column dimensions")
+                        props.addAlert("Error in input. Matrices have different rows and column dimensions", 5000, "error")
                         return null
                     }
 
@@ -323,7 +323,7 @@ const MatrixMath = (props) => {
                     a = stack.pop()
                     result = matrixAddition(b, a)
                     if (result === null) {
-                        alert("Error in input. Matrices have different dimensions")
+                        props.addAlert("Error in input. Matrices have different dimensions", 5000, "error")
                         return null;
                     }
 
@@ -342,13 +342,13 @@ const MatrixMath = (props) => {
                             matrix = props.matrices[postFix[i]]
 
                         if (!matrix in props.matrices) {
-                            alert(matrix + " does not exist")
+                            props.addAlert(matrix + " does not exist", 5000, "error")
                             return null;
                         }
 
                         let parsedMatrix = cloneAndVerify(matrix); //replace sparseVals and parse floats
                         if (parsedMatrix === null) {
-                            alert("Error in input. Matrix " + postFix[i] + " is not a valid matrix or contains non-numeric values")
+                            props.addAlert(`Error in input. Matrix ${postFix[i]} is not a valid matrix or contains non-numeric values`, 5000, "error")
                             return null;
                         } else {
                             if (negative)

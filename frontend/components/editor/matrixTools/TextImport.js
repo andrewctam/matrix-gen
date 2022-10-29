@@ -223,9 +223,9 @@ const TextImport = (props) => {
 
                 } catch (error) {
                     console.log(error); 
-                    alert("Error in input.")
+                    props.addAlert("Error in input.", 5000, "error");
                 }
-
+                
                 break;
 
         
@@ -236,18 +236,18 @@ const TextImport = (props) => {
 
                 if (isNaN(rowCount) || isNaN(colCount)) { //one is empty or NaN
                     if (isNaN(rowCount) && isNaN(colCount)) {
-                        alert("Enter rows and columns to reshape");
+                        props.addAlert("Enter rows and columns to reshape", 5000, "error");
                         return;
                     } else if (!isNaN(rowCount)) { //infer cols bsed on rows
                         if (elements.length % rowCount !== 0) {
-                            alert("Invalid number of rows");
+                            props.addAlert("Invalid number of rows", 5000, "error");
                             return;
                         }
                         
                         colCount = elements.length / rowCount;
                     } else if (!isNaN(colCount)) { //infer rows based on cols
                         if (elements.length % colCount !== 0) {
-                            alert("Invalid number of columns");
+                            props.addAlert("Invalid number of columns", 5000, "error");
                             return;
                         }
                         

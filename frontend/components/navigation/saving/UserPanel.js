@@ -204,6 +204,8 @@ const UserPanel = (props) => {
             updateMatrices={props.updateMatrices}
             setSelection={props.setSelection}
             updateParameter={props.updateParameter}
+            addAlert={props.addAlert}
+
         /> : null}
     </div>)
 }

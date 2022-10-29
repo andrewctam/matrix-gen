@@ -20,7 +20,7 @@ const MergeStorage = (props) => {
         }
 
         if (JSON.stringify(union).length > 512000) {
-            alert("Merging your matrices will exceed the maximum storage limit for accounts. Please delete some local matrices before merging.");
+            props.addAlert("Merging your matrices will exceed the maximum storage limit for accounts. Please delete some local matrices before merging.", 10000, "error");
             return;
         }
 

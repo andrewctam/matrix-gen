@@ -26,6 +26,7 @@ const SaveMatrices = (props) => {
                         updateParameter={props.updateParameter}
                         updateUserInfo={props.updateUserInfo}
                         refreshTokens={props.refreshTokens}
+                        addAlert={props.addAlert}
                     />
                     :
                     <LoginForm
@@ -52,9 +53,11 @@ const SaveMatrices = (props) => {
                             if (props.saveToLocal) {//if currently saving to local (which will become false after this)
                                 setShowLocalStorageWarning(true);
 
-                                localStorage.removeItem("settings");
                                 localStorage.setItem("First Visit", "0")
-                            }
+                            } else 
+                                setShowLocalStorageWarning(false);
+
+
                         }}
                         checked={props.saveToLocal}
                         type="checkbox"

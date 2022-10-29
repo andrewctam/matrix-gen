@@ -49,12 +49,10 @@ export const generateUniqueName = (matrices) => {
 
 export const resizeMatrix = (matrix, rows, cols) => {
     if (isNaN(rows) || isNaN(cols)) {
-        alert("Enter a number for rows and columns");
         return null;
     }
 
     if (rows <= 1 || cols <= 1) { //actually inputted 0 x 0, which is 1 x 1
-        alert("Dimensions must be positive");
         return null;
     }
 
@@ -218,7 +216,6 @@ export const randomMatrix = (matrix, randomLow, randomHigh) => {
     }
 
     if (randomLow > randomHigh) {
-        alert(`Invalid range. ${randomLow} is greater than ${randomHigh}`);
         return null;
     }
 
@@ -238,7 +235,6 @@ export const scatter = (matrix, scatterLow, scatterHigh) => {
     }
 
     if (scatterLow > scatterHigh) {
-        alert(`Invalid range. ${scatterLow} is greater than ${scatterHigh}`);
         return null;
     }
 
@@ -276,18 +272,15 @@ export const reshapeMatrix = (matrix, rowCount, colCount) => {
     const numElements = (matrix.length - 1) * (matrix[0].length - 1);
     if (isNaN(rowCount) || isNaN(colCount)) { //one is empty or NaN
         if (isNaN(rowCount) && isNaN(colCount)) {
-            alert("Enter rows and columns to reshape");
             return null;
         } else if (!isNaN(rowCount)) { //infer cols bsed on rows
             if (numElements % rowCount !== 0) {
-                alert("Invalid number of rows");
                 return null;
             }
 
             colCount = numElements / rowCount;
         } else if (!isNaN(colCount)) { //infer rows based on cols
             if (numElements % colCount !== 0) {
-                alert("Invalid number of columns");
                 return null;
             }
 
@@ -295,7 +288,6 @@ export const reshapeMatrix = (matrix, rowCount, colCount) => {
         }
     }
     if (rowCount <= 0 || colCount <= 0) {
-        alert("Dimensions must be positive");
         return null;
     }
 
@@ -476,7 +468,6 @@ export const pasteMatrix = (pasteMatrix, copyMatrix, x1, y1, x2, y2,) => {
     }
 
     if (x2 - x1 + 2 !== copyMatrix.length || y2 - y1 + 2 !== copyMatrix[0].length) {
-        alert("Error: selection dimensions and pasted matrix dimensions must match.")
         return null;
     }
 

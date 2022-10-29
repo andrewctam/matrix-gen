@@ -54,6 +54,8 @@ const MatrixGenerator = (props) => {
 
             toolActive={toolActive}
             toolDispatch={toolDispatch}
+
+            addAlert={props.addAlert}
         />
 
 
@@ -69,6 +71,8 @@ const MatrixGenerator = (props) => {
             redoStack = {props.redoStack}
             toolActive={toolActive}
             toolDispatch={toolDispatch}
+
+            addAlert = {props.addAlert}
         />
 
     </>)

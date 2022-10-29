@@ -46,10 +46,10 @@ const MatrixSelector = (props) => {
         if (oldName === newName)
             return false;
         else if (newName === "") {
-            alert("The name can not be blank!")
+            props.addAlert("The name can not be blank!", 5000, "error")
             return false;
         } else if (newName in props.matrices) {
-            alert(`The name ${displayName} already exists!`)
+            props.addAlert(`The name ${newName} already exists!`, 5000, "error")
             return false;
         } else {         
             props.matrixDispatch({"type": "RENAME_MATRIX", payload: {"oldName": oldName, "newName": newName}})
@@ -70,11 +70,12 @@ const MatrixSelector = (props) => {
                     props.matrixDispatch({type: "UPDATE_MATRIX", payload: {"name": name, "matrix": resized}});
                     return true;
                 } else {
+                    props.addAlert("Enter a valid number for rows and columns", 5000, "error");
                     return false;
                 }
 
             } else {
-                alert("Dimensions can not be zero");
+                props.addAlert("Dimensions can not be zero", 5000, "error");
                 return false;
             }
         } else {

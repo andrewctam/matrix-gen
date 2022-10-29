@@ -69,10 +69,10 @@ const SelectionMenu = (props) => {
                     name={"Paste Another Matrix Into Selection: "}
                     action={() => {
                         if (pasteName === "") {
-                            alert("Please enter a matrix name to paste.");
+                            props.addAlert("Please enter a matrix name to paste.", 5000, "error");
                             return;
                         } else if (!(pasteName in props.matrices)) {
-                            alert("Matrix not found");
+                            props.addAlert(`Matrix ${pasteName} not found`, 5000, "error");
                             return;
                         }
                         const pasted = pasteMatrix(
@@ -85,6 +85,9 @@ const SelectionMenu = (props) => {
 
                         if (pasted)
                             props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": pasted, "switch": false }});
+                        else
+                            props.addAlert("Error: Selection dimensions and pasted matrix dimensions must match.", 5000, "error");
+
                     }}
 
                     updateParameter={updateName}

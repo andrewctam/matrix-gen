@@ -93,6 +93,8 @@ const FloatingMenu = (props) => {
                     showMerge={props.showMerge}
                     multiSelected={multiSelected}
                     setMultiSelected={setMultiSelected}
+
+                    addAlert={props.addAlert}
                 />
 
                 <div>

@@ -80,6 +80,7 @@ const Navigation = (props) => {
                         userMatrices={props.userMatrices}
                         setShowMerge={props.setShowMerge}
                         closeSaveMenu={() => { setShowSaveMenu(false) }}
+                        addAlert={props.addAlert}
                     /> : null}
 
                 {showTutorial ?

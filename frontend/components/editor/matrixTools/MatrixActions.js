@@ -188,12 +188,14 @@ const MatrixActions = (props) => {
                 name="Reshape To: "
                 action={() => {
                     if (reshapeRows > 100 || reshapeCols > 100) {
-                        alert("The max matrix size is 100 x 100")
+                        props.addAlert("The max matrix size is 100 x 100", 5000, "error")
                         return;
                     }
                     const reshaped = reshapeMatrix(props.matrix, parseInt(reshapeRows), parseInt(reshapeCols))
                     if (reshaped)
                         props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: reshaped}})
+                    else 
+                        props.addAlert("Enter valid numbers for rows and columns.", 5000, "error")
                 }}
                 updateParameter={updateParameter}
                 id1={"reshapeRows"}
@@ -208,12 +210,15 @@ const MatrixActions = (props) => {
                 name="Resize To: "
                 action={() => {
                     if (resizeRows > 100 || resizeCols > 100) {
-                        alert("The max matrix size is 100 x 100")
+                        props.addAlert("The max matrix size is 100 x 100", 5000, "error")
                         return;
                     }
                     const resized = resizeMatrix(props.matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
                     if (resized)
                         props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: resized}})
+                    else 
+                        props.addAlert("Enter a number for rows and columns", 5000, "error");
+
                 }}
                 updateParameter={updateParameter}
                 id1={"resizeRows"}
@@ -231,6 +236,9 @@ const MatrixActions = (props) => {
 
                     if (random)
                         props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: random}})
+                    else
+                        props.addAlert(`Invalid range: ${randomLow} is greater than ${randomHigh}`, 5000, "error");
+
                 }}
                 updateParameter={updateParameter}
                 id1={"randomLow"}
@@ -248,6 +256,9 @@ const MatrixActions = (props) => {
 
                     if (scattered)
                         props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: scattered}})
+                    else   
+                        props.addAlert(`Invalid range: ${scatterLow} is greater than ${scatterHigh}`, 5000, "error");
+
                         
                 }}
                 updateParameter={updateParameter}

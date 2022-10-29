@@ -102,3 +102,37 @@ li {
     border-color: black;
     color: black !important;
 }
+
+
+.alertContainer {
+    position: fixed;
+    top: 4px;
+    right: 4px;
+    margin: 1px;
+    z-index: 20;
+}
+
+.alert {
+    border-radius: 4px;
+    border: 1px solid black;
+    padding: 12px 16px;
+    width: fit-content;
+    height: fit-content;
+    margin: 2px;
+    color: black;
+    z-index: 20;
+}
+
+.alert > p {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+.error-alert {
+    background-color: rgb(232, 177, 177);
+}
+
+.normal-alert {
+    background-color: rgb(175, 202, 211);
+}
