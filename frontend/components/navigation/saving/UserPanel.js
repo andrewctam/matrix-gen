@@ -44,6 +44,7 @@ const UserPanel = (props) => {
     const logOut = () => {
         props.setShowWelcome(false)
         props.updateUserInfo(null, null, null);
+        
     }
 
     const handleDeleteAccount = async (e = null) => {
@@ -87,6 +88,7 @@ const UserPanel = (props) => {
             setDeleteVerifyError("Incorrect password")
         } else {
             logOut();
+            
             console.log("Account deleted")
         }
     }

@@ -151,9 +151,12 @@ const TextImport = (props) => {
         if (ignoreWhitespace)
             text = text.replaceAll(/\s/g,"")
         
-        if (props.currentName && overwrite) //overwrite current matrix
-            var name = props.currentName;
-        else if (newName === "") //input empty, so auto generate
+        if (props.currentName && overwrite) {//overwrite current matrix
+            if (props.currentName === "0")
+                var name = "A"
+            else
+                var name = props.currentName;
+        } else if (newName === "") //input empty, so auto generate
             name = generateUniqueName(props.matrices);
         else //name provided
             name = newName;

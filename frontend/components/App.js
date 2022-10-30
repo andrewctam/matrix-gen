@@ -342,6 +342,7 @@ const App = () => {
         } else {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
+            setShowMerge(false);
         }
 
         //if all is set to null (log out or invalid tokens), then load local storage
