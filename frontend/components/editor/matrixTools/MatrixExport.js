@@ -181,7 +181,7 @@ const MatrixExport = (props) => {
                 result += "\n";
                 
 
-                for (let i = 0; i < props.matrix.length - 1; i++) {
+                for (let i = 1; i < props.matrix.length - 1; i++) {
                     result += "|";
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
 

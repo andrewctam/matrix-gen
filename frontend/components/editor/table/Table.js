@@ -35,7 +35,7 @@ const Table = (props) => {
     }, [props.name]);
 
     const backspaceSelection = (e) => {
-        if (e.keyCode !== 8 || !props.settings["Disable Selection"])
+        if (e.keyCode !== 8 || props.settings["Disable Selection"])
             return
 
         if (props.boxSelection && ( //only delete if there is a selection larger than 1x1
@@ -277,7 +277,8 @@ const Table = (props) => {
     }
 
     return (
-        <div className={"d-flex justify-content-center"} id="hide"
+        <div className={"d-flex justify-content-center"} 
+            id="hide"
             onClick={(e) => {
                 if (e.target.id === "hide") {
                     props.boxSelectionDispatch({ "type": "CLEAR" });
