@@ -23,6 +23,9 @@ const MatrixExport = (props) => {
         "\\":"\\char92"
     })  
 
+    const [pipeEscape, setPipeEscape] = useState(true);
+    const [padMarkdown, setPadMarkdown] = useState(true);
+
     const matrixExport = useExpand(matrixExport);
 
 
@@ -104,6 +107,112 @@ const MatrixExport = (props) => {
                     }
                 }
                 return result + end;
+            case "Markdown":
+                let size = 3; //default since ---
+
+                if (padMarkdown) {
+                    //find the longest element
+                    for (let i = 0; i < props.matrix.length; i++) {
+                        for (let j = 0; j < props.matrix[0].length; j++) {
+                            let element = props.matrix[i][j];
+                            switch (element) {
+                                case "":
+                                    element = props.settings["Empty Element"];
+                                    break;
+                                case "|":
+                                    if (pipeEscape)
+                                        element = "&#124;";
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            if (element.length > size)
+                                size = element.length;
+                        }
+                    }
+
+                }
+
+                result = "|";
+                for (let i = 0; i < props.matrix[0].length - 1; i++) {
+
+                    let text = props.matrix[0][i];
+                    switch(props.matrix[0][i]) {
+                        case "":
+                            text = props.settings["Empty Element"];
+                            break;
+                        case "|":
+                            if (pipeEscape)
+                                text = "&#124;";
+                            break;
+                        default:
+                            break;
+                    }
+
+                    result += ` ${text} `;
+
+                    if (padMarkdown) {
+                        for (let j = 0; j < size - text.length; j++) {
+                            result += " ";
+                        }
+                    }
+
+                    result += "|";
+                }
+
+                if (props.matrix.length == 2) //1 row
+                    return result;
+                    
+                result += "\n|";
+
+                //add |---|
+                for (let i = 0; i < props.matrix[0].length - 1; i++) {
+                    result += ` ---`;
+
+                    if (padMarkdown) {
+                        for (let j = 0; j < size - 3; j++) {
+                            result += "-";
+                        }
+                    }
+
+                    result += " |";
+                }
+                result += "\n";
+                
+
+                for (let i = 0; i < props.matrix.length - 1; i++) {
+                    result += "|";
+                    for (let j = 0; j < props.matrix[0].length - 1; j++) {
+
+                        let text = props.matrix[i][j];
+                        switch(props.matrix[i][j]) {
+                            case "":
+                                text = props.settings["Empty Element"];
+                                break;
+                            case "|":
+                                if (pipeEscape)
+                                    text = "&#124;";
+                                break;
+                            default:
+                                break;
+                        }
+
+                        result += ` ${text} `;
+                        if (padMarkdown) {
+                            for (let k = 0; k < size - text.length; k++) {
+                                result += " ";
+                            }
+                        }
+
+                        result += "|";
+                    }
+
+                    result += "\n"
+                }   
+
+                return result;
+
 
             default: return "";
         }
@@ -127,6 +236,14 @@ const MatrixExport = (props) => {
             case "environment":
                 setEnvironment(updated);
                 break;
+            case "Escape | as &#124;":
+                setPipeEscape(updated);
+                break;
+            case "Pad Entries with Spaces":
+                setPadMarkdown(updated);
+                break;
+
+
             case "Add Escapes For: #$%&_{}^~\\":
                 setLatexEscape(updated)
                 break;
@@ -159,6 +276,9 @@ const MatrixExport = (props) => {
             case "LaTeX":
                 setEnvironment("bmatrix");
                 setExportOption("LaTeX");
+                break;
+            case "Markdown":
+                setExportOption("Markdown");
                 break;
             
             default: break;
@@ -215,29 +335,42 @@ const MatrixExport = (props) => {
                         action = {updateExportOption}
                         active = {exportOption === "LaTeX"}
                     />
+
+                    <ActiveButton
+                        name = {"Markdown"}
+                        action = {updateExportOption}
+                        active = {exportOption === "Markdown"}
+                    />
                     </li>
                 </ul>
             </div>
 
             <div className = "col-sm-4">
-                <ParameterBoxInput isChecked = {newLines} name = {"Add New Lines"} updateParameter={updateExportParameter}/>
 
-                {exportOption === "2D Arrays" ? <div>
+                {exportOption === "2D Arrays" ? <>
+                    <ParameterBoxInput isChecked = {newLines} name = {"Add New Lines"} updateParameter={updateExportParameter}/>
+
                     <div>Open arrays with &nbsp;
                         <ParameterTextInput text = {start} width = {"10%"} id={"start"} updateParameter={updateExportParameter}/></div>
                     <div>End arrays with &nbsp;
                         <ParameterTextInput text = {end} width = {"10%"} id={"end"} updateParameter={updateExportParameter}/></div>
                     <div>Separate elements with &nbsp;
                         <ParameterTextInput text = {delim} width = {"10%"} id={"delim"} updateParameter={updateExportParameter}/></div>
-                </div> : null}
+                </> : null}
 
-                {exportOption === "LaTeX" ? <div>
+                {exportOption === "LaTeX" ? <>
+                    <ParameterBoxInput isChecked = {newLines} name = {"Add New Lines"} updateParameter={updateExportParameter}/>
                     <ParameterBoxInput isChecked = {latexEscape} name = {"Add Escapes For: #$%&_{}^~\\"} updateParameter={updateExportParameter}/>
                 
                     <div>Environment &nbsp;
                     <ParameterTextInput width = {"25%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>
+                </>
+                : null}
 
-                </div>
+                {exportOption === "Markdown" ?  <>
+                    <ParameterBoxInput isChecked = {pipeEscape} name = {"Escape | as &#124;"} updateParameter={updateExportParameter}/>
+                    <ParameterBoxInput isChecked = {padMarkdown} name = {"Pad Entries with Spaces"} updateParameter={updateExportParameter}/>
+                    </>   
                 : null}
             </div>
 
