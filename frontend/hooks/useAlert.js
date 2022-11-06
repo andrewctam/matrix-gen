@@ -1,28 +1,30 @@
-import { useCallback, useMemo, useReducer } from "react";
-
-
+import { useCallback, useMemo, useReducer, useState } from "react";
 
 const useAlert = () => {
-    const createAlert = ((msg, id, time, type = "success") => {
+    const [count, setCount] = useState(0);
+
+    const createAlert = ((msg, time, type = "success") => {
         const timeout = setTimeout(() => {
-            dispatch({ type: "REMOVE_ALERT", payload: { "id": id } })
+            dispatch({ type: "REMOVE_ALERT", payload: { "id": count } })
         }, time)
 
         const alert = (
             <div
-                key={`alert${id}`}
+                key={`alert${count}`}
                 className={`alert ${type === "error" ? "error-alert" : "normal-alert"}`}
                 onClick={() => {
-                    dispatch({ type: "REMOVE_ALERT", payload: { "id": id } })
+                    dispatch({ type: "REMOVE_ALERT", payload: { "id": count } })
                 }}>
 
                 <p>{msg}</p>
             </div>
         )
+        
+        setCount(count + 1);
 
 
         return {
-            index: id,
+            index: count,
             alert: alert,
             timeout: timeout
         };
@@ -32,7 +34,7 @@ const useAlert = () => {
     const reducer = (state, action) => {
         switch (action.type) {
             case "ADD_ALERT":
-                return [...state, createAlert(action.payload.msg, state.length, action.payload.time, action.payload.type)];
+                return [...state, createAlert(action.payload.msg, action.payload.time, action.payload.type)];
 
             case "REMOVE_ALERT":
                 const alert = state.find(alert => alert.index === action.payload.id);
