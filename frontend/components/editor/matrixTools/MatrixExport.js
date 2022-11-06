@@ -25,6 +25,7 @@ const MatrixExport = (props) => {
 
     const [pipeEscape, setPipeEscape] = useState(true);
     const [padMarkdown, setPadMarkdown] = useState(true);
+    const [tableAlign, setTableAlign] = useState("Default")
 
     const matrixExport = useExpand(matrixExport);
 
@@ -108,7 +109,21 @@ const MatrixExport = (props) => {
                 }
                 return result + end;
             case "Markdown":
-                let size = 3; //default since ---
+                let defaultSize = 3; //default size of --- (or :---: etc)
+
+                switch(tableAlign) {
+                    case "Left":
+                    case "Right":
+                        defaultSize += 1;
+                        break;
+                    case "Center":
+                        defaultSize += 2;
+                        break;
+
+                    default: break;
+                }
+
+                let size = defaultSize;
 
                 if (padMarkdown) {
                     //find the longest element
@@ -134,6 +149,7 @@ const MatrixExport = (props) => {
 
                 }
 
+                //first row
                 result = "|";
                 for (let i = 0; i < props.matrix[0].length - 1; i++) {
 
@@ -161,26 +177,34 @@ const MatrixExport = (props) => {
                     result += "|";
                 }
 
-                if (props.matrix.length == 2) //1 row
-                    return result;
                     
                 result += "\n|";
 
                 //add |---|
                 for (let i = 0; i < props.matrix[0].length - 1; i++) {
-                    result += ` ---`;
+                    result += " "
+
+                    if (tableAlign === "Left" || tableAlign === "Center")
+                        result += ":"
+                        
+                    result += `---`;
 
                     if (padMarkdown) {
-                        for (let j = 0; j < size - 3; j++) {
+                        for (let j = 0; j < size - defaultSize; j++) {
                             result += "-";
                         }
                     }
+                    
+                    if (tableAlign === "Right" || tableAlign === "Center")
+                        result += ":"
+
 
                     result += " |";
                 }
-                result += "\n";
-                
 
+
+                //last rows
+                result += "\n";
                 for (let i = 1; i < props.matrix.length - 1; i++) {
                     result += "|";
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
@@ -246,6 +270,19 @@ const MatrixExport = (props) => {
 
             case "Add Escapes For: #$%&_{}^~\\":
                 setLatexEscape(updated)
+                break;
+
+            case "Left":
+                setTableAlign("Left");
+                break;
+            case "Center":
+                setTableAlign("Center");
+                break;
+            case "Right":
+                setTableAlign("Right");
+                break;
+            case "Default":
+                setTableAlign("Default");
                 break;
 
             case "^": 
@@ -377,7 +414,7 @@ const MatrixExport = (props) => {
             <div className = "col-sm-4">
                 {exportOption === "2D Arrays" ? 
                     <ul>
-                        {"Quick Options:"}
+                        {"Quick Options"}
                         <li>
                         <ActiveButton
                             name = {"Curly Braces { } ,"}
@@ -406,6 +443,29 @@ const MatrixExport = (props) => {
                     <div>Replace \ with <ParameterTextInput text = {escapeMap["\\"]} width = {"20%"} id={"\\"} updateParameter={updateExportParameter}/></div>
                 </div> : null}
 
+                {exportOption === "Markdown" ? 
+                    <ul>
+                        {"Alignment"}
+                        <li>
+                        <ActiveButton
+                            name = {"None"}
+                            action = {(e) => {updateExportParameter("Default", "")}}
+                            active = {tableAlign === "Default"}/>
+                        <ActiveButton
+                            name = {"Left"}
+                            action = {(e) => {updateExportParameter("Left", "")}}
+                            active = {tableAlign === "Left"}/>
+                        <ActiveButton
+                            name = {"Center"}
+                            action = {(e) => {updateExportParameter("Center", "")}}
+                            active = {tableAlign === "Center"}/>
+                        <ActiveButton
+                            name = {"Right"}
+                            action = {(e) => {updateExportParameter("Right", "")}}
+                            active = {tableAlign === "Right"}/>
+                        </li>
+                    </ul>
+                : null}
             </div>
 
             <Toggle toggle = {props.close} show = {false}/>
