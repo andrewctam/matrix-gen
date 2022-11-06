@@ -271,7 +271,6 @@ const App = () => {
 
 
 
-
     //functions related to saving
     const saveToLocalStorage = () => {
         saving.current = true
@@ -584,6 +583,8 @@ const App = () => {
         }
     }
 
+ 
+
 
 
     const deleteSelectedMatrices = (matricesToDelete) => {
@@ -618,7 +619,17 @@ const App = () => {
     if (!matrices || !doneLoading)
         return <div/>
     return (
-        <div>
+        <div onKeyDown={(e) => {
+            //undo
+            if (e.metaKey && e.keyCode === 90) {
+                e.preventDefault();
+                undo();
+            } else if (e.metaKey && e.keyCode === 89) {
+                e.preventDefault();
+                redo();
+            }
+
+        }}>
             {alerts}
 
             <Navigation

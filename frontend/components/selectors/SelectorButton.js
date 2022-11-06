@@ -59,7 +59,7 @@ const SelectorButton = (props) => {
             onChange={updateRename}
             onKeyDown={handleKeyDown}
             onFocus = {() => {
-                setDisplayName(props.name);
+                setDisplayName(props.name); //default to current name
                 setEditingName(true);
             }}
             onBlur={() => {
@@ -67,7 +67,7 @@ const SelectorButton = (props) => {
                 if (!props.pushNewName(props.name, displayName))
                     setDisplayName(props.name)
                 else   
-                    setDisplayName("")
+                    setDisplayName("") //clear the input if failed
             }}
         />
 
@@ -79,15 +79,18 @@ const SelectorButton = (props) => {
             className={styles.sizeInput}
             onChange={updateResize}
             onFocus = {() => {
-                setDisplaySize(`${props.rows} x ${props.cols}`)
+                setDisplaySize(`${props.rows} x ${props.cols}`) //default to current size
                 setEditingSize(true);
             }}
             onBlur={() => {
                 setEditingSize(false);
-                if (!props.pushNewSize(props.name, displaySize))
+                if (displaySize !== "" && 
+                    displaySize !== `${props.rows} x ${props.cols}` && 
+                    !props.pushNewSize(props.name, displaySize))
+
                     setDisplaySize(`${props.rows} x ${props.cols}`)
                 else   
-                    setDisplaySize("")
+                    setDisplaySize("") //clear the input if failed
             }}
             onKeyDown={handleKeyDown}
         />
