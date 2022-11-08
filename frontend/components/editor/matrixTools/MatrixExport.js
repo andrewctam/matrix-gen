@@ -237,7 +237,31 @@ const MatrixExport = (props) => {
 
                 return result;
 
+            case "HTML":
+                result = "<table>\n"
+                for (let i = 0; i < props.matrix.length - 1; i++) {
+                    result += "\t<tr>\n";
+                    
+                    for (let j = 0; j < props.matrix[0].length - 1; j++) {
+                        let element = props.matrix[i][j]
+                        if (element === "")
+                            element = props.settings["Empty Element"]
+                        
+                        let tag = "td";
+                        if (i === 0)
+                            tag = "th";
 
+                        result += `\t\t<${tag}>${element}</${tag}>\n`;
+                    }
+
+                    result += "\t</tr>\n";
+   
+                }
+
+                result += "</table>"
+
+                return result;
+                
             default: return "";
         }
 
@@ -317,6 +341,9 @@ const MatrixExport = (props) => {
             case "Markdown":
                 setExportOption("Markdown");
                 break;
+            case "HTML":
+                setExportOption("HTML");
+                break;
             
             default: break;
   
@@ -377,6 +404,11 @@ const MatrixExport = (props) => {
                         name = {"Markdown"}
                         action = {updateExportOption}
                         active = {exportOption === "Markdown"}
+                    />
+                    <ActiveButton
+                        name = {"HTML"}
+                        action = {updateExportOption}
+                        active = {exportOption === "HTML"}
                     />
                     </li>
                 </ul>
@@ -448,7 +480,7 @@ const MatrixExport = (props) => {
                         {"Alignment"}
                         <li>
                         <ActiveButton
-                            name = {"None"}
+                            name = {"Default"}
                             action = {(e) => {updateExportParameter("Default", "")}}
                             active = {tableAlign === "Default"}/>
                         <ActiveButton
