@@ -585,36 +585,6 @@ const App = () => {
 
  
 
-
-
-    const deleteSelectedMatrices = (matricesToDelete) => {
-        if (matricesToDelete.length === 0) { //if input is empty, delete all
-            if (window.confirm("Are you sure you want to delete all of your matrices?")) {
-                setSelection("0");
-                matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": {} } });
-
-                localStorage.removeItem("matrices");
-                return true;
-            }
-            return false;
-        } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
-            const tempObj = { ...matrices };
-
-            for (let i = 0; i < matricesToDelete.length; i++) {
-                if (selection === matricesToDelete[i])
-                    setSelection("0");
-
-                delete tempObj[matricesToDelete[i]];
-            }
-
-            matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": tempObj } });
-            return true;
-        }
-
-        return false;
-
-    }
-
     const [alerts, addAlert] = useAlert();
     if (!matrices || !doneLoading)
         return <div/>
@@ -666,7 +636,6 @@ const App = () => {
 
                 setSelection={setSelection}
 
-                deleteSelectedMatrices={deleteSelectedMatrices}
                 updateMatrixSettings={updateMatrixSettings}
 
                 settings={settings}

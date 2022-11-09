@@ -42,7 +42,6 @@ const MatrixGenerator = (props) => {
             selection={props.selection}
             setSelection={props.setSelection}
 
-            deleteSelectedMatrices={props.deleteSelectedMatrices}
 
             showMerge={props.showMerge}
             userMatrices = {props.userMatrices}

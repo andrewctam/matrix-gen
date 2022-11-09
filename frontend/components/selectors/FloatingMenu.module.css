@@ -10,6 +10,7 @@
     width: 35vw;
     overflow: auto;
     background-color: rgba(62, 63, 65, 0.95);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: 10px;
     position: absolute;
@@ -75,6 +76,7 @@
 .settingsMenu {
     position: absolute;
     background-color: rgba(62, 63, 65, 0.95);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     padding: 25px;
     display: flex;
     flex-direction: column;

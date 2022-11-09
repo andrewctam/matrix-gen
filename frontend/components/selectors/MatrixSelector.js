@@ -131,7 +131,7 @@ const MatrixSelector = (props) => {
         selectors = <div className={styles.noMatrices}>{"No Matrices Found"}</div>;
     else
         selectors.sort((selector1, selector2) => {
-            return selector1.props.name.toUpperCase() < selector2.props.name.toUpperCase() ? selector1 : selector2;
+            return selector1.props.name.toUpperCase().localeCompare(selector2.props.name.toUpperCase());
         });
 
 

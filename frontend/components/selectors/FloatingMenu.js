@@ -35,6 +35,35 @@ const FloatingMenu = (props) => {
         props.toolDispatch({ "type": "TOGGLE", payload: {"name": e.target.id } });
     }
 
+
+
+    const deleteSelectedMatrices = (matricesToDelete) => {
+        if (matricesToDelete.length === 0) { //if input is empty, delete all
+            if (window.confirm("Are you sure you want to delete all of your matrices?")) {
+                props.setSelection("0");
+                props.matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": {} } });
+                localStorage.removeItem("matrices");
+                return true;
+            }
+            return false;
+        } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
+            const tempObj = { ...props.matrices };
+
+            for (let i = 0; i < matricesToDelete.length; i++) {
+                if (props.selection === matricesToDelete[i])
+                    props.setSelection("0");
+
+                delete tempObj[matricesToDelete[i]];
+            }
+
+            props.matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": tempObj } });
+            return true;
+        }
+
+        return false;
+
+    }
+
     return (<div className={styles.floatingMenu}>
         <div className={styles.bar}>
             <BasicActionButton
@@ -119,7 +148,7 @@ const FloatingMenu = (props) => {
                             <BasicActionButton
                                 key="deleteButton" buttonStyle={"danger"} name={`Delete ${props.selection}`}
                                 action={() => {
-                                    if (props.selection !== "0" && window.confirm(`Are you sure you want to delete ${props.selection}?`)) {
+                                    if (props.selection !== "0") {
                                         props.matrixDispatch({type: "DELETE_MATRIX", payload: {name: props.selection}});
                                         props.setSelection("0");
                                     }
@@ -131,7 +160,7 @@ const FloatingMenu = (props) => {
                             buttonStyle={"danger"} name={`Delete ${multiSelected.length > 0 ? "Selected" : "All"}`}
                             disabled={!(props.matrices && Object.keys(props.matrices).length) > 0}
                             action={() => {
-                                if (props.deleteSelectedMatrices(multiSelected))
+                                if (deleteSelectedMatrices(multiSelected))
                                     setMultiSelected([])
                             }}
                         />
