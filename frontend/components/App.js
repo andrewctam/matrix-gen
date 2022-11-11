@@ -130,7 +130,7 @@ const App = () => {
 
             }
             case 'ADD_ROW_AND_COL': {
-                const { name, row, col, updated, pos } = action.payload;
+                const { name, row, col, updated } = action.payload;
 
                 let clone = cloneMatrix(state[name])
 
@@ -143,7 +143,7 @@ const App = () => {
                     clone[col][row] = updated;
 
                 } else {
-                    clone = addRowsAndCols(clone, 1, 1, pos);
+                    clone = addRowsAndCols(clone, 1, 1);
                 }
 
                 clone[row][col] = updated;

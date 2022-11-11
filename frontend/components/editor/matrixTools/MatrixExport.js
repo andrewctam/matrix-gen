@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, { useState, useRef } from 'react';
 import ParameterTextInput from '../../inputs/ParameterTextInput.js';
 import ParameterBoxInput from '../../inputs/ParameterBoxInput.js';
 import ActiveButton from '../../buttons/ActiveButton.js';
@@ -6,7 +6,7 @@ import ActiveButton from '../../buttons/ActiveButton.js';
 import styles from "./MatrixExport.module.css"
 import Toggle from '../../buttons/Toggle.js';
 import useExpand from '../../../hooks/useExpand.js';
-const MatrixExport = (props) => {    
+const MatrixExport = (props) => {
     const [exportOption, setExportOption] = useState("2D Arrays");
 
     const [start, setStart] = useState("{");
@@ -18,10 +18,10 @@ const MatrixExport = (props) => {
     const [latexEscape, setLatexEscape] = useState(true);
 
     const [escapeMap, setEscapeMap] = useState({
-        "^":"\\char94",
-        "~":"\\char126",
-        "\\":"\\char92"
-    })  
+        "^": "\\char94",
+        "~": "\\char126",
+        "\\": "\\char92"
+    })
 
     const [pipeEscape, setPipeEscape] = useState(true);
     const [padMarkdown, setPadMarkdown] = useState(true);
@@ -34,7 +34,7 @@ const MatrixExport = (props) => {
     const handleFocus = (e) => {
         e.target.select();
     }
-    
+
     const matrixToString = () => {
         switch (exportOption) {
             case "LaTeX":
@@ -42,30 +42,31 @@ const MatrixExport = (props) => {
 
                 for (let i = 0; i < props.matrix.length - 1; i++) {
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
-                        if (props.matrix[i][j] === "") {
-                            result += props.settings["Empty Element"];        
-                        } else {
-                            var text = props.matrix[i][j];
-                            if (latexEscape) {
-                                //&%$#_{}  ~^\
-                                text = text.replaceAll(/[&%$#_{}~^\\]/g, (s) => {
-                                    switch(s) {
-                                        case "&": case "%": case "$": case "#": case "_": case "{": case "}":
-                                            return "\\" + s;
-                                        case "~":
-                                        case "^":
-                                        case "\\":
-                                            return escapeMap[s];
-                                            
-                                        default:
-                                            return s;
-                                    }
-                                });
-                            }
+                        let text = props.matrix[i][j];
+
+                        if (text === "")
+                            text = props.settings["Empty Element"];
+
+                        if (latexEscape) {
+                            //&%$#_{}  ~^\
+                            text = text.replaceAll(/[&%$#_{}~^\\]/g, (s) => {
+                                switch (s) {
+                                    case "&": case "%": case "$": case "#": case "_": case "{": case "}":
+                                        return "\\" + s;
+                                    case "~":
+                                    case "^":
+                                    case "\\":
+                                        return escapeMap[s];
+
+                                    default:
+                                        return s;
+                                }
+                            });
+                        }
 
 
-                            result += text;
-                        }            
+                        result += text;
+                        
 
                         if (j !== props.matrix[0].length - 2) {
                             result += " & ";
@@ -73,26 +74,26 @@ const MatrixExport = (props) => {
                             if (newLines)
                                 result += " \\\\\n";
                             else
-                            result += " \\\\ ";
+                                result += " \\\\ ";
                         }
                     }
                 }
-                
-                return result + (environment !== "" ? `\n\\end{${environment}}` : ""); 
-            
+
+                return result + (environment !== "" ? `\n\\end{${environment}}` : "");
+
 
             case "2D Arrays":
                 result = start.toString();
 
                 for (let i = 0; i < props.matrix.length - 1; i++) {
                     result += start;
-                    
+
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
                         if (props.matrix[i][j] !== "")
                             result += props.matrix[i][j];
                         else
                             result += props.settings["Empty Element"];
-                            
+
                         if (j !== props.matrix[0].length - 2) {
                             result += delim;
                         }
@@ -111,7 +112,7 @@ const MatrixExport = (props) => {
             case "Markdown":
                 let defaultSize = 3; //default size of --- (or :---: etc)
 
-                switch(tableAlign) {
+                switch (tableAlign) {
                     case "Left":
                     case "Right":
                         defaultSize += 1;
@@ -132,7 +133,10 @@ const MatrixExport = (props) => {
                             let element = props.matrix[i][j];
                             switch (element) {
                                 case "":
-                                    element = props.settings["Empty Element"];
+                                    if (pipeEscape && props.settings["Empty Element"] === "|")
+                                        element = "&#124;"
+                                    else
+                                        element = props.settings["Empty Element"];
                                     break;
                                 case "|":
                                     if (pipeEscape)
@@ -154,10 +158,12 @@ const MatrixExport = (props) => {
                 for (let i = 0; i < props.matrix[0].length - 1; i++) {
 
                     let text = props.matrix[0][i];
-                    switch(props.matrix[0][i]) {
+                    switch (props.matrix[0][i]) {
                         case "":
-                            text = props.settings["Empty Element"];
-                            break;
+                            if (pipeEscape && props.settings["Empty Element"] === "|")
+                                text = "&#124;"
+                            else
+                                text = props.settings["Empty Element"]; break;
                         case "|":
                             if (pipeEscape)
                                 text = "&#124;";
@@ -177,7 +183,7 @@ const MatrixExport = (props) => {
                     result += "|";
                 }
 
-                    
+
                 result += "\n|";
 
                 //add |---|
@@ -186,7 +192,7 @@ const MatrixExport = (props) => {
 
                     if (tableAlign === "Left" || tableAlign === "Center")
                         result += ":"
-                        
+
                     result += `---`;
 
                     if (padMarkdown) {
@@ -194,7 +200,7 @@ const MatrixExport = (props) => {
                             result += "-";
                         }
                     }
-                    
+
                     if (tableAlign === "Right" || tableAlign === "Center")
                         result += ":"
 
@@ -210,9 +216,12 @@ const MatrixExport = (props) => {
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
 
                         let text = props.matrix[i][j];
-                        switch(props.matrix[i][j]) {
+                        switch (props.matrix[i][j]) {
                             case "":
-                                text = props.settings["Empty Element"];
+                                if (pipeEscape && props.settings["Empty Element"] === "|")
+                                    text = "&#124;"
+                                else
+                                    text = props.settings["Empty Element"];
                                 break;
                             case "|":
                                 if (pipeEscape)
@@ -233,7 +242,7 @@ const MatrixExport = (props) => {
                     }
 
                     result += "\n"
-                }   
+                }
 
                 return result;
 
@@ -241,12 +250,12 @@ const MatrixExport = (props) => {
                 result = "<table>\n"
                 for (let i = 0; i < props.matrix.length - 1; i++) {
                     result += "\t<tr>\n";
-                    
+
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
                         let element = props.matrix[i][j]
                         if (element === "")
                             element = props.settings["Empty Element"]
-                        
+
                         let tag = "td";
                         if (i === 0)
                             tag = "th";
@@ -255,29 +264,29 @@ const MatrixExport = (props) => {
                     }
 
                     result += "\t</tr>\n";
-   
+
                 }
 
                 result += "</table>"
 
                 return result;
-                
+
             default: return "";
         }
 
     }
 
     const updateExportParameter = (parameterName, updated) => {
-        switch (parameterName) { 
+        switch (parameterName) {
             case "start":
-                setStart(updated);  
-                break;  
+                setStart(updated);
+                break;
             case "end":
-                setEnd(updated);  
-                break;  
+                setEnd(updated);
+                break;
             case "delim":
-                setDelim(updated);  
-                break;   
+                setDelim(updated);
+                break;
             case "Add New Lines":
                 setNewLines(updated);
                 break;
@@ -309,18 +318,18 @@ const MatrixExport = (props) => {
                 setTableAlign("Default");
                 break;
 
-            case "^": 
-            case "~": 
-            case "\\": 
-                const tempObj = {...escapeMap};
+            case "^":
+            case "~":
+            case "\\":
+                const tempObj = { ...escapeMap };
                 tempObj[parameterName] = updated;
                 setEscapeMap(tempObj);
                 break;
-                
-                
-                
+
+
+
             default: break;
-  
+
         }
     }
 
@@ -344,20 +353,20 @@ const MatrixExport = (props) => {
             case "HTML":
                 setExportOption("HTML");
                 break;
-            
+
             default: break;
-  
+
         }
     }
 
     const presets = (e) => {
         const updated = e.target.id;
-        switch(updated) {
+        switch (updated) {
             case "Square Braces [ ] ,":
                 setStart("[");
                 setEnd("]");
                 setDelim(",");
-                break;  
+                break;
             case "Curly Braces { } ,":
                 setStart("{");
                 setEnd("}");
@@ -380,129 +389,129 @@ const MatrixExport = (props) => {
 
     }
 
-  
-    return <div className = {"fixed-bottom row " + styles.exportContainer} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {matrixExport}>
-            <textarea readOnly = {true} onClick = {handleFocus} className={styles.exportTextArea} value = {matrixToString(props.matrix)} />
 
-            <div className = "col-sm-4">
+    return <div className={"fixed-bottom row " + styles.exportContainer} style={{ "bottom": props.showFullInput ? "28px" : "0" }} ref={matrixExport}>
+        <textarea readOnly={true} onClick={handleFocus} className={styles.exportTextArea} value={matrixToString(props.matrix)} />
+
+        <div className="col-sm-4">
+            <ul>
+                {"Export Format"}
+                <li>
+                    <ActiveButton
+                        name={"2D Arrays"}
+                        action={updateExportOption}
+                        active={exportOption === "2D Arrays"}
+                    />
+
+                    <ActiveButton
+                        name={"LaTeX"}
+                        action={updateExportOption}
+                        active={exportOption === "LaTeX"}
+                    />
+
+                    <ActiveButton
+                        name={"Markdown"}
+                        action={updateExportOption}
+                        active={exportOption === "Markdown"}
+                    />
+                    <ActiveButton
+                        name={"HTML"}
+                        action={updateExportOption}
+                        active={exportOption === "HTML"}
+                    />
+                </li>
+            </ul>
+        </div>
+
+        <div className="col-sm-4">
+
+            {exportOption === "2D Arrays" ? <>
+                <ParameterBoxInput isChecked={newLines} name={"Add New Lines"} updateParameter={updateExportParameter} />
+
+                <div>Open arrays with &nbsp;
+                    <ParameterTextInput text={start} width={"10%"} id={"start"} updateParameter={updateExportParameter} /></div>
+                <div>End arrays with &nbsp;
+                    <ParameterTextInput text={end} width={"10%"} id={"end"} updateParameter={updateExportParameter} /></div>
+                <div>Separate elements with &nbsp;
+                    <ParameterTextInput text={delim} width={"10%"} id={"delim"} updateParameter={updateExportParameter} /></div>
+            </> : null}
+
+            {exportOption === "LaTeX" ? <>
+                <ParameterBoxInput isChecked={newLines} name={"Add New Lines"} updateParameter={updateExportParameter} />
+                <ParameterBoxInput isChecked={latexEscape} name={"Add Escapes For: #$%&_{}^~\\"} updateParameter={updateExportParameter} />
+
+                <div>Environment &nbsp;
+                    <ParameterTextInput width={"25%"} text={environment} id={"environment"} updateParameter={updateExportParameter} /></div>
+            </>
+                : null}
+
+            {exportOption === "Markdown" ? <>
+                <ParameterBoxInput isChecked={pipeEscape} name={"Escape | as &#124;"} updateParameter={updateExportParameter} />
+                <ParameterBoxInput isChecked={padMarkdown} name={"Pad Entries with Spaces"} updateParameter={updateExportParameter} />
+            </>
+                : null}
+        </div>
+
+        <div className="col-sm-4">
+            {exportOption === "2D Arrays" ?
                 <ul>
-                    {"Export Format"}
+                    {"Quick Options"}
                     <li>
-                    <ActiveButton
-                        name = {"2D Arrays"}
-                        action = {updateExportOption}
-                        active = {exportOption === "2D Arrays"}
-                    />
+                        <ActiveButton
+                            name={"Curly Braces { } ,"}
+                            action={presets}
+                            active={start === "{" && end === "}" && delim === ","} />
+                        <ActiveButton
+                            name={"Square Braces [ ] ,"}
+                            action={presets}
+                            active={start === "[" && end === "]" && delim === ","} />
+                        <ActiveButton
+                            name={"Parentheses ( ) ,"}
+                            action={presets}
+                            active={start === "(" && end === ")" && delim === ","} />
+                        <ActiveButton
+                            name={"Spaces"}
+                            action={presets}
+                            active={start === "" && end === "" && delim === " "} />
 
-                    <ActiveButton
-                        name = {"LaTeX"}
-                        action = {updateExportOption}
-                        active = {exportOption === "LaTeX"}
-                    />
-
-                    <ActiveButton
-                        name = {"Markdown"}
-                        action = {updateExportOption}
-                        active = {exportOption === "Markdown"}
-                    />
-                    <ActiveButton
-                        name = {"HTML"}
-                        action = {updateExportOption}
-                        active = {exportOption === "HTML"}
-                    />
                     </li>
                 </ul>
-            </div>
-
-            <div className = "col-sm-4">
-
-                {exportOption === "2D Arrays" ? <>
-                    <ParameterBoxInput isChecked = {newLines} name = {"Add New Lines"} updateParameter={updateExportParameter}/>
-
-                    <div>Open arrays with &nbsp;
-                        <ParameterTextInput text = {start} width = {"10%"} id={"start"} updateParameter={updateExportParameter}/></div>
-                    <div>End arrays with &nbsp;
-                        <ParameterTextInput text = {end} width = {"10%"} id={"end"} updateParameter={updateExportParameter}/></div>
-                    <div>Separate elements with &nbsp;
-                        <ParameterTextInput text = {delim} width = {"10%"} id={"delim"} updateParameter={updateExportParameter}/></div>
-                </> : null}
-
-                {exportOption === "LaTeX" ? <>
-                    <ParameterBoxInput isChecked = {newLines} name = {"Add New Lines"} updateParameter={updateExportParameter}/>
-                    <ParameterBoxInput isChecked = {latexEscape} name = {"Add Escapes For: #$%&_{}^~\\"} updateParameter={updateExportParameter}/>
-                
-                    <div>Environment &nbsp;
-                    <ParameterTextInput width = {"25%"} text = {environment} id={"environment"} updateParameter={updateExportParameter}/></div>
-                </>
                 : null}
 
-                {exportOption === "Markdown" ?  <>
-                    <ParameterBoxInput isChecked = {pipeEscape} name = {"Escape | as &#124;"} updateParameter={updateExportParameter}/>
-                    <ParameterBoxInput isChecked = {padMarkdown} name = {"Pad Entries with Spaces"} updateParameter={updateExportParameter}/>
-                    </>   
+            {latexEscape && exportOption === "LaTeX" ? <div>
+                <div>Replace ^ with <ParameterTextInput text={escapeMap["^"]} width={"20%"} id={"^"} updateParameter={updateExportParameter} /></div>
+                <div>Replace ~ with <ParameterTextInput text={escapeMap["~"]} width={"20%"} id={"~"} updateParameter={updateExportParameter} /></div>
+                <div>Replace \ with <ParameterTextInput text={escapeMap["\\"]} width={"20%"} id={"\\"} updateParameter={updateExportParameter} /></div>
+            </div> : null}
+
+            {exportOption === "Markdown" ?
+                <ul>
+                    {"Alignment"}
+                    <li>
+                        <ActiveButton
+                            name={"Default"}
+                            action={(e) => { updateExportParameter("Default", "") }}
+                            active={tableAlign === "Default"} />
+                        <ActiveButton
+                            name={"Left"}
+                            action={(e) => { updateExportParameter("Left", "") }}
+                            active={tableAlign === "Left"} />
+                        <ActiveButton
+                            name={"Center"}
+                            action={(e) => { updateExportParameter("Center", "") }}
+                            active={tableAlign === "Center"} />
+                        <ActiveButton
+                            name={"Right"}
+                            action={(e) => { updateExportParameter("Right", "") }}
+                            active={tableAlign === "Right"} />
+                    </li>
+                </ul>
                 : null}
-            </div>
+        </div>
 
-            <div className = "col-sm-4">
-                {exportOption === "2D Arrays" ? 
-                    <ul>
-                        {"Quick Options"}
-                        <li>
-                        <ActiveButton
-                            name = {"Curly Braces { } ,"}
-                            action = {presets}
-                            active = {start === "{" && end === "}" && delim === ","}/>
-                        <ActiveButton
-                            name = {"Square Braces [ ] ,"}
-                            action = {presets}
-                            active = {start === "[" && end === "]" && delim === ","}/>
-                        <ActiveButton
-                            name = {"Parentheses ( ) ,"}
-                            action = {presets}
-                            active = {start === "(" && end === ")" && delim === ","}/>
-                        <ActiveButton
-                            name = {"Spaces"}
-                            action = {presets}
-                            active = {start === "" && end === "" && delim === " "}/>
+        <Toggle toggle={props.close} show={false} />
 
-                        </li>
-                    </ul>
-                : null}
-
-                {latexEscape && exportOption === "LaTeX" ? <div>
-                    <div>Replace ^ with <ParameterTextInput text = {escapeMap["^"]} width = {"20%"} id={"^"} updateParameter={updateExportParameter}/></div>
-                    <div>Replace ~ with <ParameterTextInput text = {escapeMap["~"]} width = {"20%"} id={"~"} updateParameter={updateExportParameter}/></div>
-                    <div>Replace \ with <ParameterTextInput text = {escapeMap["\\"]} width = {"20%"} id={"\\"} updateParameter={updateExportParameter}/></div>
-                </div> : null}
-
-                {exportOption === "Markdown" ? 
-                    <ul>
-                        {"Alignment"}
-                        <li>
-                        <ActiveButton
-                            name = {"Default"}
-                            action = {(e) => {updateExportParameter("Default", "")}}
-                            active = {tableAlign === "Default"}/>
-                        <ActiveButton
-                            name = {"Left"}
-                            action = {(e) => {updateExportParameter("Left", "")}}
-                            active = {tableAlign === "Left"}/>
-                        <ActiveButton
-                            name = {"Center"}
-                            action = {(e) => {updateExportParameter("Center", "")}}
-                            active = {tableAlign === "Center"}/>
-                        <ActiveButton
-                            name = {"Right"}
-                            action = {(e) => {updateExportParameter("Right", "")}}
-                            active = {tableAlign === "Right"}/>
-                        </li>
-                    </ul>
-                : null}
-            </div>
-
-            <Toggle toggle = {props.close} show = {false}/>
-
-    </div>    
+    </div>
 }
 
 

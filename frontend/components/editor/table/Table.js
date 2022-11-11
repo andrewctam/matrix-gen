@@ -1,9 +1,7 @@
 import styles from "./Table.module.css"
 import { useCallback, useEffect, useState } from 'react';
-
-import Box from './Box.js';
-
 import { editSelection } from '../../matrixFunctions.js';
+import Box from './Box.js';
 
 const Table = (props) => {
     const [showHelpers, setShowHelpers] = useState(false);
@@ -25,12 +23,18 @@ const Table = (props) => {
             }
         });
 
-        props.matrixDispatch({ "type": type, payload: { "name": props.name, "row": row, "col": col, "updated": updated } })
+        props.matrixDispatch({
+            "type": type,
+            payload: { "name": props.name, "row": row, "col": col, "updated": updated }
+        })
     }, [props.name]);
 
     const update = useCallback((row, col, updated) => {
         setShowHelpers(false)
-        props.matrixDispatch({ "type": "UPDATE_ENTRY", payload: { "name": props.name, "row": row, "col": col, "updated": updated } });
+        props.matrixDispatch({
+            "type": "UPDATE_ENTRY",
+            payload: { "name": props.name, "row": row, "col": col, "updated": updated }
+        });
 
     }, [props.name]);
 
@@ -62,13 +66,22 @@ const Table = (props) => {
         const lastCol = col === props.matrix[0].length - 1
 
         //shift
-        if (e.keyCode === 16) { 
+        if (e.keyCode === 16) {
             if (lastRow && lastCol) //add both
-                addBoth(row, col, "");
+                props.matrixDispatch({
+                    "type": "ADD_ROW_AND_COL",
+                    payload: { "name": props.name, "row": row, "col": col, "updated": "" }
+                })
             else if (lastRow) //add row
-                addRow(row, col, "");
+                props.matrixDispatch({
+                    "type": "ADD_ROW",
+                    payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row }
+                })
             else if (lastCol) //add col
-                addCol(row, col, "");
+                props.matrixDispatch({
+                    "type": "ADD_COL",
+                    payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col }
+                })
 
         }
 
@@ -76,61 +89,98 @@ const Table = (props) => {
         else if (e.keyCode === 13) {
             e.preventDefault();
             if (lastRow && lastCol) { //add both if just on corner box
-                addBoth(row + 1, col + 1, "");
+                props.matrixDispatch({
+                    "type": "ADD_ROW_AND_COL",
+                    payload: { "name": props.name, "row": row + 1, "col": col + 1, "updated": "" }
+                })
             } else if (lastCol) { //add row at this pos
                 if (e.metaKey) {
-                    props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row } })
+                    props.matrixDispatch({
+                        "type": "ADD_ROW",
+                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row }
+                    })
                     document.getElementById((row + 1) + ":" + (col)).focus();
                 } else {
-                    props.matrixDispatch({ "type": "ADD_ROW", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row + 1} })
+                    props.matrixDispatch({
+                        "type": "ADD_ROW",
+                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row + 1 }
+                    })
                 }
             } else if (lastRow) { //add col at this pos
                 if (e.metaKey) {
-                    props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col } })
+                    props.matrixDispatch({
+                        "type": "ADD_COL",
+                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col }
+                    })
                     document.getElementById((row) + ":" + (col + 1)).focus();
                 } else {
-                    props.matrixDispatch({ "type": "ADD_COL", payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col + 1} })
+                    props.matrixDispatch({
+                        "type": "ADD_COL",
+                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col + 1 }
+                    })
                 }
             }
         }
 
         //backspace            
-        else if (e.keyCode === 8) { 
+        else if (e.keyCode === 8) {
             if (lastRow && lastCol) {//delete both
                 if (props.matrix.length === 2 && col > 1) {//2 rows, so delete columns
-                    props.matrixDispatch({ "type": "DELETE_ROW_COL", payload: { "name": props.name, "col": col - 1 } })
+                    props.matrixDispatch({
+                        "type": "DELETE_ROW_COL",
+                        payload: { "name": props.name, "col": col - 1 }
+                    })
 
                     document.getElementById((row) + ":" + (col - 1)).focus();
                 } else if (props.matrix[0].length === 2 && row > 1) { //2 cols, so delete rows
-                    props.matrixDispatch({ "type": "DELETE_ROW_COL", payload: { "name": props.name, "row": row - 1 } })
+                    props.matrixDispatch({
+                        "type": "DELETE_ROW_COL",
+                        payload: { "name": props.name, "row": row - 1 }
+                    })
                     document.getElementById((row - 1) + ":" + (col)).focus();
 
                 } else if (row > 1 && col > 1) { //delete both
-                    props.matrixDispatch({ "type": "DELETE_ROW_COL", payload: { "name": props.name, "row": row - 1, "col": col - 1 } })
+                    props.matrixDispatch({
+                        "type": "DELETE_ROW_COL",
+                        payload: { "name": props.name, "row": row - 1, "col": col - 1 }
+                    })
                     document.getElementById((row - 1) + ":" + (col - 1)).focus();
                 }
 
             } else if (lastCol) {//last col
                 if (e.metaKey) { //delete this row
                     if (props.matrix.length > 2)
-                        props.matrixDispatch({ "type": "DELETE_ROW_COL", payload: { "name": props.name, "row": row } })
+                        props.matrixDispatch({
+                            "type": "DELETE_ROW_COL",
+                            payload: { "name": props.name, "row": row }
+                        })
                     if (row > 0)
                         document.getElementById((row - 1) + ":" + (col)).focus();
                 } else { //delete last col
                     if (props.matrix[0].length > 2) {
-                        props.matrixDispatch({ "type": "DELETE_ROW_COL", payload: { "name": props.name, "col": col - 1 } })
+                        props.matrixDispatch({
+                            "type": "DELETE_ROW_COL",
+                            payload: { "name": props.name, "col": col - 1 }
+                        })
                         document.getElementById((row) + ":" + (col - 1)).focus();
                     }
                 }
             } else if (lastRow) { //last row
                 if (e.metaKey) { //delete this col
                     if (props.matrix[0].length > 2)
-                        props.matrixDispatch({ "type": "DELETE_ROW_COL", payload: { "name": props.name, "col": col } })
+                        props.matrixDispatch({
+                            "type": "DELETE_ROW_COL",
+                            payload: { "name": props.name, "col": col }
+                        })
+
                     if (col > 0)
                         document.getElementById((row) + ":" + (col - 1)).focus();
                 } else { //delete last row
                     if (props.matrix.length > 2) {
-                        props.matrixDispatch({ "type": "DELETE_ROW_COL", payload: { "name": props.name, "row": row - 1 } })
+                        props.matrixDispatch({
+                            "type": "DELETE_ROW_COL",
+                            payload: { "name": props.name, "row": row - 1 }
+                        })
                         document.getElementById((row - 1) + ":" + (col)).focus();
                     }
                 }
@@ -142,7 +192,7 @@ const Table = (props) => {
         }
 
         //Left arrow
-        else if (e.target.selectionStart === 0 && e.keyCode === 37) { 
+        else if (e.target.selectionStart === 0 && e.keyCode === 37) {
             e.preventDefault();
 
             if (col !== 0) {
@@ -154,7 +204,7 @@ const Table = (props) => {
         }
 
         //Right arrow
-        else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) { 
+        else if (e.target.selectionStart === e.target.value.length && e.keyCode === 39) {
             e.preventDefault();
 
             if (!lastCol) {
@@ -167,7 +217,7 @@ const Table = (props) => {
         }
 
         //Down arrow
-        else if (e.keyCode === 40) { 
+        else if (e.keyCode === 40) {
             e.preventDefault();
 
             if (!lastRow) {
@@ -178,7 +228,7 @@ const Table = (props) => {
         }
 
         //Up arrow
-        else if (e.keyCode === 38) { 
+        else if (e.keyCode === 38) {
             e.preventDefault();
 
             if (row !== 0) {
@@ -241,7 +291,7 @@ const Table = (props) => {
     }
 
 
-    
+
     const cols = Math.min(50, props.matrix[0].length);
     const rows = Math.min(50, props.matrix.length);
 
@@ -277,7 +327,7 @@ const Table = (props) => {
     }
 
     return (
-        <div className={"d-flex justify-content-center"} 
+        <div className={"d-flex justify-content-center"}
             id="hide"
             onClick={(e) => {
                 if (e.target.id === "hide") {
