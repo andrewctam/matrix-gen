@@ -1,18 +1,15 @@
 .navigateBar {
-  background-color: rgb(50, 50, 50);
-  margin-top: 0px;
-  margin-bottom: 1px;
   width: 100%;
   height: fit-content;
-  padding-top: 10px;
-  padding-bottom: 10px;
-
+  padding: 0px;
+  position: absolute;
+  top: 0;
+  z-index: 10;
 }
 
 .navigation {
   position: relative
 }
-
 
 .mainBar {
   margin-top: 10px;
@@ -50,6 +47,7 @@
   cursor: pointer;
   display: flex;
   justify-content: center;
+  position: relative;
   
 }
 

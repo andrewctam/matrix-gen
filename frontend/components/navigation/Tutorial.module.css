@@ -1,5 +1,6 @@
 .tutorial {
-    background-color: rgb(88, 91, 96);
+    background-color: rgba(50, 50, 50, 0.95);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     border-radius: 15px;
     width: 95%;
     margin: 2.5%;

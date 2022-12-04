@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
 
 import styles from "./Navigation.module.css";
 
-
 const Navigation = (props) => {
     const [showTutorial, setShowTutorial] = useState(false);
     const [showSaveMenu, setShowSaveMenu] = useState(false);
 
     const [hovering, setHovering] = useState(false);
-
+    const topBar= useRef(null);
     useEffect(() => {
         if (localStorage.getItem("First Visit") === null) {
             setShowTutorial(true);
-        }   
+        }
     }, []);
+    
 
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict.`;
@@ -40,10 +40,8 @@ const Navigation = (props) => {
 
 
 
-    return <div className = {styles.navigation}>
-
-        <div className={styles.topBar}
-            onClick={(e) => { e.stopPropagation(); setShowSaveMenu(!showSaveMenu) }}>
+    return <div className={styles.navigation}>
+        <div className = {styles.topBar} onClick={(e) => { e.stopPropagation(); setShowSaveMenu(!showSaveMenu); setShowTutorial(false) }} ref = {topBar}>
             <div
                 style={{ color: hovering ? (props.saveToLocal || props.username ? "rgb(147, 221, 165)" : "rgb(247, 198, 198)") : "white" }}
                 onMouseEnter={() => { setHovering(true) }}
@@ -52,44 +50,42 @@ const Navigation = (props) => {
                 <div className={styles.savingInfo}>
                     {saving + (showSaveMenu ? " Click to close the save menu ↑" : " Click to open the save menu ↓")}
                 </div>
-          
+
 
             </div>
 
             {!showTutorial ?
-            <div className={styles.toggleTutorial} onClick={(e) => { e.stopPropagation(); setShowTutorial(true) }} >
-                ?
-            </div> : null}
+                <div className={styles.toggleTutorial} onClick={(e) => { e.stopPropagation(); setShowTutorial(true); setShowSaveMenu(false) }} >
+                    ?
+                </div> : null}
         </div>
 
-        {showSaveMenu || showTutorial ?
-            <div className={styles.navigateBar}>
-                {showSaveMenu ?
-                    <SaveMatrices
-                        username={props.username}
-                        updateUserInfo={props.updateUserInfo}
-                        saveToLocal={props.saveToLocal}
-                        settings={props.settings}
-                        updateParameter={props.updateParameter}
-                        matrices={props.matrices}
-                        refreshTokens={props.refreshTokens}
+        <div className={styles.navigateBar} style = {{top: topBar.current ? topBar.current.offsetHeight + "px" : "0px"}}>
+            {showSaveMenu ?
+                <SaveMatrices
+                    username={props.username}
+                    updateUserInfo={props.updateUserInfo}
+                    saveToLocal={props.saveToLocal}
+                    settings={props.settings}
+                    updateParameter={props.updateParameter}
+                    matrices={props.matrices}
+                    refreshTokens={props.refreshTokens}
 
-                        matrixDispatch={props.matrixDispatch}
-                        setSelection={props.setSelection}
-                        showMerge={props.showMerge}
-                        setShowMerge={props.setShowMerge}
-                        userMatrices={props.userMatrices}
-                        closeSaveMenu={() => { setShowSaveMenu(false) }}
-                        addAlert={props.addAlert}
+                    matrixDispatch={props.matrixDispatch}
+                    setSelection={props.setSelection}
+                    showMerge={props.showMerge}
+                    setShowMerge={props.setShowMerge}
+                    userMatrices={props.userMatrices}
+                    closeSaveMenu={() => { setShowSaveMenu(false) }}
+                    addAlert={props.addAlert}
 
-                        setSaveToLocal = {props.setSaveToLocal}
-                    /> : null}
+                    setSaveToLocal={props.setSaveToLocal}
+                /> : null}
 
-                {showTutorial ?
-                     <Tutorial closeTutorial={() => { setShowTutorial(false) }} /> 
+            {showTutorial ?
+                <Tutorial closeTutorial={() => { setShowTutorial(false) }} />
                 : null}
-            </div> : null}
-
+        </div>
     </div>
 }
 
