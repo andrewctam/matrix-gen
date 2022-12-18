@@ -4,9 +4,7 @@
     border: none;
 }
 
-.box > input:focus {
-    outline: none !important;
-}
+
 
 .box > input {
     width: 100%;
@@ -16,5 +14,13 @@
     margin: 0px;
     border: none;
     text-align: center;
+}
+
+.box > input:focus {
+    outline: none !important;
+}
+
+.box > input::placeholder {
+    color: rgba(0, 0, 0, 0.25)
 }
 

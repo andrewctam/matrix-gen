@@ -1,6 +1,6 @@
 import MergeStorage from "./MergeStorage";
 import styles from "./SaveMatrices.module.css";
-import SaveInput from "./SaveInput"
+import SaveInput from "./SaveInput.tsx"
 2
 import { useState } from "react";
 
@@ -199,7 +199,7 @@ const UserPanel = (props) => {
         }
 
 
-        {props.showMerge ?
+        {props.showMerge && props.userMatrices?
         <MergeStorage
             matrices={props.matrices}
             userMatrices={props.userMatrices}

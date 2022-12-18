@@ -17,11 +17,19 @@ You can view a recorded demo of the app [here](https://andrewtam.org/MatrixGener
 - [Bootstrap](https://getbootstrap.com/)
 
 ## Installation
-Clone this repository, and update the environmental variables in backend/.env.template (rename this to .env) and in frontend/.env.local.template (rename this to .env.local). This app is built using docker, so run ```docker compose up``` at the root of the project.
+Clone this repository, and update the environmental variables in backend/.env.template (rename this to .env) and in frontend/.env.local.template (rename this to .env.local). This app is built using docker, run ```docker compose up``` at the root of the project.
 
 ```
 git clone https://github.com/tamandrew/matrix-gen.git
 docker compose up
 ```
 
-If you want to run the servers separately, you can start the local servers using ```npm run dev``` in the frontend and ```python3 -m uvicorn app.main:app --reload --port 8080 --host 0.0.0.0``` in the backend.
+To start the front end local server:
+```
+npm run dev
+```
+
+To start the back end local server:
+ ```
+ python3 -m uvicorn app.main:app --reload --port 8080 --host 0.0.0.0
+ ``` 
