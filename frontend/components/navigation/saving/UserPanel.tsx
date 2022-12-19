@@ -1,41 +1,56 @@
 import MergeStorage from "./MergeStorage";
 import styles from "./SaveMatrices.module.css";
-import SaveInput from "./SaveInput.tsx"
-2
-import { useState } from "react";
+import SaveInput from "./SaveInput"
+import React, { useState } from "react";
+import { Matrices } from "../../App";
 
-const UserPanel = (props) => {
+interface UserPanelProps {
+    username: string
+    showWelcome: boolean
+    setShowWelcome: (bool: boolean) => void
+    showMerge: boolean
+    matrices: Matrices
+    userMatrices: Matrices | null
+    matrixDispatch: React.Dispatch<any>
+    setSelection: (str: string) => void
+    updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
+    refreshTokens: () => boolean
+    addAlert: (str: string, time: number, type?: string) => void
+    setShowMerge: (bool: boolean) => void
+}
+
+const UserPanel = (props: UserPanelProps) => {
 
     const [showChangePassword, setShowChangePassword] = useState(false);
     const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
     const [currentPassword, setCurrentPassword] = useState("");
-    const [currentPasswordError, setCurrentPasswordError] = useState(null);
+    const [currentPasswordError, setCurrentPasswordError] = useState("");
 
     const [newPassword, setNewPassword] = useState("");
-    const [newPasswordError, setNewPasswordError] = useState(null);
-    const [newPasswordSuccess, setNewPasswordSuccess] = useState(null);
+    const [newPasswordError, setNewPasswordError] = useState("");
+    const [newPasswordSuccess, setNewPasswordSuccess] = useState("");
 
     const [deleteVerify, setDeleteVerify] = useState("");
-    const [deleteVerifyError, setDeleteVerifyError] = useState(null);
+    const [deleteVerifyError, setDeleteVerifyError] = useState("");
         
 
     const toggleShowChangePassword = () => {
         if (showChangePassword) {
             setCurrentPassword("");
-            setCurrentPasswordError(null);
+            setCurrentPasswordError("");
             setNewPassword("");
-            setNewPasswordError(null);
+            setNewPasswordError("");
         }
         
-        setNewPasswordSuccess(null);
+        setNewPasswordSuccess("");
         setShowChangePassword(!showChangePassword);
     }
 
     const toggleShowDeleteAccount = () => {
         if (showDeleteAccount) {
             setDeleteVerify("");
-            setDeleteVerifyError(null);
+            setDeleteVerifyError("");
         }
 
         setShowDeleteAccount(!showDeleteAccount);
@@ -43,11 +58,10 @@ const UserPanel = (props) => {
 
     const logOut = () => {
         props.setShowWelcome(false)
-        props.updateUserInfo(null, null, null);
-        
+        props.updateUserInfo("", "", "");
     }
 
-    const handleDeleteAccount = async (e = null) => {
+    const handleDeleteAccount = async (e: null | React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
         if (e)
             e.preventDefault();
 
@@ -80,9 +94,10 @@ const UserPanel = (props) => {
 
         if (response === 401) { 
             if (await props.refreshTokens()) {
-                return handleDeleteAccount(); //retry
+                handleDeleteAccount(null); //retry
+                return;
             } else { //refresh token invalid
-                props.setUserInfo(null, null, null);
+                props.updateUserInfo("", "", "");
             }
         } else if (response == 403) { //Access Denied
             setDeleteVerifyError("Incorrect password")
@@ -93,11 +108,13 @@ const UserPanel = (props) => {
         }
     }
 
-    const handleChangePassword = async (e = null) => {
+    const handleChangePassword = async (e: null | React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
         if (e)
             e.preventDefault();
 
-        var error = false
+        let error = false
+        setCurrentPasswordError("")
+        setNewPasswordError("")
         if (!currentPassword) {
             setCurrentPasswordError("Please enter your current password")
             error = true;
@@ -139,16 +156,17 @@ const UserPanel = (props) => {
 
 
         if (response === 401) { //access token expired 
-            if (await props.refreshTokens()) 
-                return handleChangePassword(); //retry
-            else //refresh token invalid
-                props.setUserInfo(null, null, null);
+            if (await props.refreshTokens())  {
+                handleChangePassword(null); //retry
+                return;
+            } else //refresh token invalid
+                props.updateUserInfo("", "", "");
         } else if (response == 403) { //Wrong Password
             setCurrentPasswordError("Incorrect current password")
         } else {
             setNewPasswordSuccess("Password successfully changed")
-            setCurrentPasswordError(null)
-            setNewPasswordError(null)
+            setCurrentPasswordError("")
+            setNewPasswordError("")
             setTimeout(() => { toggleShowChangePassword() }, 1000);
         }
     }

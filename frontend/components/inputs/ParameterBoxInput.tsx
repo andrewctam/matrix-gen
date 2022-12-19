@@ -3,7 +3,7 @@ import React from "react"
 interface ParameterBoxInputProps {
     isChecked: boolean
     name: string
-    updateParameter: (str: string, checked: boolean) => void
+    updateParameter: any
 }
 
 const ParameterBoxInput = (props: ParameterBoxInputProps) =>{

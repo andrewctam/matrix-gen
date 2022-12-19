@@ -213,7 +213,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                     <ParameterTextInput width={"30px"} text={props.settings["Empty Element"]} id={"Empty Element"} updateParameter={updateSetting} />
                 </div>
                 <div>{"Decimals To Round: "} 
-                    <ParameterTextInput width={"30px"} text={props.settings["Decimals To Round"]} id={"Decimals To Round"} updateParameter={updateSetting} placeholder={props.settings["Decimals To Round"] === 0 ? "None" : ""} />
+                    <ParameterTextInput width={"30px"} text={props.settings["Decimals To Round"].toString()} id={"Decimals To Round"} updateParameter={updateSetting} placeholder={props.settings["Decimals To Round"] === 0 ? "None" : ""} />
                 </div>
 
             </div>

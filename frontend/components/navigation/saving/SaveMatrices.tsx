@@ -11,7 +11,7 @@ interface SaveMatricesProps {
     saveToLocal: boolean
     settings: Settings
     matrices: Matrices
-    refreshTokens: () => void
+    refreshTokens: () => boolean
     matrixDispatch: React.Dispatch<any>
     setSelection: (str: string) => void
     showMerge: boolean

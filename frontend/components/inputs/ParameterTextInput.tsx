@@ -2,10 +2,10 @@ import React from 'react';
 
 interface ParameterTextInputProps {
     id: string
-    width: number
-    placeholder: string
+    width: string
+    placeholder?: string
     text: string
-    updateParameter: (str1: string, str2: string) => void
+    updateParameter: any
 }
 const ParameterTextInput = (props: ParameterTextInputProps) => {
     const handleInput = (e: React.KeyboardEvent<HTMLInputElement>) =>{

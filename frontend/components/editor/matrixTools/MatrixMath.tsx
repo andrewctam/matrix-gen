@@ -61,6 +61,7 @@ const MatrixMath = (props: MatrixMathProps) => {
     }
 
     const calculate = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+        debugger;
         e.preventDefault();
 
         if (expression === "") {
@@ -204,8 +205,9 @@ const MatrixMath = (props: MatrixMathProps) => {
                                 let ch = stack.pop();
                                 if (ch)
                                     output.push(ch)
-                                stack.push(char)
                             }
+
+                            stack.push(char)
                         }
                     }
                 }
