@@ -61,7 +61,7 @@ const Box = (props: BoxProps) => {
     var boxStyle = {
         "backgroundColor": "rgb(231, 223, 223)",
         "height": "50px",
-        "width": "50px"
+        "width": "50px",
     }
 
     var textColor = "black";

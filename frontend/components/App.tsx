@@ -41,7 +41,7 @@ type MatricesAction =
 const App = () => {
     const [undoStack, setUndoStack] = useState<Matrices[]>([]);
     const [redoStack, setRedoStack] = useState<Matrices[]>([]);
-    const [selection, setSelection] = useState("0"); //0 for no selection
+    const [selection, setSelection] = useState("");
 
     const settingsReducer = (state: Settings, action: SettingsAction) => {
         switch (action.type) {
@@ -265,8 +265,8 @@ const App = () => {
 
     //state related to storing
     const [showMerge, setShowMerge] = useState(false);
+    //in event of a conflict, store user's online matrices separate from local until resolved
     const [userMatrices, setUserMatrices] = useState<Matrices | null>(null);
-    const [dataTooLarge, setDataTooLarge] = useState(false);
 
     //state related to loading
     const [doneLoading, setDoneLoading] = useState(false);
@@ -360,7 +360,7 @@ const App = () => {
                 if (localMatrices.length > 0)
                     setSelection(localMatrices[0]);
                 else
-                    setSelection("0");
+                    setSelection("");
 
                 const settings = localStorage.getItem("settings");
                 if (settings !== null) {
@@ -470,7 +470,7 @@ const App = () => {
             if (Object.keys(userMatrices).length > 0)
                 setSelection(Object.keys(userMatrices)[0])
             else
-                setSelection("0");
+                setSelection("");
 
         } else {
             setShowMerge(true)
@@ -500,14 +500,10 @@ const App = () => {
             })
         }).then((response) => {
             if (response.status === 413) { //data too large
-                if (!dataTooLarge) { //only show the alert the first time
-                    addAlert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.", 5000, "error");
-                }
-                setDataTooLarge(true)
+                addAlert("WARNING: Matrix data is too large to be saved online. Please delete some matrices or save to local storage, or your changes may be lost.", 5000, "error");
                 return response.json();
             }
 
-            setDataTooLarge(false);
             if (response.status === 401) {
                 return null; //invalid access token
             } else {
@@ -694,7 +690,6 @@ const App = () => {
             setShowTutorial = {setShowTutorial}
             showMerge = {showMerge}
             username = {username}
-            dataTooLarge = {dataTooLarge}
             saveToLocal = {saveToLocal} />
 
         <div className={styles.floatingContainer}>

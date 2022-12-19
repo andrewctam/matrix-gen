@@ -9,7 +9,6 @@ interface TopBarProps {
 
    showMerge: boolean
    username: string
-   dataTooLarge: boolean
    saveToLocal: boolean
 
 }
@@ -25,17 +24,11 @@ const TopBar = (props: TopBarProps) => {
     }, []);
     
 
+
     if (props.showMerge) {
         var saving = `Logged in as ${props.username}. There is currently a storage conflict.`;
     } else if (props.username) {
-        if (props.dataTooLarge) {
-            if (props.saveToLocal) {
-                saving = `Logged in as ${props.username}. Matrices are too large and new changes may not be saved to your account, but they will be saved to local storage.`;
-            } else {
-                saving = `Logged in as ${props.username}. WARNING: Matrices are too large and new changes may not be saved to your account. Please decrease matrices' size or enable saving to local storage. `;
-
-            }
-        } else if (props.saveToLocal)
+        if (props.saveToLocal)
             saving = `Logged in as ${props.username}. Matrices will be saved to your account and to your local browser's storage.`;
         else
             saving = `Logged in as ${props.username}. Matrices will be saved to your account.`;
@@ -60,7 +53,7 @@ const TopBar = (props: TopBarProps) => {
                     props.setShowTutorial(false) 
                 }}>
 
-                {saving + (props.showSaveMenu ? " Click to close the save menu ↑" : " Click to open the save menu ↓")}
+                {saving + (props.showSaveMenu ? " ↑" : " Click for options ↓")}
             </div>
         
 

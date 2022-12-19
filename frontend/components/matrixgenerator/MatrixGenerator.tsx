@@ -22,10 +22,10 @@ interface MatrixGeneratorProps {
 }
 
 export interface Tools { 
-    "Matrix Actions": boolean,
-    "Export Matrix": boolean,
-    "Matrix Math": boolean,
-    "Import From Text": boolean,
+    "Actions": boolean,
+    "Export": boolean,
+    "Math": boolean,
+    "Import": boolean,
     "Selection": boolean
 }
 
@@ -34,20 +34,20 @@ type ToolsAction = {type: "TOGGLE", payload: {name: keyof Tools}} | {"type": "CL
 const MatrixGenerator = (props: MatrixGeneratorProps) => {
     const [toolActive, toolDispatch] = useReducer((state: Tools, action: ToolsAction) => {
         const disabled: Tools = { 
-            "Matrix Actions": false,
-            "Export Matrix": false,
-            "Matrix Math": false,
-            "Import From Text": false,
+            "Actions": false,
+            "Export": false,
+            "Math": false,
+            "Import": false,
             "Selection": false
         } //only one can be active at a time
 
         switch (action.type) {
             case "TOGGLE":
                 if (typeof action.payload.name !== "string" &&
-                  !(action.payload.name === "Matrix Actions" || 
-                    action.payload.name === "Export Matrix" || 
-                    action.payload.name === "Matrix Math" || 
-                    action.payload.name === "Import From Text" || 
+                  !(action.payload.name === "Actions" || 
+                    action.payload.name === "Export" || 
+                    action.payload.name === "Math" || 
+                    action.payload.name === "Import" || 
                     action.payload.name === "Selection"
                 ))
                     return state;
@@ -61,10 +61,10 @@ const MatrixGenerator = (props: MatrixGeneratorProps) => {
                 return state;
         }
     }, {
-        "Matrix Actions": false,
-        "Export Matrix": false,
-        "Matrix Math": false,
-        "Import From Text": false,
+        "Actions": false,
+        "Export": false,
+        "Math": false,
+        "Import": false,
         "Selection": false
     });
 

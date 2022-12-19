@@ -72,7 +72,6 @@ const MatrixEditor = (props: MatrixEditorProps) => {
         boxSelectionDispatch({type: "CLEAR"});
     }, [props.name]);
 
-
     
     const toStringUpdateMatrix = (name: string | undefined, matrix: number[][]) => {
         let stringMatrix = new Array(matrix.length).fill([]).map(() => new Array(matrix[0].length).fill(""));
@@ -90,45 +89,44 @@ const MatrixEditor = (props: MatrixEditorProps) => {
         props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": name, "matrix": stringMatrix, "switch": true} });
     }
 
-    const showFullInput = boxSelection !== null && props.matrix !== null && document.activeElement !== null
-                    && (document.activeElement.id === "fullInput"
-                    || (document.activeElement.tagName === "INPUT" && /^[\d]+:[\d]+$/.test(document.activeElement.id))//num:num
-                    )
-
-    let fullInput = null;
-    if (showFullInput) {
-        const x = boxSelection.start.x;
-        const y = boxSelection.start.y;
-
-        fullInput =
-            <input className={"fixed-bottom " + styles.fullInput}
-                value={props.matrix ? props.matrix[x][y] : ""}
-                placeholder={`Row ${x} Column ${y}`}
-                id={"fullInput"}
-                onChange={(e) => {
-                    if (props.matrix) {
-                        const changed = updateEntry(cloneMatrix(props.matrix), x, y, e.target.value, props.settings["Mirror Inputs"]);
-                        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": changed, "switch": false }});
-                    }
-                }} />
-    }
-
     const close = () => {
         props.toolDispatch({"type": "CLOSE"})
     }
 
+    const formatName = (str: string) => {
+        if (str.length > 5)
+            return str.substring(0, 5) + "..."
+        else
+            return str;
+    }
+
+    const formatSelection = (boxSelection: BoxSelection) => {
+        if (!boxSelection)
+            return "";
+
+        if (boxSelection.start.x !== boxSelection.end.x || boxSelection.start.y !== boxSelection?.end.y)
+            return `${boxSelection.start.x}:${boxSelection.start.y} to ${boxSelection.end.x}:${boxSelection.end.y}`
+        else
+            return (`${boxSelection.start.x}:${boxSelection.start.y}`)
+    }
+
+
+    const showFullInput = boxSelection !== null && props.matrix !== null && document.activeElement !== null
+                        && (document.activeElement.id === "fullInput"
+                            || (document.activeElement.tagName === "INPUT" 
+                                && /^[\d]+:[\d]+$/.test(document.activeElement.id))//num:num
+                    )
 
     //for multi cell editing
     let lastValue = null;
     if (boxSelection && props.undoStack.length > 0 && props.name in props.undoStack[props.undoStack.length - 1]
         && (boxSelection.start.x !== boxSelection.end.x || boxSelection.start.y !== boxSelection.end.y)) {
         lastValue = props.undoStack[props.undoStack.length - 1][props.name] [boxSelection.start.x][boxSelection.start.y] 
-    }
-        
+    }        
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
-            {props.matrix && props.toolActive["Matrix Actions"] ?
+            {props.matrix && props.toolActive["Actions"] ?
                 <MatrixActions
                     name={props.name}
                     matrix={props.matrix}
@@ -136,11 +134,10 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     close={close}
                     showFullInput={showFullInput}
 
-                    addAlert = {props.addAlert}
-                />
-                : null}
+                    addAlert = {props.addAlert}/>
+            : null}
 
-            {props.matrix && props.toolActive["Matrix Math"] ?
+            {props.matrix && props.toolActive["Math"] ?
                 <MatrixMath
                     matrices={props.matrices}
                     matrix={props.matrix}
@@ -150,9 +147,8 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     close={close}
                     showFullInput={showFullInput}
 
-                    addAlert = {props.addAlert}
-                />
-                : null}
+                    addAlert = {props.addAlert}/>
+            : null}
 
             {props.matrix && !props.settings["Disable Selection"] && props.toolActive["Selection"] ?
                 <SelectionMenu
@@ -166,12 +162,10 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     close={close}
                     showFullInput={showFullInput}
 
-                    addAlert = {props.addAlert}
+                    addAlert = {props.addAlert}/>
+            : null}
 
-                />
-                : null}
-
-            {props.toolActive["Import From Text"] ?
+            {props.toolActive["Import"] ?
                 <TextImport
                     matrixDispatch={props.matrixDispatch}
                     matrices={props.matrices}
@@ -179,18 +173,16 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     close={close}
                     showFullInput={showFullInput}
 
-                    addAlert = {props.addAlert}
-                />
-                : null}
+                    addAlert = {props.addAlert}/>
+            : null}
 
-            {props.matrix && props.toolActive["Export Matrix"] ?
+            {props.matrix && props.toolActive["Export"] ?
                 <MatrixExport
                     matrix={props.matrix}
                     settings = {props.settings}
                     close={close}
-                    showFullInput={showFullInput}
-                />
-                : null}
+                    showFullInput={showFullInput}/>
+            : null}
 
 
             {props.matrix ?
@@ -207,12 +199,33 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     />
                     : <div className={styles.bigMatrixInfo}>
                         Matrices larger than 50 x 50 are too big to be displayed<br />
-                        Use Import From Text or Matrix Actions to edit the matrix<br />
-                        Use Export Matrix to view the matrix
+                        Use Import or Matrix Actions to edit the matrix<br />
+                        Use Export to view the matrix
                     </div> 
             : null}
 
-            {fullInput}
+            {showFullInput ? 
+                <input className={"fixed-bottom " + styles.fullInput}
+                value={props.matrix ? props.matrix[boxSelection.start.x][boxSelection.start.y] : ""}
+                
+                id = {"fullInput"}
+                onChange={(e) => {
+                    if (props.matrix) {
+                        const changed = updateEntry(
+                            cloneMatrix(props.matrix), 
+                            boxSelection.start.x, 
+                            boxSelection.start.y, 
+                            e.target.value, 
+                            props.settings["Mirror Inputs"]);
+
+                        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": changed, "switch": false }});
+                    }
+                }} /> 
+            : null}
+
+            <p className = {styles.currentSelection}>
+                {formatName(props.name) + " " + formatSelection(boxSelection)}
+            </p>
 
         </div>)
 

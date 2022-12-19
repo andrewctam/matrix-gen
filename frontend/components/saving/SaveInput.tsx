@@ -1,4 +1,5 @@
 import styles from "./SaveMatrices.module.css";
+
 interface SaveInputProps {
     name: string
     type: string
@@ -7,6 +8,7 @@ interface SaveInputProps {
     success?: string | null
     setCurrent: (str: string) => void
 }
+
 const SaveInput = (props: SaveInputProps) => {
     return (
         <div>

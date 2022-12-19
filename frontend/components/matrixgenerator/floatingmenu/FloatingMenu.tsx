@@ -64,7 +64,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
     const deleteSelectedMatrices = (matricesToDelete: string[]) => {
         if (matricesToDelete.length === 0) { //if input is empty, delete all
             if (window.confirm("Are you sure you want to delete all of your matrices?")) {
-                props.setSelection("0");
+                props.setSelection("");
                 props.matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": {} } });
                 localStorage.removeItem("matrices");
                 return true;
@@ -75,7 +75,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
 
             for (let i = 0; i < matricesToDelete.length; i++) {
                 if (props.selection === matricesToDelete[i])
-                    props.setSelection("0");
+                    props.setSelection("");
 
                 delete tempObj[matricesToDelete[i]];
             }
@@ -110,17 +110,17 @@ const FloatingMenu = (props: FloatingMenuProps) => {
 
             {props.selection in props.matrices ?
                 <>
-                    <ActiveButton name="Matrix Actions" id = {"Matrix Actions"}  active={props.toolActive["Matrix Actions"]} action={toggleTool} />
+                    <ActiveButton name="Actions" id = {"Actions"}  active={props.toolActive["Actions"]} action={toggleTool} />
 
-                    <ActiveButton name="Matrix Math" id = {"Matrix Math"} active={props.toolActive["Matrix Math"]} action={toggleTool} />
+                    <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} />
 
                     {!props.settings["Disable Selection"] ?
                         <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} />
                         : null}
 
-                    <ActiveButton name="Export Matrix" id = {"Export Matrix"} active={props.toolActive["Export Matrix"]} action={toggleTool} />
+                    <ActiveButton name="Export" id = {"Export"} active={props.toolActive["Export"]} action={toggleTool} />
                 </> : null}
-            <ActiveButton name="Import From Text" id = {"Import From Text"} active={props.toolActive["Import From Text"]} action={toggleTool} />
+            <ActiveButton name="Import" id = {"Import"} active={props.toolActive["Import"]} action={toggleTool} />
 
 
 
@@ -159,7 +159,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                             }}
                         />
 
-                        {props.selection !== "0" ?
+                        {props.selection !== "" ?
                             <BasicActionButton
                                 key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${props.selection}`}
                                 action={() => { 
@@ -168,13 +168,13 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                             : null}
                     </div>
                     <div className = {styles.pair}>
-                        {props.selection !== "0" ?
+                        {props.selection !== "" ?
                             <BasicActionButton
                                 key="deleteButton" buttonStyle={"danger"} name={`Delete ${props.selection}`}
                                 action={() => {
-                                    if (props.selection !== "0") {
+                                    if (props.selection !== "") {
                                         props.matrixDispatch({type: "DELETE_MATRIX", payload: {name: props.selection}});
-                                        props.setSelection("0");
+                                        props.setSelection("");
                                     }
                                 }} />
                             : null}

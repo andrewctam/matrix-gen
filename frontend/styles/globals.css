@@ -1,3 +1,6 @@
+#__next, #__next > div, html {
+    height: 100%;
+}
 body {
     overflow-y: auto;
     margin: 0px;
@@ -6,6 +9,7 @@ body {
     background-color: rgb(75,75,75);
     user-select: none;
     width: 100%;
+    height: 100%;
 }
 .container-fluid, .row {
     --bs-gutter-x: 0;

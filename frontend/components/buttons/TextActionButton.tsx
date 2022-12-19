@@ -2,8 +2,8 @@ import ParameterTextInput from "../inputs/ParameterTextInput";
 import styles from "./TextActionButton.module.css"
 
 interface TextActionButtonProps {
-    updateParameter: any
-    action: any
+    updateParameter: (a: string, b: any) => void
+    action: Function
     value: string
     width: string
     placeholder?: string

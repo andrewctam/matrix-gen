@@ -10,7 +10,7 @@ function IndexPage() {
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         </Head>
 
-        <div className='container-fluid'> <App /> </div>
+        <div className='container-fluid h-100'> <App /> </div>
       </div>
     )
   }

@@ -47,7 +47,7 @@ const MergeStorage = (props: MergeStorageProps) => {
         if (accountMatrices.length > 0) {
             props.setSelection(Object.keys(props.userMatrices)[0]);
         } else {
-            props.setSelection("0");
+            props.setSelection("");
         }
 
         props.setShowMerge(false);  
