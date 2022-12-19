@@ -1,8 +1,8 @@
 import styles from "./Table.module.css"
 import React, { useCallback, useEffect, useState } from 'react';
-import { editSelection } from '../../matrixFunctions';
+import { editSelection } from '../../../matrixFunctions';
 import Box from './Box';
-import { Settings } from "../../App";
+import { Settings } from "../../../App";
 import { BoxSelection } from "../MatrixEditor";
 
 interface TableProps {

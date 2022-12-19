@@ -2,12 +2,12 @@ import React, { useState, useRef } from "react";
 
 import styles from "./SelectionMenu.module.css"
 
-import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../matrixFunctions";
+import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../../matrixFunctions";
 
-import TextActionButton from '../../buttons/TextActionButton'
-import Toggle from '../../buttons/Toggle';
-import useExpand from '../../../hooks/useExpand';
-import { Matrices } from "../../App";
+import TextActionButton from '../../../buttons/TextActionButton'
+import Toggle from '../../../buttons/Toggle';
+import useExpand from '../../../../hooks/useExpand';
+import { Matrices } from "../../../App";
 import { BoxSelection } from "../MatrixEditor";
 
 interface SelectionMenuProps {

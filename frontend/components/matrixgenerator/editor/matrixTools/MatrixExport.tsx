@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
-import ParameterTextInput from '../../inputs/ParameterTextInput';
-import ParameterBoxInput from '../../inputs/ParameterBoxInput';
-import ActiveButton from '../../buttons/ActiveButton';
+import ParameterTextInput from '../../../inputs/ParameterTextInput';
+import ParameterBoxInput from '../../../inputs/ParameterBoxInput';
+import ActiveButton from '../../../buttons/ActiveButton';
 
 import styles from "./MatrixExport.module.css"
-import Toggle from '../../buttons/Toggle';
-import useExpand from '../../../hooks/useExpand';
-import { Settings } from '../../App';
+import Toggle from '../../../buttons/Toggle';
+import useExpand from '../../../../hooks/useExpand';
+import { Settings } from '../../../App';
 
 
 interface MatrixExportProps {

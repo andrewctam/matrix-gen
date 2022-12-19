@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 
-import styles from "./Tutorial.module.css";
+import styles from "./App.module.css";
 
 interface TutorialProps {
     closeTutorial: () => void

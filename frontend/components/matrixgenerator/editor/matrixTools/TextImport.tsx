@@ -1,16 +1,16 @@
 import React, {useEffect, useState, useRef} from "react";
 import styles from "./TextImport.module.css"
-import { generateUniqueName } from "../../matrixFunctions";
+import { generateUniqueName } from "../../../matrixFunctions";
 
-import ParameterBoxInput from "../../inputs/ParameterBoxInput";
-import ParameterTextInput from "../../inputs/ParameterTextInput";
-import ActiveButton from '../../buttons/ActiveButton'
+import ParameterBoxInput from "../../../inputs/ParameterBoxInput";
+import ParameterTextInput from "../../../inputs/ParameterTextInput";
+import ActiveButton from '../../../buttons/ActiveButton'
 
-import OverwriteInput from '../../inputs/OverwriteInput'
+import OverwriteInput from '../../../inputs/OverwriteInput'
 
-import Toggle from '../../buttons/Toggle';
-import useExpand from '../../../hooks/useExpand';
-import { Matrices } from "../../App";
+import Toggle from '../../../buttons/Toggle';
+import useExpand from '../../../../hooks/useExpand';
+import { Matrices } from "../../../App";
 
 interface TextImportProps {
     matrixDispatch: React.Dispatch<any>

@@ -1,9 +1,12 @@
-import { useEffect, useState, useRef, useReducer } from 'react';
-import Navigation from "./navigation/Navigation"
-import MatrixGenerator from './MatrixGenerator';
+import React, { useEffect, useState, useRef, useReducer } from 'react';
+import styles from "./App.module.css"
+import MatrixGenerator from './matrixgenerator/MatrixGenerator';
 import { generateUniqueName, cloneMatrix, addRowsAndCols, addRows, addCols, updateEntry, deleteRowCol } from './matrixFunctions';
 import useAlert from '../hooks/useAlert';
+import TopBar from './TopBar';
 
+import SaveMatrices from './saving/SaveMatrices';
+import Tutorial from './Tutorial';
 
 
 export type Matrices = { [key: string]: string[][] }
@@ -653,14 +656,9 @@ const App = () => {
         }
     }
 
- 
-
-    const [alerts, addAlert] = useAlert();
-    if (!matrices || !doneLoading)
-        return <div/>
-    return (
-        <div onKeyDown={(e) => {
-            //undo
+    
+    useEffect(() => {
+        const undoredo = (e: KeyboardEvent) => {
             if (e.metaKey && e.key === "z") {
                 e.preventDefault();
                 undo();
@@ -668,63 +666,88 @@ const App = () => {
                 e.preventDefault();
                 redo();
             }
+        }
 
-        }}>
-            {alerts}
+        addEventListener('keydown', undoredo)
 
-            <Navigation
-                matrices={matrices}
-                matrixDispatch={matrixDispatch}
-                setSelection={setSelection}
+        return () => {
+           removeEventListener('keydown', undoredo); 
+        }
 
-                settings={settings}
-                updateMatrixSettings={updateMatrixSettings}
+    }, [undo, redo])
 
-                username={username}
-                updateUserInfo={updateUserInfo}
-                refreshTokens={refreshTokens}
+    const [showTutorial, setShowTutorial] = useState(false);
+    const [showSaveMenu, setShowSaveMenu] = useState(false);
 
-                saveToLocal={saveToLocal}
-                saveToLocalStorage={saveToLocalStorage}
-                setSaveToLocal={setSaveToLocal}
+    const [alerts, addAlert] = useAlert();
 
-                showMerge={showMerge}
-                setShowMerge={setShowMerge}
-                userMatrices={userMatrices}
-                dataTooLarge={dataTooLarge}
-                addAlert={addAlert}
+    if (!matrices || !doneLoading)
+        return <div/>
 
-            />
+    return (<> 
+        {alerts}
 
+        <TopBar
+            showTutorial = {showTutorial}
+            showSaveMenu = {showSaveMenu}
+            setShowSaveMenu={setShowSaveMenu}
+            setShowTutorial = {setShowTutorial}
+            showMerge = {showMerge}
+            username = {username}
+            dataTooLarge = {dataTooLarge}
+            saveToLocal = {saveToLocal} />
 
-            <MatrixGenerator
-                matrices={matrices}
-                matrixDispatch={matrixDispatch}
+        <div className={styles.floatingContainer}>
+            {showSaveMenu ?
+                <SaveMatrices
+                    username={username}
+                    updateUserInfo={updateUserInfo}
+                    saveToLocal={saveToLocal}
+                    settings={settings}
+                    matrices={matrices}
+                    refreshTokens={refreshTokens}
 
-                selection={selection}
-                matrix={selection in matrices ? matrices[selection] : null}
+                    matrixDispatch={matrixDispatch}
+                    setSelection={setSelection}
+                    showMerge={showMerge}
+                    setShowMerge={setShowMerge}
+                    userMatrices={userMatrices}
+                    closeSaveMenu={() => { setShowSaveMenu(false) }}
+                    addAlert={addAlert}
 
-                setSelection={setSelection}
+                    setSaveToLocal={setSaveToLocal}
+                /> : null}
 
-                updateMatrixSettings={updateMatrixSettings}
+            {showTutorial ?
+                <Tutorial closeTutorial={() => { setShowTutorial(false) }} />
+                : null}
+        </div>
+        
 
-                settings={settings}
-                settingsDispatch={settingsDispatch}
-                
-                showMerge={showMerge}
-                userMatrices={userMatrices}
-                undo={undo}
-                redo={redo}
-                undoStack={undoStack}
-                redoStack={redoStack}
+        <MatrixGenerator
+            matrices={matrices}
+            matrixDispatch={matrixDispatch}
 
-                addAlert={addAlert}
+            selection={selection}
+            matrix={selection in matrices ? matrices[selection] : null}
 
+            setSelection={setSelection}
 
-            />
+            updateMatrixSettings={updateMatrixSettings}
 
+            settings={settings}
+            settingsDispatch={settingsDispatch}
+            
+            showMerge={showMerge}
+            userMatrices={userMatrices}
+            undo={undo}
+            redo={redo}
+            undoStack={undoStack}
+            redoStack={redoStack}
 
-        </div>);
+            addAlert={addAlert}
+        />
+    </>);
 
 }
 

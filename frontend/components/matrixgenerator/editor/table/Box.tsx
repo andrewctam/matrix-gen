@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import { Settings } from '../../App';
+import { Settings } from '../../../App';
 import styles from "./Box.module.css"
 
 interface BoxProps {

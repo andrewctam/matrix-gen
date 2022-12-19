@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import SelectorButton from "./SelectorButton";
 import styles from "./Selectors.module.css"
 
-import {resizeMatrix} from "../matrixFunctions"
-import { Matrices, Settings } from "../App";
+import {resizeMatrix} from "../../matrixFunctions"
+import { Matrices, Settings } from "../../App";
 
 interface MatrixSelectorProps {
     matrices: Matrices

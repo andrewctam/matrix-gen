@@ -1,7 +1,7 @@
 import { useReducer } from "react";
-import FloatingMenu from "./selectors/FloatingMenu";
+import FloatingMenu from "./floatingmenu/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
-import { Matrices, Settings } from "./App";
+import { Matrices, Settings } from "../App";
 
 interface MatrixGeneratorProps {
     matrices: Matrices

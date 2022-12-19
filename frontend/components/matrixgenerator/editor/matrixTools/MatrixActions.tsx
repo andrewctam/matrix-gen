@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
-import { transpose, shuffle, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, scatter, rotate90Degrees, reshapeMatrix, resizeMatrix } from '../../matrixFunctions';
+import { transpose, shuffle, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, scatter, rotate90Degrees, reshapeMatrix, resizeMatrix } from '../../../matrixFunctions';
 import styles from "./MatrixActions.module.css"
 
-import BasicActionButton from '../../buttons/BasicActionButton';
-import TextActionButton from '../../buttons/TextActionButton';
-import TwoTextActionButton from '../../buttons/TwoTextActionButton';
+import BasicActionButton from '../../../buttons/BasicActionButton';
+import TextActionButton from '../../../buttons/TextActionButton';
+import TwoTextActionButton from '../../../buttons/TwoTextActionButton';
 
-import Toggle from '../../buttons/Toggle';
-import useExpand from '../../../hooks/useExpand';
+import Toggle from '../../../buttons/Toggle';
+import useExpand from '../../../../hooks/useExpand';
 
 interface MatrixActionsProps {
     name: string

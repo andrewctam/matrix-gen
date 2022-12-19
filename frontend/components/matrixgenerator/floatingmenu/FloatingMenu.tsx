@@ -2,16 +2,16 @@
 import React, { useState, useRef } from 'react';
 import MatrixSelector from './MatrixSelector';
 
-import ParameterBoxInput from '../inputs/ParameterBoxInput';
-import ParameterTextInput from '../inputs/ParameterTextInput';
+import ParameterBoxInput from '../../inputs/ParameterBoxInput';
+import ParameterTextInput from '../../inputs/ParameterTextInput';
 
-import BasicActionButton from '../buttons/BasicActionButton';
-import ActiveButton from '../buttons/ActiveButton';
+import BasicActionButton from '../../buttons/BasicActionButton';
+import ActiveButton from '../../buttons/ActiveButton';
 import styles from "./FloatingMenu.module.css"
-import useMove from '../../hooks/useMove';
+import useMove from '../../../hooks/useMove';
 
-import { cloneMatrix } from '../matrixFunctions';
-import { Matrices, Settings } from '../App';
+import { cloneMatrix } from '../../matrixFunctions';
+import { Matrices, Settings } from '../../App';
 import { Tools } from '../MatrixGenerator';
 
 interface FloatingMenuProps {
@@ -213,7 +213,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                     <ParameterTextInput width={"30px"} text={props.settings["Empty Element"]} id={"Empty Element"} updateParameter={updateSetting} />
                 </div>
                 <div>{"Decimals To Round: "} 
-                    <ParameterTextInput width={"30px"} text={props.settings["Decimals To Round"].toString()} id={"Decimals To Round"} updateParameter={updateSetting} placeholder={props.settings["Decimals To Round"] === 0 ? "None" : ""} />
+                    <ParameterTextInput width={"30px"} text={props.settings["Decimals To Round"].toString()} id={"Decimals To Round"} updateParameter={updateSetting} placeholder={props.settings["Decimals To Round"] === "0" ? "None" : ""} />
                 </div>
 
             </div>

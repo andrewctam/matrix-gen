@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useRef, ReactText  } from 'react';
 import styles from "./MatrixMath.module.css"
 
-import { generateUniqueName, cloneMatrix, gaussian, LUDecomposition, inverse, createIdentity} from '../../matrixFunctions';
-import Toggle from '../../buttons/Toggle';
-import BasicActionButton from '../../buttons/BasicActionButton';
-import OverwriteInput from '../../inputs/OverwriteInput'
-import useExpand from '../../../hooks/useExpand';
-import { Matrices, Settings } from '../../App';
+import { generateUniqueName, cloneMatrix, gaussian, LUDecomposition, inverse, createIdentity} from '../../../matrixFunctions';
+import Toggle from '../../../buttons/Toggle';
+import BasicActionButton from '../../../buttons/BasicActionButton';
+import OverwriteInput from '../../../inputs/OverwriteInput'
+import useExpand from '../../../../hooks/useExpand';
+import { Matrices, Settings } from '../../../App';
 
 interface MatrixMathProps {
     matrices: Matrices

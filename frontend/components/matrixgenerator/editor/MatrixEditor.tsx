@@ -7,8 +7,8 @@ import MatrixActions from './matrixTools/MatrixActions';
 import TextImport from './matrixTools/TextImport';
 import SelectionMenu from './matrixTools/SelectionMenu';
 
-import { cloneMatrix, updateEntry } from '../matrixFunctions';
-import { Matrices, Settings } from '../App';
+import { cloneMatrix, updateEntry } from '../../matrixFunctions';
+import { Matrices, Settings } from '../../App';
 import { Tools } from '../MatrixGenerator';
 
 interface MatrixEditorProps {

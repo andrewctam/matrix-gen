@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import LoginForm from "./LoginForm";
 import UserPanel from "./UserPanel";
-import { Matrices, Settings } from "../../App";
+import { Matrices, Settings } from "../App";
 
 interface SaveMatricesProps {
     username: string
@@ -11,7 +11,7 @@ interface SaveMatricesProps {
     saveToLocal: boolean
     settings: Settings
     matrices: Matrices
-    refreshTokens: () => boolean
+    refreshTokens: () => Promise<boolean>
     matrixDispatch: React.Dispatch<any>
     setSelection: (str: string) => void
     showMerge: boolean

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./SaveMatrices.module.css";
 import SaveInput from "./SaveInput"
-import { Matrices, Settings } from "../../App";
+import { Matrices, Settings } from "../App";
 
 interface LoginFormProps {
     matrices: Matrices

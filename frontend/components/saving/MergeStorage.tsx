@@ -1,5 +1,5 @@
 
-import { Matrices } from "../../App";
+import { Matrices } from "../App";
 import styles from "./MergeStorage.module.css";
 
 interface MergeStorageProps {
