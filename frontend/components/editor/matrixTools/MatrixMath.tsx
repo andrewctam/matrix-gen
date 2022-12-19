@@ -79,9 +79,9 @@ const MatrixMath = (props: MatrixMathProps) => {
             if (matrix !== null)
                 props.toStringUpdateMatrix(resultName === "" ? undefined : resultName, matrix)
             else
-            props.addAlert("Error in expression.", 5000, "error");
+            props.addAlert("Error calculating expression.", 5000, "error");
         } catch (error) {
-            props.addAlert("Error in expression.", 5000, "error");
+            props.addAlert("Error calculating expression.", 5000, "error");
             console.log(error);
         }
 

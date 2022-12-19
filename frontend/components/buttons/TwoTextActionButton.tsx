@@ -6,11 +6,11 @@ interface TwoTextActionButtonProps {
     id1: string
     id2: string
     updateParameter: any
-    placeholder1: string
-    placeholder2: string
+    placeholder1?: string
+    placeholder2?: string
     value1: string
     value2: string
-    width: number
+    width: string
     separator: string
     action: any
 }

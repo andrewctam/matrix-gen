@@ -48,10 +48,6 @@ export const generateUniqueName = (matrices: Matrices) => {
 }
 
 export const resizeMatrix = (matrix: string[][], rows: number, cols: number) => {
-    if (isNaN(rows) || isNaN(cols)) {
-        return null;
-    }
-
     if (rows <= 1 || cols <= 1) { //actually inputted 0 x 0, which is 1 x 1
         return null;
     }
@@ -60,10 +56,6 @@ export const resizeMatrix = (matrix: string[][], rows: number, cols: number) => 
         rows = 101;
     if (cols > 101)
         cols = 101;
-
-    //check to make new and old dimensions are different
-    if (matrix.length === rows && matrix[0].length === cols)
-        return null;
 
     //get the smaller of each dimension in case new > old
     const lessRows = Math.min(rows, matrix.length)

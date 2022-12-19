@@ -14,7 +14,6 @@ interface MatrixExportProps {
     settings: Settings
     close: () => void
     showFullInput: boolean
-    
 }
 
 const MatrixExport = (props: MatrixExportProps) => {

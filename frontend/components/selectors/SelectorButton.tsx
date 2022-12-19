@@ -23,13 +23,13 @@ const SelectorButton = (props: SelectorButtonProps) => {
     const [editingSize, setEditingSize] = useState(false);
     
 
-    const updateRename = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const updateRename = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
         if (/^[A-Za-z_]*$/.test(updated))
             setDisplayName(updated);
     }
 
-    const updateResize = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const updateResize = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
         if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated))
             setDisplaySize(updated);
@@ -70,7 +70,7 @@ const SelectorButton = (props: SelectorButtonProps) => {
             id={props.name}
             type="text"
             className={`${styles.renameInput} ${props.intersectionMerge ? styles.intersectionMerge : ""}`}
-            onInput={updateRename}
+            onChange={updateRename}
             onKeyDown={handleKeyDown}
             onFocus = {() => {
                 setDisplayName(props.name); //default to current name
@@ -91,7 +91,7 @@ const SelectorButton = (props: SelectorButtonProps) => {
             id={"size " + props.name}
             type="text"
             className={styles.sizeInput}
-            onInput={updateResize}
+            onChange={updateResize}
             onFocus = {() => {
                 setDisplaySize(`${props.rows} x ${props.cols}`) //default to current size
                 setEditingSize(true);

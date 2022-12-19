@@ -5,10 +5,11 @@ interface ParameterTextInputProps {
     width: string
     placeholder?: string
     text: string
-    updateParameter: any
+    updateParameter: (a: string, b: any) => void
+
 }
 const ParameterTextInput = (props: ParameterTextInputProps) => {
-    const handleInput = (e: React.KeyboardEvent<HTMLInputElement>) =>{
+    const handleInput = (e: React.ChangeEvent<HTMLInputElement>) =>{
         props.updateParameter(props.id, (e.target as HTMLInputElement).value);
     }
 
@@ -17,7 +18,7 @@ const ParameterTextInput = (props: ParameterTextInputProps) => {
         style = {{width: props.width}} 
         value = {props.text} 
         placeholder = {props.placeholder}
-        onInput = {handleInput}>
+        onChange = {handleInput}>
     </input>
 
     

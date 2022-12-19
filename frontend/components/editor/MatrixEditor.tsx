@@ -80,8 +80,8 @@ const MatrixEditor = (props: MatrixEditorProps) => {
         //takes a number[][] and converts each element to a string and updates it in matrices
         for (let i = 0; i < matrix.length - 1; i++) {
             for (let j = 0; j < matrix[i].length - 1; j++) {
-                if (props.settings["Decimals To Round"] > 0) {
-                    let rounded = matrix[i][j].toFixed(props.settings["Decimals To Round"])
+                if (parseInt(props.settings["Decimals To Round"]) > 0) {
+                    let rounded = matrix[i][j].toFixed(parseInt(props.settings["Decimals To Round"]))
                     stringMatrix[i][j] = (+rounded).toString(); //remove trailing zeros 
                 } else
                     stringMatrix[i][j] = matrix[i][j].toString();
@@ -117,10 +117,11 @@ const MatrixEditor = (props: MatrixEditorProps) => {
         props.toolDispatch({"type": "CLOSE"})
     }
 
+
+    //for multi cell editing
     let lastValue = null;
     if (boxSelection && props.undoStack.length > 0 && props.name in props.undoStack[props.undoStack.length - 1]
         && (boxSelection.start.x !== boxSelection.end.x || boxSelection.start.y !== boxSelection.end.y)) {
-            
         lastValue = props.undoStack[props.undoStack.length - 1][props.name] [boxSelection.start.x][boxSelection.start.y] 
     }
         

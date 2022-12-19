@@ -2,12 +2,12 @@ import ParameterTextInput from "../inputs/ParameterTextInput";
 import styles from "./TextActionButton.module.css"
 
 interface TextActionButtonProps {
-    name: string
     updateParameter: any
     action: any
     value: string
-    width: number
-    placeholder: string
+    width: string
+    placeholder?: string
+    name: string
 }
 
 const TextActionButton = (props: TextActionButtonProps) => {

@@ -3,12 +3,12 @@ import React from "react"
 interface ParameterBoxInputProps {
     isChecked: boolean
     name: string
-    updateParameter: any
+    updateParameter: (a: string, b: any) => void
 }
 
 const ParameterBoxInput = (props: ParameterBoxInputProps) =>{
     
-    const handleInput = (e: React.KeyboardEvent<HTMLInputElement>) =>{
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
         props.updateParameter(props.name, (e.target as HTMLInputElement).checked)
     }
 
@@ -16,7 +16,7 @@ const ParameterBoxInput = (props: ParameterBoxInputProps) =>{
                 <label className = "form-check-label" htmlFor={props.name}> {props.name}</label>
 
                 <input className = "form-check-input pull-right" 
-                    onInput = {handleInput}
+                    onChange = {handleChange}
                     checked = {props.isChecked} 
                     type = "checkbox" 
                     id = {props.name} 

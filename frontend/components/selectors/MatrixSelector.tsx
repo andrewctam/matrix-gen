@@ -22,13 +22,13 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
     const [searchName, setSearchName] = useState("");
     const [searchSize, setSearchSize] = useState("");
 
-    const updateSearchName = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const updateSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
         if (/^[A-Za-z_]*$/.test(updated)) //only allow letters and underscores
             setSearchName(updated);
     }
 
-    const updateSearchSize = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const updateSearchSize = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
         if (/^[0-9 \s]*[x]?[0-9 \s]*$/.test(updated)) //only allow digits and one instance of "x"
             setSearchSize(updated);
@@ -153,8 +153,8 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
 
 
     return (<div>
-            <input className={styles.nameSearchBar} onInput={updateSearchName} value={searchName} placeholder='Search by Name'></input>
-            <input className={styles.sizeSearchBar} onInput={updateSearchSize} value={searchSize} placeholder='Search by Size'></input>
+            <input className={styles.nameSearchBar} onChange={updateSearchName} value={searchName} placeholder='Search by Name'></input>
+            <input className={styles.sizeSearchBar} onChange={updateSearchSize} value={searchSize} placeholder='Search by Size'></input>
 
             <div id="selectors" className={"list-group " + styles.matrixSelectorContainer}>
                  {selectors}

@@ -14,12 +14,12 @@ export interface Settings {
     "Numbers Only Input": boolean
     "Dark Mode Table": boolean
     "Empty Element": string
-    "Decimals To Round": number
+    "Decimals To Round": string
 }
 
 type SettingsAction =
     { type: "UPDATE_ALL", payload: { settings: Settings } } |
-    { type: "UPDATE_SETTING", payload: { name: keyof Settings, value: boolean | string | number } } |
+    { type: "UPDATE_SETTING", payload: { name: keyof Settings, value: boolean | string } } |
     { type: "TOGGLE_SETTING", payload: { name: keyof Settings } };
 
 
@@ -50,21 +50,18 @@ const App = () => {
 
                 switch(action.payload.name) {
                     case "Decimals To Round":
-                        if (typeof value === "string") {
-                            if (value !== "" && /^\d+$/.test(value)) {
-                                let num = parseInt(value);
-                                if (!isNaN(num)) {
-                                    tempObj[action.payload.name] = Math.max(0, Math.min(num, 16))
-                                    return tempObj;
-                                } else
-                                    return state;
-                            } else
-                                return state;
-                        } else if (typeof value === "number") {
-                            tempObj[action.payload.name] = Math.max(0, Math.min(value, 16))
-                            return tempObj;
-                        } else 
+                        if (typeof value !== "string")
                             return state;
+
+                        if (value === "") {
+                            tempObj[action.payload.name] = ""
+                            return tempObj    
+                        } else if (/^\d+$/.test(value)) {
+                            tempObj[action.payload.name] = Math.max(0, Math.min(parseInt(value), 16)).toString();
+                            return tempObj;
+                        } else {
+                            return state;
+                        }
 
                     case "Empty Element":
                         if (typeof value !== "string")
@@ -111,7 +108,7 @@ const App = () => {
         "Numbers Only Input": false,
         "Dark Mode Table": false,
         "Empty Element": "0",
-        "Decimals To Round": 8
+        "Decimals To Round": "8"
     });
 
     const matrixReducer = (state: Matrices, action: MatricesAction) => {
@@ -381,7 +378,7 @@ const App = () => {
                         "Numbers Only Input": false,
                         "Dark Mode Table": false,
                         "Empty Element": "0",
-                        "Decimals To Round": 8
+                        "Decimals To Round": "8"
                     }
                 }
             });
