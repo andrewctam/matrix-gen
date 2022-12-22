@@ -3,7 +3,7 @@ import SelectorButton from "./SelectorButton";
 import styles from "./Selectors.module.css"
 
 import {resizeMatrix} from "../../matrixFunctions"
-import { Matrices, Settings } from "../../App";
+import { Matrices, MatricesAction, Settings } from "../../App";
 
 interface MatrixSelectorProps {
     matrices: Matrices
@@ -11,7 +11,7 @@ interface MatrixSelectorProps {
     name: string
     setSelection: (str: string) => void
     selection: string
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     showMerge: boolean
     multiSelected: string[]
     setMultiSelected: (arr: string[]) => void

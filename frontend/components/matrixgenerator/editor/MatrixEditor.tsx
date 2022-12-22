@@ -8,19 +8,19 @@ import TextImport from './matrixTools/TextImport';
 import SelectionMenu from './matrixTools/SelectionMenu';
 
 import { cloneMatrix, updateEntry } from '../../matrixFunctions';
-import { Matrices, Settings } from '../../App';
-import { Tools } from '../MatrixGenerator';
+import { Matrices, MatricesAction, Settings } from '../../App';
+import { Tools, ToolsAction } from '../MatrixGenerator';
 
 interface MatrixEditorProps {
     matrices: Matrices
     name: string
     matrix: string[][] | null
     settings: Settings
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     undoStack: Matrices[]
     redoStack: Matrices[]
     toolActive: Tools
-    toolDispatch: React.Dispatch<any>
+    toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
 }
 
@@ -28,9 +28,11 @@ type Cell = {x: number, y: number}
 
 export type BoxSelection = {start: Cell, end: Cell} | null
 
-type BoxSelectionAction =
+export type BoxSelectionAction =
     {"type": "CLEAR"} | 
-    {"type": "SET_BOTH" | "SET_START" | "SET_END", payload: {start: Cell, end: Cell} }
+    {"type": "SET_BOTH", payload: {start: Cell, end: Cell} } |
+    {"type": "SET_START", payload: {start: Cell} } |
+    {"type": "SET_END", payload: {end: Cell} }
 
 const MatrixEditor = (props: MatrixEditorProps) => {
     const boxSelectionReducer = (state: BoxSelection, action: BoxSelectionAction) => {

@@ -9,11 +9,12 @@ import TwoTextActionButton from '../../../buttons/TwoTextActionButton';
 
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
+import { MatricesAction } from '../../../App';
 
 interface MatrixActionsProps {
     name: string
     matrix: string[][]
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     close: () => void
     showFullInput: boolean
     addAlert: (str: string, time: number, type?: string) => void

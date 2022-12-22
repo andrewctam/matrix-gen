@@ -10,10 +10,10 @@ import OverwriteInput from '../../../inputs/OverwriteInput'
 
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
-import { Matrices } from "../../../App";
+import { Matrices, MatricesAction } from "../../../App";
 
 interface TextImportProps {
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     matrices: Matrices
     currentName: string
     close: () => void

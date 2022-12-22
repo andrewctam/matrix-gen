@@ -1,5 +1,6 @@
 import React, {memo} from 'react';
 import { Settings } from '../../../App';
+import { BoxSelectionAction } from '../MatrixEditor';
 import styles from "./Box.module.css"
 
 interface BoxProps {
@@ -8,7 +9,7 @@ interface BoxProps {
     addRowCol: (row: number, col: number, updated: string, type: "ADD_ROW" | "ADD_COL" | "ADD_ROW_AND_COL") => void
     update: (row: number, col: number, updated: string) => void
     keyDown: (row: number, col: number, e: React.KeyboardEvent<HTMLInputElement>) => void
-    boxSelectionDispatch: React.Dispatch<any>
+    boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     rows: number
     cols: number
     row: number

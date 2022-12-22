@@ -1,17 +1,17 @@
 import { useReducer } from "react";
 import FloatingMenu from "./floatingmenu/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
-import { Matrices, Settings } from "../App";
+import { Matrices, MatricesAction, Settings, SettingsAction } from "../App";
 
 interface MatrixGeneratorProps {
     matrices: Matrices
     matrix: string[][] | null
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     selection: string
     setSelection: (str: string) => void
     updateMatrixSettings: () => void
     settings: Settings
-    settingsDispatch: React.Dispatch<any>
+    settingsDispatch: React.Dispatch<SettingsAction>
     showMerge: boolean
     userMatrices: Matrices | null
     undo: () => void
@@ -29,7 +29,7 @@ export interface Tools {
     "Selection": boolean
 }
 
-type ToolsAction = {type: "TOGGLE", payload: {name: keyof Tools}} | {"type": "CLOSE"}
+export type ToolsAction = {type: "TOGGLE", payload: {name: keyof Tools}} | {"type": "CLOSE"}
 
 const MatrixGenerator = (props: MatrixGeneratorProps) => {
     const [toolActive, toolDispatch] = useReducer((state: Tools, action: ToolsAction) => {

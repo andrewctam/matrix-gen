@@ -2,7 +2,7 @@ import MergeStorage from "./MergeStorage";
 import styles from "./SaveMatrices.module.css";
 import SaveInput from "./SaveInput"
 import React, { useState } from "react";
-import { Matrices } from "../App";
+import { Matrices, MatricesAction } from "../App";
 
 interface UserPanelProps {
     username: string
@@ -11,7 +11,7 @@ interface UserPanelProps {
     showMerge: boolean
     matrices: Matrices
     userMatrices: Matrices | null
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     setSelection: (str: string) => void
     updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
     refreshTokens: () => Promise<boolean>

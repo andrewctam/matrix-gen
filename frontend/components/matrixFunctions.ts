@@ -83,7 +83,7 @@ export const resizeMatrix = (matrix: string[][], rows: number, cols: number) => 
     return resized;
 }
 
-export const deleteRowCol = (matrix: string[][], row: number, col: number) => {
+export const deleteRowCol = (matrix: string[][], row: number | undefined, col: number | undefined) => {
     //Can not delete the red row/column
     if (row === matrix.length - 1 || col === matrix[0].length - 1)
         return null;

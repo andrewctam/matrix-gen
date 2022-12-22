@@ -1,11 +1,11 @@
 
-import { Matrices } from "../App";
+import { Matrices, MatricesAction } from "../App";
 import styles from "./MergeStorage.module.css";
 
 interface MergeStorageProps {
     matrices: Matrices
     userMatrices: Matrices
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     setSelection: (str: string) => void
     setShowMerge: (bool: boolean) => void
     addAlert: (str: string, time: number, type?: string) => void

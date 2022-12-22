@@ -7,16 +7,16 @@ import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../../matrixFu
 import TextActionButton from '../../../buttons/TextActionButton'
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
-import { Matrices } from "../../../App";
-import { BoxSelection } from "../MatrixEditor";
+import { Matrices, MatricesAction } from "../../../App";
+import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
 
 interface SelectionMenuProps {
     matrices: Matrices
     name: string
     matrix: string[][]
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     boxSelection: BoxSelection
-    boxSelectionDispatch: React.Dispatch<any>
+    boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     close: () => void
     showFullInput: boolean
     addAlert: (str: string, time: number, type?: string) => void

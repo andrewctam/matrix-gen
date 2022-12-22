@@ -11,25 +11,25 @@ import styles from "./FloatingMenu.module.css"
 import useMove from '../../../hooks/useMove';
 
 import { cloneMatrix } from '../../matrixFunctions';
-import { Matrices, Settings } from '../../App';
-import { Tools } from '../MatrixGenerator';
+import { Matrices, MatricesAction, Settings, SettingsAction } from '../../App';
+import { Tools, ToolsAction } from '../MatrixGenerator';
 
 interface FloatingMenuProps {
     matrices: Matrices
     matrix: string[][] | null
-    matrixDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
     selection: string
     setSelection: (str: string) => void
     showMerge: boolean
     userMatrices: Matrices | null
     settings: Settings
-    settingsDispatch: React.Dispatch<any>
+    settingsDispatch: React.Dispatch<SettingsAction>
     undo: () => void
     redo: () => void
     canUndo: boolean
     canRedo: boolean
     toolActive: Tools
-    toolDispatch: React.Dispatch<any>
+    toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
 
 }
@@ -52,11 +52,11 @@ const FloatingMenu = (props: FloatingMenuProps) => {
     const [lastClicked, setLastClicked] = useState<string>("settings");
 
     const updateSetting = (name: string, value: string) => {
-        props.settingsDispatch({ "type": "UPDATE_SETTING", "payload": {"name": name, "value": value }});
+        props.settingsDispatch({ "type": "UPDATE_SETTING", "payload": {"name": name as keyof Settings, "value": value }});
     }
 
     const toggleTool = (e: React.MouseEvent<HTMLButtonElement>) => {
-        props.toolDispatch({ "type": "TOGGLE", payload: {"name": (e.target as HTMLButtonElement).id } });
+        props.toolDispatch({ "type": "TOGGLE", payload: {"name": (e.target as HTMLButtonElement).id  as keyof Tools} });
     }
 
 

@@ -2,15 +2,15 @@ import styles from "./Table.module.css"
 import React, { useCallback, useEffect, useState } from 'react';
 import { editSelection } from '../../../matrixFunctions';
 import Box from './Box';
-import { Settings } from "../../../App";
-import { BoxSelection } from "../MatrixEditor";
+import { MatricesAction, Settings } from "../../../App";
+import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
 
 interface TableProps {
     settings: Settings
     name: string
     matrix: string[][]
-    matrixDispatch: React.Dispatch<any>
-    boxSelectionDispatch: React.Dispatch<any>
+    matrixDispatch: React.Dispatch<MatricesAction>
+    boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     boxSelection: BoxSelection
     mouseDown: React.MutableRefObject<boolean>
     lastValue: string | null

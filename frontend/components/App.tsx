@@ -11,6 +11,7 @@ import Tutorial from './Tutorial';
 
 export type Matrices = { [key: string]: string[][] }
 
+
 export interface Settings {
     "Mirror Inputs": boolean
     "Disable Selection": boolean
@@ -20,22 +21,22 @@ export interface Settings {
     "Decimals To Round": string
 }
 
-type SettingsAction =
+export type SettingsAction =
     { type: "UPDATE_ALL", payload: { settings: Settings } } |
     { type: "UPDATE_SETTING", payload: { name: keyof Settings, value: boolean | string } } |
     { type: "TOGGLE_SETTING", payload: { name: keyof Settings } };
 
 
-type MatricesAction =
-    { type: "UPDATE_ALL", payload: { matrices: Matrices, DO_NOT_UPDATE_UNDO_STACK: boolean } } |
-    { type: "UPDATE_MATRIX", payload: { name: string | undefined, matrix: string[][], switch: boolean, DO_NOT_UPDATE_UNDO_STACK: boolean } } |
-    { type: "ADD_ROW", payload: { name: string, row: number, col: number, updated: string, pos: number | undefined, DO_NOT_UPDATE_UNDO_STACK: boolean } } |
-    { type: "ADD_COL", payload: { name: string, row: number, col: number, updated: string, pos: number | undefined, DO_NOT_UPDATE_UNDO_STACK: boolean} } |
-    { type: "ADD_ROW_AND_COL", payload: { name: string, row: number, col: number, updated: string, DO_NOT_UPDATE_UNDO_STACK: boolean} } |
-    { type: "DELETE_ROW_COL", payload: { name: string, row: number, col: number, DO_NOT_UPDATE_UNDO_STACK: boolean } } |
-    { type: "UPDATE_ENTRY", payload: {name: string, row: number, col: number, updated: string, DO_NOT_UPDATE_UNDO_STACK: boolean } } |
-    { type: "RENAME_MATRIX", payload: { oldName: string, newName: string, DO_NOT_UPDATE_UNDO_STACK: boolean } } |
-    { type: "DELETE_MATRIX", payload: { name: string, DO_NOT_UPDATE_UNDO_STACK: boolean } }
+export type MatricesAction =
+    { type: "UPDATE_ALL", payload: { matrices: Matrices, DO_NOT_UPDATE_UNDO_STACK?: boolean } } |
+    { type: "UPDATE_MATRIX", payload: { name: string | undefined, matrix: string[][] | undefined, switch?: boolean, DO_NOT_UPDATE_UNDO_STACK?: boolean } } |
+    { type: "ADD_ROW", payload: { name: string, row: number, col: number, updated: string, pos?: number | undefined, DO_NOT_UPDATE_UNDO_STACK?: boolean } } |
+    { type: "ADD_COL", payload: { name: string, row: number, col: number, updated: string, pos?: number | undefined, DO_NOT_UPDATE_UNDO_STACK?: boolean} } |
+    { type: "ADD_ROW_AND_COL", payload: { name: string, row: number, col: number, updated: string, DO_NOT_UPDATE_UNDO_STACK?: boolean} } |
+    { type: "DELETE_ROW_COL", payload: { name: string, row?: number, col?: number, DO_NOT_UPDATE_UNDO_STACK?: boolean } } |
+    { type: "UPDATE_ENTRY", payload: {name: string, row: number, col: number, updated: string, DO_NOT_UPDATE_UNDO_STACK?: boolean } } |
+    { type: "RENAME_MATRIX", payload: { oldName: string, newName: string, DO_NOT_UPDATE_UNDO_STACK?: boolean } } |
+    { type: "DELETE_MATRIX", payload: { name: string, DO_NOT_UPDATE_UNDO_STACK?: boolean } }
 
 
 const App = () => {
@@ -112,7 +113,7 @@ const App = () => {
         "Dark Mode Table": false,
         "Empty Element": "0",
         "Decimals To Round": "8"
-    });
+    });    
 
     const matrixReducer = (state: Matrices, action: MatricesAction) => {
         if (!action.payload.DO_NOT_UPDATE_UNDO_STACK) {
