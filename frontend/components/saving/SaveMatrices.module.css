@@ -13,6 +13,7 @@
 .loginForm {
     display: block;
     margin: 0px;
+    margin-bottom: 50px;
     width: fit-content;
 }
 
@@ -67,26 +68,21 @@
     margin-left: 0px;
 }
 
-.loginOption {
+.option {
     display: inline-block;
     padding: 5px;
-    padding-left: 10px;
-    padding-right: 15px;
+    margin: 5px;
     user-select: none;
+    color: white;
+    border-radius: 10px;
 }
 
-.registerOption {
-    display: inline-block;
-    padding: 5px;
-    padding-right: 15px;
-    user-select: none;
 
+.selectedOption {
+    color: rgb(102, 199, 239);
+    border: 1px solid rgb(102, 199, 239);
 }
 
-.methodSelector {
-    border-bottom: 1px solid white;
-    padding-left: 0;
-}
 
 .loginSubBox {
     border: 1px solid black;

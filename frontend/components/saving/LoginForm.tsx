@@ -19,6 +19,7 @@ const LoginForm = (props: LoginFormProps) => {
 
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+    const [verifyPasswordInput, setVerifyPasswordInput] = useState("");
 
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
@@ -86,6 +87,14 @@ const LoginForm = (props: LoginFormProps) => {
         } else
             setPasswordError(null)
 
+        if (!verifyPasswordInput) {
+            setPasswordError("Please verify your password");
+            error = true
+        } else if (verifyPasswordInput !== passwordInput) {
+            setPasswordError("Passwords do not match");
+            error = true
+        }
+
         if (error)
             return;
 
@@ -128,11 +137,11 @@ const LoginForm = (props: LoginFormProps) => {
         <div>
             <form onSubmit={showLogin ? handleLogin : handleRegister} className={styles.loginForm}>
                 <div className={styles.methodSelector}>
-                    <div onClick={() => { setShowLogin(true) }} style={{ color: (showLogin ? "rgb(102, 199, 239)" : "white") }} className={styles.loginOption}>
+                    <div onClick={() => { setShowLogin(true) }} className={styles.option + " " + (showLogin ? styles.selectedOption : "")}>
                         Sign In
                     </div>
 
-                    <div onClick={() => { setShowLogin(false) }} style={{ color: (!showLogin ? "rgb(102, 199, 239)" : "white") }} className={styles.registerOption}>
+                    <div onClick={() => { setShowLogin(false) }} className={styles.option + " " + (!showLogin ? styles.selectedOption : "")}>
                         Create New Account
                     </div>
                 </div>
@@ -152,6 +161,15 @@ const LoginForm = (props: LoginFormProps) => {
                     setCurrent={setPasswordInput}
                     error={passwordError}
                 />
+
+                {!showLogin ? 
+                    <SaveInput
+                    name="Verify Password"
+                    type="password"
+                    current={verifyPasswordInput}
+                    setCurrent={setVerifyPasswordInput}
+                    error={null}
+                /> : null}
 
                 {showLogin ?
                     <button onClick={handleLogin} className={"btn btn-secondary " + styles.loginRegisterButton}>Sign In</button>
