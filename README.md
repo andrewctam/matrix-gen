@@ -5,13 +5,13 @@ The [Matrix Generator](https://matrixgen.web.app) is a full stack web app that a
 
 You can view a recorded demo of the app [here](https://andrewtam.org/MatrixGenerator).
 
-![Owner View](demo.png)
+![Matrix Generator](demo.png)
 
 ## Technologies
+- [TypeScript](https://www.typescriptlang.org/download)
 - [Docker](https://www.docker.com/products/docker-desktop)
 - [PostgreSQL](https://www.postgresql.org/download/)
 - [FastAPI](https://fastapi.tiangolo.com/tutorial/first-steps/)
-- [Node.js](https://nodejs.org/en/download/)
 - [React](https://reactjs.org/docs/getting-started.html)
 - [Next.js](https://nextjs.org/docs/getting-started)
 - [Bootstrap](https://getbootstrap.com/)
@@ -24,12 +24,12 @@ git clone https://github.com/tamandrew/matrix-gen.git
 docker compose up
 ```
 
-To start the front end local server:
+To start the frontend local server:
 ```
 npm run dev
 ```
 
-To start the back end local server:
- ```
- python3 -m uvicorn app.main:app --reload --port 8080 --host 0.0.0.0
- ``` 
+To start the backend local server:
+```
+python3 -m uvicorn app.main:app --reload --port 8080 --host 0.0.0.0
+``` 
