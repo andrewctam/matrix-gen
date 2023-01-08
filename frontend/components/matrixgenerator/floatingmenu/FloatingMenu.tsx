@@ -11,23 +11,16 @@ import styles from "./FloatingMenu.module.css"
 import useMove from '../../../hooks/useMove';
 
 import { cloneMatrix } from '../../matrixFunctions';
-import { Matrices, MatricesAction, Settings, SettingsAction } from '../../App';
+import { Settings, SettingsAction } from '../../App';
 import { Tools, ToolsAction } from '../MatrixGenerator';
+import { deleteMatrix, Matrices, redo, undo, updateAll, updateMatrix, updateSelection } from '../../../features/matrices-slice';
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 
 interface FloatingMenuProps {
-    matrices: Matrices
-    matrix: string[][] | null
-    matrixDispatch: React.Dispatch<MatricesAction>
-    selection: string
-    setSelection: (str: string) => void
     showMerge: boolean
     userMatrices: Matrices | null
     settings: Settings
     settingsDispatch: React.Dispatch<SettingsAction>
-    undo: () => void
-    redo: () => void
-    canUndo: boolean
-    canRedo: boolean
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
@@ -36,6 +29,9 @@ interface FloatingMenuProps {
 
 
 const FloatingMenu = (props: FloatingMenuProps) => {
+
+    const {matrices, selection, undoStack, redoStack} = useAppSelector((state) => state.matricesData)
+    const matrixDispatch = useAppDispatch();
 
     const [showSelectors, setShowSelectors] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
@@ -64,23 +60,23 @@ const FloatingMenu = (props: FloatingMenuProps) => {
     const deleteSelectedMatrices = (matricesToDelete: string[]) => {
         if (matricesToDelete.length === 0) { //if input is empty, delete all
             if (window.confirm("Are you sure you want to delete all of your matrices?")) {
-                props.setSelection("");
-                props.matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": {} } });
+                matrixDispatch(updateAll({ "matrices": {} }))
+                matrixDispatch(updateSelection(""))
                 localStorage.removeItem("matrices");
                 return true;
             }
             return false;
         } else if (window.confirm(`Are you sure you want to delete these matrices: ${matricesToDelete.join(" ")}?`)) {
-            const tempObj = { ...props.matrices };
+            const tempObj = { ...matrices };
 
             for (let i = 0; i < matricesToDelete.length; i++) {
-                if (props.selection === matricesToDelete[i])
-                    props.setSelection("");
+                if (selection === matricesToDelete[i])
+                matrixDispatch(updateSelection(""))
 
                 delete tempObj[matricesToDelete[i]];
             }
 
-            props.matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": tempObj } });
+            matrixDispatch(updateAll({ "matrices": tempObj }))
             return true;
         }
 
@@ -101,22 +97,22 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                 action={() => { setShowSettings(!showSettings); setLastClicked("settings");}}
             />
             <div className={styles.pair}>
-                <BasicActionButton buttonStyle={"primary"} disabled={!props.canUndo} name="↺" action={props.undo} />
-                <BasicActionButton buttonStyle={"primary"} disabled={!props.canRedo} name="↻" action={props.redo} />
+                <BasicActionButton buttonStyle={"primary"} disabled={undoStack.length === 0} name="↺" action={ () => matrixDispatch(undo()) } />
+                <BasicActionButton buttonStyle={"primary"} disabled={redoStack.length === 0} name="↻" action={ () => matrixDispatch(redo()) } />
             </div>
         </div>
         <div className={styles.bar}>
 
 
-            <ActiveButton name="Actions" id = {"Actions"}  active={props.toolActive["Actions"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
+            <ActiveButton name="Actions" id = {"Actions"}  active={props.toolActive["Actions"]} action={toggleTool} disabled = {! (selection in matrices)}/>
 
-            <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
+            <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} disabled = {! (selection in matrices)}/>
 
             {!props.settings["Disable Selection"] ?
-                <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
+                <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} disabled = {! (selection in matrices)}/>
                 : null}
 
-            <ActiveButton name="Export" id = {"Export"} active={props.toolActive["Export"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
+            <ActiveButton name="Export" id = {"Export"} active={props.toolActive["Export"]} action={toggleTool} disabled = {! (selection in matrices)}/>
 
             <ActiveButton name="Import" id = {"Import"} active={props.toolActive["Import"]} action={toggleTool} disabled = {false}/>
 
@@ -135,12 +131,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                 ref={selectors}
                 onMouseDown = {() => {setLastClicked("selectors")}}>
                 <MatrixSelector
-                    matrices={props.matrices}
                     userMatrices={props.userMatrices}
-                    name={props.selection}
-                    setSelection={props.setSelection}
-                    selection={props.selection}
-                    matrixDispatch={props.matrixDispatch}
                     showMerge={props.showMerge}
                     multiSelected={multiSelected}
                     setMultiSelected={setMultiSelected}
@@ -153,26 +144,27 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                         <BasicActionButton
                             key="addButton" name={"New Matrix"} buttonStyle={"success"}
                             action={() => {
-                                props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: undefined, matrix: undefined}}); //new matrix
+                                matrixDispatch(updateMatrix({ "name": undefined, "matrix": [["", ""], ["", ""]] }))
                             }}
                         />
 
-                        {props.selection !== "" ?
+                        {selection !== "" ?
                             <BasicActionButton
-                                key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${props.selection}`}
+                                key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${selection}`}
                                 action={() => { 
-                                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: undefined, matrix: cloneMatrix(props.matrices[props.selection])}});
-                                }} />
+                                    matrixDispatch(updateMatrix({ "name": undefined, "matrix": cloneMatrix(matrices[selection]) }))
+                                }} 
+                            />
                             : null}
                     </div>
                     <div className = {styles.pair}>
-                        {props.selection !== "" ?
+                        {selection !== "" ?
                             <BasicActionButton
-                                key="deleteButton" buttonStyle={"danger"} name={`Delete ${props.selection}`}
+                                key="deleteButton" buttonStyle={"danger"} name={`Delete ${selection}`}
                                 action={() => {
-                                    if (props.selection !== "") {
-                                        props.matrixDispatch({type: "DELETE_MATRIX", payload: {name: props.selection}});
-                                        props.setSelection("");
+                                    if (selection !== "") {
+                                        matrixDispatch(deleteMatrix(selection))
+                                        matrixDispatch(updateSelection(""))
                                     }
                                 }} />
                             : null}
@@ -180,7 +172,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
 
                         <BasicActionButton
                             buttonStyle={"danger"} name={`Delete ${multiSelected.length > 0 ? "Selected" : "All"}`}
-                            disabled={!props.matrices || Object.keys(props.matrices).length === 0}
+                            disabled={!matrices || Object.keys(matrices).length === 0}
                             action={() => {
                                 if (deleteSelectedMatrices(multiSelected))
                                     setMultiSelected([])

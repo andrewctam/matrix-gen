@@ -10,11 +10,10 @@ import OverwriteInput from '../../../inputs/OverwriteInput'
 
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
-import { Matrices, MatricesAction } from "../../../App";
+import { updateMatrix, updateSelection } from "../../../../features/matrices-slice";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 
 interface TextImportProps {
-    matrixDispatch: React.Dispatch<MatricesAction>
-    matrices: Matrices
     currentName: string
     close: () => void
     showFullInput: boolean
@@ -23,6 +22,9 @@ interface TextImportProps {
 
 
 const TextImport = (props: TextImportProps) => {
+    const {matrices} = useAppSelector((state) => state.matricesData);
+    const matrixDispatch = useAppDispatch();
+
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);
 
@@ -184,7 +186,7 @@ const TextImport = (props: TextImportProps) => {
             else
                 var name = props.currentName;
         } else if (newName === "") //input empty, so auto generate
-            name = generateUniqueName(props.matrices);
+            name = generateUniqueName(matrices);
         else //name provided
             name = newName;
 
@@ -211,7 +213,7 @@ const TextImport = (props: TextImportProps) => {
 
                 //remove empty rows
                 matrix.push(Array(maxLen).fill(""));
-                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : name, "matrix" : matrix}});
+                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
                 
                 break;
                 
@@ -249,7 +251,7 @@ const TextImport = (props: TextImportProps) => {
 
                 //add empty row
                 matrix.push(Array(maxLen).fill(""));
-                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : name, "matrix" : matrix}});
+                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
 
                 } catch (error) {
                     console.log(error); 
@@ -303,7 +305,7 @@ const TextImport = (props: TextImportProps) => {
                 }
 
 
-                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload:  {"name" : name, "matrix" : matrix}});
+                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
                 break;
 
             case "LaTeX":
@@ -359,7 +361,8 @@ const TextImport = (props: TextImportProps) => {
                             });
                     }
                 }
-                props.matrixDispatch({"type" : "UPDATE_MATRIX", payload: {"name" : name, "matrix" : matrix, "switch": true}});
+                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
+                matrixDispatch(updateSelection(name));
                 break;
 
             default: break;
@@ -471,7 +474,7 @@ const TextImport = (props: TextImportProps) => {
                 overwrite = {overwrite}
                 updateParameter = {updateParameter}
                 id = "newName"
-                placeholder = {generateUniqueName(props.matrices)}
+                placeholder = {generateUniqueName(matrices)}
                 newName = {newName}
             /> 
             : null}

@@ -1,46 +1,45 @@
 import React, { useState, useMemo, useRef, ReactText, useEffect  } from 'react';
 import styles from "./MatrixMath.module.css"
 
-import { generateUniqueName, cloneMatrix, gaussian, LUDecomposition, inverse, createIdentity} from '../../../matrixFunctions';
+import { generateUniqueName } from '../../../matrixFunctions';
 import Toggle from '../../../buttons/Toggle';
 import BasicActionButton from '../../../buttons/BasicActionButton';
 import useExpand from '../../../../hooks/useExpand';
-import { Matrices, MatricesAction, Settings } from '../../../App';
+import { Settings } from '../../../App';
+import { updateAll, updateMatrix } from '../../../../features/matrices-slice';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
 
 interface MatrixMathProps {
-    matrices: Matrices
-    matrix: string[][]
-    name: string
-    matrixDispatch: React.Dispatch<MatricesAction>
-
-    toStringUpdateMatrix: (name: string | undefined, matrix: number[][]) => void
     settings: Settings
     close: () => void
     showFullInput: boolean
     addAlert: (str: string, time: number, type?: string) => void
-    username: string
 }
 
 
 const MatrixMath = (props: MatrixMathProps) => {
+    const {matrices, selection} = useAppSelector((state) => state.matricesData);
+    const matrixDispatch = useAppDispatch();
+
     const [expression, setExpression] = useState("");
     const [resultName, setResultName] = useState("");
     const [determinant, setDeterminant] = useState<number | null>(null);
     const [error, setError] = useState(false);
+    const matrix = selection in matrices ? matrices[selection] : null
 
     useEffect(() => {
-        if (props.matrix.length === 0 || props.matrix[0].length === 0 || props.matrix.length !== props.matrix[0].length) {
+        if (!matrix || matrix.length === 0 || matrix[0].length === 0 || matrix.length !== matrix[0].length) {
             setDeterminant(null);
             return;
         }
 
         calculateDecomp("determinant");
-    }, [props.matrix])
+    }, [matrix])
 
     const matrixMath = useExpand() as React.MutableRefObject<HTMLDivElement>;
 
-    const placeholderName = generateUniqueName(props.matrices);
-    const isSquare = props.matrix.length === props.matrix[0].length;
+    const placeholderName = generateUniqueName(matrices);
+    const isSquare = matrix && matrix.length === matrix[0].length;
 
     const updateParameter = (parameterName: string, updated: string | boolean) => {
         switch(parameterName) {
@@ -82,7 +81,7 @@ const MatrixMath = (props: MatrixMathProps) => {
             },
             body: JSON.stringify({
                 expression: expression,
-                matrices: JSON.stringify(props.matrices),
+                matrices: JSON.stringify(matrices),
                 sparseVal: props.settings["Empty Element"],
                 round: props.settings["Decimals To Round"]
             })
@@ -113,8 +112,13 @@ const MatrixMath = (props: MatrixMathProps) => {
         const matrix = JSON.parse(response.result)
         console.log(matrix)
 
-        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": resultName !== "" ? resultName : placeholderName, "matrix": matrix, "switch": true} });
-            
+        let saveName = "";
+        if (resultName !== "")
+            saveName = resultName;
+        else
+            saveName = placeholderName;
+
+        matrixDispatch(updateMatrix({ "name": saveName, "matrix": matrix}))
     }
 
 
@@ -130,7 +134,7 @@ const MatrixMath = (props: MatrixMathProps) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                matrix: JSON.stringify(props.matrix),
+                matrix: JSON.stringify(matrix),
                 sparseVal: props.settings["Empty Element"],
                 round: props.settings["Decimals To Round"]
             })
@@ -163,20 +167,21 @@ const MatrixMath = (props: MatrixMathProps) => {
                 return;
             }
                 
-            let tempObj = {...props.matrices}
+            let tempObj = {...matrices}
             let names = []
             for (const [key, value] of Object.entries(decompMatrices)) {
-                let name = `${props.name}_${key}`;
+                let name = `${selection}_${key}`;
                 
-                while (name in props.matrices) {
+                while (name in matrices) {
                     name += "_";
                 }
     
                 names.push(name);
                 tempObj[name] = value;
             }
-    
-            props.matrixDispatch({ type: "UPDATE_ALL", payload: { "matrices": tempObj } });
+
+            matrixDispatch(updateAll({ "matrices": tempObj }));
+
             props.addAlert(`Results added to matrices!`, 5000, "success");
         }
 

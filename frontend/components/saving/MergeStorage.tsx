@@ -1,27 +1,27 @@
 
-import { Matrices, MatricesAction } from "../App";
+import { Matrices, updateAll, updateSelection } from "../../features/matrices-slice";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import styles from "./MergeStorage.module.css";
 
 interface MergeStorageProps {
-    matrices: Matrices
     userMatrices: Matrices
-    matrixDispatch: React.Dispatch<MatricesAction>
-    setSelection: (str: string) => void
     setShowMerge: (bool: boolean) => void
     addAlert: (str: string, time: number, type?: string) => void
 }
 
 const MergeStorage = (props: MergeStorageProps) => {
+    const {matrices, selection} = useAppSelector((state) => state.matricesData);
+    const matrixDispatch = useAppDispatch();
 
     const merge = () => {
     
         // @ts-ignore, userMatrices won't be nyll
-        var intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
-        var union = { ...props.matrices, ...props.userMatrices };
+        var intersection = Object.keys(matrices).filter(x => props.userMatrices.hasOwnProperty(x));
+        var union = { ...matrices, ...props.userMatrices };
 
         //a dupe in userMatrices will overwrite the cooresponding dupe in matrices, so rename the dupe in matrices and readd it
         for (let i = 0; i < intersection.length; i++) {
-            const originalName = props.matrices[intersection[i]];
+            const originalName = matrices[intersection[i]];
 
             intersection[i] += "_Local"
             while (intersection[i] in union) {
@@ -36,18 +36,18 @@ const MergeStorage = (props: MergeStorageProps) => {
             return;
         }
 
-        props.matrixDispatch({"type": "UPDATE_ALL", "payload": {"matrices": union}});
+        matrixDispatch(updateAll({"matrices": union}))
         
         props.setShowMerge(false);
     }
 
     const overwriteLocal = () => {
-        props.matrixDispatch({"type": "UPDATE_ALL", "payload": {"matrices": props.userMatrices}});
+        matrixDispatch(updateAll({"matrices": props.userMatrices}))
         const accountMatrices = Object.keys(props.userMatrices)
         if (accountMatrices.length > 0) {
-            props.setSelection(Object.keys(props.userMatrices)[0]);
+            matrixDispatch(updateSelection(Object.keys(props.userMatrices)[0]))
         } else {
-            props.setSelection("");
+            matrixDispatch(updateSelection(""))
         }
 
         props.setShowMerge(false);  

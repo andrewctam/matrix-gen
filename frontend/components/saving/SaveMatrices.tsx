@@ -3,17 +3,15 @@ import React, { useState } from "react";
 
 import LoginForm from "./LoginForm";
 import UserPanel from "./UserPanel";
-import { Matrices, MatricesAction, Settings } from "../App";
+import { Settings } from "../App";
+import { Matrices } from "../../features/matrices-slice";
 
 interface SaveMatricesProps {
     username: string
     updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
     saveToLocal: boolean
     settings: Settings
-    matrices: Matrices
     refreshTokens: () => Promise<boolean>
-    matrixDispatch: React.Dispatch<MatricesAction>
-    setSelection: (str: string) => void
     showMerge: boolean
     setShowMerge: (bool: boolean) => void
     userMatrices: Matrices | null
@@ -36,10 +34,7 @@ const SaveMatrices = (props: SaveMatricesProps) => {
                         showWelcome={showWelcome}
                         setShowWelcome={setShowWelcome}
                         showMerge={props.showMerge}
-                        matrices={props.matrices}
                         userMatrices={props.userMatrices}
-                        matrixDispatch={props.matrixDispatch}
-                        setSelection={props.setSelection}
                         updateUserInfo={props.updateUserInfo}
                         refreshTokens={props.refreshTokens}
                         addAlert={props.addAlert}
@@ -47,7 +42,6 @@ const SaveMatrices = (props: SaveMatricesProps) => {
                     />
                     :
                     <LoginForm
-                        matrices={props.matrices}
                         settings={props.settings}
                         updateUserInfo={props.updateUserInfo}
                         setShowWelcome={setShowWelcome}

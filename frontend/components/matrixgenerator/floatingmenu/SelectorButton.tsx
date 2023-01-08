@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { updateSelection } from '../../../features/matrices-slice';
+import { useAppDispatch } from '../../../hooks/hooks';
 import styles from "./Selectors.module.css"
 
 interface SelectorButtonProps {
@@ -6,7 +8,6 @@ interface SelectorButtonProps {
     name: string
     rows: number
     cols: number
-    setSelection: (str: string) => void
     toggleMultiSelect: (name: string | undefined) => void
     pushNewName: (oldName: string, newName: string) => boolean
     pushNewSize: (oldName: string, newName: string) => boolean
@@ -22,6 +23,7 @@ const SelectorButton = (props: SelectorButtonProps) => {
     const [displaySize, setDisplaySize] = useState("");
     const [editingSize, setEditingSize] = useState(false);
     
+    const matrixDispatch = useAppDispatch();
 
     const updateRename = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
@@ -48,7 +50,7 @@ const SelectorButton = (props: SelectorButtonProps) => {
         if (e.metaKey) {
             props.toggleMultiSelect(props.name);
         } else {
-            props.setSelection(props.name);
+            matrixDispatch(updateSelection(props.name))
             props.toggleMultiSelect(undefined);
         }
 

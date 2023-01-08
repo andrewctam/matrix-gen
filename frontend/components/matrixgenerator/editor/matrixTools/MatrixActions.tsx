@@ -9,12 +9,10 @@ import TwoTextActionButton from '../../../buttons/TwoTextActionButton';
 
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
-import { MatricesAction } from '../../../App';
+import { updateMatrix } from '../../../../features/matrices-slice';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
 
 interface MatrixActionsProps {
-    name: string
-    matrix: string[][]
-    matrixDispatch: React.Dispatch<MatricesAction>
     close: () => void
     showFullInput: boolean
     addAlert: (str: string, time: number, type?: string) => void
@@ -34,6 +32,9 @@ const MatrixActions = (props: MatrixActionsProps) => {
     const [fillDiagonalWithThis, setFillDiagonalWithThis] = useState("1");
     const [replaceX, setReplaceX] = useState("");
     const [replaceY, setReplaceY] = useState("");
+
+    const {selection, matrices} = useAppSelector((state) => state.matricesData)
+    const matrixDispatch = useAppDispatch();
 
     const matrixActions = useExpand() as React.MutableRefObject<HTMLDivElement>;
 
@@ -95,6 +96,9 @@ const MatrixActions = (props: MatrixActionsProps) => {
 
     }
 
+    const matrix = selection in matrices ? matrices[selection] : null
+    if (!matrix)
+        return null;
 
     return <div className={"fixed-bottom row " + styles.matrixActionsContainer}
         ref = {matrixActions}
@@ -103,14 +107,14 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: transpose(props.matrix)}})
+                    matrixDispatch(updateMatrix({name: selection, matrix: transpose(matrix)}))
                 }}
                 name={"Transpose"}
             />
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: rotate90Degrees(props.matrix)}})
+                    matrixDispatch(updateMatrix({name: selection, matrix: rotate90Degrees(matrix)}))
                 }}
                 name={"Rotate 90 ↻"}
             />
@@ -118,8 +122,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: shuffle(props.matrix)}})
-
+                    matrixDispatch(updateMatrix({name: selection, matrix: shuffle(matrix)}))
                 }}
                 name={"Shuffle"}
             />
@@ -127,14 +130,14 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: mirrorRowsCols(props.matrix, true)}}) //true = rows to cols
+                    matrixDispatch(updateMatrix({name: selection, matrix: mirrorRowsCols(matrix, true)}))
                 }}
                 name={"Mirror Rows Across Diagonal"}
             />
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: mirrorRowsCols(props.matrix, false)}}) //false = cols to rows
+                    matrixDispatch(updateMatrix({name: selection, matrix: mirrorRowsCols(matrix, false)}))
                 }}
                 name={"Mirror Columns Across Diagonal"}
             />
@@ -147,7 +150,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TextActionButton
                 name="Fill Empty With: "
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillEmpty(props.matrix, fillEmptyWithThis)}})
+                    matrixDispatch(updateMatrix({name: selection, matrix: fillEmpty(matrix, fillEmptyWithThis)}))
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -157,7 +160,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TextActionButton
                 name="Fill All With: "
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillAll(props.matrix, fillAllWithThis)}})
+                    matrixDispatch(updateMatrix({name: selection, matrix: fillAll(matrix, fillAllWithThis)}))
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -167,7 +170,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TextActionButton
                 name="Fill Diagonal With: "
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillDiagonal(props.matrix, fillDiagonalWithThis)}})
+                    matrixDispatch(updateMatrix({name: selection, matrix: fillDiagonal(matrix, fillDiagonalWithThis)}))
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -177,7 +180,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TwoTextActionButton
                 name="Replace X With Y: "
                 action={() => {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: fillXY(props.matrix, replaceX, replaceY)}})
+                    matrixDispatch(updateMatrix({name: selection, matrix: fillXY(matrix, replaceX, replaceY)}))
                 }}
                 updateParameter={updateParameter}
                 id1={"replaceX"}
@@ -201,9 +204,9 @@ const MatrixActions = (props: MatrixActionsProps) => {
                         props.addAlert("The max matrix size is 100 x 100", 5000, "error")
                         return;
                     }
-                    const reshaped = reshapeMatrix(props.matrix, parseInt(reshapeRows), parseInt(reshapeCols))
+                    const reshaped = reshapeMatrix(matrix, parseInt(reshapeRows), parseInt(reshapeCols))
                     if (reshaped)
-                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: reshaped}})
+                        matrixDispatch(updateMatrix({name: selection, matrix: reshaped}))
                     else 
                         props.addAlert("Enter valid numbers for rows and columns.", 5000, "error")
                 }}
@@ -223,9 +226,9 @@ const MatrixActions = (props: MatrixActionsProps) => {
                         props.addAlert("The max matrix size is 100 x 100", 5000, "error")
                         return;
                     }
-                    const resized = resizeMatrix(props.matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
+                    const resized = resizeMatrix(matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
                     if (resized)
-                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: resized}})
+                        matrixDispatch(updateMatrix({name: selection, matrix: resized}))
                     else 
                         props.addAlert("Enter a number for rows and columns", 5000, "error");
 
@@ -242,10 +245,10 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TwoTextActionButton
                 name="Randomize Elements: "
                 action={() => {
-                    const random = randomMatrix(props.matrix, parseInt(randomLow), parseInt(randomHigh))
+                    const random = randomMatrix(matrix, parseInt(randomLow), parseInt(randomHigh))
 
                     if (random)
-                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: random}})
+                        matrixDispatch(updateMatrix({name: selection, matrix: random}))
                     else
                         props.addAlert(`Invalid range`, 5000, "error");
 
@@ -262,10 +265,10 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TwoTextActionButton
                 name="Scatter These Numbers: "
                 action={() => {
-                    const scattered = scatter(props.matrix, parseInt(scatterLow), parseInt(scatterHigh))
+                    const scattered = scatter(matrix, parseInt(scatterLow), parseInt(scatterHigh))
 
                     if (scattered)
-                        props.matrixDispatch({type: "UPDATE_MATRIX", payload: {name: props.name, matrix: scattered}})
+                        matrixDispatch(updateMatrix({name: selection, matrix: scattered}))
                     else   
                         props.addAlert(`Invalid range`, 5000, "error");
 

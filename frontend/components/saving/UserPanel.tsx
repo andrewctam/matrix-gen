@@ -2,17 +2,14 @@ import MergeStorage from "./MergeStorage";
 import styles from "./SaveMatrices.module.css";
 import SaveInput from "./SaveInput"
 import React, { useState } from "react";
-import { Matrices, MatricesAction } from "../App";
+import { Matrices } from "../../features/matrices-slice";
 
 interface UserPanelProps {
     username: string
     showWelcome: boolean
     setShowWelcome: (bool: boolean) => void
     showMerge: boolean
-    matrices: Matrices
     userMatrices: Matrices | null
-    matrixDispatch: React.Dispatch<MatricesAction>
-    setSelection: (str: string) => void
     updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
     refreshTokens: () => Promise<boolean>
     addAlert: (str: string, time: number, type?: string) => void
@@ -219,10 +216,7 @@ const UserPanel = (props: UserPanelProps) => {
 
         {props.showMerge && props.userMatrices?
         <MergeStorage
-            matrices={props.matrices}
             userMatrices={props.userMatrices}
-            matrixDispatch={props.matrixDispatch}
-            setSelection={props.setSelection}
             setShowMerge={props.setShowMerge}
             addAlert={props.addAlert}
 

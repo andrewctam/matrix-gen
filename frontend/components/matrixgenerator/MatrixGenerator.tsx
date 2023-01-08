@@ -1,24 +1,16 @@
 import { useReducer } from "react";
 import FloatingMenu from "./floatingmenu/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
-import { Matrices, MatricesAction, Settings, SettingsAction } from "../App";
+import { Settings, SettingsAction } from "../App";
+import { Matrices } from "../../features/matrices-slice";
 
 interface MatrixGeneratorProps {
-    matrices: Matrices
-    matrix: string[][] | null
-    matrixDispatch: React.Dispatch<MatricesAction>
-    selection: string
-    setSelection: (str: string) => void
     updateMatrixSettings: () => void
     settings: Settings
     settingsDispatch: React.Dispatch<SettingsAction>
     showMerge: boolean
     userMatrices: Matrices | null
-    undo: () => void
-    redo: () => void
     username: string
-    undoStack: Matrices[]
-    redoStack: Matrices[]
     addAlert: (str: string, time: number, type?: string) => void
 }
 
@@ -74,23 +66,11 @@ const MatrixGenerator = (props: MatrixGeneratorProps) => {
 
     return (<>
         <FloatingMenu
-            matrices={props.matrices}
-            matrix={props.matrix}
-            matrixDispatch={props.matrixDispatch}
-
-            selection={props.selection}
-            setSelection={props.setSelection}
-
             showMerge={props.showMerge}
             userMatrices = {props.userMatrices}
 
             settings={props.settings}
             settingsDispatch={props.settingsDispatch}
-
-            undo={props.undo}
-            redo={props.redo}
-            canUndo={props.undoStack.length > 0}
-            canRedo={props.redoStack.length > 0}
 
             toolActive={toolActive}
             toolDispatch={toolDispatch}
@@ -100,21 +80,11 @@ const MatrixGenerator = (props: MatrixGeneratorProps) => {
 
 
         <MatrixEditor
-            matrices={props.matrices}
-            matrix={props.matrix}
-            name={props.selection}
-
-            matrixDispatch={props.matrixDispatch}
             settings={props.settings}
-
-            undoStack = {props.undoStack}
-            redoStack = {props.redoStack}
             toolActive={toolActive}
             toolDispatch={toolDispatch}
-
             addAlert = {props.addAlert}
             username = {props.username}
-
         />
 
     </>)

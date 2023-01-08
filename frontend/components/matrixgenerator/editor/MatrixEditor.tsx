@@ -7,18 +7,14 @@ import MatrixActions from './matrixTools/MatrixActions';
 import TextImport from './matrixTools/TextImport';
 import SelectionMenu from './matrixTools/SelectionMenu';
 
-import { cloneMatrix, updateEntry } from '../../matrixFunctions';
-import { Matrices, MatricesAction, Settings } from '../../App';
+import { cloneMatrix, updateMatrixEntry } from '../../matrixFunctions';
+import { Settings } from '../../App';
 import { Tools, ToolsAction } from '../MatrixGenerator';
+import { updateMatrix } from '../../../features/matrices-slice';
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 
 interface MatrixEditorProps {
-    matrices: Matrices
-    name: string
-    matrix: string[][] | null
     settings: Settings
-    matrixDispatch: React.Dispatch<MatricesAction>
-    undoStack: Matrices[]
-    redoStack: Matrices[]
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
@@ -36,6 +32,10 @@ export type BoxSelectionAction =
     {"type": "SET_END", payload: {end: Cell} }
 
 const MatrixEditor = (props: MatrixEditorProps) => {
+    const {matrices, selection, undoStack} = useAppSelector((state) => state.matricesData);
+    const matrixDispatch = useAppDispatch();
+
+    const matrix = selection in matrices ? matrices[selection] : null
     const boxSelectionReducer = (state: BoxSelection, action: BoxSelectionAction) => {
         if (props.settings["Disable Selection"])
             return null;
@@ -73,24 +73,8 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
     useEffect(() => {
         boxSelectionDispatch({type: "CLEAR"});
-    }, [props.name]);
+    }, [selection]);
 
-    
-    const toStringUpdateMatrix = (name: string | undefined, matrix: number[][]) => {
-        let stringMatrix = new Array(matrix.length).fill([]).map(() => new Array(matrix[0].length).fill(""));
-
-        //takes a number[][] and converts each element to a string and updates it in matrices
-        for (let i = 0; i < matrix.length - 1; i++) {
-            for (let j = 0; j < matrix[i].length - 1; j++) {
-                if (parseInt(props.settings["Decimals To Round"]) > 0) {
-                    let rounded = matrix[i][j].toFixed(parseInt(props.settings["Decimals To Round"]))
-                    stringMatrix[i][j] = (+rounded).toString(); //remove trailing zeros 
-                } else
-                    stringMatrix[i][j] = matrix[i][j].toString();
-            }
-        }
-        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": name, "matrix": stringMatrix, "switch": true} });
-    }
 
     const close = () => {
         props.toolDispatch({"type": "CLOSE"})
@@ -114,7 +98,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
     }
 
 
-    const showFullInput = boxSelection !== null && props.matrix !== null && document.activeElement !== null
+    const showFullInput = boxSelection !== null && matrix !== null && document.activeElement !== null
                         && (document.activeElement.id === "fullInput"
                             || (document.activeElement.tagName === "INPUT" 
                                 && /^[\d]+:[\d]+$/.test(document.activeElement.id))//num:num
@@ -122,45 +106,31 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
     //for multi cell editing
     let lastValue = null;
-    if (boxSelection && props.undoStack.length > 0 && props.name in props.undoStack[props.undoStack.length - 1]
+    if (boxSelection && undoStack.length > 0 && selection in undoStack[undoStack.length - 1]
         && (boxSelection.start.x !== boxSelection.end.x || boxSelection.start.y !== boxSelection.end.y)) {
-        lastValue = props.undoStack[props.undoStack.length - 1][props.name] [boxSelection.start.x][boxSelection.start.y] 
+        lastValue = undoStack[undoStack.length - 1][selection] [boxSelection.start.x][boxSelection.start.y] 
     }        
 
     return (
         <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
-            {props.matrix && props.toolActive["Actions"] ?
+            {matrix && props.toolActive["Actions"] ?
                 <MatrixActions
-                    name={props.name}
-                    matrix={props.matrix}
-                    matrixDispatch={props.matrixDispatch}
                     close={close}
                     showFullInput={showFullInput}
 
                     addAlert = {props.addAlert}/>
             : null}
 
-            {props.matrix && props.toolActive["Math"] ?
+            {matrix && props.toolActive["Math"] ?
                 <MatrixMath
-                    matrices={props.matrices}
-                    matrix={props.matrix}
-                    name={props.name}
-                    toStringUpdateMatrix={toStringUpdateMatrix}
                     settings = {props.settings}
                     close={close}
                     showFullInput={showFullInput}
-                    username = {props.username}
-
-                    matrixDispatch={props.matrixDispatch}
                     addAlert = {props.addAlert}/>
             : null}
 
-            {props.matrix && !props.settings["Disable Selection"] && props.toolActive["Selection"] ?
+            {matrix && !props.settings["Disable Selection"] && props.toolActive["Selection"] ?
                 <SelectionMenu
-                    matrices={props.matrices}
-                    name={props.name}
-                    matrix={props.matrix}
-                    matrixDispatch={props.matrixDispatch}
                     boxSelection={boxSelection}
                     boxSelectionDispatch={boxSelectionDispatch}
         
@@ -172,31 +142,28 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
             {props.toolActive["Import"] ?
                 <TextImport
-                    matrixDispatch={props.matrixDispatch}
-                    matrices={props.matrices}
-                    currentName={props.name}
+                    currentName={selection}
                     close={close}
                     showFullInput={showFullInput}
 
                     addAlert = {props.addAlert}/>
             : null}
 
-            {props.matrix && props.toolActive["Export"] ?
+            {matrix && props.toolActive["Export"] ?
                 <MatrixExport
-                    matrix={props.matrix}
+                    matrix={matrix}
                     settings = {props.settings}
                     close={close}
                     showFullInput={showFullInput}/>
             : null}
 
 
-            {props.matrix ?
-                (props.matrix.length <= 51 && props.matrix[0].length <= 51) ?
+            {matrix ?
+                (matrix.length <= 51 && matrix[0].length <= 51) ?
                     <Table
                         settings = {props.settings}
-                        name={props.name}
-                        matrix={props.matrix}
-                        matrixDispatch={props.matrixDispatch}
+                        name={selection}
+                        matrix={matrix}
                         boxSelection = {boxSelection}
                         boxSelectionDispatch = {boxSelectionDispatch}
                         mouseDown={mouseDown}
@@ -211,25 +178,25 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
             {showFullInput ? 
                 <input className={"fixed-bottom " + styles.fullInput}
-                value={props.matrix ? props.matrix[boxSelection.start.x][boxSelection.start.y] : ""}
+                value={matrix ? matrix[boxSelection.start.x][boxSelection.start.y] : ""}
                 
                 id = {"fullInput"}
                 onChange={(e) => {
-                    if (props.matrix) {
-                        const changed = updateEntry(
-                            cloneMatrix(props.matrix), 
+                    if (matrix) {
+                        const changed = updateMatrixEntry(
+                            cloneMatrix(matrix), 
                             boxSelection.start.x, 
                             boxSelection.start.y, 
                             e.target.value, 
                             props.settings["Mirror Inputs"]);
 
-                        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": changed, "switch": false }});
+                        matrixDispatch(updateMatrix({ "name": selection, "matrix": changed}));
                     }
                 }} /> 
             : null}
 
             <p className = {styles.currentSelection}>
-                {formatName(props.name) + " " + formatSelection(boxSelection)}
+                {formatName(selection) + " " + formatSelection(boxSelection)}
             </p>
 
         </div>)

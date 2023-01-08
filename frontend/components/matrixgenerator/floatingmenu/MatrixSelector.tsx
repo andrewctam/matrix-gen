@@ -3,15 +3,11 @@ import SelectorButton from "./SelectorButton";
 import styles from "./Selectors.module.css"
 
 import {resizeMatrix} from "../../matrixFunctions"
-import { Matrices, MatricesAction, Settings } from "../../App";
+import { Matrices, renameMatrix, updateMatrix, updateSelection } from "../../../features/matrices-slice";
+import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 
 interface MatrixSelectorProps {
-    matrices: Matrices
     userMatrices: Matrices | null
-    name: string
-    setSelection: (str: string) => void
-    selection: string
-    matrixDispatch: React.Dispatch<MatricesAction>
     showMerge: boolean
     multiSelected: string[]
     setMultiSelected: (arr: string[]) => void
@@ -21,6 +17,9 @@ interface MatrixSelectorProps {
 const MatrixSelector = (props: MatrixSelectorProps) => {
     const [searchName, setSearchName] = useState("");
     const [searchSize, setSearchSize] = useState("");
+
+    const {matrices, selection} = useAppSelector((state) => state.matricesData)
+    const matrixDispatch =  useAppDispatch();
 
     const updateSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
@@ -35,7 +34,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
     }
 
     const verifySize = (name: string, sizeFilters: number[]) => {
-        const matrix = props.matrices[name];
+        const matrix = matrices[name];
         const rows = matrix.length - 1;
         const cols = matrix[0].length - 1;
 
@@ -62,12 +61,13 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
         else if (newName === "") {
             props.addAlert("The name can not be blank!", 5000, "error")
             return false;
-        } else if (newName in props.matrices) {
+        } else if (newName in matrices) {
             props.addAlert(`The name ${newName} already exists!`, 5000, "error")
             return false;
         } else {         
-            props.matrixDispatch({"type": "RENAME_MATRIX", payload: {"oldName": oldName, "newName": newName}})
-            props.setSelection(newName)
+            matrixDispatch(renameMatrix({"oldName": oldName, "newName": newName}))
+            matrixDispatch(updateSelection(newName))
+
             return true;
         }
 
@@ -79,9 +79,9 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
             const cols = parseInt(newSize.substring(newSize.indexOf("x") + 1));
 
             if (rows > 0 && cols > 0) {
-                const resized = resizeMatrix(props.matrices[name], rows + 1, cols + 1)
+                const resized = resizeMatrix(matrices[name], rows + 1, cols + 1)
                 if (resized) {
-                    props.matrixDispatch({type: "UPDATE_MATRIX", payload: {"name": name, "matrix": resized}});
+                    matrixDispatch(updateMatrix({"name": name, "matrix": resized}))
                     return true;
                 } else {
                     props.addAlert("Enter a valid number for rows and columns", 5000, "error");
@@ -110,16 +110,16 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
     let intersection: string[] = [];
     if (props.showMerge && props.userMatrices) {
         // @ts-ignore: Object is possibly 'null'. props.userMatrices below can't be null.
-        intersection = Object.keys(props.matrices).filter(x => props.userMatrices.hasOwnProperty(x));
+        intersection = Object.keys(matrices).filter(x => props.userMatrices.hasOwnProperty(x));
     }
 
     let selectors: JSX.Element | JSX.Element[];
-    if (props.matrices === null || Object.keys(props.matrices).length === 0)
+    if (matrices === null || Object.keys(matrices).length === 0)
         selectors = <div className={styles.noMatrices}>{"No Matrices Created"}</div>
     else {
         //map matrices to selectors
         selectors = []
-        for (const matrixName in props.matrices) {
+        for (const matrixName in matrices) {
             if ((searchName === "" || matrixName.toUpperCase().startsWith(searchName.toUpperCase())) &&
                 (searchSize === "" || verifySize(matrixName, sizeFilters)))
                 selectors.push(
@@ -127,15 +127,14 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
                         key={matrixName}
                         name={matrixName}
 
-                        rows = {props.matrices[matrixName].length - 1}
-                        cols = {props.matrices[matrixName][0].length - 1}
+                        rows = {matrices[matrixName].length - 1}
+                        cols = {matrices[matrixName][0].length - 1}
 
-                        setSelection={props.setSelection}
                         toggleMultiSelect = {toggleMultiSelect}
                         pushNewName={pushNewName}
                         pushNewSize={pushNewSize}
 
-                        active={props.selection === matrixName}
+                        active={selection === matrixName}
                         multiSelected={props.multiSelected.includes(matrixName)}
                         intersectionMerge={props.showMerge && intersection.includes(matrixName)}
                     />

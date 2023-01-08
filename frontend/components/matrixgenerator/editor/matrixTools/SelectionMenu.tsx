@@ -7,14 +7,11 @@ import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../../matrixFu
 import TextActionButton from '../../../buttons/TextActionButton'
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
-import { Matrices, MatricesAction } from "../../../App";
 import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
+import { updateMatrix } from "../../../../features/matrices-slice";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 
 interface SelectionMenuProps {
-    matrices: Matrices
-    name: string
-    matrix: string[][]
-    matrixDispatch: React.Dispatch<MatricesAction>
     boxSelection: BoxSelection
     boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     close: () => void
@@ -23,6 +20,9 @@ interface SelectionMenuProps {
 }
 
 const SelectionMenu = (props: SelectionMenuProps) => {
+    const {matrices, selection} = useAppSelector((state) => state.matricesData);
+    const matrixDispatch = useAppDispatch();
+
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
 
@@ -42,7 +42,7 @@ const SelectionMenu = (props: SelectionMenuProps) => {
     }
 
 
-    var generatedName = generateUniqueName(props.matrices);
+    var generatedName = generateUniqueName(matrices);
     
     return <div className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {selectionMenu}>
         {props.boxSelection === null ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
@@ -64,13 +64,13 @@ const SelectionMenu = (props: SelectionMenuProps) => {
                     name={"Save Selection as New Matrix: "}
                     action={() => {
                         if (!props.boxSelection) return;
-                        const spliced = spliceMatrix(props.matrix,
+                        const spliced = spliceMatrix(matrices[selection],
                             props.boxSelection.start.x,
                             props.boxSelection.start.y,
                             props.boxSelection.end.x,
                             props.boxSelection.end.y)
 
-                        props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": spliceName ? spliceName : generatedName, "matrix": spliced, "switch": false }});
+                        matrixDispatch(updateMatrix( {"name" : spliceName ? spliceName : generatedName, "matrix" : spliced}));
                     }}
 
                     updateParameter={updateName}
@@ -85,7 +85,7 @@ const SelectionMenu = (props: SelectionMenuProps) => {
                         if (pasteName === "") {
                             props.addAlert("Please enter a matrix name to paste.", 5000, "error");
                             return;
-                        } else if (!(pasteName in props.matrices)) {
+                        } else if (!(pasteName in matrices)) {
                             props.addAlert(`Matrix ${pasteName} not found`, 5000, "error");
                             return;
                         }
@@ -93,15 +93,15 @@ const SelectionMenu = (props: SelectionMenuProps) => {
                         if (!props.boxSelection) 
                             return;
                         const pasted = pasteMatrix(
-                            props.matrices[props.name], //matrix to paste on
-                            props.matrices[pasteName],  //matrix to copy from
+                            matrices[selection], //matrix to paste on
+                            matrices[pasteName],  //matrix to copy from
                             props.boxSelection.start.x,
                             props.boxSelection.start.y,
                             props.boxSelection.end.x,
                             props.boxSelection.end.y)
 
                         if (pasted)
-                            props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: {"name": props.name, "matrix": pasted, "switch": false }});
+                            matrixDispatch(updateMatrix( {"name" : selection, "matrix" : pasted}));
                         else
                             props.addAlert("Error: Selection dimensions and pasted matrix dimensions must match.", 5000, "error");
 

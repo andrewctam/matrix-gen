@@ -1,4 +1,4 @@
-import { Matrices } from "./App";
+import { Matrices } from "../features/matrices-slice";
 export const cloneMatrix = (matrix: any[][]) => {
     const clone = new Array(matrix.length).fill(null).map(() => new Array(matrix[0].length).fill(null));
     for (let i = 0; i < matrix.length; i++) {
@@ -83,7 +83,7 @@ export const resizeMatrix = (matrix: string[][], rows: number, cols: number) => 
     return resized;
 }
 
-export const deleteRowCol = (matrix: string[][], row: number | undefined, col: number | undefined) => {
+export const deleteMatrixRowCol = (matrix: string[][], row: number | undefined, col: number | undefined) => {
     //Can not delete the red row/column
     if (row === matrix.length - 1 || col === matrix[0].length - 1)
         return null;
@@ -105,7 +105,7 @@ export const deleteRowCol = (matrix: string[][], row: number | undefined, col: n
 
 
 
-export const updateEntry = (matrix: string[][], i: number, j: number, value: string, mirror: boolean) => {
+export const updateMatrixEntry = (matrix: string[][], i: number, j: number, value: string, mirror: boolean) => {
     //does not make a clone to prevent unnecessary cloning if we use multiple functions 
     if (mirror) {
         //add enough rows/cols in order to update the correct  j, i

@@ -2,23 +2,24 @@ import styles from "./Table.module.css"
 import React, { useCallback, useEffect, useState } from 'react';
 import { editSelection } from '../../../matrixFunctions';
 import Box from './Box';
-import { MatricesAction, Settings } from "../../../App";
+import { Settings } from "../../../App";
 import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
+import { addCol, addRow, addRowAndCol, deleteRowCol, updateEntry, updateMatrix } from "../../../../features/matrices-slice";
+import { useAppDispatch } from "../../../../hooks/hooks";
 
 interface TableProps {
     settings: Settings
     name: string
     matrix: string[][]
-    matrixDispatch: React.Dispatch<MatricesAction>
     boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     boxSelection: BoxSelection
     mouseDown: React.MutableRefObject<boolean>
     lastValue: string | null
-
-
 }
 
 const Table = (props: TableProps) => {
+    const matrixDispatch = useAppDispatch();
+
     const [showHelpers, setShowHelpers] = useState(false);
 
     useEffect(() => {
@@ -37,19 +38,29 @@ const Table = (props: TableProps) => {
                 end: { x: row, y: col }
             }
         });
+        switch (type) {
+            case "ADD_ROW":
+                matrixDispatch(addRow({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": props.settings["Mirror Inputs"] }))
+                break;
+            case "ADD_COL":
+                matrixDispatch(addCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": props.settings["Mirror Inputs"]}))
+                break;
+            case "ADD_ROW_AND_COL":
+                matrixDispatch(addRowAndCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": props.settings["Mirror Inputs"]}))
+                break;
+        }
 
-        props.matrixDispatch({
-            "type": type,
-            payload: { "name": props.name, "row": row, "col": col, "updated": updated }
-        })
     }, [props.name]);
 
     const update = useCallback((row: number, col: number, updated: string) => {
         setShowHelpers(false)
-        props.matrixDispatch({
-            "type": "UPDATE_ENTRY",
-            payload: { "name": props.name, "row": row, "col": col, "updated": updated }
-        });
+        matrixDispatch(updateEntry({
+            "name": props.name,
+            "row": row,
+            "col": col,
+            "updated": updated,
+            "mirror": props.settings["Mirror Inputs"]
+        }))
 
     }, [props.name]);
 
@@ -64,16 +75,13 @@ const Table = (props: TableProps) => {
 
             e.preventDefault();
 
-            props.matrixDispatch({
-                "type": "UPDATE_MATRIX", payload: {
-                    "name": props.name, "matrix":
-                        editSelection(props.matrix, 8,
+            let matrix = editSelection(props.matrix, 8,
                             props.boxSelection.start.x,
                             props.boxSelection.start.y,
                             props.boxSelection.end.x,
                             props.boxSelection.end.y)
-                }
-            });
+
+            matrixDispatch(updateMatrix({"name": props.name, "matrix": matrix}))
         }
     }
 
@@ -85,60 +93,90 @@ const Table = (props: TableProps) => {
         //shift
         if (e.key === "Shift") {
             if (lastRow && lastCol) //add both
-                props.matrixDispatch({
-                    "type": "ADD_ROW_AND_COL",
-                    payload: { "name": props.name, "row": row, "col": col, "updated": "" }
-                })
+                matrixDispatch(addRowAndCol({
+                    "name": props.name,
+                    "row": row,
+                    "col": col,
+                    "updated": "",
+                    "mirror": props.settings["Mirror Inputs"]
+                }))
             else if (lastRow) //add row
-                props.matrixDispatch({
-                    "type": "ADD_ROW",
-                    payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row }
-                })
+                matrixDispatch(addRow({
+                    "name": props.name,
+                    "row": row,
+                    "col": col,
+                    "updated": "",
+                    "pos": row,
+                    "mirror": props.settings["Mirror Inputs"]
+                }))
             else if (lastCol) //add col
-                props.matrixDispatch({
-                    "type": "ADD_COL",
-                    payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col }
-                })
-
+                matrixDispatch(addCol({
+                    "name": props.name,
+                    "row": row,
+                    "col": col,
+                    "updated": "",
+                    "pos": col,
+                    "mirror": props.settings["Mirror Inputs"]
+                }))
         }
 
         //enter
         else if (e.key === "Enter") {
             e.preventDefault();
             if (lastRow && lastCol) { //add both if just on corner box
-                props.matrixDispatch({
-                    "type": "ADD_ROW_AND_COL",
-                    payload: { "name": props.name, "row": row + 1, "col": col + 1, "updated": "" }
-                })
+                matrixDispatch(addRowAndCol({
+                    "name": props.name,
+                    "row": row + 1,
+                    "col": col + 1,
+                    "updated": "",
+                    "mirror": props.settings["Mirror Inputs"]
+                }))
             } else if (lastCol) { //add row at this pos
                 if (e.metaKey) {
-                    props.matrixDispatch({
-                        "type": "ADD_ROW",
-                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row }
-                    })
+                    matrixDispatch(addRow({
+                        "name": props.name,
+                        "row": row,
+                        "col": col,
+                        "updated": "",
+                        "pos": row,
+                        "mirror": props.settings["Mirror Inputs"]
+                    }))
+
                     let newRowCell = document.getElementById((row + 1) + ":" + (col))
                     if (newRowCell)
                         newRowCell.focus();
                 } else {
-                    props.matrixDispatch({
-                        "type": "ADD_ROW",
-                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": row + 1 }
-                    })
+                    matrixDispatch(addRow({
+                        "name": props.name,
+                        "row": row,
+                        "col": col,
+                        "updated": "",
+                        "pos": row + 1,
+                        "mirror": props.settings["Mirror Inputs"]
+                    }))
                 }
             } else if (lastRow) { //add col at this pos
                 if (e.metaKey) {
-                    props.matrixDispatch({
-                        "type": "ADD_COL",
-                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col }
-                    })
+                    matrixDispatch(addCol({
+                        "name": props.name,
+                        "row": row,
+                        "col": col,
+                        "updated": "",
+                        "pos": col,
+                        "mirror": props.settings["Mirror Inputs"]
+                    }))
                     let newColCell = document.getElementById((row) + ":" + (col + 1))
                     if (newColCell)
                     newColCell.focus();
                 } else {
-                    props.matrixDispatch({
-                        "type": "ADD_COL",
-                        payload: { "name": props.name, "row": row, "col": col, "updated": "", "pos": col + 1 }
-                    })
+                    matrixDispatch(addCol({
+                        "name": props.name,
+                        "row": row,
+                        "col": col,
+                        "updated": "",
+                        "pos": col + 1,
+                        "mirror": props.settings["Mirror Inputs"]
+                    }))
                 }
             }
         }
@@ -147,28 +185,30 @@ const Table = (props: TableProps) => {
         else if (e.key === "Backspace") {
             if (lastRow && lastCol) {//delete both
                 if (props.matrix.length === 2 && col > 1) {//2 rows, so delete columns
-                    props.matrixDispatch({
-                        "type": "DELETE_ROW_COL",
-                        payload: { "name": props.name, "col": col - 1 }
-                    })
+                    matrixDispatch(deleteRowCol({
+                        "name": props.name,
+                        "col": col - 1,
+                    }))
 
                     let prevColCell = document.getElementById((row) + ":" + (col - 1))
                     if (prevColCell)
                         prevColCell.focus();
                 } else if (props.matrix[0].length === 2 && row > 1) { //2 cols, so delete rows
-                    props.matrixDispatch({
-                        "type": "DELETE_ROW_COL",
-                        payload: { "name": props.name, "row": row - 1 }
-                    })
+                   
+                    matrixDispatch(deleteRowCol({
+                        "name": props.name,
+                        "row": row - 1,
+                    }))
                     let prevRowCell = document.getElementById((row - 1) + ":" + (col))
                     if (prevRowCell)
                         prevRowCell.focus();
 
                 } else if (row > 1 && col > 1) { //delete both
-                    props.matrixDispatch({
-                        "type": "DELETE_ROW_COL",
-                        payload: { "name": props.name, "row": row - 1, "col": col - 1 }
-                    })
+                    matrixDispatch(deleteRowCol({
+                        "name": props.name,
+                        "row": row - 1,
+                        "col": col - 1,
+                    }))
                     let prevCell = document.getElementById((row - 1) + ":" + (col - 1))
                     if (prevCell)
                         prevCell.focus();
@@ -177,21 +217,21 @@ const Table = (props: TableProps) => {
             } else if (lastCol) {//last col
                 if (e.metaKey) { //delete this row
                     if (props.matrix.length > 2)
-                        props.matrixDispatch({
-                            "type": "DELETE_ROW_COL",
-                            payload: { "name": props.name, "row": row }
-                        })
+                        matrixDispatch(deleteRowCol({
+                            "name": props.name,
+                            "row": row,
+                        }))
                     if (row > 0) {
                         let prevRowCell = document.getElementById((row - 1) + ":" + (col))
                         if (prevRowCell)
                             prevRowCell.focus();
                     }
                 } else { //delete last col
-                    if (props.matrix[0].length > 2) {
-                        props.matrixDispatch({
-                            "type": "DELETE_ROW_COL",
-                            payload: { "name": props.name, "col": col - 1 }
-                        })
+                    if (props.matrix[0].length > 2) {       
+                        matrixDispatch(deleteRowCol({
+                            "name": props.name,
+                            "col": col - 1,
+                        }))
                         let prevColCell = document.getElementById((row) + ":" + (col - 1))
                         if (prevColCell)
                             prevColCell.focus();
@@ -199,11 +239,11 @@ const Table = (props: TableProps) => {
                 }
             } else if (lastRow) { //last row
                 if (e.metaKey) { //delete this col
-                    if (props.matrix[0].length > 2)
-                        props.matrixDispatch({
-                            "type": "DELETE_ROW_COL",
-                            payload: { "name": props.name, "col": col }
-                        })
+                    if (props.matrix[0].length > 2)   
+                        matrixDispatch(deleteRowCol({
+                            "name": props.name,
+                            "col": col,
+                        }))
 
                     if (col > 0) {
                         let prevColCell = document.getElementById((row) + ":" + (col - 1))
@@ -212,10 +252,11 @@ const Table = (props: TableProps) => {
                     }
                 } else { //delete last row
                     if (props.matrix.length > 2) {
-                        props.matrixDispatch({
-                            "type": "DELETE_ROW_COL",
-                            payload: { "name": props.name, "row": row - 1 }
-                        })
+                        matrixDispatch(deleteRowCol({
+                            "name": props.name,
+                            "row": row - 1,
+                        }))
+
                         let prevRowCell = document.getElementById((row - 1) + ":" + (col))
                         if (prevRowCell) 
                             prevRowCell.focus();
@@ -295,21 +336,29 @@ const Table = (props: TableProps) => {
     }, [props.name, props.matrix.length, props.matrix[0].length]); //don't care about the matrix itself for this function. resizing will cause an entire rerender, but that is ok since it is less frequent
 
     useEffect(() => { //if the user changed a box and they have a selection, update the entire selection
+        console.clear()
+        console.log(props.lastValue)
+        console.log(props.settings["Disable Selection"])
+        console.log(props.boxSelection)
+        if (props.boxSelection) {
+            console.log(props.boxSelection.start.x !== props.boxSelection.end.x || props.boxSelection.start.y !== props.boxSelection.end.y)
+            console.log(props.lastValue !== props.matrix[props.boxSelection.start.x][props.boxSelection.start.y])
+        }
         if (props.lastValue !== null && !props.settings["Disable Selection"] && props.boxSelection &&
             (props.boxSelection.start.x !== props.boxSelection.end.x || props.boxSelection.start.y !== props.boxSelection.end.y) &&
             props.lastValue !== props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]) {
 
-            const updated = props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]
+            const preserveBox = props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]
 
-            const lenDiff = updated.length - props.lastValue.length;
+            const lenDiff = preserveBox.length - props.lastValue.length;
 
             if (lenDiff <= 0)
                 return;
 
             let difference = "";
-            for (let i = 0; i < updated.length; i++) {
-                if (updated.charAt(i) !== props.lastValue.charAt(i)) {
-                    difference = updated.substring(i, i + lenDiff);
+            for (let i = 0; i < preserveBox.length; i++) {
+                if (preserveBox.charAt(i) !== props.lastValue.charAt(i)) {
+                    difference = preserveBox.substring(i, i + lenDiff);
                     break;
                 }
             }
@@ -319,14 +368,13 @@ const Table = (props: TableProps) => {
                 props.boxSelection.end.x,
                 props.boxSelection.end.y)
 
-            edited[props.boxSelection.start.x][props.boxSelection.start.y] = updated;
+            edited[props.boxSelection.start.x][props.boxSelection.start.y] = preserveBox;
 
-
-            props.matrixDispatch({ "type": "UPDATE_MATRIX", payload: { "name": props.name, "matrix": edited } });
+            matrixDispatch(updateMatrix({ "name": props.name, "matrix": edited }))
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.lastValue, props.boxSelection, props.matrix, props.name, props.matrixDispatch])
+    }, [props.lastValue, props.boxSelection, props.matrix, props.name, matrixDispatch])
 
     const inSelection = (x: number, y: number) => {
         if (props.boxSelection === null)
