@@ -11,5 +11,3 @@ passlib
 bcrypt
 numpy
 scipy
-sympy
-json

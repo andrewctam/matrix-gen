@@ -17,15 +17,6 @@ def is_number(a):
 def is_None(a): 
     return type(a) == None
 
-def processMatrix(matrix: list, sparseVal: float):
-    #remove last row/col
-    trim = np.delete(matrix, -1, 0)
-    trim = np.delete(trim, -1, 1)
-
-    #replace "" in matrix with sparseVal
-    trim[trim == ""] = sparseVal
-    
-    return trim.astype(float)
 
 #rounds, converts to string maitrx, and pads matrix
 def finalize(matrix: np.ndarray, round: int):
@@ -81,7 +72,7 @@ def infix_to_postfix(infixExpr: str):
                 end += 1
             
         else: #some letter
-            if ('a' <= char and char <= 'z') or ('A' <= char and char <= 'Z'):
+            if ('a' <= char and char <= 'z') or ('A' <= char and char <= 'Z') or char == "_":
                 if (parsingNum): #done parsing a number
                     finalNum = infixExpr[start:end + 1]
                     if (subtractionSeen):
@@ -229,12 +220,18 @@ def evaluate_postfix(postFix: str, sparseVal: float, matrices: dict):
 
                     matrix = matrices[name]
 
-                    parsedMatrix = processMatrix(matrix, sparseVal); #replace sparseVals and parse floats
+                    #remove row and col of ""
+                    matrix = np.delete(matrix, -1, 0)
+                    matrix = np.delete(matrix, -1, 1)
+
+                    #replace "" in matrix with sparseVal
+                    matrix[matrix == ""] = sparseVal
+                    matrix = matrix.astype(float)
 
                     if (negative):
-                        parsedMatrix *= -1
+                        matrix *= -1
 
-                    stack.append(parsedMatrix)
+                    stack.append(matrix)
 
 
         
@@ -266,9 +263,6 @@ def determinant(matrix: np.ndarray):
 
 def LU(matrix: np.ndarray, round: int):
     p, l, u = la.lu(matrix)
-    print(p)
-    print(l)
-    print(u)
     p = finalize(p, round)
     l = finalize(l, round)
     u = finalize(u, round)
