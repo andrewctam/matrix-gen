@@ -9,3 +9,7 @@ psycopg2
 python-jose
 passlib
 bcrypt
+numpy
+scipy
+sympy
+json

@@ -22,6 +22,7 @@ interface MatrixEditorProps {
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
+    username: string
 }
 
 type Cell = {x: number, y: number}
@@ -148,7 +149,9 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     settings = {props.settings}
                     close={close}
                     showFullInput={showFullInput}
+                    username = {props.username}
 
+                    matrixDispatch={props.matrixDispatch}
                     addAlert = {props.addAlert}/>
             : null}
 

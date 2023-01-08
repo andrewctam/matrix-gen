@@ -724,6 +724,7 @@ const App = () => {
             matrices={matrices}
             matrixDispatch={matrixDispatch}
 
+            username = {username}
             selection={selection}
             matrix={selection in matrices ? matrices[selection] : null}
 

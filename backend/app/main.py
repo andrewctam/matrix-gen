@@ -4,11 +4,14 @@ from .database import database
 from .user_routes import router as user_router
 from .matrix_routes import router as matrix_router
 from .settings_routes import router as settings_router
+from .math_routes import router as math_router
 
 app = FastAPI()
 app.include_router(user_router)
 app.include_router(matrix_router)
 app.include_router(settings_router)
+app.include_router(math_router)
+
 
 origins = [
     "http://localhost",

@@ -16,6 +16,7 @@ interface MatrixGeneratorProps {
     userMatrices: Matrices | null
     undo: () => void
     redo: () => void
+    username: string
     undoStack: Matrices[]
     redoStack: Matrices[]
     addAlert: (str: string, time: number, type?: string) => void
@@ -112,6 +113,8 @@ const MatrixGenerator = (props: MatrixGeneratorProps) => {
             toolDispatch={toolDispatch}
 
             addAlert = {props.addAlert}
+            username = {props.username}
+
         />
 
     </>)

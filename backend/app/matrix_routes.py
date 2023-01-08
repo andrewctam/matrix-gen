@@ -22,4 +22,3 @@ async def update_matrix_data(matrix_data: MatrixData, current_user: UserInfo = D
     query = users.update().where(users.c.username == current_user.username).values(matrix_data = matrix_data.matrix_data)
     await database.execute(query)
     return {"status": "success"}
-    

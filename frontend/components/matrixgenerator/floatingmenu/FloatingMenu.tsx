@@ -108,19 +108,17 @@ const FloatingMenu = (props: FloatingMenuProps) => {
         <div className={styles.bar}>
 
 
-            {props.selection in props.matrices ?
-                <>
-                    <ActiveButton name="Actions" id = {"Actions"}  active={props.toolActive["Actions"]} action={toggleTool} />
+            <ActiveButton name="Actions" id = {"Actions"}  active={props.toolActive["Actions"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
 
-                    <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} />
+            <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
 
-                    {!props.settings["Disable Selection"] ?
-                        <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} />
-                        : null}
+            {!props.settings["Disable Selection"] ?
+                <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
+                : null}
 
-                    <ActiveButton name="Export" id = {"Export"} active={props.toolActive["Export"]} action={toggleTool} />
-                </> : null}
-            <ActiveButton name="Import" id = {"Import"} active={props.toolActive["Import"]} action={toggleTool} />
+            <ActiveButton name="Export" id = {"Export"} active={props.toolActive["Export"]} action={toggleTool} disabled = {! (props.selection in props.matrices)}/>
+
+            <ActiveButton name="Import" id = {"Import"} active={props.toolActive["Import"]} action={toggleTool} disabled = {false}/>
 
 
 
