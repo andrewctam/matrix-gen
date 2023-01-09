@@ -1,11 +1,11 @@
 import React, {memo} from 'react';
-import { Settings } from '../../../App';
+import { useAppSelector } from '../../../../hooks/hooks';
+
 import { BoxSelectionAction } from '../MatrixEditor';
 import styles from "./Box.module.css"
 
 interface BoxProps {
     name: string
-    settings: Settings
     addRowCol: (row: number, col: number, updated: string, type: "ADD_ROW" | "ADD_COL" | "ADD_ROW_AND_COL") => void
     update: (row: number, col: number, updated: string) => void
     keyDown: (row: number, col: number, e: React.KeyboardEvent<HTMLInputElement>) => void
@@ -21,6 +21,8 @@ interface BoxProps {
 
 }
 const Box = (props: BoxProps) => {
+    const settings = useAppSelector((state) => state.settings);
+    
     const handleMouseDown = () => {
         //set the start of the selection
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
@@ -68,7 +70,7 @@ const Box = (props: BoxProps) => {
     var textColor = "black";
 
     //assign special styles
-    if (props.settings["Dark Mode Table"]) {
+    if (settings["Dark Mode Table"]) {
         textColor = "white";
         
         if (props.boxSelected && !lastRow && !lastCol) {
@@ -100,10 +102,10 @@ const Box = (props: BoxProps) => {
 
     return <td className={styles.box} style = {boxStyle}>
         <input
-            placeholder={!lastRow && !lastCol ? props.settings["Empty Element"] : ""}
-            type={props.settings["Numbers Only Input"] ? "number" : "text"}
-            step={props.settings["Numbers Only Input"] ? "any" : ""}
-            pattern={props.settings["Numbers Only Input"] ? "[0-9.-]*" : undefined}
+            placeholder={!lastRow && !lastCol ? settings["Empty Element"] : ""}
+            type={settings["Numbers Only Input"] ? "number" : "text"}
+            step={settings["Numbers Only Input"] ? "any" : ""}
+            pattern={settings["Numbers Only Input"] ? "[0-9.-]*" : undefined}
             autoComplete="off"
             id={props.row + ":" + props.col}
             value={props.val}

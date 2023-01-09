@@ -6,17 +6,19 @@ import ActiveButton from '../../../buttons/ActiveButton';
 import styles from "./MatrixExport.module.css"
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
-import { Settings } from '../../../App';
+
+import { useAppSelector } from '../../../../hooks/hooks';
 
 
 interface MatrixExportProps {
     matrix: string[][]
-    settings: Settings
     close: () => void
     showFullInput: boolean
 }
 
 const MatrixExport = (props: MatrixExportProps) => {
+    const settings = useAppSelector((state) => state.settings);
+
     const [exportOption, setExportOption] = useState("2D Arrays");
 
     const [start, setStart] = useState("{");
@@ -53,7 +55,7 @@ const MatrixExport = (props: MatrixExportProps) => {
                         let text = props.matrix[i][j];
 
                         if (text === "")
-                            text = props.settings["Empty Element"];
+                            text = settings["Empty Element"];
 
                         if (latexEscape) {
                             //&%$#_{}  ~^\
@@ -100,7 +102,7 @@ const MatrixExport = (props: MatrixExportProps) => {
                         if (props.matrix[i][j] !== "")
                             result += props.matrix[i][j];
                         else
-                            result += props.settings["Empty Element"];
+                            result += settings["Empty Element"];
 
                         if (j !== props.matrix[0].length - 2) {
                             result += delim;
@@ -141,10 +143,10 @@ const MatrixExport = (props: MatrixExportProps) => {
                             let element = props.matrix[i][j];
                             switch (element) {
                                 case "":
-                                    if (pipeEscape && props.settings["Empty Element"] === "|")
+                                    if (pipeEscape && settings["Empty Element"] === "|")
                                         element = "&#124;"
                                     else
-                                        element = props.settings["Empty Element"];
+                                        element = settings["Empty Element"];
                                     break;
                                 case "|":
                                     if (pipeEscape)
@@ -168,10 +170,10 @@ const MatrixExport = (props: MatrixExportProps) => {
                     let text = props.matrix[0][i];
                     switch (props.matrix[0][i]) {
                         case "":
-                            if (pipeEscape && props.settings["Empty Element"] === "|")
+                            if (pipeEscape && settings["Empty Element"] === "|")
                                 text = "&#124;"
                             else
-                                text = props.settings["Empty Element"]; break;
+                                text = settings["Empty Element"]; break;
                         case "|":
                             if (pipeEscape)
                                 text = "&#124;";
@@ -226,10 +228,10 @@ const MatrixExport = (props: MatrixExportProps) => {
                         let text = props.matrix[i][j];
                         switch (props.matrix[i][j]) {
                             case "":
-                                if (pipeEscape && props.settings["Empty Element"] === "|")
+                                if (pipeEscape && settings["Empty Element"] === "|")
                                     text = "&#124;"
                                 else
-                                    text = props.settings["Empty Element"];
+                                    text = settings["Empty Element"];
                                 break;
                             case "|":
                                 if (pipeEscape)
@@ -262,7 +264,7 @@ const MatrixExport = (props: MatrixExportProps) => {
                     for (let j = 0; j < props.matrix[0].length - 1; j++) {
                         let element = props.matrix[i][j]
                         if (element === "")
-                            element = props.settings["Empty Element"]
+                            element = settings["Empty Element"]
 
                         let tag = "td";
                         if (i === 0)

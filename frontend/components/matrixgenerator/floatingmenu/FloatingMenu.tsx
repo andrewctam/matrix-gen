@@ -11,16 +11,14 @@ import styles from "./FloatingMenu.module.css"
 import useMove from '../../../hooks/useMove';
 
 import { cloneMatrix } from '../../matrixFunctions';
-import { Settings, SettingsAction } from '../../App';
 import { Tools, ToolsAction } from '../MatrixGenerator';
-import { deleteMatrix, Matrices, redo, undo, updateAll, updateMatrix, updateSelection } from '../../../features/matrices-slice';
+import { deleteMatrix, Matrices, redo, undo, updateAllMatrices, updateMatrix, updateSelection } from '../../../features/matrices-slice';
+import { updateSetting } from '../../../features/settings-slice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 
 interface FloatingMenuProps {
     showMerge: boolean
     userMatrices: Matrices | null
-    settings: Settings
-    settingsDispatch: React.Dispatch<SettingsAction>
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
@@ -31,24 +29,28 @@ interface FloatingMenuProps {
 const FloatingMenu = (props: FloatingMenuProps) => {
 
     const {matrices, selection, undoStack, redoStack} = useAppSelector((state) => state.matricesData)
-    const matrixDispatch = useAppDispatch();
+    const settings = useAppSelector((state) => state.settings )
+    const dispatch = useAppDispatch();
+
+
 
     const [showSelectors, setShowSelectors] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [multiSelected, setMultiSelected] = useState<string[]>([]);
 
-    const selectors = useRef<HTMLDivElement | null>(null);
-    const selectorsToggle = useRef<HTMLButtonElement | null>(null);
-    const settings = useRef<HTMLDivElement | null>(null);
-    const settingsToggle = useRef<HTMLButtonElement | null>(null);
 
-    const [selectorsX, selectorsY] = useMove(selectors, selectorsToggle);
-    const [settingsX, settingsY] = useMove(settings, settingsToggle);
+    const selectorsRef = useRef<HTMLDivElement | null>(null);
+    const selectorsToggleRef = useRef<HTMLButtonElement | null>(null);
+    const settingsRef = useRef<HTMLDivElement | null>(null);
+    const settingsToggleRef = useRef<HTMLButtonElement | null>(null);
+
+    const [selectorsX, selectorsY] = useMove(selectorsRef, selectorsToggleRef);
+    const [settingsX, settingsY] = useMove(settingsRef, settingsToggleRef);
 
     const [lastClicked, setLastClicked] = useState<string>("settings");
 
-    const updateSetting = (name: string, value: string) => {
-        props.settingsDispatch({ "type": "UPDATE_SETTING", "payload": {"name": name as keyof Settings, "value": value }});
+    const setSetting = (name: string, value: string) => {
+        dispatch(updateSetting({ "name": name, "value": value }));
     }
 
     const toggleTool = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -60,8 +62,8 @@ const FloatingMenu = (props: FloatingMenuProps) => {
     const deleteSelectedMatrices = (matricesToDelete: string[]) => {
         if (matricesToDelete.length === 0) { //if input is empty, delete all
             if (window.confirm("Are you sure you want to delete all of your matrices?")) {
-                matrixDispatch(updateAll({ "matrices": {} }))
-                matrixDispatch(updateSelection(""))
+                dispatch(updateAllMatrices({ "matrices": {} }))
+                dispatch(updateSelection(""))
                 localStorage.removeItem("matrices");
                 return true;
             }
@@ -71,12 +73,12 @@ const FloatingMenu = (props: FloatingMenuProps) => {
 
             for (let i = 0; i < matricesToDelete.length; i++) {
                 if (selection === matricesToDelete[i])
-                matrixDispatch(updateSelection(""))
+                dispatch(updateSelection(""))
 
                 delete tempObj[matricesToDelete[i]];
             }
 
-            matrixDispatch(updateAll({ "matrices": tempObj }))
+            dispatch(updateAllMatrices({ "matrices": tempObj }))
             return true;
         }
 
@@ -87,18 +89,18 @@ const FloatingMenu = (props: FloatingMenuProps) => {
     return (<div className={styles.floatingMenu}>
         <div className={styles.bar}>
             <BasicActionButton
-                innerRef={selectorsToggle}
+                innerRef={selectorsToggleRef}
                 name={"Matrices"} buttonStyle={showSelectors ? "info" : "primary"}
                 action={() => {setShowSelectors(!showSelectors); }}
             />
             <BasicActionButton
-                innerRef={settingsToggle}
+                innerRef={settingsToggleRef}
                 name={"Settings"} buttonStyle={showSettings ? "info" : "primary"}
                 action={() => { setShowSettings(!showSettings); setLastClicked("settings");}}
             />
             <div className={styles.pair}>
-                <BasicActionButton buttonStyle={"primary"} disabled={undoStack.length === 0} name="↺" action={ () => matrixDispatch(undo()) } />
-                <BasicActionButton buttonStyle={"primary"} disabled={redoStack.length === 0} name="↻" action={ () => matrixDispatch(redo()) } />
+                <BasicActionButton buttonStyle={"primary"} disabled={undoStack.length === 0} name="↺" action={ () => dispatch(undo()) } />
+                <BasicActionButton buttonStyle={"primary"} disabled={redoStack.length === 0} name="↻" action={ () => dispatch(redo()) } />
             </div>
         </div>
         <div className={styles.bar}>
@@ -108,7 +110,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
 
             <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} disabled = {! (selection in matrices)}/>
 
-            {!props.settings["Disable Selection"] ?
+            {!settings["Disable Selection"] ?
                 <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} disabled = {! (selection in matrices)}/>
                 : null}
 
@@ -128,7 +130,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                         top: selectorsY, 
                         zIndex: lastClicked === "selectors" ? 5 : 4 
                     }} 
-                ref={selectors}
+                ref={selectorsRef}
                 onMouseDown = {() => {setLastClicked("selectors")}}>
                 <MatrixSelector
                     userMatrices={props.userMatrices}
@@ -144,7 +146,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                         <BasicActionButton
                             key="addButton" name={"New Matrix"} buttonStyle={"success"}
                             action={() => {
-                                matrixDispatch(updateMatrix({ "name": undefined, "matrix": [["", ""], ["", ""]] }))
+                                dispatch(updateMatrix({ "name": undefined, "matrix": [["", ""], ["", ""]] }))
                             }}
                         />
 
@@ -152,7 +154,7 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                             <BasicActionButton
                                 key="duplicateButton" buttonStyle={"success"} name={`Duplicate ${selection}`}
                                 action={() => { 
-                                    matrixDispatch(updateMatrix({ "name": undefined, "matrix": cloneMatrix(matrices[selection]) }))
+                                    dispatch(updateMatrix({ "name": undefined, "matrix": cloneMatrix(matrices[selection]) }))
                                 }} 
                             />
                             : null}
@@ -163,8 +165,8 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                                 key="deleteButton" buttonStyle={"danger"} name={`Delete ${selection}`}
                                 action={() => {
                                     if (selection !== "") {
-                                        matrixDispatch(deleteMatrix(selection))
-                                        matrixDispatch(updateSelection(""))
+                                        dispatch(deleteMatrix(selection))
+                                        dispatch(updateSelection(""))
                                     }
                                 }} />
                             : null}
@@ -188,22 +190,26 @@ const FloatingMenu = (props: FloatingMenuProps) => {
         {showSettings ?
             <div 
             className={styles.settingsMenu} 
-            ref={settings}
+            ref={settingsRef}
             style={window.innerWidth < 1133 ? undefined : { 
                 left: settingsX,
                 top: settingsY, 
                 zIndex: lastClicked === "settings" ? 5 : 4 }}
                 onMouseDown = {() => {setLastClicked("settings")}}
                 >
-                <ParameterBoxInput isChecked={props.settings["Mirror Inputs"]} name={"Mirror Inputs"} updateParameter={updateSetting} />
-                <ParameterBoxInput isChecked={props.settings["Disable Selection"]} name={"Disable Selection"} updateParameter={updateSetting} />
-                <ParameterBoxInput isChecked={props.settings["Numbers Only Input"]} name={"Numbers Only Input"} updateParameter={updateSetting} />
-                <ParameterBoxInput isChecked={props.settings["Dark Mode Table"]} name={"Dark Mode Table"} updateParameter={updateSetting} />
+                <ParameterBoxInput isChecked={settings["Mirror Inputs"]} name={"Mirror Inputs"} updateParameter={setSetting} />
+                <ParameterBoxInput isChecked={settings["Disable Selection"]} name={"Disable Selection"} updateParameter={setSetting} />
+                <ParameterBoxInput isChecked={settings["Numbers Only Input"]} name={"Numbers Only Input"} updateParameter={setSetting} />
+                <ParameterBoxInput isChecked={settings["Dark Mode Table"]} name={"Dark Mode Table"} updateParameter={setSetting} />
                 <div>{"Empty Element: "} 
-                    <ParameterTextInput width={"30px"} text={props.settings["Empty Element"]} id={"Empty Element"} updateParameter={updateSetting} />
+                    <ParameterTextInput width={"30px"} text={settings["Empty Element"]} id={"Empty Element"} updateParameter={setSetting} />
                 </div>
                 <div>{"Decimals To Round: "} 
-                    <ParameterTextInput width={"30px"} text={props.settings["Decimals To Round"].toString()} id={"Decimals To Round"} updateParameter={updateSetting} placeholder={props.settings["Decimals To Round"] === "0" ? "None" : ""} />
+                    <ParameterTextInput width={"30px"} 
+                        id={"Decimals To Round"} 
+                        text={settings["Decimals To Round"].toString()} 
+                        updateParameter={setSetting} 
+                        placeholder={settings["Decimals To Round"] === "0" ? "None" : ""} />
                 </div>
 
             </div>

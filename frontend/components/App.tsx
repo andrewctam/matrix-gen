@@ -6,100 +6,17 @@ import TopBar from './TopBar';
 
 import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
-import { clearStacks, updateAll, updateSelection } from '../features/matrices-slice';
+import { clearStacks, updateAllMatrices, updateSelection } from '../features/matrices-slice';
 import { Matrices } from '../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { setAllSettings } from '../features/settings-slice';
 
-export interface Settings {
-    "Mirror Inputs": boolean
-    "Disable Selection": boolean
-    "Numbers Only Input": boolean
-    "Dark Mode Table": boolean
-    "Empty Element": string
-    "Decimals To Round": string
-}
-
-export type SettingsAction =
-    { type: "UPDATE_ALL", payload: { settings: Settings } } |
-    { type: "UPDATE_SETTING", payload: { name: keyof Settings, value: boolean | string } } |
-    { type: "TOGGLE_SETTING", payload: { name: keyof Settings } };
 
 
 const App = () => {
-    const {matrices, selection} = useAppSelector((state) => state.matricesData);
+    const {matrices} = useAppSelector((state) => state.matricesData);
+    const settings = useAppSelector((state) => state.settings);
     const dispatch = useAppDispatch();
-
-    const settingsReducer = (state: Settings, action: SettingsAction) => {
-        switch (action.type) {
-            case 'UPDATE_ALL':
-                return action.payload.settings;
-            case 'UPDATE_SETTING':
-                let tempObj = { ...state };
-                let value = action.payload.value;
-
-                switch(action.payload.name) {
-                    case "Decimals To Round":
-                        if (typeof value !== "string")
-                            return state;
-
-                        if (value === "") {
-                            tempObj[action.payload.name] = ""
-                            return tempObj    
-                        } else if (/^\d+$/.test(value)) {
-                            tempObj[action.payload.name] = Math.max(0, Math.min(parseInt(value), 16)).toString();
-                            return tempObj;
-                        } else {
-                            return state;
-                        }
-
-                    case "Empty Element":
-                        if (typeof value !== "string")
-                            return state;
-
-                        tempObj[action.payload.name] = value;
-                        return tempObj;
-
-                    case "Mirror Inputs":
-                    case "Disable Selection":
-                    case "Numbers Only Input":
-                    case "Dark Mode Table":
-                        if (typeof value !== "boolean")
-                            return state;
-
-                        tempObj[action.payload.name] = value;
-                        return tempObj;
-
-                    default: 
-                        return state;
-                } 
-
-
-            case 'TOGGLE_SETTING':
-                if (typeof action.payload.name !== "boolean" && !(
-                    action.payload.name == "Mirror Inputs" ||
-                    action.payload.name == "Disable Selection" ||
-                    action.payload.name == "Numbers Only Input" ||
-                    action.payload.name == "Dark Mode Table"
-                ))
-                    return state;
-
-                tempObj = { ...state };
-                tempObj[action.payload.name] = !tempObj[action.payload.name];
-                return tempObj;
-            default:
-                return state;
-        }
-    }
-
-    const [settings, settingsDispatch] = useReducer(settingsReducer, {
-        "Mirror Inputs": false,
-        "Disable Selection": false,
-        "Numbers Only Input": false,
-        "Dark Mode Table": false,
-        "Empty Element": "0",
-        "Decimals To Round": "8"
-    });    
-
 
     //state for saving online/local
     const [username, setUsername] = useState("");
@@ -131,7 +48,7 @@ const App = () => {
             loadFromLocalStorage();
             setShowMerge(false)
         } else { //default
-            dispatch(updateAll({ "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO": true }))
+            dispatch(updateAllMatrices({ "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO": true }))
             dispatch(updateSelection("A"))
 
             setShowMerge(false)
@@ -197,7 +114,7 @@ const App = () => {
             if (parsed.length === 0) { //if {} is saved, it will be parsed to []
                 throw new Error("No matrices found in local storage");
             } else {
-                dispatch(updateAll({ "matrices": parsed, "DO_NOT_UPDATE_UNDO": true}))
+                dispatch(updateAllMatrices({ "matrices": parsed, "DO_NOT_UPDATE_UNDO": true}))
 
                 const localMatrices = Object.keys(parsed);
                 if (localMatrices.length > 0)
@@ -207,7 +124,7 @@ const App = () => {
 
                 const settings = localStorage.getItem("settings");
                 if (settings !== null) {
-                    settingsDispatch({ type: "UPDATE_ALL", payload: { "settings": JSON.parse(settings) } });
+                    dispatch(setAllSettings(JSON.parse(settings)))
                 }
             }
 
@@ -215,10 +132,8 @@ const App = () => {
             console.log(error)
             localStorage.removeItem("matrices");
             dispatch(updateSelection("A"));
-            dispatch(updateAll({ "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO": true }))
-            settingsDispatch({
-                type: "UPDATE_ALL", payload: {
-                    "settings": {
+            dispatch(updateAllMatrices({ "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO": true }))
+            dispatch(setAllSettings({
                         "Mirror Inputs": false,
                         "Disable Selection": false,
                         "Numbers Only Input": false,
@@ -226,8 +141,7 @@ const App = () => {
                         "Empty Element": "0",
                         "Decimals To Round": "8"
                     }
-                }
-            });
+            ));
         }
 
         setDoneLoading(true);
@@ -308,7 +222,7 @@ const App = () => {
 
         if (mergeUnnecessary) {
             setShowMerge(false)
-            dispatch(updateAll({ "matrices": userMatrices, "DO_NOT_UPDATE_UNDO": true }))
+            dispatch(updateAllMatrices({ "matrices": userMatrices, "DO_NOT_UPDATE_UNDO": true }))
             if (Object.keys(userMatrices).length > 0)
                 dispatch(updateSelection(Object.keys(userMatrices)[0]));
             else
@@ -435,7 +349,7 @@ const App = () => {
         if (response) {
             const settings = JSON.parse(response["settings"]);
             if (settings)
-                settingsDispatch({ type: "UPDATE_ALL", payload: { "settings": settings } });
+                dispatch(setAllSettings(settings))
         }
 
     }
@@ -499,7 +413,7 @@ const App = () => {
                     username={username}
                     updateUserInfo={updateUserInfo}
                     saveToLocal={saveToLocal}
-                    settings={settings}
+
                     refreshTokens={refreshTokens}
                     showMerge={showMerge}
                     setShowMerge={setShowMerge}
@@ -519,8 +433,6 @@ const App = () => {
         <MatrixGenerator
             username = {username}
             updateMatrixSettings={updateMatrixSettings}
-            settings={settings}
-            settingsDispatch={settingsDispatch}
             showMerge={showMerge}
             userMatrices={userMatrices}
             addAlert={addAlert}

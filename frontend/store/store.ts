@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { matricesSlice } from '../features/matrices-slice';
+import { settingsSlice } from '../features/settings-slice';
 
 export const store = configureStore({
     reducer: {
-        matricesData: matricesSlice.reducer 
+        matricesData: matricesSlice.reducer,
+        settings: settingsSlice.reducer
     }
 });
 

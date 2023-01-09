@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import styles from "./SaveMatrices.module.css";
 import SaveInput from "./SaveInput"
-import { Settings } from "../App";
 import { useAppSelector } from "../../hooks/hooks";
 
 interface LoginFormProps {
-    settings: Settings
     updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
     setShowWelcome: (bool: boolean) => void
 }
@@ -13,6 +11,7 @@ interface LoginFormProps {
 const LoginForm = (props: LoginFormProps) => {
 
     const {matrices} = useAppSelector((state) => state.matricesData);
+    const settings = useAppSelector((state) => state.settings);
     const [showLogin, setShowLogin] = useState(true);
 
     const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -109,7 +108,7 @@ const LoginForm = (props: LoginFormProps) => {
                 username: usernameInput,
                 password: passwordInput,
                 matrix_data: JSON.stringify(matrices),
-                settings: JSON.stringify(props.settings)
+                settings: JSON.stringify(settings)
             })
 
         }).then((response) => {

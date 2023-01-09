@@ -17,6 +17,15 @@ def is_number(a):
 def is_None(a): 
     return type(a) == None
 
+def processMatrix(matrix: list, sparseVal: float):
+    #remove last row/col
+    trim = np.delete(matrix, -1, 0)
+    trim = np.delete(trim, -1, 1)
+
+    #replace "" in matrix with sparseVal
+    trim[trim == ""] = sparseVal
+    
+    return trim.astype(float)
 
 #rounds, converts to string maitrx, and pads matrix
 def finalize(matrix: np.ndarray, round: int):
@@ -220,18 +229,12 @@ def evaluate_postfix(postFix: str, sparseVal: float, matrices: dict):
 
                     matrix = matrices[name]
 
-                    #remove row and col of ""
-                    matrix = np.delete(matrix, -1, 0)
-                    matrix = np.delete(matrix, -1, 1)
-
-                    #replace "" in matrix with sparseVal
-                    matrix[matrix == ""] = sparseVal
-                    matrix = matrix.astype(float)
+                    parsedMatrix = processMatrix(matrix, sparseVal); #replace sparseVals and parse floats
 
                     if (negative):
-                        matrix *= -1
+                        parsedMatrix *= -1
 
-                    stack.append(matrix)
+                    stack.append(parsedMatrix)
 
 
         

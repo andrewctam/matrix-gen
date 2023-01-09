@@ -1,5 +1,5 @@
 
-import { Matrices, updateAll, updateSelection } from "../../features/matrices-slice";
+import { Matrices, updateAllMatrices, updateSelection } from "../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import styles from "./MergeStorage.module.css";
 
@@ -36,13 +36,13 @@ const MergeStorage = (props: MergeStorageProps) => {
             return;
         }
 
-        matrixDispatch(updateAll({"matrices": union}))
+        matrixDispatch(updateAllMatrices({"matrices": union}))
         
         props.setShowMerge(false);
     }
 
     const overwriteLocal = () => {
-        matrixDispatch(updateAll({"matrices": props.userMatrices}))
+        matrixDispatch(updateAllMatrices({"matrices": props.userMatrices}))
         const accountMatrices = Object.keys(props.userMatrices)
         if (accountMatrices.length > 0) {
             matrixDispatch(updateSelection(Object.keys(props.userMatrices)[0]))

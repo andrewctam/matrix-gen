@@ -5,12 +5,11 @@ import { generateUniqueName } from '../../../matrixFunctions';
 import Toggle from '../../../buttons/Toggle';
 import BasicActionButton from '../../../buttons/BasicActionButton';
 import useExpand from '../../../../hooks/useExpand';
-import { Settings } from '../../../App';
-import { updateAll, updateMatrix } from '../../../../features/matrices-slice';
+
+import { updateAllMatrices, updateMatrix } from '../../../../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
 
 interface MatrixMathProps {
-    settings: Settings
     close: () => void
     showFullInput: boolean
     addAlert: (str: string, time: number, type?: string) => void
@@ -19,6 +18,7 @@ interface MatrixMathProps {
 
 const MatrixMath = (props: MatrixMathProps) => {
     const {matrices, selection} = useAppSelector((state) => state.matricesData);
+    const settings = useAppSelector((state) => state.settings);
     const matrixDispatch = useAppDispatch();
 
     const [expression, setExpression] = useState("");
@@ -68,7 +68,7 @@ const MatrixMath = (props: MatrixMathProps) => {
             return;
         }
 
-        if (props.settings["Decimals To Round"] === "") {
+        if (settings["Decimals To Round"] === "") {
             props.addAlert("Please enter the number of decimals to round to in the settings", 5000, "error");
             return;
         }
@@ -82,8 +82,8 @@ const MatrixMath = (props: MatrixMathProps) => {
             body: JSON.stringify({
                 expression: expression,
                 matrices: JSON.stringify(matrices),
-                sparseVal: props.settings["Empty Element"],
-                round: props.settings["Decimals To Round"]
+                sparseVal: settings["Empty Element"],
+                round: settings["Decimals To Round"]
             })
         }).then((response) => {
             if (response === undefined) {
@@ -135,8 +135,8 @@ const MatrixMath = (props: MatrixMathProps) => {
             },
             body: JSON.stringify({
                 matrix: JSON.stringify(matrix),
-                sparseVal: props.settings["Empty Element"],
-                round: props.settings["Decimals To Round"]
+                sparseVal: settings["Empty Element"],
+                round: settings["Decimals To Round"]
             })
         }).then((response) => {
             if (response.status === 400) {
@@ -180,7 +180,7 @@ const MatrixMath = (props: MatrixMathProps) => {
                 tempObj[name] = value;
             }
 
-            matrixDispatch(updateAll({ "matrices": tempObj }));
+            matrixDispatch(updateAllMatrices({ "matrices": tempObj }));
 
             props.addAlert(`Results added to matrices!`, 5000, "success");
         }

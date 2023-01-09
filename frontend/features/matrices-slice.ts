@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { generateUniqueName, cloneMatrix, addRowsAndCols, addRows, addCols, updateMatrixEntry, deleteMatrixRowCol } from "../components/matrixFunctions"
 
 export type Matrices = { [key: string]: string[][] }
@@ -24,7 +24,7 @@ export const matricesSlice = createSlice({
         updateSelection: (state: MatricesState, action: PayloadAction<string>) => {
             state.selection = action.payload;
         },
-        updateAll: (state: MatricesState, action: PayloadAction<{matrices: Matrices, DO_NOT_UPDATE_UNDO?: boolean}>) => {
+        updateAllMatrices: (state: MatricesState, action: PayloadAction<{matrices: Matrices, DO_NOT_UPDATE_UNDO?: boolean}>) => {
             if (!action.payload.DO_NOT_UPDATE_UNDO)
                 state.undoStack.push({...state.matrices});
 
@@ -74,7 +74,7 @@ export const matricesSlice = createSlice({
             } else if (mirror) {
                 const cols = clone[0].length;
                 const rows = clone.length
-                const max = Math.max(rows + 1, cols)
+                const max = Math.max(row, cols + 1)
 
                 clone = addRowsAndCols(clone, max - rows, max - cols);
                 clone[col][row] = updated;
@@ -121,6 +121,7 @@ export const matricesSlice = createSlice({
             state.undoStack.push({...state.matrices});
 
             const { name, row, col, updated, mirror } = action.payload;
+            console.log(mirror)
             const modified = updateMatrixEntry(cloneMatrix(state.matrices[name]), row, col, updated, mirror)
             state.matrices[name] = modified;
         },
@@ -140,7 +141,7 @@ export const matricesSlice = createSlice({
         },
         undo: (state: MatricesState) => {
             if (state.undoStack.length > 0) {
-                state.redoStack.push(state.matrices);
+                state.redoStack.push({...state.matrices});
 
                 state.matrices = state.undoStack.pop() as Matrices;
             }
@@ -162,4 +163,4 @@ export const matricesSlice = createSlice({
 
 
 export default matricesSlice.reducer;
-export const { updateSelection, updateAll, updateMatrix, addRow, addCol, addRowAndCol, updateEntry, renameMatrix, deleteMatrix, undo, redo, deleteRowCol, clearStacks } = matricesSlice.actions;
+export const { updateSelection, updateAllMatrices, updateMatrix, addRow, addCol, addRowAndCol, updateEntry, renameMatrix, deleteMatrix, undo, redo, deleteRowCol, clearStacks } = matricesSlice.actions;

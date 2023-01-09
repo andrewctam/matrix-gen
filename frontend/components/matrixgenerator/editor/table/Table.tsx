@@ -2,13 +2,11 @@ import styles from "./Table.module.css"
 import React, { useCallback, useEffect, useState } from 'react';
 import { editSelection } from '../../../matrixFunctions';
 import Box from './Box';
-import { Settings } from "../../../App";
 import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
 import { addCol, addRow, addRowAndCol, deleteRowCol, updateEntry, updateMatrix } from "../../../../features/matrices-slice";
-import { useAppDispatch } from "../../../../hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 
 interface TableProps {
-    settings: Settings
     name: string
     matrix: string[][]
     boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
@@ -19,6 +17,7 @@ interface TableProps {
 
 const Table = (props: TableProps) => {
     const matrixDispatch = useAppDispatch();
+    const settings = useAppSelector((state) => state.settings);
 
     const [showHelpers, setShowHelpers] = useState(false);
 
@@ -40,17 +39,17 @@ const Table = (props: TableProps) => {
         });
         switch (type) {
             case "ADD_ROW":
-                matrixDispatch(addRow({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": props.settings["Mirror Inputs"] }))
+                matrixDispatch(addRow({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"] }))
                 break;
             case "ADD_COL":
-                matrixDispatch(addCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": props.settings["Mirror Inputs"]}))
+                matrixDispatch(addCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"]}))
                 break;
             case "ADD_ROW_AND_COL":
-                matrixDispatch(addRowAndCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": props.settings["Mirror Inputs"]}))
+                matrixDispatch(addRowAndCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"]}))
                 break;
         }
 
-    }, [props.name]);
+    }, [props.name, settings["Mirror Inputs"]]);
 
     const update = useCallback((row: number, col: number, updated: string) => {
         setShowHelpers(false)
@@ -59,13 +58,13 @@ const Table = (props: TableProps) => {
             "row": row,
             "col": col,
             "updated": updated,
-            "mirror": props.settings["Mirror Inputs"]
+            "mirror": settings["Mirror Inputs"]
         }))
 
-    }, [props.name]);
+    }, [props.name, settings["Mirror Inputs"]]);
 
     const backspaceSelection = (e: React.KeyboardEvent) => {
-        if (e.key !== "Backspace" || props.settings["Disable Selection"])
+        if (e.key !== "Backspace" || settings["Disable Selection"])
             return
             
 
@@ -98,7 +97,7 @@ const Table = (props: TableProps) => {
                     "row": row,
                     "col": col,
                     "updated": "",
-                    "mirror": props.settings["Mirror Inputs"]
+                    "mirror": settings["Mirror Inputs"]
                 }))
             else if (lastRow) //add row
                 matrixDispatch(addRow({
@@ -107,7 +106,7 @@ const Table = (props: TableProps) => {
                     "col": col,
                     "updated": "",
                     "pos": row,
-                    "mirror": props.settings["Mirror Inputs"]
+                    "mirror": settings["Mirror Inputs"]
                 }))
             else if (lastCol) //add col
                 matrixDispatch(addCol({
@@ -116,7 +115,7 @@ const Table = (props: TableProps) => {
                     "col": col,
                     "updated": "",
                     "pos": col,
-                    "mirror": props.settings["Mirror Inputs"]
+                    "mirror": settings["Mirror Inputs"]
                 }))
         }
 
@@ -129,7 +128,7 @@ const Table = (props: TableProps) => {
                     "row": row + 1,
                     "col": col + 1,
                     "updated": "",
-                    "mirror": props.settings["Mirror Inputs"]
+                    "mirror": settings["Mirror Inputs"]
                 }))
             } else if (lastCol) { //add row at this pos
                 if (e.metaKey) {
@@ -139,7 +138,7 @@ const Table = (props: TableProps) => {
                         "col": col,
                         "updated": "",
                         "pos": row,
-                        "mirror": props.settings["Mirror Inputs"]
+                        "mirror": settings["Mirror Inputs"]
                     }))
 
                     let newRowCell = document.getElementById((row + 1) + ":" + (col))
@@ -152,7 +151,7 @@ const Table = (props: TableProps) => {
                         "col": col,
                         "updated": "",
                         "pos": row + 1,
-                        "mirror": props.settings["Mirror Inputs"]
+                        "mirror": settings["Mirror Inputs"]
                     }))
                 }
             } else if (lastRow) { //add col at this pos
@@ -163,7 +162,7 @@ const Table = (props: TableProps) => {
                         "col": col,
                         "updated": "",
                         "pos": col,
-                        "mirror": props.settings["Mirror Inputs"]
+                        "mirror": settings["Mirror Inputs"]
                     }))
                     let newColCell = document.getElementById((row) + ":" + (col + 1))
                     if (newColCell)
@@ -175,7 +174,7 @@ const Table = (props: TableProps) => {
                         "col": col,
                         "updated": "",
                         "pos": col + 1,
-                        "mirror": props.settings["Mirror Inputs"]
+                        "mirror": settings["Mirror Inputs"]
                     }))
                 }
             }
@@ -333,18 +332,10 @@ const Table = (props: TableProps) => {
                     input.focus();
             }
         }
-    }, [props.name, props.matrix.length, props.matrix[0].length]); //don't care about the matrix itself for this function. resizing will cause an entire rerender, but that is ok since it is less frequent
+    }, [props.name, props.matrix.length, props.matrix[0].length, settings["Mirror Inputs"]]); //don't care about the matrix itself for this function. resizing will cause an entire rerender, but that is ok since it is less frequent
 
     useEffect(() => { //if the user changed a box and they have a selection, update the entire selection
-        console.clear()
-        console.log(props.lastValue)
-        console.log(props.settings["Disable Selection"])
-        console.log(props.boxSelection)
-        if (props.boxSelection) {
-            console.log(props.boxSelection.start.x !== props.boxSelection.end.x || props.boxSelection.start.y !== props.boxSelection.end.y)
-            console.log(props.lastValue !== props.matrix[props.boxSelection.start.x][props.boxSelection.start.y])
-        }
-        if (props.lastValue !== null && !props.settings["Disable Selection"] && props.boxSelection &&
+        if (props.lastValue !== null && !settings["Disable Selection"] && props.boxSelection &&
             (props.boxSelection.start.x !== props.boxSelection.end.x || props.boxSelection.start.y !== props.boxSelection.end.y) &&
             props.lastValue !== props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]) {
 
@@ -406,7 +397,6 @@ const Table = (props: TableProps) => {
         for (let j = 0; j < cols; j++) {
             eachRow[j] = <Box
                 name={props.name}
-                settings={props.settings}
 
                 addRowCol={addRowCol}
                 update={update}
@@ -421,7 +411,7 @@ const Table = (props: TableProps) => {
                 val={props.matrix[i][j]}
                 key={i + ";" + j}
 
-                boxSelected={!props.settings["Disable Selection"] ? inSelection(i, j) : false}
+                boxSelected={!settings["Disable Selection"] ? inSelection(i, j) : false}
                 mouseDown={props.mouseDown}
             />
         }

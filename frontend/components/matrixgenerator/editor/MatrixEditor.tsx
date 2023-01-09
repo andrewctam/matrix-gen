@@ -8,13 +8,11 @@ import TextImport from './matrixTools/TextImport';
 import SelectionMenu from './matrixTools/SelectionMenu';
 
 import { cloneMatrix, updateMatrixEntry } from '../../matrixFunctions';
-import { Settings } from '../../App';
 import { Tools, ToolsAction } from '../MatrixGenerator';
 import { updateMatrix } from '../../../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 
 interface MatrixEditorProps {
-    settings: Settings
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
@@ -33,11 +31,12 @@ export type BoxSelectionAction =
 
 const MatrixEditor = (props: MatrixEditorProps) => {
     const {matrices, selection, undoStack} = useAppSelector((state) => state.matricesData);
+    const settings = useAppSelector((state) => state.settings);
     const matrixDispatch = useAppDispatch();
 
     const matrix = selection in matrices ? matrices[selection] : null
     const boxSelectionReducer = (state: BoxSelection, action: BoxSelectionAction) => {
-        if (props.settings["Disable Selection"])
+        if (settings["Disable Selection"])
             return null;
 
         switch (action.type) {
@@ -123,13 +122,12 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
             {matrix && props.toolActive["Math"] ?
                 <MatrixMath
-                    settings = {props.settings}
                     close={close}
                     showFullInput={showFullInput}
                     addAlert = {props.addAlert}/>
             : null}
 
-            {matrix && !props.settings["Disable Selection"] && props.toolActive["Selection"] ?
+            {matrix && !settings["Disable Selection"] && props.toolActive["Selection"] ?
                 <SelectionMenu
                     boxSelection={boxSelection}
                     boxSelectionDispatch={boxSelectionDispatch}
@@ -152,7 +150,6 @@ const MatrixEditor = (props: MatrixEditorProps) => {
             {matrix && props.toolActive["Export"] ?
                 <MatrixExport
                     matrix={matrix}
-                    settings = {props.settings}
                     close={close}
                     showFullInput={showFullInput}/>
             : null}
@@ -161,7 +158,6 @@ const MatrixEditor = (props: MatrixEditorProps) => {
             {matrix ?
                 (matrix.length <= 51 && matrix[0].length <= 51) ?
                     <Table
-                        settings = {props.settings}
                         name={selection}
                         matrix={matrix}
                         boxSelection = {boxSelection}
@@ -188,7 +184,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                             boxSelection.start.x, 
                             boxSelection.start.y, 
                             e.target.value, 
-                            props.settings["Mirror Inputs"]);
+                            settings["Mirror Inputs"]);
 
                         matrixDispatch(updateMatrix({ "name": selection, "matrix": changed}));
                     }

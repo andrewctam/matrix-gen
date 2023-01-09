@@ -3,14 +3,14 @@ import React, { useState } from "react";
 
 import LoginForm from "./LoginForm";
 import UserPanel from "./UserPanel";
-import { Settings } from "../App";
+
 import { Matrices } from "../../features/matrices-slice";
 
 interface SaveMatricesProps {
     username: string
     updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
     saveToLocal: boolean
-    settings: Settings
+
     refreshTokens: () => Promise<boolean>
     showMerge: boolean
     setShowMerge: (bool: boolean) => void
@@ -42,7 +42,6 @@ const SaveMatrices = (props: SaveMatricesProps) => {
                     />
                     :
                     <LoginForm
-                        settings={props.settings}
                         updateUserInfo={props.updateUserInfo}
                         setShowWelcome={setShowWelcome}
 
