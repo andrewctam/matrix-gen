@@ -1,13 +1,9 @@
 import { useReducer } from "react";
 import FloatingMenu from "./floatingmenu/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
-import { Matrices } from "../../features/matrices-slice";
 
 interface MatrixGeneratorProps {
     updateMatrixSettings: () => void
-    showMerge: boolean
-    userMatrices: Matrices | null
-    username: string
     addAlert: (str: string, time: number, type?: string) => void
 }
 
@@ -63,13 +59,8 @@ const MatrixGenerator = (props: MatrixGeneratorProps) => {
 
     return (<>
         <FloatingMenu
-            showMerge={props.showMerge}
-            userMatrices = {props.userMatrices}
-
-
             toolActive={toolActive}
             toolDispatch={toolDispatch}
-
             addAlert={props.addAlert}
         />
 
@@ -78,7 +69,6 @@ const MatrixGenerator = (props: MatrixGeneratorProps) => {
             toolActive={toolActive}
             toolDispatch={toolDispatch}
             addAlert = {props.addAlert}
-            username = {props.username}
         />
 
     </>)

@@ -23,12 +23,12 @@ export const settingsSlice = createSlice({
     initialState,
     reducers: {
         setAllSettings: (state: Settings, action: PayloadAction<Settings>) => {
-            state = action.payload;
+            return action.payload;
         },
-        updateSetting: (state: Settings, action: PayloadAction<{name: string, value: string}>) => {
-            let {name, value} = action.payload;
+        updateSetting: (state: Settings, action: PayloadAction<{ name: string, value: string }>) => {
+            let { name, value } = action.payload;
 
-            switch(name) {
+            switch (name) {
                 case "Decimals To Round":
                     if (typeof value !== "string")
                         return;
@@ -57,12 +57,12 @@ export const settingsSlice = createSlice({
                     state[name] = value;
                     return;
 
-                default: 
+                default:
                     return;
             }
         },
         toggleSetting: (state: Settings, action: PayloadAction<string>) => {
-            switch(action.payload) {
+            switch (action.payload) {
                 case "Mirror Inputs":
                 case "Disable Selection":
                 case "Numbers Only Input":
@@ -73,14 +73,20 @@ export const settingsSlice = createSlice({
                 default:
                     return;
             }
+        },
+        loadLocalSettings: (state: Settings) => {
+            let localSettings = localStorage.getItem("settings");
+            if (localSettings) {
+                let parsedSettings = JSON.parse(localSettings);
+                if (parsedSettings) {
+                    return parsedSettings;
+                }
+            }
         }
-
-
-
     }
 
 })
 
 export default settingsSlice.reducer;
 
-export const { setAllSettings, updateSetting, toggleSetting } = settingsSlice.actions;
+export const { setAllSettings, updateSetting, toggleSetting, loadLocalSettings } = settingsSlice.actions;

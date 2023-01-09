@@ -17,8 +17,6 @@ import { updateSetting } from '../../../features/settings-slice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 
 interface FloatingMenuProps {
-    showMerge: boolean
-    userMatrices: Matrices | null
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
     addAlert: (str: string, time: number, type?: string) => void
@@ -133,8 +131,6 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                 ref={selectorsRef}
                 onMouseDown = {() => {setLastClicked("selectors")}}>
                 <MatrixSelector
-                    userMatrices={props.userMatrices}
-                    showMerge={props.showMerge}
                     multiSelected={multiSelected}
                     setMultiSelected={setMultiSelected}
                     

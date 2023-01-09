@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import styles from "./SaveMatrices.module.css";
 import SaveInput from "./SaveInput"
-import { useAppSelector } from "../../hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { updateUser } from "../../features/user-slice";
 
 interface LoginFormProps {
-    updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
     setShowWelcome: (bool: boolean) => void
 }
 
 const LoginForm = (props: LoginFormProps) => {
-
     const {matrices} = useAppSelector((state) => state.matricesData);
+    const dispatch = useAppDispatch();
+
     const settings = useAppSelector((state) => state.settings);
     const [showLogin, setShowLogin] = useState(true);
 
@@ -68,7 +69,11 @@ const LoginForm = (props: LoginFormProps) => {
         }
         
         if (usernameInput && response) {
-            props.updateUserInfo(usernameInput, response["access_token"], response["refresh_token"]);
+            dispatch(updateUser({
+                username: usernameInput,
+                accessToken: response["access_token"],
+                refreshToken: response["refresh_token"]
+            }))
         }
     }
 
@@ -127,7 +132,11 @@ const LoginForm = (props: LoginFormProps) => {
             return;
         }
         else if (usernameInput && response) {
-            props.updateUserInfo(usernameInput, response["access_token"], response["refresh_token"]);
+            dispatch(updateUser({
+                username: usernameInput,
+                accessToken: response["access_token"],
+                refreshToken: response["refresh_token"]
+            }))
             props.setShowWelcome(true)
         }
     }

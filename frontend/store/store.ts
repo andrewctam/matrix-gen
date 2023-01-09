@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { matricesSlice } from '../features/matrices-slice';
 import { settingsSlice } from '../features/settings-slice';
+import { userSlice } from '../features/user-slice';
 
 export const store = configureStore({
     reducer: {
         matricesData: matricesSlice.reducer,
-        settings: settingsSlice.reducer
+        settings: settingsSlice.reducer,
+        user: userSlice.reducer
     }
 });
 

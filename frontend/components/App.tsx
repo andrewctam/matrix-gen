@@ -1,57 +1,39 @@
-import React, { useEffect, useState, useRef, useReducer } from 'react';
-import styles from "./App.module.css"
+import React, { useEffect, useState } from 'react';
 import MatrixGenerator from './matrixgenerator/MatrixGenerator';
 import useAlert from '../hooks/useAlert';
 import TopBar from './TopBar';
 
-import SaveMatrices from './saving/SaveMatrices';
-import Tutorial from './Tutorial';
-import { clearStacks, updateAllMatrices, updateSelection } from '../features/matrices-slice';
-import { Matrices } from '../features/matrices-slice';
+import { loadLocalMatrices, updateAllMatrices, updateSelection } from '../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { setAllSettings } from '../features/settings-slice';
+import { loadLocalSettings, setAllSettings } from '../features/settings-slice';
+import { declareMergeConflict, loadUser, logoutUser, updateSaveToLocal } from '../features/user-slice';
 
 
 
 const App = () => {
-    const {matrices} = useAppSelector((state) => state.matricesData);
+    const { matrices } = useAppSelector((state) => state.matricesData);
+    const { username, accessToken, refreshToken, mergeConflict, saveToLocal } = useAppSelector((state) => state.user);
     const settings = useAppSelector((state) => state.settings);
     const dispatch = useAppDispatch();
 
-    //state for saving online/local
-    const [username, setUsername] = useState("");
-    const [saveToLocal, setSaveToLocal] = useState(false);
-
-    //state related to storing
-    const [showMerge, setShowMerge] = useState(false);
-    //in event of a conflict, store user's online matrices separate from local until resolved
-    const [userMatrices, setUserMatrices] = useState<Matrices | null>(null);
-
-    //state related to loading
     const [doneLoading, setDoneLoading] = useState(false);
-    const saving = useRef(false);
-
+   
+    const [alerts, addAlert] = useAlert();
 
     //load from local storage and set up app
     useEffect(() => {
-        window.addEventListener("beforeunload", (e) => {
-            if (saving.current)
-                e.returnValue = "";
-        });
+        if (window.localStorage.getItem("Save To Local") === "1")
+            dispatch(updateSaveToLocal(true));
 
-        setSaveToLocal(window.localStorage.getItem("Save To Local") === "1");
-        const username = localStorage.getItem("username");
-
-        if (username !== null) {
-            setUsername(username);
+        if (localStorage.getItem("username") !== null) {
+            dispatch(loadUser());
         } else if (localStorage.getItem("matrices") !== null) {
-            loadFromLocalStorage();
-            setShowMerge(false)
+            dispatch(loadLocalMatrices());
+            dispatch(loadLocalSettings());
+            setDoneLoading(true);
         } else { //default
             dispatch(updateAllMatrices({ "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO": true }))
             dispatch(updateSelection("A"))
-
-            setShowMerge(false)
             setDoneLoading(true);
         }
 
@@ -76,101 +58,27 @@ const App = () => {
     //send updates to server
     useEffect(() => {
         if (doneLoading) {
-            if (!showMerge && username)
+            if (mergeConflict && username)
                 updateAccountMatrices();
 
-            if (matrices && saveToLocal)
-                saveToLocalStorage();
+            if (matrices && saveToLocal) {
+                window.localStorage.setItem("matrices", JSON.stringify(matrices))
+            }    
         }
 
         // eslint-disable-next-line
-    }, [matrices, saveToLocal, settings]); //only need to send if matrices or settings change
+    }, [matrices, saveToLocal]); //only need to send if matrices or settings change
 
     useEffect(() => { //update settings
-        if (username)
-            updateMatrixSettings();
+        if (doneLoading) {
+            if (username)
+                updateAccountSettings();
+            if (saveToLocal)
+                window.localStorage.setItem("settings", JSON.stringify(settings))
+        }
     // eslint-disable-next-line
     }, [settings]); //only send settings if they change
 
-
-
-    //functions related to saving
-    const saveToLocalStorage = () => {
-        saving.current = true
-        window.localStorage.setItem("matrices", JSON.stringify(matrices))
-        window.localStorage.setItem("settings", JSON.stringify(settings))
-        saving.current = false
-    }
-
-    const loadFromLocalStorage = () => {
-        console.log("Loading from local storage...")
-        try {
-            const matrices = localStorage.getItem("matrices")
-            console.log("Found: " + matrices)
-            if (matrices === null)
-                throw new Error("No matrices found in local storage");
-
-            const parsed = JSON.parse(matrices);
-            if (parsed.length === 0) { //if {} is saved, it will be parsed to []
-                throw new Error("No matrices found in local storage");
-            } else {
-                dispatch(updateAllMatrices({ "matrices": parsed, "DO_NOT_UPDATE_UNDO": true}))
-
-                const localMatrices = Object.keys(parsed);
-                if (localMatrices.length > 0)
-                    dispatch(updateSelection(localMatrices[0]));
-                else
-                    dispatch(updateSelection(""));
-
-                const settings = localStorage.getItem("settings");
-                if (settings !== null) {
-                    dispatch(setAllSettings(JSON.parse(settings)))
-                }
-            }
-
-        } catch (error) {
-            console.log(error)
-            localStorage.removeItem("matrices");
-            dispatch(updateSelection("A"));
-            dispatch(updateAllMatrices({ "matrices": { "A": [["", ""], ["", ""]] }, "DO_NOT_UPDATE_UNDO": true }))
-            dispatch(setAllSettings({
-                        "Mirror Inputs": false,
-                        "Disable Selection": false,
-                        "Numbers Only Input": false,
-                        "Dark Mode Table": false,
-                        "Empty Element": "0",
-                        "Decimals To Round": "8"
-                    }
-            ));
-        }
-
-        setDoneLoading(true);
-    }
-
-    const updateUserInfo = (username: string, access_token: string, refresh_token: string) => {
-        setUsername(username);
-
-        if (username)
-            localStorage.setItem("username", username);
-        else
-            localStorage.removeItem("username");
-
-        if (access_token && refresh_token) {
-            localStorage.setItem("access_token", access_token);
-            localStorage.setItem("refresh_token", refresh_token);
-        } else {
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("refresh_token");
-            setShowMerge(false);
-        }
-
-        //if all is set to null (log out or invalid tokens), then load local storage
-        if (!username && !access_token && !refresh_token) {
-            dispatch(clearStacks())
-            loadFromLocalStorage();
-        }
-
-    }
 
     const getMatrixData = async () => {
         const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/matrix`;
@@ -178,7 +86,7 @@ const App = () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("access_token")
+                "Authorization": "Bearer " + accessToken
             }
         }).then((response) => {
             if (response.status === 401) { //invalid access token
@@ -221,7 +129,6 @@ const App = () => {
             localMatricesStr === response["matrix_data"])
 
         if (mergeUnnecessary) {
-            setShowMerge(false)
             dispatch(updateAllMatrices({ "matrices": userMatrices, "DO_NOT_UPDATE_UNDO": true }))
             if (Object.keys(userMatrices).length > 0)
                 dispatch(updateSelection(Object.keys(userMatrices)[0]));
@@ -229,27 +136,25 @@ const App = () => {
                 dispatch(updateSelection(""));
 
         } else {
-            setShowMerge(true)
             addAlert("You have matrices saved locally that conflict with your account's matrices. Please see the save menu for more info.", 5000, "error")
-            setUserMatrices(userMatrices);
+            dispatch(declareMergeConflict(userMatrices))
 
             if (!matrices || saveToLocal) //if the page is loading, load from local storage if enabled.
-                loadFromLocalStorage();
+                dispatch(loadLocalMatrices());
             //otherwise, the merge request was made after the page finished laoding, so don't re load from local storage
 
-
         }
+
         setDoneLoading(true);
     }
 
     const updateAccountMatrices = async () => {
-        saving.current = true
         const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/matrix`;
         const response = await fetch(url, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("access_token")
+                "Authorization": "Bearer " + accessToken
             },
             body: JSON.stringify({
                 matrix_data: JSON.stringify(matrices)
@@ -282,7 +187,6 @@ const App = () => {
             }
         }
 
-        saving.current = false
     }
 
     const refreshTokens = async () => {
@@ -291,7 +195,7 @@ const App = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("refresh_token")
+                "Authorization": "Bearer " + refreshToken
             }
         }).then((response) => {
             if (response.status === 401) { //invalid refresh token
@@ -310,7 +214,7 @@ const App = () => {
 
             return true; //tokens successfully refreshed
         } else {
-            updateUserInfo("", "", "");
+            dispatch(logoutUser())
             localStorage.removeItem("refresh_token");
             return false; //failed to refresh tokens
         }
@@ -322,7 +226,7 @@ const App = () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("access_token")
+                "Authorization": "Bearer " + accessToken
             }
         }).then((response) => {
             if (response.status === 401) {
@@ -352,15 +256,17 @@ const App = () => {
                 dispatch(setAllSettings(settings))
         }
 
+        setDoneLoading(true);
+
     }
 
-    const updateMatrixSettings = async () => {
+    const updateAccountSettings = async () => {
         const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/settings`;
         const response = await fetch(url, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("access_token")
+                "Authorization": "Bearer " + accessToken
             },
             body: JSON.stringify({ settings: JSON.stringify(settings) })
         }).then((response) => {
@@ -377,7 +283,7 @@ const App = () => {
         if (response === null) {
             if (await refreshTokens()) {
                 console.log("Retrying Update Settings...");
-                updateMatrixSettings(); //retry
+                updateAccountSettings(); //retry
                 return;
             } else { //refresh token invalid
                 console.log("Unauthorized. Refresh token invalid.");
@@ -387,11 +293,6 @@ const App = () => {
     }
 
 
-    const [showTutorial, setShowTutorial] = useState(false);
-    const [showSaveMenu, setShowSaveMenu] = useState(false);
-
-    const [alerts, addAlert] = useAlert();
-
     if (!matrices || !doneLoading)
         return <div/>
 
@@ -399,43 +300,14 @@ const App = () => {
         {alerts}
 
         <TopBar
-            showTutorial = {showTutorial}
-            showSaveMenu = {showSaveMenu}
-            setShowSaveMenu={setShowSaveMenu}
-            setShowTutorial = {setShowTutorial}
-            showMerge = {showMerge}
-            username = {username}
-            saveToLocal = {saveToLocal} />
-
-        <div className={styles.floatingContainer}>
-            {showSaveMenu ?
-                <SaveMatrices
-                    username={username}
-                    updateUserInfo={updateUserInfo}
-                    saveToLocal={saveToLocal}
-
-                    refreshTokens={refreshTokens}
-                    showMerge={showMerge}
-                    setShowMerge={setShowMerge}
-                    userMatrices={userMatrices}
-                    closeSaveMenu={() => { setShowSaveMenu(false) }}
-                    addAlert={addAlert}
-
-                    setSaveToLocal={setSaveToLocal}
-                /> : null}
-
-            {showTutorial ?
-                <Tutorial closeTutorial={() => { setShowTutorial(false) }} />
-                : null}
-        </div>
-        
-
-        <MatrixGenerator
-            username = {username}
-            updateMatrixSettings={updateMatrixSettings}
-            showMerge={showMerge}
-            userMatrices={userMatrices}
             addAlert={addAlert}
+            refreshTokens={refreshTokens}
+        />
+
+        
+        <MatrixGenerator
+            addAlert={addAlert}
+            updateMatrixSettings={updateAccountSettings}
         />
     </>);
 

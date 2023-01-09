@@ -1,38 +1,39 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useAppSelector } from '../hooks/hooks';
 import styles from "./App.module.css";
+import SaveMatrices from './saving/SaveMatrices';
+import Tutorial from './Tutorial';
 
 interface TopBarProps {
-   showTutorial: boolean
-   setShowTutorial: (bool: boolean) => void
-   showSaveMenu: boolean
-   setShowSaveMenu: (bool: boolean) => void
-
-   showMerge: boolean
-   username: string
-   saveToLocal: boolean
-
+    refreshTokens: () => Promise<boolean>
+    addAlert: (str: string, time: number, type?: string) => void
 }
 
-const TopBar = (props: TopBarProps) => {
+const enum Hovering { None, Saving, Tutorial }
 
-    const [hovering, setHovering] = useState("");
+const TopBar = (props: TopBarProps) => {
+    const [hovering, setHovering] = useState<Hovering>(Hovering.None);
+    const [showTutorial, setShowTutorial] = useState(false);
+    const [showSaveMenu, setShowSaveMenu] = useState(false);
+
+    const {username, mergeConflict, saveToLocal} = useAppSelector((state) => state.user)
 
     useEffect(() => {
-        if (localStorage.getItem("First Visit") === null) {
-            props.setShowTutorial(true);
+        if (localStorage.getItem("First Visit") !== "0") {
+            setShowTutorial(true);
         }
     }, []);
     
 
 
-    if (props.showMerge) {
-        var saving = `Logged in as ${props.username}. There is currently a storage conflict.`;
-    } else if (props.username) {
-        if (props.saveToLocal)
-            saving = `Logged in as ${props.username}. Matrices will be saved to your account and to your local browser's storage.`;
+    if (mergeConflict) {
+        var saving = `Logged in as ${username}. There is currently a storage conflict.`;
+    } else if (username) {
+        if (saveToLocal)
+            saving = `Logged in as ${username}. Matrices will be saved to your account and to your local browser's storage.`;
         else
-            saving = `Logged in as ${props.username}. Matrices will be saved to your account.`;
-    } else if (props.saveToLocal) {
+            saving = `Logged in as ${username}. Matrices will be saved to your account.`;
+    } else if (saveToLocal) {
         saving = `Matrices will be saved to your local browser's storage.`;
     } else {
         saving = "Matrices will not be saved if you refresh the page.";
@@ -44,30 +45,43 @@ const TopBar = (props: TopBarProps) => {
        <div className = {styles.topBar}>
             
             <div className={styles.savingInfo}
-                style={{ color: hovering === "saving" ? (props.saveToLocal || props.username ? "rgb(147, 221, 165)" : "rgb(247, 198, 198)") : "white" }}
-                onMouseEnter={() => { setHovering("saving") }}
-                onMouseLeave={() => { setHovering("") }}
+                style={{ color: hovering === Hovering.Saving ? (saveToLocal || username ? "rgb(147, 221, 165)" : "rgb(247, 198, 198)") : "white" }}
+                onMouseEnter={() => { setHovering(Hovering.Saving) }}
+                onMouseLeave={() => { setHovering(Hovering.None) }}
                 onClick={(e) => { 
                     e.stopPropagation(); 
-                    props.setShowSaveMenu(!props.showSaveMenu); 
-                    props.setShowTutorial(false) 
+                    setShowSaveMenu(!showSaveMenu); 
+                    setShowTutorial(false) 
                 }}>
 
-                {saving + (props.showSaveMenu ? " ↑" : " Click for options ↓")}
+                {saving + (showSaveMenu ? " ↑" : " Click for options ↓")}
             </div>
         
 
             
             <div className={styles.toggleTutorial} 
-                style={{ color: hovering === "tutorial" ? "rgb(100, 198, 198)" : "white" }}
-                onMouseEnter={() => { setHovering("tutorial") }}
-                onMouseLeave={() => { setHovering("") }}
+                style={{ color: hovering === Hovering.Tutorial ? "rgb(100, 198, 198)" : "white" }}
+                onMouseEnter={() => { setHovering(Hovering.Tutorial) }}
+                onMouseLeave={() => { setHovering(Hovering.None) }}
                 onClick={(e) => { 
                     e.stopPropagation(); 
-                    props.setShowTutorial(!props.showTutorial);
-                    props.setShowSaveMenu(false); 
+                    setShowTutorial(!showTutorial);
+                    setShowSaveMenu(false); 
                 }}> {"?"}
             </div>
+        </div>
+
+        <div className={styles.floatingContainer}>
+            {showSaveMenu ?
+                <SaveMatrices
+                    refreshTokens={props.refreshTokens}
+                    closeSaveMenu={() => { setShowSaveMenu(false) }}
+                    addAlert={props.addAlert}
+                /> : null}
+
+            {showTutorial ?
+                <Tutorial closeTutorial={() => { setShowTutorial(false) }} />
+                : null}
         </div>
 
     </div>

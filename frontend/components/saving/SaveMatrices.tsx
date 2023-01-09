@@ -4,23 +4,19 @@ import React, { useState } from "react";
 import LoginForm from "./LoginForm";
 import UserPanel from "./UserPanel";
 
-import { Matrices } from "../../features/matrices-slice";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { updateSaveToLocal } from "../../features/user-slice";
 
 interface SaveMatricesProps {
-    username: string
-    updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
-    saveToLocal: boolean
-
     refreshTokens: () => Promise<boolean>
-    showMerge: boolean
-    setShowMerge: (bool: boolean) => void
-    userMatrices: Matrices | null
     closeSaveMenu: () => void
     addAlert: (str: string, time: number, type?: string) => void
-    setSaveToLocal: (bool: boolean) => void
 }
 
 const SaveMatrices = (props: SaveMatricesProps) => {
+    const {username, saveToLocal} = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
+
     const [showWelcome, setShowWelcome] = useState(false);
     const [showLocalStorageWarning, setShowLocalStorageWarning] = useState(false);
 
@@ -28,23 +24,16 @@ const SaveMatrices = (props: SaveMatricesProps) => {
         <div className="row">
             <div className="col-sm-6">
                 <h1>Save Matrices Online</h1>
-                {props.username ?
+                {username ?
                     <UserPanel
-                        username={props.username}
                         showWelcome={showWelcome}
                         setShowWelcome={setShowWelcome}
-                        showMerge={props.showMerge}
-                        userMatrices={props.userMatrices}
-                        updateUserInfo={props.updateUserInfo}
                         refreshTokens={props.refreshTokens}
                         addAlert={props.addAlert}
-                        setShowMerge={props.setShowMerge}
                     />
                     :
                     <LoginForm
-                        updateUserInfo={props.updateUserInfo}
                         setShowWelcome={setShowWelcome}
-
                     />
                 }
 
@@ -59,20 +48,19 @@ const SaveMatrices = (props: SaveMatricesProps) => {
 
                     <input className="form-check-input pull-right"
                         onChange={() => {
-                            props.setSaveToLocal(!props.saveToLocal);
-                            window.localStorage.setItem("Save To Local", !props.saveToLocal ? "1" : "0");
+                            dispatch(updateSaveToLocal(!saveToLocal))
+                            window.localStorage.setItem("Save To Local", !saveToLocal ? "1" : "0");
             
-                            if (props.saveToLocal) {//if currently saving to local (which will become false after this)
+                            if (saveToLocal) {//if currently saving to local (which will become false after this)
                                 setShowLocalStorageWarning(true);
                                 localStorage.removeItem("matrices");
                                 localStorage.removeItem("settings");
-
                             } else 
                                 setShowLocalStorageWarning(false);
 
 
                         }}
-                        checked={props.saveToLocal}
+                        checked={saveToLocal}
                         type="checkbox"
                         role={"switch"}
                         id="saveToLocalSwitch"

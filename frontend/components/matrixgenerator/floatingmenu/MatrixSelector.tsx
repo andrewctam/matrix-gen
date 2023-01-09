@@ -7,8 +7,6 @@ import { Matrices, renameMatrix, updateMatrix, updateSelection } from "../../../
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 
 interface MatrixSelectorProps {
-    userMatrices: Matrices | null
-    showMerge: boolean
     multiSelected: string[]
     setMultiSelected: (arr: string[]) => void
     addAlert: (str: string, time: number, type?: string) => any
@@ -19,6 +17,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
     const [searchSize, setSearchSize] = useState("");
 
     const {matrices, selection} = useAppSelector((state) => state.matricesData)
+    const {mergeConflict, userMatrices} = useAppSelector((state) => state.user)
     const matrixDispatch =  useAppDispatch();
 
     const updateSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +107,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
     }
 
     let intersection: string[] = [];
-    if (props.showMerge && props.userMatrices) {
+    if (mergeConflict && userMatrices) {
         // @ts-ignore: Object is possibly 'null'. props.userMatrices below can't be null.
         intersection = Object.keys(matrices).filter(x => props.userMatrices.hasOwnProperty(x));
     }
@@ -136,7 +135,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
 
                         active={selection === matrixName}
                         multiSelected={props.multiSelected.includes(matrixName)}
-                        intersectionMerge={props.showMerge && intersection.includes(matrixName)}
+                        intersectionMerge={mergeConflict && intersection.includes(matrixName)}
                     />
                 )
         }

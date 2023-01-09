@@ -2,21 +2,20 @@ import MergeStorage from "./MergeStorage";
 import styles from "./SaveMatrices.module.css";
 import SaveInput from "./SaveInput"
 import React, { useState } from "react";
-import { Matrices } from "../../features/matrices-slice";
+import { clearStacks, loadLocalMatrices } from "../../features/matrices-slice";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { logoutUser } from "../../features/user-slice";
 
 interface UserPanelProps {
-    username: string
     showWelcome: boolean
     setShowWelcome: (bool: boolean) => void
-    showMerge: boolean
-    userMatrices: Matrices | null
-    updateUserInfo: (username: string, access_token: string, refresh_token: string) => void
     refreshTokens: () => Promise<boolean>
     addAlert: (str: string, time: number, type?: string) => void
-    setShowMerge: (bool: boolean) => void
 }
 
 const UserPanel = (props: UserPanelProps) => {
+    const {username, accessToken, mergeConflict, userMatrices} = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
 
     const [showChangePassword, setShowChangePassword] = useState(false);
     const [showDeleteAccount, setShowDeleteAccount] = useState(false);
@@ -55,7 +54,9 @@ const UserPanel = (props: UserPanelProps) => {
 
     const logOut = () => {
         props.setShowWelcome(false)
-        props.updateUserInfo("", "", "");
+        dispatch(logoutUser());
+        dispatch(loadLocalMatrices())
+        dispatch(clearStacks())
     }
 
     const handleDeleteAccount = async (e: null | React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
@@ -72,10 +73,10 @@ const UserPanel = (props: UserPanelProps) => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("access_token")
+                "Authorization": "Bearer " + accessToken
             },
             body: JSON.stringify({
-                username: props.username,
+                username: username,
                 password: deleteVerify
             })
         }).then((response) => {
@@ -94,7 +95,7 @@ const UserPanel = (props: UserPanelProps) => {
                 handleDeleteAccount(null); //retry
                 return;
             } else { //refresh token invalid
-                props.updateUserInfo("", "", "");
+                logOut()
             }
         } else if (response == 403) { //Access Denied
             setDeleteVerifyError("Incorrect password")
@@ -133,10 +134,10 @@ const UserPanel = (props: UserPanelProps) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("access_token")
+                "Authorization": "Bearer " + accessToken
             },
             body: JSON.stringify({
-                username: props.username,
+                username: username,
                 current_password: currentPassword,
                 new_password: newPassword
             })
@@ -157,7 +158,7 @@ const UserPanel = (props: UserPanelProps) => {
                 handleChangePassword(null); //retry
                 return;
             } else //refresh token invalid
-                props.updateUserInfo("", "", "");
+                logOut();
         } else if (response == 403) { //Wrong Password
             setCurrentPasswordError("Incorrect current password")
         } else {
@@ -171,7 +172,7 @@ const UserPanel = (props: UserPanelProps) => {
 
     return (
     <div>
-        {props.showWelcome ? `New Account Created. Welcome, ${props.username}!` :`Signed in as ${props.username}`}
+        {props.showWelcome ? `New Account Created. Welcome, ${username}!` :`Signed in as ${username}`}
 
         <button onClick={logOut} className={"btn btn-secondary " + styles.loginRegisterButton}>Log Out</button>
         
@@ -214,12 +215,9 @@ const UserPanel = (props: UserPanelProps) => {
         }
 
 
-        {props.showMerge && props.userMatrices?
+        {mergeConflict && userMatrices?
         <MergeStorage
-            userMatrices={props.userMatrices}
-            setShowMerge={props.setShowMerge}
             addAlert={props.addAlert}
-
         /> : null}
     </div>)
 }

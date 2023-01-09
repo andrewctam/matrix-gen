@@ -1,23 +1,22 @@
 
 import { Matrices, updateAllMatrices, updateSelection } from "../../features/matrices-slice";
+import { resolveMergeConflict } from "../../features/user-slice";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import styles from "./MergeStorage.module.css";
 
 interface MergeStorageProps {
-    userMatrices: Matrices
-    setShowMerge: (bool: boolean) => void
     addAlert: (str: string, time: number, type?: string) => void
 }
 
 const MergeStorage = (props: MergeStorageProps) => {
     const {matrices, selection} = useAppSelector((state) => state.matricesData);
-    const matrixDispatch = useAppDispatch();
+    const {userMatrices} = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
 
     const merge = () => {
-    
         // @ts-ignore, userMatrices won't be nyll
         var intersection = Object.keys(matrices).filter(x => props.userMatrices.hasOwnProperty(x));
-        var union = { ...matrices, ...props.userMatrices };
+        var union = { ...matrices, ...userMatrices };
 
         //a dupe in userMatrices will overwrite the cooresponding dupe in matrices, so rename the dupe in matrices and readd it
         for (let i = 0; i < intersection.length; i++) {
@@ -36,21 +35,23 @@ const MergeStorage = (props: MergeStorageProps) => {
             return;
         }
 
-        matrixDispatch(updateAllMatrices({"matrices": union}))
-        
-        props.setShowMerge(false);
+        dispatch(updateAllMatrices({"matrices": union}))
+        dispatch(resolveMergeConflict())
     }
 
     const overwriteLocal = () => {
-        matrixDispatch(updateAllMatrices({"matrices": props.userMatrices}))
-        const accountMatrices = Object.keys(props.userMatrices)
+        if (!userMatrices)
+            return;
+
+        dispatch(updateAllMatrices({"matrices": userMatrices}))
+        const accountMatrices = Object.keys(userMatrices)
         if (accountMatrices.length > 0) {
-            matrixDispatch(updateSelection(Object.keys(props.userMatrices)[0]))
+            dispatch(updateSelection(Object.keys(userMatrices)[0]))
         } else {
-            matrixDispatch(updateSelection(""))
+            dispatch(updateSelection(""))
         }
 
-        props.setShowMerge(false);  
+        dispatch(resolveMergeConflict())
     }
 
 
