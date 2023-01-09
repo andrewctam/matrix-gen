@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState, useRef, useContext} from "react";
 import styles from "./TextImport.module.css"
 import { generateUniqueName } from "../../../matrixFunctions";
 
@@ -12,12 +12,12 @@ import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
 import { updateMatrix, updateSelection } from "../../../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
+import { AlertContext } from "../../../App";
 
 interface TextImportProps {
     currentName: string
     close: () => void
     showFullInput: boolean
-    addAlert: (str: string, time: number, type?: string) => void
 }
 
 
@@ -47,6 +47,7 @@ const TextImport = (props: TextImportProps) => {
     const [settingD, setSettingD] = useState("\n"); //new line separator
 
     const textImport = useExpand() as React.MutableRefObject<HTMLDivElement>;
+    const addAlert = useContext(AlertContext);
 
     useEffect(() => {
         //if one of the setting changes, update if we should display a warning
@@ -255,7 +256,7 @@ const TextImport = (props: TextImportProps) => {
 
                 } catch (error) {
                     console.log(error); 
-                    props.addAlert("Error in input.", 5000, "error");
+                    addAlert("Error in input.", 5000, "error");
                 }
                 
                 break;
@@ -268,18 +269,18 @@ const TextImport = (props: TextImportProps) => {
 
                 if (isNaN(rowCount) || isNaN(colCount)) { //one is empty or NaN
                     if (isNaN(rowCount) && isNaN(colCount)) {
-                        props.addAlert("Enter rows and columns to reshape", 5000, "error");
+                        addAlert("Enter rows and columns to reshape", 5000, "error");
                         return;
                     } else if (!isNaN(rowCount)) { //infer cols bsed on rows
                         if (elements.length % rowCount !== 0) {
-                            props.addAlert("Invalid number of rows", 5000, "error");
+                            addAlert("Invalid number of rows", 5000, "error");
                             return;
                         }
                         
                         colCount = elements.length / rowCount;
                     } else if (!isNaN(colCount)) { //infer rows based on cols
                         if (elements.length % colCount !== 0) {
-                            props.addAlert("Invalid number of columns", 5000, "error");
+                            addAlert("Invalid number of columns", 5000, "error");
                             return;
                         }
                         

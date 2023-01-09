@@ -4,17 +4,16 @@ import SaveInput from "./SaveInput"
 import React, { useState } from "react";
 import { clearStacks, loadLocalMatrices } from "../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { logoutUser } from "../../features/user-slice";
+import { logoutUser, updateUser } from "../../features/user-slice";
+import { retry } from "../../hooks/useSaving";
 
 interface UserPanelProps {
     showWelcome: boolean
     setShowWelcome: (bool: boolean) => void
-    refreshTokens: () => Promise<boolean>
-    addAlert: (str: string, time: number, type?: string) => void
 }
 
 const UserPanel = (props: UserPanelProps) => {
-    const {username, accessToken, mergeConflict, userMatrices} = useAppSelector((state) => state.user);
+    const {username, accessToken, refreshToken, mergeConflict, userMatrices} = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
 
     const [showChangePassword, setShowChangePassword] = useState(false);
@@ -59,10 +58,7 @@ const UserPanel = (props: UserPanelProps) => {
         dispatch(clearStacks())
     }
 
-    const handleDeleteAccount = async (e: null | React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
-        if (e)
-            e.preventDefault();
-
+    const handleDeleteAccount = async (overrideAccessToken?: string) => {
         if (!deleteVerify) {
             setDeleteVerifyError("Enter your password")
             return;
@@ -73,7 +69,7 @@ const UserPanel = (props: UserPanelProps) => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + accessToken
+                "Authorization": "Bearer " + (overrideAccessToken ?? accessToken)
             },
             body: JSON.stringify({
                 username: username,
@@ -91,12 +87,8 @@ const UserPanel = (props: UserPanelProps) => {
         })
 
         if (response === 401) { 
-            if (await props.refreshTokens()) {
-                handleDeleteAccount(null); //retry
-                return;
-            } else { //refresh token invalid
-                logOut()
-            }
+            retry(handleDeleteAccount, username, refreshToken, dispatch, updateUser, logoutUser)
+            return;
         } else if (response == 403) { //Access Denied
             setDeleteVerifyError("Incorrect password")
         } else {
@@ -106,10 +98,7 @@ const UserPanel = (props: UserPanelProps) => {
         }
     }
 
-    const handleChangePassword = async (e: null | React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
-        if (e)
-            e.preventDefault();
-
+    const handleChangePassword = async (overrideAccessToken?: string) => {
         let error = false
         setCurrentPasswordError("")
         setNewPasswordError("")
@@ -134,7 +123,7 @@ const UserPanel = (props: UserPanelProps) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + accessToken
+                "Authorization": "Bearer " + (overrideAccessToken ?? accessToken)
             },
             body: JSON.stringify({
                 username: username,
@@ -154,11 +143,7 @@ const UserPanel = (props: UserPanelProps) => {
 
 
         if (response === 401) { //access token expired 
-            if (await props.refreshTokens())  {
-                handleChangePassword(null); //retry
-                return;
-            } else //refresh token invalid
-                logOut();
+            retry(handleChangePassword, username, refreshToken, dispatch, updateUser, logoutUser)
         } else if (response == 403) { //Wrong Password
             setCurrentPasswordError("Incorrect current password")
         } else {
@@ -178,7 +163,7 @@ const UserPanel = (props: UserPanelProps) => {
         
         <button onClick={toggleShowChangePassword} className={"btn btn-secondary " + styles.loginRegisterButton}>{showChangePassword ? "Close" : "Change Password"}</button>
         { showChangePassword ?
-            <form onSubmit={handleChangePassword} className={styles.loginSubBox}>
+            <form onSubmit={(e) => {e.preventDefault(); handleChangePassword();}} className={styles.loginSubBox}>
                 <SaveInput
                     name="Current Password"
                     type="password"
@@ -194,14 +179,14 @@ const UserPanel = (props: UserPanelProps) => {
                     error={newPasswordError}
                     success={newPasswordSuccess}
                 />
-                <button onClick={handleChangePassword} className={"btn btn-secondary " + styles.loginRegisterButton}>Confirm</button>
+                <button onClick={() => handleChangePassword()} className={"btn btn-secondary " + styles.loginRegisterButton}>Confirm</button>
             </form> 
         : null}
 
 
         <button onClick={toggleShowDeleteAccount} className={"btn btn-secondary " + styles.loginRegisterButton}>{showDeleteAccount ? "Cancel" : "Delete Account"}</button>
         { showDeleteAccount ?
-            <form onSubmit={handleDeleteAccount} className={styles.loginSubBox}>
+            <form onSubmit={(e) => {e.preventDefault(); handleDeleteAccount();}} className={styles.loginSubBox}>
                 <SaveInput
                     name="Verify your password"
                     type="password"
@@ -210,15 +195,13 @@ const UserPanel = (props: UserPanelProps) => {
                     error={deleteVerifyError}
                 />
 
-                <button onClick={handleDeleteAccount} className={"btn btn-danger " + styles.loginRegisterButton}>Confirm</button>
+                <button onClick={() => handleDeleteAccount()} className={"btn btn-danger " + styles.loginRegisterButton}>Confirm</button>
             </form> : null
         }
 
 
         {mergeConflict && userMatrices?
-        <MergeStorage
-            addAlert={props.addAlert}
-        /> : null}
+        <MergeStorage /> : null}
     </div>)
 }
 

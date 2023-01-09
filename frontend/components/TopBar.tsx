@@ -1,22 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../hooks/hooks';
 import styles from "./App.module.css";
 import SaveMatrices from './saving/SaveMatrices';
 import Tutorial from './Tutorial';
 
-interface TopBarProps {
-    refreshTokens: () => Promise<boolean>
-    addAlert: (str: string, time: number, type?: string) => void
-}
 
 const enum Hovering { None, Saving, Tutorial }
 
-const TopBar = (props: TopBarProps) => {
+const TopBar = () => {
     const [hovering, setHovering] = useState<Hovering>(Hovering.None);
     const [showTutorial, setShowTutorial] = useState(false);
     const [showSaveMenu, setShowSaveMenu] = useState(false);
 
     const {username, mergeConflict, saveToLocal} = useAppSelector((state) => state.user)
+
 
     useEffect(() => {
         if (localStorage.getItem("First Visit") !== "0") {
@@ -74,9 +71,7 @@ const TopBar = (props: TopBarProps) => {
         <div className={styles.floatingContainer}>
             {showSaveMenu ?
                 <SaveMatrices
-                    refreshTokens={props.refreshTokens}
                     closeSaveMenu={() => { setShowSaveMenu(false) }}
-                    addAlert={props.addAlert}
                 /> : null}
 
             {showTutorial ?

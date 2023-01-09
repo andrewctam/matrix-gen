@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useContext } from "react";
 
 import styles from "./SelectionMenu.module.css"
 
@@ -10,13 +10,13 @@ import useExpand from '../../../../hooks/useExpand';
 import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
 import { updateMatrix } from "../../../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
+import { AlertContext } from "../../../App";
 
 interface SelectionMenuProps {
     boxSelection: BoxSelection
     boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     close: () => void
     showFullInput: boolean
-    addAlert: (str: string, time: number, type?: string) => void
 }
 
 const SelectionMenu = (props: SelectionMenuProps) => {
@@ -25,7 +25,8 @@ const SelectionMenu = (props: SelectionMenuProps) => {
 
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
-
+    const addAlert = useContext(AlertContext);
+    
     const selectionMenu = useExpand() as React.MutableRefObject<HTMLDivElement>;
 
     const updateName = (parameterName: string, updated: string) => {
@@ -83,10 +84,10 @@ const SelectionMenu = (props: SelectionMenuProps) => {
                     name={"Paste Another Matrix Into Selection: "}
                     action={() => {
                         if (pasteName === "") {
-                            props.addAlert("Please enter a matrix name to paste.", 5000, "error");
+                            addAlert("Please enter a matrix name to paste.", 5000, "error");
                             return;
                         } else if (!(pasteName in matrices)) {
-                            props.addAlert(`Matrix ${pasteName} not found`, 5000, "error");
+                            addAlert(`Matrix ${pasteName} not found`, 5000, "error");
                             return;
                         }
 
@@ -103,7 +104,7 @@ const SelectionMenu = (props: SelectionMenuProps) => {
                         if (pasted)
                             matrixDispatch(updateMatrix( {"name" : selection, "matrix" : pasted}));
                         else
-                            props.addAlert("Error: Selection dimensions and pasted matrix dimensions must match.", 5000, "error");
+                            addAlert("Error: Selection dimensions and pasted matrix dimensions must match.", 5000, "error");
 
                     }}
 

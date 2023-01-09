@@ -19,8 +19,6 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 interface FloatingMenuProps {
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
-    addAlert: (str: string, time: number, type?: string) => void
-
 }
 
 
@@ -133,8 +131,6 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                 <MatrixSelector
                     multiSelected={multiSelected}
                     setMultiSelected={setMultiSelected}
-                    
-                    addAlert={props.addAlert}
                 />
 
                 <div>

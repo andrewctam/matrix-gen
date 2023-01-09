@@ -15,7 +15,6 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 interface MatrixEditorProps {
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
-    addAlert: (str: string, time: number, type?: string) => void
 }
 
 type Cell = {x: number, y: number}
@@ -115,15 +114,14 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                 <MatrixActions
                     close={close}
                     showFullInput={showFullInput}
-
-                    addAlert = {props.addAlert}/>
+                />
             : null}
 
             {matrix && props.toolActive["Math"] ?
                 <MatrixMath
                     close={close}
                     showFullInput={showFullInput}
-                    addAlert = {props.addAlert}/>
+                />
             : null}
 
             {matrix && !settings["Disable Selection"] && props.toolActive["Selection"] ?
@@ -134,7 +132,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     close={close}
                     showFullInput={showFullInput}
 
-                    addAlert = {props.addAlert}/>
+                    />
             : null}
 
             {props.toolActive["Import"] ?
@@ -143,7 +141,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     close={close}
                     showFullInput={showFullInput}
 
-                    addAlert = {props.addAlert}/>
+                />
             : null}
 
             {matrix && props.toolActive["Export"] ?

@@ -8,9 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { updateSaveToLocal } from "../../features/user-slice";
 
 interface SaveMatricesProps {
-    refreshTokens: () => Promise<boolean>
     closeSaveMenu: () => void
-    addAlert: (str: string, time: number, type?: string) => void
 }
 
 const SaveMatrices = (props: SaveMatricesProps) => {
@@ -28,8 +26,6 @@ const SaveMatrices = (props: SaveMatricesProps) => {
                     <UserPanel
                         showWelcome={showWelcome}
                         setShowWelcome={setShowWelcome}
-                        refreshTokens={props.refreshTokens}
-                        addAlert={props.addAlert}
                     />
                     :
                     <LoginForm

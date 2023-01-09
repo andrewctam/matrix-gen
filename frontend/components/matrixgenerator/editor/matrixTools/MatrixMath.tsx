@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, ReactText, useEffect  } from 'react';
+import React, { useState, useMemo, useRef, ReactText, useEffect, useContext  } from 'react';
 import styles from "./MatrixMath.module.css"
 
 import { generateUniqueName } from '../../../matrixFunctions';
@@ -8,11 +8,11 @@ import useExpand from '../../../../hooks/useExpand';
 
 import { updateAllMatrices, updateMatrix } from '../../../../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
+import { AlertContext } from '../../../App';
 
 interface MatrixMathProps {
     close: () => void
     showFullInput: boolean
-    addAlert: (str: string, time: number, type?: string) => void
 }
 
 
@@ -26,6 +26,8 @@ const MatrixMath = (props: MatrixMathProps) => {
     const [determinant, setDeterminant] = useState<number | null>(null);
     const [error, setError] = useState(false);
     const matrix = selection in matrices ? matrices[selection] : null
+
+    const addAlert = useContext(AlertContext);
 
     useEffect(() => {
         if (!matrix || matrix.length === 0 || matrix[0].length === 0 || matrix.length !== matrix[0].length) {
@@ -64,12 +66,12 @@ const MatrixMath = (props: MatrixMathProps) => {
         e.preventDefault();
 
         if (expression === "") {
-            props.addAlert("Please enter an expression", 5000, "error");
+            addAlert("Please enter an expression", 5000, "error");
             return;
         }
 
         if (settings["Decimals To Round"] === "") {
-            props.addAlert("Please enter the number of decimals to round to in the settings", 5000, "error");
+            addAlert("Please enter the number of decimals to round to in the settings", 5000, "error");
             return;
         }
 
@@ -87,19 +89,19 @@ const MatrixMath = (props: MatrixMathProps) => {
             })
         }).then((response) => {
             if (response === undefined) {
-                props.addAlert("Can not connect to server", 5000, "error");
+                addAlert("Can not connect to server", 5000, "error");
                 setError(true)
                 setDeterminant(null);
                 return null;
             }
             if (response.status === 400) {
-                props.addAlert("Expression could not be evaluated", 5000, "error");
+                addAlert("Expression could not be evaluated", 5000, "error");
                 return null;
             }
 
             return response.json()
         }).catch(error => {
-            props.addAlert("Can not connect to server", 5000, "error");
+            addAlert("Can not connect to server", 5000, "error");
             setError(true)
             setDeterminant(null);
             console.log(error)
@@ -140,13 +142,13 @@ const MatrixMath = (props: MatrixMathProps) => {
             })
         }).then((response) => {
             if (response.status === 400) {
-                props.addAlert(`Invalid matrix for ${decomp} decomposition`, 5000, "error");
+                addAlert(`Invalid matrix for ${decomp} decomposition`, 5000, "error");
                 return null;
             }
 
             return response.json()
         }).catch(error => {
-            props.addAlert("Can not connect to server", 5000, "error");
+            addAlert("Can not connect to server", 5000, "error");
             setError(true)
             console.log(error)
             return null;
@@ -163,7 +165,7 @@ const MatrixMath = (props: MatrixMathProps) => {
 
             if (decompMatrices === null) {
                 if (decomp === "determinant")
-                    props.addAlert(`Invalid matrix for ${decomp} decomposition`, 5000, "error");
+                    addAlert(`Invalid matrix for ${decomp} decomposition`, 5000, "error");
                 return;
             }
                 
@@ -182,7 +184,7 @@ const MatrixMath = (props: MatrixMathProps) => {
 
             matrixDispatch(updateAllMatrices({ "matrices": tempObj }));
 
-            props.addAlert(`Results added to matrices!`, 5000, "success");
+            addAlert(`Results added to matrices!`, 5000, "success");
         }
 
     }

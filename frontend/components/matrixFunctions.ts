@@ -48,7 +48,7 @@ export const generateUniqueName = (matrices: Matrices) => {
 }
 
 export const resizeMatrix = (matrix: string[][], rows: number, cols: number) => {
-    if (rows <= 1 || cols <= 1) { //actually inputted 0 x 0, which is 1 x 1
+    if (rows <= 1 || cols <= 1 || isNaN(rows) || isNaN(cols)) { //actually inputted 0 x 0, which is 1 x 1
         return null;
     }
 

@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import SelectorButton from "./SelectorButton";
 import styles from "./Selectors.module.css"
 
 import {resizeMatrix} from "../../matrixFunctions"
 import { Matrices, renameMatrix, updateMatrix, updateSelection } from "../../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
+import { AlertContext } from "../../App";
 
 interface MatrixSelectorProps {
     multiSelected: string[]
     setMultiSelected: (arr: string[]) => void
-    addAlert: (str: string, time: number, type?: string) => any
 }
 
 const MatrixSelector = (props: MatrixSelectorProps) => {
@@ -19,6 +19,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
     const {matrices, selection} = useAppSelector((state) => state.matricesData)
     const {mergeConflict, userMatrices} = useAppSelector((state) => state.user)
     const matrixDispatch =  useAppDispatch();
+    const addAlert = useContext(AlertContext);
 
     const updateSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
@@ -58,10 +59,10 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
         if (oldName === newName)
             return false;
         else if (newName === "") {
-            props.addAlert("The name can not be blank!", 5000, "error")
+            addAlert("The name can not be blank!", 5000, "error")
             return false;
         } else if (newName in matrices) {
-            props.addAlert(`The name ${newName} already exists!`, 5000, "error")
+            addAlert(`The name ${newName} already exists!`, 5000, "error")
             return false;
         } else {         
             matrixDispatch(renameMatrix({"oldName": oldName, "newName": newName}))
@@ -83,12 +84,12 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
                     matrixDispatch(updateMatrix({"name": name, "matrix": resized}))
                     return true;
                 } else {
-                    props.addAlert("Enter a valid number for rows and columns", 5000, "error");
+                    addAlert("Enter a valid number for rows and columns", 5000, "error");
                     return false;
                 }
 
             } else {
-                props.addAlert("Dimensions can not be zero", 5000, "error");
+                addAlert("Dimensions can not be zero", 5000, "error");
                 return false;
             }
         } else {

@@ -2,10 +2,6 @@ import { useReducer } from "react";
 import FloatingMenu from "./floatingmenu/FloatingMenu";
 import MatrixEditor from "./editor/MatrixEditor";
 
-interface MatrixGeneratorProps {
-    updateMatrixSettings: () => void
-    addAlert: (str: string, time: number, type?: string) => void
-}
 
 export interface Tools { 
     "Actions": boolean,
@@ -17,7 +13,7 @@ export interface Tools {
 
 export type ToolsAction = {type: "TOGGLE", payload: {name: keyof Tools}} | {"type": "CLOSE"}
 
-const MatrixGenerator = (props: MatrixGeneratorProps) => {
+const MatrixGenerator = () => {
     const [toolActive, toolDispatch] = useReducer((state: Tools, action: ToolsAction) => {
         const disabled: Tools = { 
             "Actions": false,
@@ -61,14 +57,12 @@ const MatrixGenerator = (props: MatrixGeneratorProps) => {
         <FloatingMenu
             toolActive={toolActive}
             toolDispatch={toolDispatch}
-            addAlert={props.addAlert}
         />
 
 
         <MatrixEditor
             toolActive={toolActive}
             toolDispatch={toolDispatch}
-            addAlert = {props.addAlert}
         />
 
     </>)

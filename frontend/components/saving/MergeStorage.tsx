@@ -1,18 +1,19 @@
 
+import { useContext } from "react";
 import { Matrices, updateAllMatrices, updateSelection } from "../../features/matrices-slice";
 import { resolveMergeConflict } from "../../features/user-slice";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { AlertContext } from "../App";
 import styles from "./MergeStorage.module.css";
 
-interface MergeStorageProps {
-    addAlert: (str: string, time: number, type?: string) => void
-}
 
-const MergeStorage = (props: MergeStorageProps) => {
-    const {matrices, selection} = useAppSelector((state) => state.matricesData);
+const MergeStorage = () => {
+    const {matrices} = useAppSelector((state) => state.matricesData);
     const {userMatrices} = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
 
+    const addAlert = useContext(AlertContext);
+    
     const merge = () => {
         // @ts-ignore, userMatrices won't be nyll
         var intersection = Object.keys(matrices).filter(x => props.userMatrices.hasOwnProperty(x));
@@ -31,7 +32,7 @@ const MergeStorage = (props: MergeStorageProps) => {
         }
 
         if (JSON.stringify(union).length > 512000) {
-            props.addAlert("Merging your matrices will exceed the maximum storage limit for accounts. Please delete some local matrices before merging.", 10000, "error");
+            addAlert("Merging your matrices will exceed the maximum storage limit for accounts. Please delete some local matrices before merging.", 10000, "error");
             return;
         }
 

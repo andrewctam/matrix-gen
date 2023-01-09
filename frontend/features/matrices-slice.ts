@@ -180,7 +180,7 @@ export const matricesSlice = createSlice({
             } catch (error) {
                 console.log(error)
                 localStorage.removeItem("matrices");
-                state = initialState;
+                return initialState;
             }
 
         },

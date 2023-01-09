@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { transpose, shuffle, mirrorRowsCols, fillEmpty, fillXY, fillAll, fillDiagonal, randomMatrix, scatter, rotate90Degrees, reshapeMatrix, resizeMatrix } from '../../../matrixFunctions';
 import styles from "./MatrixActions.module.css"
@@ -11,11 +11,11 @@ import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
 import { updateMatrix } from '../../../../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
+import { AlertContext } from '../../../App';
 
 interface MatrixActionsProps {
     close: () => void
     showFullInput: boolean
-    addAlert: (str: string, time: number, type?: string) => void
 }
 
 const MatrixActions = (props: MatrixActionsProps) => {
@@ -35,6 +35,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
 
     const {selection, matrices} = useAppSelector((state) => state.matricesData)
     const matrixDispatch = useAppDispatch();
+    const addAlert = useContext(AlertContext);
 
     const matrixActions = useExpand() as React.MutableRefObject<HTMLDivElement>;
 
@@ -201,14 +202,14 @@ const MatrixActions = (props: MatrixActionsProps) => {
                 name="Reshape To: "
                 action={() => {
                     if (parseInt(reshapeRows) > 100 || parseInt(reshapeCols) > 100) {
-                        props.addAlert("The max matrix size is 100 x 100", 5000, "error")
+                        addAlert("The max matrix size is 100 x 100", 5000, "error")
                         return;
                     }
                     const reshaped = reshapeMatrix(matrix, parseInt(reshapeRows), parseInt(reshapeCols))
                     if (reshaped)
                         matrixDispatch(updateMatrix({name: selection, matrix: reshaped}))
                     else 
-                        props.addAlert("Enter valid numbers for rows and columns.", 5000, "error")
+                        addAlert("Enter valid numbers for rows and columns.", 5000, "error")
                 }}
                 updateParameter={updateParameter}
                 id1={"reshapeRows"}
@@ -223,14 +224,14 @@ const MatrixActions = (props: MatrixActionsProps) => {
                 name="Resize To: "
                 action={() => {
                     if (parseInt(resizeRows) > 100 || parseInt(resizeCols) > 100) {
-                        props.addAlert("The max matrix size is 100 x 100", 5000, "error")
+                        addAlert("The max matrix size is 100 x 100", 5000, "error")
                         return;
                     }
                     const resized = resizeMatrix(matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
                     if (resized)
                         matrixDispatch(updateMatrix({name: selection, matrix: resized}))
                     else 
-                        props.addAlert("Enter a number for rows and columns", 5000, "error");
+                        addAlert("Enter a number for rows and columns", 5000, "error");
 
                 }}
                 updateParameter={updateParameter}
@@ -250,7 +251,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
                     if (random)
                         matrixDispatch(updateMatrix({name: selection, matrix: random}))
                     else
-                        props.addAlert(`Invalid range`, 5000, "error");
+                        addAlert(`Invalid range`, 5000, "error");
 
                 }}
                 updateParameter={updateParameter}
@@ -270,7 +271,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
                     if (scattered)
                         matrixDispatch(updateMatrix({name: selection, matrix: scattered}))
                     else   
-                        props.addAlert(`Invalid range`, 5000, "error");
+                        addAlert(`Invalid range`, 5000, "error");
 
                         
                 }}
