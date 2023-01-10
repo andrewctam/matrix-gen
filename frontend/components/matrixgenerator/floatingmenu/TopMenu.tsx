@@ -11,14 +11,15 @@ import styles from "./TopMenu.module.css"
 import useMove from '../../../hooks/useMove';
 
 import { cloneMatrix } from '../../matrixFunctions';
-import { Tools, ToolsAction } from '../MatrixGenerator';
+import { ActiveTool } from '../MatrixGenerator';
 import { deleteMatrix, redo, undo, updateAllMatrices, updateMatrix, updateSelection } from '../../../features/matrices-slice';
 import { updateSetting } from '../../../features/settings-slice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 
 interface TopMenuProps {
-    toolActive: Tools
-    toolDispatch: React.Dispatch<ToolsAction>
+    activeTool: ActiveTool
+    setActiveTool: (tool: ActiveTool) => void
+    
 }
 
 
@@ -50,7 +51,34 @@ const TopMenu = (props: TopMenuProps) => {
     }
 
     const toggleTool = (e: React.MouseEvent<HTMLButtonElement>) => {
-        props.toolDispatch({ "type": "TOGGLE", payload: {"name": (e.target as HTMLButtonElement).id  as keyof Tools} });
+        let tool = ActiveTool.None;
+        switch ((e.target as HTMLButtonElement).id) {
+            case "Actions":
+                tool = ActiveTool.Actions
+                break;
+            case "Math":
+                tool = ActiveTool.Math
+                break;
+            case "Selection":
+                tool = ActiveTool.Selection
+                break;
+            case "Export":
+                tool = ActiveTool.Export
+                break;
+            case "Import":
+                tool = ActiveTool.Import
+                break;
+
+            case "None":
+            default:
+                props.setActiveTool(ActiveTool.None)
+                return;
+        }
+
+        if (props.activeTool === tool)
+            props.setActiveTool(ActiveTool.None)
+        else
+            props.setActiveTool(tool);
     }
 
 
@@ -99,17 +127,17 @@ const TopMenu = (props: TopMenuProps) => {
             </div>
         </div>
         <div className={styles.bar}>
-            <ActiveButton name="Actions" id = {"Actions"}  active={props.toolActive["Actions"]} action={toggleTool} disabled = {! (selection in matrices)}/>
+            <ActiveButton name="Actions" id = {"Actions"}  active={props.activeTool === ActiveTool.Actions} action={toggleTool} disabled = {! (selection in matrices)}/>
 
-            <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} disabled = {! (selection in matrices)}/>
+            <ActiveButton name="Math" id = {"Math"} active={props.activeTool === ActiveTool.Math} action={toggleTool} disabled = {! (selection in matrices)}/>
 
             {!settings["Disable Selection"] ?
-                <ActiveButton name="Selection" id = {"Selection"} active={props.toolActive["Selection"]} action={toggleTool} disabled = {! (selection in matrices)}/>
+                <ActiveButton name="Selection" id = {"Selection"} active={props.activeTool === ActiveTool.Selection} action={toggleTool} disabled = {! (selection in matrices)}/>
                 : null}
 
-            <ActiveButton name="Export" id = {"Export"} active={props.toolActive["Export"]} action={toggleTool} disabled = {! (selection in matrices)}/>
+            <ActiveButton name="Export" id = {"Export"} active={props.activeTool === ActiveTool.Export} action={toggleTool} disabled = {! (selection in matrices)}/>
 
-            <ActiveButton name="Import" id = {"Import"} active={props.toolActive["Import"]} action={toggleTool} disabled = {false}/>
+            <ActiveButton name="Import" id = {"Import"} active={props.activeTool === ActiveTool.Import} action={toggleTool} disabled = {false}/>
 
         </div>
 

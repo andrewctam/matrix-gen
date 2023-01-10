@@ -50,7 +50,6 @@ const Table = (props: TableProps) => {
 
     const update = useCallback((row: number, col: number, updated: string) => {
         setShowHelpers(false)
-        console.log("1")
         dispatch(updateEntry({
             "name": props.selection,
             "row": row,

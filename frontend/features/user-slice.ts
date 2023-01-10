@@ -36,7 +36,7 @@ export const userSlice = createSlice({
             localStorage.setItem("accessToken", state.accessToken);
             localStorage.setItem("refreshToken", state.refreshToken);
         },
-        logoutUser: (state: User) => {
+        clearUser: (state: User) => {
             state.username = "";
             state.accessToken = "";
             state.refreshToken = "";
@@ -47,6 +47,7 @@ export const userSlice = createSlice({
         },
         declareMergeConflict: (state: User, action: PayloadAction<Matrices>) => {
             state.mergeConflict = true;
+            console.log(action.payload)
             state.userMatrices = action.payload;
         },
         resolveMergeConflict: (state: User) => {
@@ -60,7 +61,5 @@ export const userSlice = createSlice({
     }
 })
 
-export const {updateUser, logoutUser, declareMergeConflict, resolveMergeConflict, updateSaveToLocal} = userSlice.actions;
-export type UpdateUser = typeof updateUser
-export type LogoutUser = typeof logoutUser
+export const {updateUser, clearUser, declareMergeConflict, resolveMergeConflict, updateSaveToLocal} = userSlice.actions;
 export default userSlice.reducer;

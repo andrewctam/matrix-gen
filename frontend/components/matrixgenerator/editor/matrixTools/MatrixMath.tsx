@@ -34,7 +34,7 @@ const MatrixMath = (props: MatrixMathProps) => {
             setDeterminant(null);
             return;
         }
-
+        
         calculateDecomp("determinant");
     }, [matrix])
 

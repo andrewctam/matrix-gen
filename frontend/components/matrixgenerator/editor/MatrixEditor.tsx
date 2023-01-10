@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useReducer, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styles from "./MatrixEditor.module.css"
 import Table from "./table/Table"
 import MatrixExport from "./matrixTools/MatrixExport"
@@ -7,15 +7,15 @@ import MatrixActions from './matrixTools/MatrixActions';
 import TextImport from './matrixTools/TextImport';
 import SelectionMenu from './matrixTools/SelectionMenu';
 
-import { editSelection, pasteMatrix, spliceMatrix } from '../../matrixFunctions';
-import { Tools, ToolsAction } from '../MatrixGenerator';
+import { pasteMatrix, spliceMatrix } from '../../matrixFunctions';
 import { backspaceBoxSelection, BoxSelection, clearBoxSelection, updateEntry, updateMatrix } from '../../../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 import { AlertContext } from '../../App';
+import { ActiveTool } from '../MatrixGenerator';
 
 interface MatrixEditorProps {
-    toolActive: Tools
-    toolDispatch: React.Dispatch<ToolsAction>
+    activeTool: ActiveTool
+    setActiveTool: (tool: ActiveTool) => void
 }
 
 const MatrixEditor = (props: MatrixEditorProps) => {
@@ -100,7 +100,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
 
     const close = () => {
-        props.toolDispatch({"type": "CLOSE"})
+        props.setActiveTool(ActiveTool.None)
     }
 
     const formatName = (str: string) => {
@@ -142,21 +142,21 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
     return (
         <div className={styles.matrixEditor}>
-            {matrix && props.toolActive["Actions"] ?
+            {matrix && props.activeTool === ActiveTool.Actions ?
                 <MatrixActions
                     close={close}
                     showFullInput={showFullInput}
                 />
             : null}
 
-            {matrix && props.toolActive["Math"] ?
+            {matrix && props.activeTool === ActiveTool.Math ?
                 <MatrixMath
                     close={close}
                     showFullInput={showFullInput}
                 />
             : null}
 
-            {matrix && !settings["Disable Selection"] && props.toolActive["Selection"] ?
+            {matrix && !settings["Disable Selection"] && props.activeTool === ActiveTool.Selection ?
                 <SelectionMenu
                     close={close}
                     showFullInput={showFullInput}
@@ -164,7 +164,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     />
             : null}
 
-            {props.toolActive["Import"] ?
+            {props.activeTool === ActiveTool.Import ?
                 <TextImport
                     currentName={selection}
                     close={close}
@@ -173,7 +173,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                 />
             : null}
 
-            {matrix && props.toolActive["Export"] ?
+            {matrix && props.activeTool === ActiveTool.Export ?
                 <MatrixExport
                     matrix={matrix}
                     close={close}
@@ -202,7 +202,6 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                 id = {"fullInput"}
                 onChange={(e) => {
                     e.stopPropagation()
-                    console.log("full")
                     dispatch(updateEntry({
                         "name": selection, 
                         "row": boxSelection.start.x,

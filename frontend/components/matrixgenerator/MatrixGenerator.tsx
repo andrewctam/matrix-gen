@@ -1,57 +1,18 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useState } from "react";
 import TopMenu from "./floatingmenu/TopMenu";
 import MatrixEditor from "./editor/MatrixEditor";
 import { useAppDispatch } from "../../hooks/hooks";
 import { redo, undo } from "../../features/matrices-slice";
 
 
-export interface Tools { 
-    "Actions": boolean,
-    "Export": boolean,
-    "Math": boolean,
-    "Import": boolean,
-    "Selection": boolean
+export const enum ActiveTool {
+    Actions, Export, Math, Import, Selection, None
 }
 
-export type ToolsAction = {type: "TOGGLE", payload: {name: keyof Tools}} | {"type": "CLOSE"}
 
 const MatrixGenerator = () => {
     const dispatch = useAppDispatch();
-    const [toolActive, toolDispatch] = useReducer((state: Tools, action: ToolsAction) => {
-        const disabled: Tools = { 
-            "Actions": false,
-            "Export": false,
-            "Math": false,
-            "Import": false,
-            "Selection": false
-        } //only one can be active at a time
-
-        switch (action.type) {
-            case "TOGGLE":
-                if (typeof action.payload.name !== "string" &&
-                  !(action.payload.name === "Actions" || 
-                    action.payload.name === "Export" || 
-                    action.payload.name === "Math" || 
-                    action.payload.name === "Import" || 
-                    action.payload.name === "Selection"
-                ))
-                    return state;
-                    
-                disabled[action.payload.name] = !state[action.payload.name];
-                
-                return disabled;
-            case "CLOSE":
-                return disabled;
-            default:
-                return state;
-        }
-    }, {
-        "Actions": false,
-        "Export": false,
-        "Math": false,
-        "Import": false,
-        "Selection": false
-    });
+    const [activeTool, setActiveTool] = useState<ActiveTool>(ActiveTool.None);
 
 
     useEffect(() => {
@@ -75,14 +36,14 @@ const MatrixGenerator = () => {
 
     return (<>
         <TopMenu
-            toolActive={toolActive}
-            toolDispatch={toolDispatch}
+            activeTool={activeTool}
+            setActiveTool = {setActiveTool}
         />
 
 
         <MatrixEditor
-            toolActive={toolActive}
-            toolDispatch={toolDispatch}
+            activeTool={activeTool}
+            setActiveTool = {setActiveTool}
         />
 
     </>)

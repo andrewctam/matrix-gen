@@ -7,7 +7,6 @@ import { generateUniqueName, spliceMatrix, pasteMatrix } from "../../../matrixFu
 import TextActionButton from '../../../buttons/TextActionButton'
 import Toggle from '../../../buttons/Toggle';
 import useExpand from '../../../../hooks/useExpand';
-import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
 import { updateMatrix } from "../../../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 import { AlertContext } from "../../../App";

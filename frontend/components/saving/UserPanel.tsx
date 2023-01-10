@@ -4,7 +4,7 @@ import SaveInput from "./SaveInput"
 import React, { useState } from "react";
 import { clearStacks, loadLocalMatrices } from "../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { logoutUser, updateUser } from "../../features/user-slice";
+import { clearUser, updateUser } from "../../features/user-slice";
 import { retry } from "../../hooks/useSaving";
 
 interface UserPanelProps {
@@ -53,7 +53,7 @@ const UserPanel = (props: UserPanelProps) => {
 
     const logOut = () => {
         props.setShowWelcome(false)
-        dispatch(logoutUser());
+        dispatch(clearUser());
         dispatch(loadLocalMatrices())
         dispatch(clearStacks())
     }
@@ -86,9 +86,12 @@ const UserPanel = (props: UserPanelProps) => {
             console.log(error);
         })
 
-        if (response === 401) { 
-            retry(handleDeleteAccount, username, refreshToken, dispatch, updateUser, logoutUser)
-            return;
+        if (response === 401) {
+            const [access, refresh] =  await retry(handleDeleteAccount, refreshToken)
+            if (access && refresh) {
+                dispatch(updateUser({ username: username, accessToken: access, refreshToken: refresh }))
+            } else
+                dispatch(clearUser());
         } else if (response == 403) { //Access Denied
             setDeleteVerifyError("Incorrect password")
         } else {
@@ -143,7 +146,12 @@ const UserPanel = (props: UserPanelProps) => {
 
 
         if (response === 401) { //access token expired 
-            retry(handleChangePassword, username, refreshToken, dispatch, updateUser, logoutUser)
+            const [access, refresh] =  await retry(handleChangePassword, refreshToken)
+            if (access && refresh) {
+                dispatch(updateUser({ username: username, accessToken: access, refreshToken: refresh }))
+            } else
+                dispatch(clearUser());
+
         } else if (response == 403) { //Wrong Password
             setCurrentPasswordError("Incorrect current password")
         } else {

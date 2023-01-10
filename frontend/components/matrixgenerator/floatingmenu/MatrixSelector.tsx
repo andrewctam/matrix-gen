@@ -109,8 +109,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
 
     let intersection: string[] = [];
     if (mergeConflict && userMatrices) {
-        // @ts-ignore: Object is possibly 'null'. props.userMatrices below can't be null.
-        intersection = Object.keys(matrices).filter(x => props.userMatrices.hasOwnProperty(x));
+        intersection = Object.keys(matrices).filter(x => userMatrices.hasOwnProperty(x));
     }
 
     let selectors: JSX.Element | JSX.Element[];

@@ -8,7 +8,7 @@ export const AlertContext = createContext<AddAlert>( () => {});
 
 const App = () => {
     const [alerts, addAlert] = useAlert();
-    const doneLoading = useSaving(addAlert);
+    const doneLoading = useSaving();
 
     if (!doneLoading)
         return null
