@@ -1,25 +1,23 @@
 import styles from "./Table.module.css"
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { editSelection } from '../../../matrixFunctions';
 import Box from './Box';
-import { BoxSelection, BoxSelectionAction } from "../MatrixEditor";
-import { addCol, addRow, addRowAndCol, deleteRowCol, updateEntry, updateMatrix } from "../../../../features/matrices-slice";
+import { addCol, addRow, addRowAndCol, deleteRowCol, setBoxSelection, updateEntry, updateMatrix } from "../../../../features/matrices-slice";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 
 interface TableProps {
-    name: string
+    selection: string
     matrix: string[][]
-    boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
-    boxSelection: BoxSelection
-    mouseDown: React.MutableRefObject<boolean>
-    lastValue: string | null
+    backspaceSelection: (e: React.KeyboardEvent) => void
 }
 
 const Table = (props: TableProps) => {
-    const matrixDispatch = useAppDispatch();
+    const {boxSelection} = useAppSelector(state => state.matricesData);
+    const dispatch = useAppDispatch();
     const settings = useAppSelector((state) => state.settings);
 
     const [showHelpers, setShowHelpers] = useState(false);
+    const mouseDown = useRef<boolean>(false);
 
     useEffect(() => {
         if (window.innerWidth > 576 && localStorage.getItem("First Visit") === null) {
@@ -31,58 +29,39 @@ const Table = (props: TableProps) => {
     const addRowCol = useCallback((row: number, col: number, updated: string, type: "ADD_ROW" | "ADD_COL" | "ADD_ROW_AND_COL") => {
         setShowHelpers(false)
 
-        props.boxSelectionDispatch({ //select this box
-            type: "SET_BOTH", payload: {
-                start: { x: row, y: col },
-                end: { x: row, y: col }
-            }
-        });
+        dispatch(setBoxSelection({
+            start: { x: row, y: col },
+            end: { x: row, y: col }
+        }))
+       
         switch (type) {
             case "ADD_ROW":
-                matrixDispatch(addRow({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"] }))
+                dispatch(addRow({ "name": props.selection, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"] }))
                 break;
             case "ADD_COL":
-                matrixDispatch(addCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"]}))
+                dispatch(addCol({ "name": props.selection, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"]}))
                 break;
             case "ADD_ROW_AND_COL":
-                matrixDispatch(addRowAndCol({ "name": props.name, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"]}))
+                dispatch(addRowAndCol({ "name": props.selection, "row": row, "col": col, "updated": updated, "mirror": settings["Mirror Inputs"]}))
                 break;
         }
 
-    }, [props.name, settings["Mirror Inputs"]]);
+    }, [props.selection, settings["Mirror Inputs"]]);
 
     const update = useCallback((row: number, col: number, updated: string) => {
         setShowHelpers(false)
-        matrixDispatch(updateEntry({
-            "name": props.name,
+        console.log("1")
+        dispatch(updateEntry({
+            "name": props.selection,
             "row": row,
             "col": col,
             "updated": updated,
             "mirror": settings["Mirror Inputs"]
         }))
 
-    }, [props.name, settings["Mirror Inputs"]]);
+    }, [props.selection, settings["Mirror Inputs"]]);
 
-    const backspaceSelection = (e: React.KeyboardEvent) => {
-        if (e.key !== "Backspace" || settings["Disable Selection"])
-            return
-            
-
-        if (props.boxSelection && ( //only delete if there is a selection larger than 1x1
-            props.boxSelection.start.x !== props.boxSelection.end.x ||
-            props.boxSelection.start.y !== props.boxSelection.end.y)) {
-
-            e.preventDefault();
-
-            let matrix = editSelection(props.matrix, 8,
-                            props.boxSelection.start.x,
-                            props.boxSelection.start.y,
-                            props.boxSelection.end.x,
-                            props.boxSelection.end.y)
-
-            matrixDispatch(updateMatrix({"name": props.name, "matrix": matrix}))
-        }
-    }
+    
 
     const keyDown = useCallback((row: number, col: number, e: React.KeyboardEvent<HTMLInputElement>) => {
         const lastRow = row === props.matrix.length - 1
@@ -92,16 +71,16 @@ const Table = (props: TableProps) => {
         //shift
         if (e.key === "Shift") {
             if (lastRow && lastCol) //add both
-                matrixDispatch(addRowAndCol({
-                    "name": props.name,
+                dispatch(addRowAndCol({
+                    "name": props.selection,
                     "row": row,
                     "col": col,
                     "updated": "",
                     "mirror": settings["Mirror Inputs"]
                 }))
             else if (lastRow) //add row
-                matrixDispatch(addRow({
-                    "name": props.name,
+                dispatch(addRow({
+                    "name": props.selection,
                     "row": row,
                     "col": col,
                     "updated": "",
@@ -109,8 +88,8 @@ const Table = (props: TableProps) => {
                     "mirror": settings["Mirror Inputs"]
                 }))
             else if (lastCol) //add col
-                matrixDispatch(addCol({
-                    "name": props.name,
+                dispatch(addCol({
+                    "name": props.selection,
                     "row": row,
                     "col": col,
                     "updated": "",
@@ -123,8 +102,8 @@ const Table = (props: TableProps) => {
         else if (e.key === "Enter") {
             e.preventDefault();
             if (lastRow && lastCol) { //add both if just on corner box
-                matrixDispatch(addRowAndCol({
-                    "name": props.name,
+                dispatch(addRowAndCol({
+                    "name": props.selection,
                     "row": row + 1,
                     "col": col + 1,
                     "updated": "",
@@ -132,8 +111,8 @@ const Table = (props: TableProps) => {
                 }))
             } else if (lastCol) { //add row at this pos
                 if (e.metaKey) {
-                    matrixDispatch(addRow({
-                        "name": props.name,
+                    dispatch(addRow({
+                        "name": props.selection,
                         "row": row,
                         "col": col,
                         "updated": "",
@@ -145,8 +124,8 @@ const Table = (props: TableProps) => {
                     if (newRowCell)
                         newRowCell.focus();
                 } else {
-                    matrixDispatch(addRow({
-                        "name": props.name,
+                    dispatch(addRow({
+                        "name": props.selection,
                         "row": row,
                         "col": col,
                         "updated": "",
@@ -156,8 +135,8 @@ const Table = (props: TableProps) => {
                 }
             } else if (lastRow) { //add col at this pos
                 if (e.metaKey) {
-                    matrixDispatch(addCol({
-                        "name": props.name,
+                    dispatch(addCol({
+                        "name": props.selection,
                         "row": row,
                         "col": col,
                         "updated": "",
@@ -168,8 +147,8 @@ const Table = (props: TableProps) => {
                     if (newColCell)
                     newColCell.focus();
                 } else {
-                    matrixDispatch(addCol({
-                        "name": props.name,
+                    dispatch(addCol({
+                        "name": props.selection,
                         "row": row,
                         "col": col,
                         "updated": "",
@@ -184,8 +163,8 @@ const Table = (props: TableProps) => {
         else if (e.key === "Backspace") {
             if (lastRow && lastCol) {//delete both
                 if (props.matrix.length === 2 && col > 1) {//2 rows, so delete columns
-                    matrixDispatch(deleteRowCol({
-                        "name": props.name,
+                    dispatch(deleteRowCol({
+                        "name": props.selection,
                         "col": col - 1,
                     }))
 
@@ -194,8 +173,8 @@ const Table = (props: TableProps) => {
                         prevColCell.focus();
                 } else if (props.matrix[0].length === 2 && row > 1) { //2 cols, so delete rows
                    
-                    matrixDispatch(deleteRowCol({
-                        "name": props.name,
+                    dispatch(deleteRowCol({
+                        "name": props.selection,
                         "row": row - 1,
                     }))
                     let prevRowCell = document.getElementById((row - 1) + ":" + (col))
@@ -203,8 +182,8 @@ const Table = (props: TableProps) => {
                         prevRowCell.focus();
 
                 } else if (row > 1 && col > 1) { //delete both
-                    matrixDispatch(deleteRowCol({
-                        "name": props.name,
+                    dispatch(deleteRowCol({
+                        "name": props.selection,
                         "row": row - 1,
                         "col": col - 1,
                     }))
@@ -216,8 +195,8 @@ const Table = (props: TableProps) => {
             } else if (lastCol) {//last col
                 if (e.metaKey) { //delete this row
                     if (props.matrix.length > 2)
-                        matrixDispatch(deleteRowCol({
-                            "name": props.name,
+                        dispatch(deleteRowCol({
+                            "name": props.selection,
                             "row": row,
                         }))
                     if (row > 0) {
@@ -227,8 +206,8 @@ const Table = (props: TableProps) => {
                     }
                 } else { //delete last col
                     if (props.matrix[0].length > 2) {       
-                        matrixDispatch(deleteRowCol({
-                            "name": props.name,
+                        dispatch(deleteRowCol({
+                            "name": props.selection,
                             "col": col - 1,
                         }))
                         let prevColCell = document.getElementById((row) + ":" + (col - 1))
@@ -239,8 +218,8 @@ const Table = (props: TableProps) => {
             } else if (lastRow) { //last row
                 if (e.metaKey) { //delete this col
                     if (props.matrix[0].length > 2)   
-                        matrixDispatch(deleteRowCol({
-                            "name": props.name,
+                        dispatch(deleteRowCol({
+                            "name": props.selection,
                             "col": col,
                         }))
 
@@ -251,8 +230,8 @@ const Table = (props: TableProps) => {
                     }
                 } else { //delete last row
                     if (props.matrix.length > 2) {
-                        matrixDispatch(deleteRowCol({
-                            "name": props.name,
+                        dispatch(deleteRowCol({
+                            "name": props.selection,
                             "row": row - 1,
                         }))
 
@@ -332,48 +311,17 @@ const Table = (props: TableProps) => {
                     input.focus();
             }
         }
-    }, [props.name, props.matrix.length, props.matrix[0].length, settings["Mirror Inputs"]]); //don't care about the matrix itself for this function. resizing will cause an entire rerender, but that is ok since it is less frequent
+    }, [props.selection, props.matrix.length, props.matrix[0].length, settings["Mirror Inputs"]]); //don't care about the matrix itself for this function. resizing will cause an entire rerender, but that is ok since it is less frequent
 
-    useEffect(() => { //if the user changed a box and they have a selection, update the entire selection
-        if (props.lastValue !== null && !settings["Disable Selection"] && props.boxSelection &&
-            (props.boxSelection.start.x !== props.boxSelection.end.x || props.boxSelection.start.y !== props.boxSelection.end.y) &&
-            props.lastValue !== props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]) {
 
-            const preserveBox = props.matrix[props.boxSelection.start.x][props.boxSelection.start.y]
 
-            const lenDiff = preserveBox.length - props.lastValue.length;
-
-            if (lenDiff <= 0)
-                return;
-
-            let difference = "";
-            for (let i = 0; i < preserveBox.length; i++) {
-                if (preserveBox.charAt(i) !== props.lastValue.charAt(i)) {
-                    difference = preserveBox.substring(i, i + lenDiff);
-                    break;
-                }
-            }
-
-            const edited = editSelection(props.matrix, difference, props.boxSelection.start.x,
-                props.boxSelection.start.y,
-                props.boxSelection.end.x,
-                props.boxSelection.end.y)
-
-            edited[props.boxSelection.start.x][props.boxSelection.start.y] = preserveBox;
-
-            matrixDispatch(updateMatrix({ "name": props.name, "matrix": edited }))
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.lastValue, props.boxSelection, props.matrix, props.name, matrixDispatch])
-
-    const inSelection = (x: number, y: number) => {
-        if (props.boxSelection === null)
+    const inBoxSelection = (x: number, y: number) => {
+        if (boxSelection === null)
             return false;
-        let x1 = props.boxSelection.start.x
-        let y1 = props.boxSelection.start.y
-        let x2 = props.boxSelection.end.x
-        let y2 = props.boxSelection.end.y
+        let x1 = boxSelection.start.x
+        let y1 = boxSelection.start.y
+        let x2 = boxSelection.end.x
+        let y2 = boxSelection.end.y
 
         let minX = Math.min(x1, x2)
         let maxX = Math.max(x1, x2)
@@ -396,13 +344,9 @@ const Table = (props: TableProps) => {
 
         for (let j = 0; j < cols; j++) {
             eachRow[j] = <Box
-                name={props.name}
-
                 addRowCol={addRowCol}
                 update={update}
                 keyDown={keyDown}
-
-                boxSelectionDispatch={props.boxSelectionDispatch}
 
                 rows={props.matrix.length}
                 cols={props.matrix[0].length}
@@ -411,8 +355,8 @@ const Table = (props: TableProps) => {
                 val={props.matrix[i][j]}
                 key={i + ";" + j}
 
-                boxSelected={!settings["Disable Selection"] ? inSelection(i, j) : false}
-                mouseDown={props.mouseDown}
+                boxSelected={!settings["Disable Selection"] ? inBoxSelection(i, j) : false}
+                mouseDown={mouseDown}
             />
         }
 
@@ -420,14 +364,7 @@ const Table = (props: TableProps) => {
     }
 
     return (
-        <div className={"d-flex justify-content-center"}
-            id="hide"
-            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                if ((e.target as HTMLDivElement).id === "hide") {
-                    props.boxSelectionDispatch({ "type": "CLEAR" });
-                }
-            }}
-            onKeyDown={backspaceSelection}>
+        <div className={"d-flex justify-content-center"} id="hide" onKeyDown={props.backspaceSelection} onMouseUp={() => { mouseDown.current = false }}>
 
             {showHelpers ?
                 <div className={"d-flex justify-content-end " + styles.helperLeft}>

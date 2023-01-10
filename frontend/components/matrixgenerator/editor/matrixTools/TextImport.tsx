@@ -23,7 +23,7 @@ interface TextImportProps {
 
 const TextImport = (props: TextImportProps) => {
     const {matrices} = useAppSelector((state) => state.matricesData);
-    const matrixDispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
     const [overwrite, setOverwrite] = useState(true);
     const [displayWarning, setDisplayWarning] = useState(true);
@@ -214,7 +214,7 @@ const TextImport = (props: TextImportProps) => {
 
                 //remove empty rows
                 matrix.push(Array(maxLen).fill(""));
-                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
+                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
                 
                 break;
                 
@@ -252,7 +252,7 @@ const TextImport = (props: TextImportProps) => {
 
                 //add empty row
                 matrix.push(Array(maxLen).fill(""));
-                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
+                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
 
                 } catch (error) {
                     console.log(error); 
@@ -306,7 +306,7 @@ const TextImport = (props: TextImportProps) => {
                 }
 
 
-                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
+                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
                 break;
 
             case "LaTeX":
@@ -362,8 +362,8 @@ const TextImport = (props: TextImportProps) => {
                             });
                     }
                 }
-                matrixDispatch(updateMatrix({"name" : name, "matrix" : matrix}));
-                matrixDispatch(updateSelection(name));
+                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
+                dispatch(updateSelection(name));
                 break;
 
             default: break;

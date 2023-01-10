@@ -20,7 +20,6 @@ const TopBar = () => {
             setShowTutorial(true);
         }
     }, []);
-    
 
 
     if (mergeConflict) {
@@ -70,13 +69,12 @@ const TopBar = () => {
 
         <div className={styles.floatingContainer}>
             {showSaveMenu ?
-                <SaveMatrices
-                    closeSaveMenu={() => { setShowSaveMenu(false) }}
-                /> : null}
+                <SaveMatrices closeSaveMenu={() => { setShowSaveMenu(false) }} />
+            : null}
 
             {showTutorial ?
                 <Tutorial closeTutorial={() => { setShowTutorial(false) }} />
-                : null}
+            : null}
         </div>
 
     </div>

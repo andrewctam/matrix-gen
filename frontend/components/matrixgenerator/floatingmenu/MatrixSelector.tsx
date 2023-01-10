@@ -18,7 +18,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
 
     const {matrices, selection} = useAppSelector((state) => state.matricesData)
     const {mergeConflict, userMatrices} = useAppSelector((state) => state.user)
-    const matrixDispatch =  useAppDispatch();
+    const dispatch =  useAppDispatch();
     const addAlert = useContext(AlertContext);
 
     const updateSearchName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,8 +65,8 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
             addAlert(`The name ${newName} already exists!`, 5000, "error")
             return false;
         } else {         
-            matrixDispatch(renameMatrix({"oldName": oldName, "newName": newName}))
-            matrixDispatch(updateSelection(newName))
+            dispatch(renameMatrix({"oldName": oldName, "newName": newName}))
+            dispatch(updateSelection(newName))
 
             return true;
         }
@@ -81,7 +81,7 @@ const MatrixSelector = (props: MatrixSelectorProps) => {
             if (rows > 0 && cols > 0) {
                 const resized = resizeMatrix(matrices[name], rows + 1, cols + 1)
                 if (resized) {
-                    matrixDispatch(updateMatrix({"name": name, "matrix": resized}))
+                    dispatch(updateMatrix({"name": name, "matrix": resized}))
                     return true;
                 } else {
                     addAlert("Enter a valid number for rows and columns", 5000, "error");

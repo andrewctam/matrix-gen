@@ -23,7 +23,7 @@ const SelectorButton = (props: SelectorButtonProps) => {
     const [displaySize, setDisplaySize] = useState("");
     const [editingSize, setEditingSize] = useState(false);
     
-    const matrixDispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
     const updateRename = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updated = (e.target as HTMLInputElement).value;
@@ -50,7 +50,7 @@ const SelectorButton = (props: SelectorButtonProps) => {
         if (e.metaKey) {
             props.toggleMultiSelect(props.name);
         } else {
-            matrixDispatch(updateSelection(props.name))
+            dispatch(updateSelection(props.name))
             props.toggleMultiSelect(undefined);
         }
 

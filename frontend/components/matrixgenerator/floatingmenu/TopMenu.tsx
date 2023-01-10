@@ -7,22 +7,22 @@ import ParameterTextInput from '../../inputs/ParameterTextInput';
 
 import BasicActionButton from '../../buttons/BasicActionButton';
 import ActiveButton from '../../buttons/ActiveButton';
-import styles from "./FloatingMenu.module.css"
+import styles from "./TopMenu.module.css"
 import useMove from '../../../hooks/useMove';
 
 import { cloneMatrix } from '../../matrixFunctions';
 import { Tools, ToolsAction } from '../MatrixGenerator';
-import { deleteMatrix, Matrices, redo, undo, updateAllMatrices, updateMatrix, updateSelection } from '../../../features/matrices-slice';
+import { deleteMatrix, redo, undo, updateAllMatrices, updateMatrix, updateSelection } from '../../../features/matrices-slice';
 import { updateSetting } from '../../../features/settings-slice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 
-interface FloatingMenuProps {
+interface TopMenuProps {
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
 }
 
 
-const FloatingMenu = (props: FloatingMenuProps) => {
+const TopMenu = (props: TopMenuProps) => {
 
     const {matrices, selection, undoStack, redoStack} = useAppSelector((state) => state.matricesData)
     const settings = useAppSelector((state) => state.settings )
@@ -52,7 +52,6 @@ const FloatingMenu = (props: FloatingMenuProps) => {
     const toggleTool = (e: React.MouseEvent<HTMLButtonElement>) => {
         props.toolDispatch({ "type": "TOGGLE", payload: {"name": (e.target as HTMLButtonElement).id  as keyof Tools} });
     }
-
 
 
     const deleteSelectedMatrices = (matricesToDelete: string[]) => {
@@ -100,8 +99,6 @@ const FloatingMenu = (props: FloatingMenuProps) => {
             </div>
         </div>
         <div className={styles.bar}>
-
-
             <ActiveButton name="Actions" id = {"Actions"}  active={props.toolActive["Actions"]} action={toggleTool} disabled = {! (selection in matrices)}/>
 
             <ActiveButton name="Math" id = {"Math"} active={props.toolActive["Math"]} action={toggleTool} disabled = {! (selection in matrices)}/>
@@ -113,8 +110,6 @@ const FloatingMenu = (props: FloatingMenuProps) => {
             <ActiveButton name="Export" id = {"Export"} active={props.toolActive["Export"]} action={toggleTool} disabled = {! (selection in matrices)}/>
 
             <ActiveButton name="Import" id = {"Import"} active={props.toolActive["Import"]} action={toggleTool} disabled = {false}/>
-
-
 
         </div>
 
@@ -180,15 +175,13 @@ const FloatingMenu = (props: FloatingMenuProps) => {
 
 
         {showSettings ?
-            <div 
-            className={styles.settingsMenu} 
-            ref={settingsRef}
-            style={window.innerWidth < 1133 ? undefined : { 
-                left: settingsX,
-                top: settingsY, 
-                zIndex: lastClicked === "settings" ? 5 : 4 }}
-                onMouseDown = {() => {setLastClicked("settings")}}
-                >
+            <div ref={settingsRef} className={styles.settingsMenu} style={
+                window.innerWidth < 1133 ? undefined : { 
+                    left: settingsX,
+                    top: settingsY, 
+                    zIndex: lastClicked === "settings" ? 5 : 4 }}
+                    onMouseDown = {() => {setLastClicked("settings")}}>
+
                 <ParameterBoxInput isChecked={settings["Mirror Inputs"]} name={"Mirror Inputs"} updateParameter={setSetting} />
                 <ParameterBoxInput isChecked={settings["Disable Selection"]} name={"Disable Selection"} updateParameter={setSetting} />
                 <ParameterBoxInput isChecked={settings["Numbers Only Input"]} name={"Numbers Only Input"} updateParameter={setSetting} />
@@ -205,11 +198,11 @@ const FloatingMenu = (props: FloatingMenuProps) => {
                 </div>
 
             </div>
-            : null}
+        : null}
 
 
 
     </div>)
 }
 
-export default FloatingMenu
+export default TopMenu

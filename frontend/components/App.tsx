@@ -8,11 +8,12 @@ export const AlertContext = createContext<AddAlert>( () => {});
 
 const App = () => {
     const [alerts, addAlert] = useAlert();
-    const [doneLoading, refreshTokens] = useSaving(addAlert);
+    const doneLoading = useSaving(addAlert);
 
     if (!doneLoading)
         return null
 
+    
     return (
         <AlertContext.Provider value = {addAlert}> 
             {alerts}

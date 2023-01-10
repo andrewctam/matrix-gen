@@ -1,6 +1,8 @@
-import { useReducer } from "react";
-import FloatingMenu from "./floatingmenu/FloatingMenu";
+import { useEffect, useReducer } from "react";
+import TopMenu from "./floatingmenu/TopMenu";
 import MatrixEditor from "./editor/MatrixEditor";
+import { useAppDispatch } from "../../hooks/hooks";
+import { redo, undo } from "../../features/matrices-slice";
 
 
 export interface Tools { 
@@ -14,6 +16,7 @@ export interface Tools {
 export type ToolsAction = {type: "TOGGLE", payload: {name: keyof Tools}} | {"type": "CLOSE"}
 
 const MatrixGenerator = () => {
+    const dispatch = useAppDispatch();
     const [toolActive, toolDispatch] = useReducer((state: Tools, action: ToolsAction) => {
         const disabled: Tools = { 
             "Actions": false,
@@ -51,10 +54,27 @@ const MatrixGenerator = () => {
     });
 
 
+    useEffect(() => {
+        const handleUndoRedo = (e: KeyboardEvent) => {
+            if (e.metaKey && (!document.activeElement || document.activeElement.tagName !== "INPUT")) {
+                if (e.key === "z") {
+                    dispatch(undo());
+                } else if (e.key === "y") {
+                    dispatch(redo());
+                }
+            }
+        }
+
+        window.addEventListener('keydown', handleUndoRedo)
+
+        return () => removeEventListener('keydown', handleUndoRedo)
+    }, [])
+
+
 
 
     return (<>
-        <FloatingMenu
+        <TopMenu
             toolActive={toolActive}
             toolDispatch={toolDispatch}
         />

@@ -1,15 +1,13 @@
 import React, {memo} from 'react';
-import { useAppSelector } from '../../../../hooks/hooks';
+import { clearBoxSelection, setBoxSelection, setBoxSelectionEnd } from '../../../../features/matrices-slice';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/hooks';
 
-import { BoxSelectionAction } from '../MatrixEditor';
 import styles from "./Box.module.css"
 
 interface BoxProps {
-    name: string
     addRowCol: (row: number, col: number, updated: string, type: "ADD_ROW" | "ADD_COL" | "ADD_ROW_AND_COL") => void
     update: (row: number, col: number, updated: string) => void
     keyDown: (row: number, col: number, e: React.KeyboardEvent<HTMLInputElement>) => void
-    boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     rows: number
     cols: number
     row: number
@@ -22,37 +20,35 @@ interface BoxProps {
 }
 const Box = (props: BoxProps) => {
     const settings = useAppSelector((state) => state.settings);
-    
+    const dispatch = useAppDispatch()
     const handleMouseDown = () => {
         //set the start of the selection
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             props.mouseDown.current = true
-            props.boxSelectionDispatch({type: "SET_BOTH", payload: {
+            dispatch(setBoxSelection({
                 start: {x: props.row, y: props.col}, 
                 end: {x: props.row, y: props.col}
-            }});
+            }));
         }
 
     }
     const handleFocus = () => {
         if (props.rows !== props.row + 1 && props.cols !== props.col + 1) {
             //select this one box
-            props.boxSelectionDispatch({type: "SET_BOTH", payload: {
+            dispatch(setBoxSelection({
                 start: {x: props.row, y: props.col}, 
                 end: {x: props.row, y: props.col}
-            }});
+            }));
         } else {
             //no selection for the last row/col
-            props.boxSelectionDispatch({type: "CLEAR"});
+            dispatch(clearBoxSelection());
         }
     }
 
     const handleMouseEnter = () => {
         //if mouse is enters and is down (i.e. dragging) set this to the end of the selection
         if (props.mouseDown.current && props.rows !== props.row + 1 && props.cols !== props.col + 1)
-            props.boxSelectionDispatch({type: "SET_END", payload: {
-                end: {x: props.row, y: props.col}
-            }});
+            dispatch(setBoxSelectionEnd({x: props.row, y: props.col}));
     }
 
     const lastRow = props.rows === props.row + 1;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useReducer } from 'react';
+import React, { useEffect, useRef, useReducer, useState, useContext } from 'react';
 import styles from "./MatrixEditor.module.css"
 import Table from "./table/Table"
 import MatrixExport from "./matrixTools/MatrixExport"
@@ -7,70 +7,96 @@ import MatrixActions from './matrixTools/MatrixActions';
 import TextImport from './matrixTools/TextImport';
 import SelectionMenu from './matrixTools/SelectionMenu';
 
-import { cloneMatrix, updateMatrixEntry } from '../../matrixFunctions';
+import { editSelection, pasteMatrix, spliceMatrix } from '../../matrixFunctions';
 import { Tools, ToolsAction } from '../MatrixGenerator';
-import { updateMatrix } from '../../../features/matrices-slice';
+import { backspaceBoxSelection, BoxSelection, clearBoxSelection, updateEntry, updateMatrix } from '../../../features/matrices-slice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
+import { AlertContext } from '../../App';
 
 interface MatrixEditorProps {
     toolActive: Tools
     toolDispatch: React.Dispatch<ToolsAction>
 }
 
-type Cell = {x: number, y: number}
-
-export type BoxSelection = {start: Cell, end: Cell} | null
-
-export type BoxSelectionAction =
-    {"type": "CLEAR"} | 
-    {"type": "SET_BOTH", payload: {start: Cell, end: Cell} } |
-    {"type": "SET_START", payload: {start: Cell} } |
-    {"type": "SET_END", payload: {end: Cell} }
-
 const MatrixEditor = (props: MatrixEditorProps) => {
-    const {matrices, selection, undoStack} = useAppSelector((state) => state.matricesData);
+    const {matrices, selection, boxSelection} = useAppSelector((state) => state.matricesData);
     const settings = useAppSelector((state) => state.settings);
-    const matrixDispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
     const matrix = selection in matrices ? matrices[selection] : null
-    const boxSelectionReducer = (state: BoxSelection, action: BoxSelectionAction) => {
-        if (settings["Disable Selection"])
-            return null;
 
-        switch (action.type) {
-            case "CLEAR":
-                return null;
-    
-            case "SET_START":
-                if (!state) 
-                    return null;
-                return {
-                    start: action.payload.start,
-                    end: state.end,
-                }
-            
-            case "SET_END":
-                if (!state) 
-                    return null;
-                return {
-                    start: state.start,
-                    end: action.payload.end,
-                }
+    const addAlert = useContext(AlertContext)
 
-            case "SET_BOTH":
-                return {
-                    start: action.payload.start,
-                    end: action.payload.end,
-                }
-       }
-    }
-
-    const [boxSelection, boxSelectionDispatch] = useReducer(boxSelectionReducer, null);
-    const mouseDown = useRef<boolean>(false);
+    const [selectionClipboard, setSelectionClipboard] = useState<string[][] | null>(null);
 
     useEffect(() => {
-        boxSelectionDispatch({type: "CLEAR"});
+        dispatch(clearBoxSelection())
     }, [selection]);
+
+    useEffect(() => {
+        if (!boxSelection)
+            return;
+
+        if (!matrix)
+            dispatch(clearBoxSelection())
+        else {
+            const xLen = matrix[0].length
+            const yLen = matrix.length
+            if (boxSelection.start.x > xLen || boxSelection.end.x > xLen || boxSelection.start.y > yLen || boxSelection.end.y > yLen) {
+                dispatch(clearBoxSelection())
+            }
+        }
+
+    }, [matrix])
+
+    useEffect(() => {
+        if (!boxSelection)
+            return;
+        
+        const handleClipboard = (e: KeyboardEvent) => {
+            if (e.metaKey && (!document.activeElement || document.activeElement.tagName !== "INPUT"))
+                if (e.key === "c") {
+                    setSelectionClipboard(
+                        spliceMatrix(matrices[selection],
+                            boxSelection.start.x,
+                            boxSelection.start.y,
+                            boxSelection.end.x,
+                            boxSelection.end.y))
+                    
+                        addAlert("Copied selection to clipboard", 1000)
+
+                } else if (e.key === "v") {
+                    if (!selectionClipboard)
+                        return;
+
+                    let boxSelectionX = Math.abs(boxSelection.start.x - boxSelection.end.x) + 1
+                    let boxSelectionY = Math.abs(boxSelection.start.y - boxSelection.end.y) + 1
+
+                    if (boxSelectionX !== selectionClipboard[0].length - 1 || boxSelectionY !== selectionClipboard.length - 1) {
+                        addAlert(`Invalid selection to paste clipboard. Clipboard matrix is ${selectionClipboard[0].length - 1} x ${selectionClipboard.length - 1}`, 1000, "error");
+                        return
+                    }
+
+                    const pasted = pasteMatrix(
+                        matrices[selection],  //matrix to copy from
+                        selectionClipboard, //matrix to paste on
+                        boxSelection.start.x,
+                        boxSelection.start.y,
+                        boxSelection.end.x,
+                        boxSelection.end.y)
+
+                    if (pasted) {
+                        dispatch(updateMatrix( {"name" : selection, "matrix" : pasted}));
+                        addAlert("Pasted clipboard", 1000)
+                    }
+                }
+            }
+
+        window.addEventListener('keydown', handleClipboard)
+
+        return () => removeEventListener('keydown', handleClipboard)
+
+    }, [selection, selectionClipboard, setSelectionClipboard, boxSelection])
 
 
     const close = () => {
@@ -101,15 +127,21 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                                 && /^[\d]+:[\d]+$/.test(document.activeElement.id))//num:num
                     )
 
-    //for multi cell editing
-    let lastValue = null;
-    if (boxSelection && undoStack.length > 0 && selection in undoStack[undoStack.length - 1]
-        && (boxSelection.start.x !== boxSelection.end.x || boxSelection.start.y !== boxSelection.end.y)) {
-        lastValue = undoStack[undoStack.length - 1][selection] [boxSelection.start.x][boxSelection.start.y] 
-    }        
+    const backspaceSelection = (e: React.KeyboardEvent) => {
+        if (!matrix || e.key !== "Backspace" || settings["Disable Selection"])
+            return
+        
+        const input = e.target as HTMLInputElement
+        //if backspace is clicked on an empty box, we want to remove one character from all boxes selected
+        if (input.value === "" || (input.selectionStart === 0 && input.selectionEnd === 0)) {
+            e.preventDefault()
+            e.stopPropagation();
+            dispatch(backspaceBoxSelection());
+        }
+    }
 
     return (
-        <div className={styles.matrixEditor} onMouseUp={() => { mouseDown.current = false }}>
+        <div className={styles.matrixEditor}>
             {matrix && props.toolActive["Actions"] ?
                 <MatrixActions
                     close={close}
@@ -126,9 +158,6 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
             {matrix && !settings["Disable Selection"] && props.toolActive["Selection"] ?
                 <SelectionMenu
-                    boxSelection={boxSelection}
-                    boxSelectionDispatch={boxSelectionDispatch}
-        
                     close={close}
                     showFullInput={showFullInput}
 
@@ -155,14 +184,12 @@ const MatrixEditor = (props: MatrixEditorProps) => {
             {matrix ?
                 (matrix.length <= 51 && matrix[0].length <= 51) ?
                     <Table
-                        name={selection}
                         matrix={matrix}
-                        boxSelection = {boxSelection}
-                        boxSelectionDispatch = {boxSelectionDispatch}
-                        mouseDown={mouseDown}
-                        lastValue={lastValue}
+                        selection = {selection}
+                        backspaceSelection = {backspaceSelection}
                     />
-                    : <div className={styles.bigMatrixInfo}>
+                    : 
+                    <div className={styles.bigMatrixInfo}>
                         Matrices larger than 50 x 50 are too big to be displayed<br />
                         Use Import or Matrix Actions to edit the matrix<br />
                         Use Export to view the matrix
@@ -172,20 +199,21 @@ const MatrixEditor = (props: MatrixEditorProps) => {
             {showFullInput ? 
                 <input className={"fixed-bottom " + styles.fullInput}
                 value={matrix ? matrix[boxSelection.start.x][boxSelection.start.y] : ""}
-                
                 id = {"fullInput"}
                 onChange={(e) => {
-                    if (matrix) {
-                        const changed = updateMatrixEntry(
-                            cloneMatrix(matrix), 
-                            boxSelection.start.x, 
-                            boxSelection.start.y, 
-                            e.target.value, 
-                            settings["Mirror Inputs"]);
+                    e.stopPropagation()
+                    console.log("full")
+                    dispatch(updateEntry({
+                        "name": selection, 
+                        "row": boxSelection.start.x,
+                        "col": boxSelection.start.y,
+                        "updated": (e.target as HTMLInputElement).value,
+                        "mirror": settings["Mirror Inputs"]
+                    }));
+                }} 
+                onKeyDown = {(e) => backspaceSelection(e)}
+                /> 
 
-                        matrixDispatch(updateMatrix({ "name": selection, "matrix": changed}));
-                    }
-                }} /> 
             : null}
 
             <p className = {styles.currentSelection}>

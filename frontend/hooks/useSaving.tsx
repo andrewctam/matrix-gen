@@ -238,37 +238,12 @@ const useSaving = (addAlert: AddAlert) => {
     }
 
 
-    return [doneLoading, refreshTokens];
+    //initial load
+    return doneLoading;
 }
 
 export default useSaving
 
-
-export const refreshTokens = async (refreshToken: string) => {
-    const url = `${process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_PROD_URL : process.env.NEXT_PUBLIC_DEV_URL}/api/token`;
-    const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + refreshToken
-        }
-    }).then((response) => {
-        if (response.status === 401) { //invalid refresh token
-            return null;
-        }
-
-        return response.json()
-    }).catch(error => {
-        console.log(error)
-    })
-
-    if (response) {
-        console.log("Tokens refreshed")
-        return [response["access_token"], response["refresh_token"]]
-    } else {
-        return [null, null]; //failed to refresh tokens
-    }
-}
 
 export const retry = async (retry: (overrideAccessToken?: string) => void,
                             username: string, 

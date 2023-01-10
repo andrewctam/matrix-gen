@@ -70,23 +70,24 @@
 
 .option {
     display: inline-block;
-    padding: 5px;
-    margin: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-right: 20px;
+    margin-left: 5px;
     user-select: none;
     color: white;
-    border-radius: 10px;
+    cursor: pointer;
 }
 
 
 .selectedOption {
     color: rgb(102, 199, 239);
-    border: 1px solid rgb(102, 199, 239);
 }
 
 
 .loginSubBox {
     border: 1px solid black;
-    background: rgb(95, 93, 93);
+    background: rgb(95, 95, 95);
     width: fit-content;
     padding: 10px;
     border-radius: 5px

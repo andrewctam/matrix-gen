@@ -13,15 +13,13 @@ import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 import { AlertContext } from "../../../App";
 
 interface SelectionMenuProps {
-    boxSelection: BoxSelection
-    boxSelectionDispatch: React.Dispatch<BoxSelectionAction>
     close: () => void
     showFullInput: boolean
 }
 
 const SelectionMenu = (props: SelectionMenuProps) => {
-    const {matrices, selection} = useAppSelector((state) => state.matricesData);
-    const matrixDispatch = useAppDispatch();
+    const {matrices, selection, boxSelection} = useAppSelector((state) => state.matricesData);
+    const dispatch = useAppDispatch();
 
     const [spliceName, setSpliceName] = useState("");
     const [pasteName, setPasteName] = useState("");
@@ -46,32 +44,32 @@ const SelectionMenu = (props: SelectionMenuProps) => {
     var generatedName = generateUniqueName(matrices);
     
     return <div className={styles.selectionSettingsContainer + " fixed-bottom"} style = {{"bottom": props.showFullInput ? "28px" : "0"}} ref = {selectionMenu}>
-        {props.boxSelection === null ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
+        {boxSelection === null ? <div>No boxes selected: drag your mouse to select a submatrix.</div>
             : <div>
                 <div>
                     {"Selection Size: " +
-                        (Math.abs(props.boxSelection.start.x - props.boxSelection.end.x) + 1)
+                        (Math.abs(boxSelection.start.x - boxSelection.end.x) + 1)
                         + " x " +
-                        (Math.abs(props.boxSelection.start.y - props.boxSelection.end.y) + 1)}
+                        (Math.abs(boxSelection.start.y - boxSelection.end.y) + 1)}
                 </div>
 
-                <div>{"Start: Row " + (props.boxSelection.start.x + " Column " + props.boxSelection.start.y)}</div>
+                <div>{"Start: Row " + (boxSelection.start.x + " Column " + boxSelection.start.y)}</div>
 
-                <div>{"End: Row " + (props.boxSelection.end.x + " Column " + props.boxSelection.end.y)}</div>
+                <div>{"End: Row " + (boxSelection.end.x + " Column " + boxSelection.end.y)}</div>
 
                
 
                 <TextActionButton
                     name={"Save Selection as New Matrix: "}
                     action={() => {
-                        if (!props.boxSelection) return;
+                        if (!boxSelection) return;
                         const spliced = spliceMatrix(matrices[selection],
-                            props.boxSelection.start.x,
-                            props.boxSelection.start.y,
-                            props.boxSelection.end.x,
-                            props.boxSelection.end.y)
+                            boxSelection.start.x,
+                            boxSelection.start.y,
+                            boxSelection.end.x,
+                            boxSelection.end.y)
 
-                        matrixDispatch(updateMatrix( {"name" : spliceName ? spliceName : generatedName, "matrix" : spliced}));
+                        dispatch(updateMatrix( {"name" : spliceName ? spliceName : generatedName, "matrix" : spliced}));
                     }}
 
                     updateParameter={updateName}
@@ -91,18 +89,18 @@ const SelectionMenu = (props: SelectionMenuProps) => {
                             return;
                         }
 
-                        if (!props.boxSelection) 
+                        if (!boxSelection) 
                             return;
                         const pasted = pasteMatrix(
                             matrices[selection], //matrix to paste on
                             matrices[pasteName],  //matrix to copy from
-                            props.boxSelection.start.x,
-                            props.boxSelection.start.y,
-                            props.boxSelection.end.x,
-                            props.boxSelection.end.y)
+                            boxSelection.start.x,
+                            boxSelection.start.y,
+                            boxSelection.end.x,
+                            boxSelection.end.y)
 
                         if (pasted)
-                            matrixDispatch(updateMatrix( {"name" : selection, "matrix" : pasted}));
+                            dispatch(updateMatrix( {"name" : selection, "matrix" : pasted}));
                         else
                             addAlert("Error: Selection dimensions and pasted matrix dimensions must match.", 5000, "error");
 

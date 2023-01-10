@@ -34,7 +34,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
     const [replaceY, setReplaceY] = useState("");
 
     const {selection, matrices} = useAppSelector((state) => state.matricesData)
-    const matrixDispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
     const addAlert = useContext(AlertContext);
 
     const matrixActions = useExpand() as React.MutableRefObject<HTMLDivElement>;
@@ -108,14 +108,14 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: transpose(matrix)}))
+                    dispatch(updateMatrix({name: selection, matrix: transpose(matrix)}))
                 }}
                 name={"Transpose"}
             />
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: rotate90Degrees(matrix)}))
+                    dispatch(updateMatrix({name: selection, matrix: rotate90Degrees(matrix)}))
                 }}
                 name={"Rotate 90 ↻"}
             />
@@ -123,7 +123,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: shuffle(matrix)}))
+                    dispatch(updateMatrix({name: selection, matrix: shuffle(matrix)}))
                 }}
                 name={"Shuffle"}
             />
@@ -131,14 +131,14 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: mirrorRowsCols(matrix, true)}))
+                    dispatch(updateMatrix({name: selection, matrix: mirrorRowsCols(matrix, true)}))
                 }}
                 name={"Mirror Rows Across Diagonal"}
             />
             <BasicActionButton
                 buttonStyle = {"primary"} 
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: mirrorRowsCols(matrix, false)}))
+                    dispatch(updateMatrix({name: selection, matrix: mirrorRowsCols(matrix, false)}))
                 }}
                 name={"Mirror Columns Across Diagonal"}
             />
@@ -151,7 +151,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TextActionButton
                 name="Fill Empty With: "
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: fillEmpty(matrix, fillEmptyWithThis)}))
+                    dispatch(updateMatrix({name: selection, matrix: fillEmpty(matrix, fillEmptyWithThis)}))
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -161,7 +161,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TextActionButton
                 name="Fill All With: "
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: fillAll(matrix, fillAllWithThis)}))
+                    dispatch(updateMatrix({name: selection, matrix: fillAll(matrix, fillAllWithThis)}))
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -171,7 +171,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TextActionButton
                 name="Fill Diagonal With: "
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: fillDiagonal(matrix, fillDiagonalWithThis)}))
+                    dispatch(updateMatrix({name: selection, matrix: fillDiagonal(matrix, fillDiagonalWithThis)}))
                 }}
                 updateParameter={updateParameter}
                 width={"40px"}
@@ -181,7 +181,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
             <TwoTextActionButton
                 name="Replace X With Y: "
                 action={() => {
-                    matrixDispatch(updateMatrix({name: selection, matrix: fillXY(matrix, replaceX, replaceY)}))
+                    dispatch(updateMatrix({name: selection, matrix: fillXY(matrix, replaceX, replaceY)}))
                 }}
                 updateParameter={updateParameter}
                 id1={"replaceX"}
@@ -207,7 +207,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
                     }
                     const reshaped = reshapeMatrix(matrix, parseInt(reshapeRows), parseInt(reshapeCols))
                     if (reshaped)
-                        matrixDispatch(updateMatrix({name: selection, matrix: reshaped}))
+                        dispatch(updateMatrix({name: selection, matrix: reshaped}))
                     else 
                         addAlert("Enter valid numbers for rows and columns.", 5000, "error")
                 }}
@@ -229,7 +229,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
                     }
                     const resized = resizeMatrix(matrix, parseInt(resizeRows) + 1, parseInt(resizeCols) + 1)
                     if (resized)
-                        matrixDispatch(updateMatrix({name: selection, matrix: resized}))
+                        dispatch(updateMatrix({name: selection, matrix: resized}))
                     else 
                         addAlert("Enter a number for rows and columns", 5000, "error");
 
@@ -249,7 +249,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
                     const random = randomMatrix(matrix, parseInt(randomLow), parseInt(randomHigh))
 
                     if (random)
-                        matrixDispatch(updateMatrix({name: selection, matrix: random}))
+                        dispatch(updateMatrix({name: selection, matrix: random}))
                     else
                         addAlert(`Invalid range`, 5000, "error");
 
@@ -269,7 +269,7 @@ const MatrixActions = (props: MatrixActionsProps) => {
                     const scattered = scatter(matrix, parseInt(scatterLow), parseInt(scatterHigh))
 
                     if (scattered)
-                        matrixDispatch(updateMatrix({name: selection, matrix: scattered}))
+                        dispatch(updateMatrix({name: selection, matrix: scattered}))
                     else   
                         addAlert(`Invalid range`, 5000, "error");
 

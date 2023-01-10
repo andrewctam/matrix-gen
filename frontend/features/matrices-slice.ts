@@ -1,20 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { generateUniqueName, cloneMatrix, addRowsAndCols, addRows, addCols, updateMatrixEntry, deleteMatrixRowCol } from "../components/matrixFunctions"
+import { generateUniqueName, cloneMatrix, addRowsAndCols, addRows, addCols, updateMatrixEntry, deleteMatrixRowCol, editSelection } from "../components/matrixFunctions"
 
 export type Matrices = { [key: string]: string[][] }
+
+type Cell = {x: number, y: number}
+
+export type BoxSelection = {start: Cell, end: Cell} | null
 
 interface MatricesState {
     matrices: Matrices,
     selection: string,
     undoStack: Matrices[],
-    redoStack: Matrices[]
+    redoStack: Matrices[],
+    boxSelection: BoxSelection
 }
 
 const initialState: MatricesState = {
     matrices: { "A": [["", ""], ["", ""]] },
     selection: "A",
     undoStack: [],
-    redoStack: []
+    redoStack: [],
+    boxSelection: null
 }
 
 export const matricesSlice = createSlice({
@@ -121,8 +127,54 @@ export const matricesSlice = createSlice({
             state.undoStack.push({ ...state.matrices });
 
             const { name, row, col, updated, mirror } = action.payload;
-            const modified = updateMatrixEntry(cloneMatrix(state.matrices[name]), row, col, updated, mirror)
+
+            let modified
+            if (state.boxSelection !== null && (state.boxSelection.start.x !== state.boxSelection.end.x || state.boxSelection.start.y !== state.boxSelection.end.y)) {
+                const prevValue = state.matrices[name][state.boxSelection.start.x][state.boxSelection.start.y]
+                const lenDiff = updated.length - prevValue.length;
+                
+                if (lenDiff === 0)
+                    return;
+                else if (lenDiff < 0) {
+                    modified = editSelection(state.matrices[name],
+                                                state.boxSelection.start.x,
+                                                state.boxSelection.start.y,
+                                                state.boxSelection.end.x,
+                                                state.boxSelection.end.y,
+                                                undefined,
+                                                true)
+                } else {
+                    let difference = "";
+                    for (let i = 0; i < updated.length; i++) {
+                        if (prevValue.charAt(i) !== updated.charAt(i)) {
+                            difference = updated.substring(i, i + lenDiff);
+                            break;
+                        }
+                    }
+        
+                    modified = editSelection(state.matrices[name],  
+                                                state.boxSelection.start.x,
+                                                state.boxSelection.start.y,
+                                                state.boxSelection.end.x,
+                                                state.boxSelection.end.y,
+                                                difference, undefined)
+                }
+            } else {
+                modified = cloneMatrix(state.matrices[name])
+            }
+            modified = updateMatrixEntry(modified, row, col, updated, mirror)
+
             state.matrices[name] = modified;
+        },
+        backspaceBoxSelection: (state: MatricesState) => {
+            if (!state.boxSelection)
+                return;
+
+            state.matrices[state.selection] = editSelection(state.matrices[state.selection],
+                                                state.boxSelection.start.x,
+                                                state.boxSelection.start.y,
+                                                state.boxSelection.end.x,
+                                                state.boxSelection.end.y, undefined, true)
         },
         renameMatrix: (state: MatricesState, action: PayloadAction<{ oldName: string, newName: string }>) => {
             state.undoStack.push({ ...state.matrices });
@@ -184,6 +236,38 @@ export const matricesSlice = createSlice({
             }
 
         },
+        setBoxSelectionStart: (state: MatricesState, action: PayloadAction<Cell>) => {
+            if (!state.boxSelection)
+                return;
+
+            state.boxSelection = {
+                start: action.payload,
+                end: state.boxSelection.end
+            }
+
+        },
+        setBoxSelectionEnd: (state: MatricesState, action: PayloadAction<Cell>) => {
+            if (!state.boxSelection)
+                return;
+
+            state.boxSelection = {
+                start: state.boxSelection.start,
+                end: action.payload
+            }
+        },
+        setBoxSelection: (state: MatricesState, action: PayloadAction<BoxSelection>) => {
+            if (!action.payload)
+                return;
+
+            state.boxSelection = {
+                start: action.payload.start,
+                end: action.payload.end
+            }
+        },
+        clearBoxSelection: (state: MatricesState) => {
+            state.boxSelection = null
+        }
+
 
     }
 
@@ -191,4 +275,22 @@ export const matricesSlice = createSlice({
 
 
 export default matricesSlice.reducer;
-export const { updateSelection, updateAllMatrices, updateMatrix, addRow, addCol, addRowAndCol, updateEntry, renameMatrix, deleteMatrix, undo, redo, deleteRowCol, clearStacks, loadLocalMatrices } = matricesSlice.actions;
+export const { updateSelection,
+                updateAllMatrices,
+                updateMatrix,
+                addRow,
+                addCol,
+                addRowAndCol,
+                updateEntry,
+                backspaceBoxSelection,
+                renameMatrix,
+                deleteMatrix,
+                undo,
+                redo,
+                deleteRowCol,
+                clearStacks,
+                loadLocalMatrices,
+                setBoxSelectionStart,
+                setBoxSelectionEnd,
+                setBoxSelection,
+                clearBoxSelection } = matricesSlice.actions;

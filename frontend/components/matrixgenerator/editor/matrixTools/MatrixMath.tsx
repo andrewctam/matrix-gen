@@ -19,7 +19,7 @@ interface MatrixMathProps {
 const MatrixMath = (props: MatrixMathProps) => {
     const {matrices, selection} = useAppSelector((state) => state.matricesData);
     const settings = useAppSelector((state) => state.settings);
-    const matrixDispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
     const [expression, setExpression] = useState("");
     const [resultName, setResultName] = useState("");
@@ -120,7 +120,7 @@ const MatrixMath = (props: MatrixMathProps) => {
         else
             saveName = placeholderName;
 
-        matrixDispatch(updateMatrix({ "name": saveName, "matrix": matrix}))
+        dispatch(updateMatrix({ "name": saveName, "matrix": matrix}))
     }
 
 
@@ -182,7 +182,7 @@ const MatrixMath = (props: MatrixMathProps) => {
                 tempObj[name] = value;
             }
 
-            matrixDispatch(updateAllMatrices({ "matrices": tempObj }));
+            dispatch(updateAllMatrices({ "matrices": tempObj }));
 
             addAlert(`Results added to matrices!`, 5000, "success");
         }

@@ -176,12 +176,12 @@ export const mirrorRowsCols = (matrix: string[][], mirrorRowsToCols: boolean) =>
         clone = addRows(clone, matrix[0].length - matrix.length)
     }
 
-    for (let row = 0; row < matrix.length; row++) {
-        for (let col = row + 1; col < matrix.length; col++) {
+    for (let i = 0; i < clone.length; i++) {
+        for (let j = i + 1; j < clone.length; j++) {
             if (mirrorRowsToCols)
-                clone[col][row] = clone[row][col];
+                clone[j][i] = clone[i][j];
             else //mirrorColsToRows
-                clone[row][col] = clone[col][row];
+                clone[i][j] = clone[j][i];
 
         }
     }
@@ -397,7 +397,7 @@ export const createIdentity = (size: number) => {
 }
 
 //functions related to matrix selection
-export const editSelection = (matrix: string[][], text: string | number, x1: number, y1: number, x2: number, y2: number) => {
+export const editSelection = (matrix: string[][], x1: number, y1: number, x2: number, y2: number, text?: string, backspace?: boolean) => {
 
     if (x1 > x2) { //x1 to smaller
         var temp = x1;
@@ -415,7 +415,7 @@ export const editSelection = (matrix: string[][], text: string | number, x1: num
 
     for (let i = x1; i <= x2; i++)
         for (let j = y1; j <= y2; j++)
-            if (text === 8) //backspace
+            if (backspace) //backspace
                 clone[i][j] = clone[i][j].substring(0, clone[i][j].length - 1); //remove last char
             else
                 clone[i][j] += text;
