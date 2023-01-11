@@ -15,14 +15,13 @@ import { useAppDispatch, useAppSelector } from "../../../../hooks/hooks";
 import { AlertContext } from "../../../App";
 
 interface TextImportProps {
-    currentName: string
     close: () => void
     showFullInput: boolean
 }
 
 
 const TextImport = (props: TextImportProps) => {
-    const {matrices} = useAppSelector((state) => state.matricesData);
+    const { matrices, selection } = useAppSelector((state) => state.matricesData);
     const dispatch = useAppDispatch();
 
     const [overwrite, setOverwrite] = useState(true);
@@ -181,11 +180,11 @@ const TextImport = (props: TextImportProps) => {
         if (ignoreWhitespace)
             text = text.replaceAll(/\s/g,"")
         
-        if (props.currentName && overwrite) {//overwrite current matrix
-            if (props.currentName === "0")
+        if (selection && overwrite) {//overwrite current matrix
+            if (selection === "0")
                 var name = "A"
             else
-                var name = props.currentName;
+                var name = selection;
         } else if (newName === "") //input empty, so auto generate
             name = generateUniqueName(matrices);
         else //name provided
@@ -214,7 +213,6 @@ const TextImport = (props: TextImportProps) => {
 
                 //remove empty rows
                 matrix.push(Array(maxLen).fill(""));
-                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
                 
                 break;
                 
@@ -252,8 +250,6 @@ const TextImport = (props: TextImportProps) => {
 
                 //add empty row
                 matrix.push(Array(maxLen).fill(""));
-                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
-
                 } catch (error) {
                     console.log(error); 
                     addAlert("Error in input.", 5000, "error");
@@ -306,7 +302,6 @@ const TextImport = (props: TextImportProps) => {
                 }
 
 
-                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
                 break;
 
             case "LaTeX":
@@ -362,15 +357,15 @@ const TextImport = (props: TextImportProps) => {
                             });
                     }
                 }
-                dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
-                dispatch(updateSelection(name));
                 break;
-
-            default: break;
-        }
-
+                
+                default: 
+                    return;
+            }
+            
+        dispatch(updateMatrix({"name" : name, "matrix" : matrix}));
+        dispatch(updateSelection(name));
         console.log(matrix)
-
     }
 
 
@@ -470,7 +465,7 @@ const TextImport = (props: TextImportProps) => {
         </div>
 
         <div className = "col-sm-4">
-            {props.currentName ? 
+            {selection ? 
                 <OverwriteInput
                 overwrite = {overwrite}
                 updateParameter = {updateParameter}

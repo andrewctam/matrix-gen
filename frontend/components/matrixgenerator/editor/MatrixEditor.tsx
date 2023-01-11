@@ -23,31 +23,36 @@ const MatrixEditor = (props: MatrixEditorProps) => {
     const settings = useAppSelector((state) => state.settings);
     const dispatch = useAppDispatch();
 
-    const matrix = selection in matrices ? matrices[selection] : null
-
     const addAlert = useContext(AlertContext)
 
     const [selectionClipboard, setSelectionClipboard] = useState<string[][] | null>(null);
+    
+    const matrix = selection in matrices ? matrices[selection] : null
+
 
     useEffect(() => {
-        dispatch(clearBoxSelection())
+        if (boxSelection) {
+            dispatch(clearBoxSelection())
+        }
     }, [selection]);
 
     useEffect(() => {
         if (!boxSelection)
             return;
 
-        if (!matrix)
-            dispatch(clearBoxSelection())
-        else {
-            const xLen = matrix[0].length
-            const yLen = matrix.length
+
+        //verify box selection if the matrix/boxSelection changes
+        if (matrix) {
+            const xLen = matrix.length
+            const yLen = matrix[0].length
             if (boxSelection.start.x > xLen || boxSelection.end.x > xLen || boxSelection.start.y > yLen || boxSelection.end.y > yLen) {
                 dispatch(clearBoxSelection())
             }
+        } else if (boxSelection) {
+            dispatch(clearBoxSelection())
         }
 
-    }, [matrix])
+    }, [matrix, boxSelection])
 
     useEffect(() => {
         if (!boxSelection)
@@ -72,7 +77,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     let boxSelectionX = Math.abs(boxSelection.start.x - boxSelection.end.x) + 1
                     let boxSelectionY = Math.abs(boxSelection.start.y - boxSelection.end.y) + 1
 
-                    if (boxSelectionX !== selectionClipboard[0].length - 1 || boxSelectionY !== selectionClipboard.length - 1) {
+                    if (boxSelectionY !== selectionClipboard[0].length - 1 || boxSelectionX !== selectionClipboard.length - 1) {
                         addAlert(`Invalid selection to paste clipboard. Clipboard matrix is ${selectionClipboard[0].length - 1} x ${selectionClipboard.length - 1}`, 1000, "error");
                         return
                     }
@@ -121,11 +126,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
     }
 
 
-    const showFullInput = boxSelection !== null && matrix !== null && document.activeElement !== null
-                        && (document.activeElement.id === "fullInput"
-                            || (document.activeElement.tagName === "INPUT" 
-                                && /^[\d]+:[\d]+$/.test(document.activeElement.id))//num:num
-                    )
+    
 
     const backspaceSelection = (e: React.KeyboardEvent) => {
         if (!matrix || e.key !== "Backspace" || settings["Disable Selection"])
@@ -140,6 +141,11 @@ const MatrixEditor = (props: MatrixEditorProps) => {
         }
     }
 
+    const showFullInput = boxSelection !== null && matrix !== null && document.activeElement !== null
+                        && (document.activeElement.id === "fullInput"
+                            || (document.activeElement.tagName === "INPUT" 
+                                && /^[\d]+:[\d]+$/.test(document.activeElement.id))//num:num
+                    )
     return (
         <div className={styles.matrixEditor}>
             {matrix && props.activeTool === ActiveTool.Actions ?
@@ -166,7 +172,6 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
             {props.activeTool === ActiveTool.Import ?
                 <TextImport
-                    currentName={selection}
                     close={close}
                     showFullInput={showFullInput}
 
@@ -191,7 +196,7 @@ const MatrixEditor = (props: MatrixEditorProps) => {
                     : 
                     <div className={styles.bigMatrixInfo}>
                         Matrices larger than 50 x 50 are too big to be displayed<br />
-                        Use Import or Matrix Actions to edit the matrix<br />
+                        Use Import or Actions to edit the matrix<br />
                         Use Export to view the matrix
                     </div> 
             : null}
@@ -215,9 +220,15 @@ const MatrixEditor = (props: MatrixEditorProps) => {
 
             : null}
 
+            {selection !== "" ?
             <p className = {styles.currentSelection}>
                 {formatName(selection) + " " + formatSelection(boxSelection)}
-            </p>
+            </p> 
+            :  
+            <div className={styles.bigMatrixInfo}>
+                No Matrix Selected
+            </div> 
+            }
 
         </div>)
 

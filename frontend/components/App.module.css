@@ -28,13 +28,14 @@
   cursor: pointer;
 }
 
-.toggleTutorial {
+.tutorialLink {
   position: absolute;
   padding-left: 10px;
   padding-right: 10px;
   top: 5px;
   right: 10px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 
@@ -50,13 +51,6 @@
   position: relative;
 }
 
-.closeTutorial {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  width: fit-content;
-  height: fit-content;
-}
 
 .tutorialBody {
   margin-right: 15%;

@@ -47,7 +47,7 @@ const useMove = (element: React.MutableRefObject<HTMLElement | null>, relElement
             setX(rect.left - 10);
             setY(2 * rect.height);
         }
-    }, [relElement, relElement.current, element, element.current]) //reset position when opened/closed
+    }, [relElement, relElement.current]) //initalize position
     
     useEffect(() => {
         window.addEventListener("mouseup", handleMouseUp);

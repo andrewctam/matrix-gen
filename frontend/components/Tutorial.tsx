@@ -1,28 +1,13 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import styles from "./App.module.css";
 
-interface TutorialProps {
-    closeTutorial: () => void
-}
-
-interface TutorialButtonProps {
-    selected: string
-    name: string
-    text: string
-    setSelected: (str: string) => void
-}
-
-
-const Tutorial = (props: TutorialProps) => {
+const Tutorial = () => {
     const [selected, setSelected] = useState("editor");
-    const [specificTutorial, setSpecificTutorial] = useState<JSX.Element | null>(null)
-
-    useLayoutEffect(() => {
-        var inside = null;
+        let selectedTutorial = null;
         switch (selected) {
             case "editor":
-                inside = <div>
+                selectedTutorial = <div>
                     The table below can be used to modify your matrices. The white boxes represent your matrix, and the red boxes allow you to quickly expand the matrix.
                     <ul className={styles.tutorialList}>
                         <li>Typing in a white box will update the corresponding entry. </li>
@@ -38,7 +23,7 @@ const Tutorial = (props: TutorialProps) => {
                 </div>
                 break;
             case "saving":
-                inside = <div>
+                selectedTutorial = <div>
                     You can create multiple matrices and swap between them. If you need your matrices to persist after you close this webpage, you can also save them to your local browser storage or online account storage. The matrices will automatically be reloaded when this webpage is reopened.
                     <ul className={styles.tutorialList}>
                         <li>All matrices must have a name. Valid characters are uppercase and lowercase letters and underscores.</li>
@@ -49,7 +34,7 @@ const Tutorial = (props: TutorialProps) => {
                 </div>
                 break;
             case "actions":
-                inside = <div>
+                selectedTutorial = <div>
                     Matrix Actions allows you to modify your matrix quickly.
                     <ul className={styles.tutorialList}>
                         <li>{"Transpose will switch the matrix's rows and columns"}</li>
@@ -67,21 +52,21 @@ const Tutorial = (props: TutorialProps) => {
                 </div>
                 break;
             case "math":
-                inside = <div>
+                selectedTutorial = <div>
                     You can evaluate mathematical expressions of your matrices using Matrix Math.
                     <ul className={styles.tutorialList}>
                         <li>Enter a math expression using the name of matrices and these operators (+, -, *, ^)</li>
                         <li>You can adjust the decimal places to round to in the settings</li>
                         <li>The answer will be saved as a new matrix.</li>
                         <li>Multiplication can be scalar or matrix multiplication. For example, 2 * A would multiply each element by 2, and A * A would do matrix multiplication.</li>
-                        <li>The Matrix Reductions buttons will directly reduce your matrix with the specificed algorithms.</li>
+                        <li>The Matrix Decompositions buttons will directly reduce your matrix into matrices with the specificed algorithms. They will be saved as new matrices with appropriate names.</li>
                         <li>If you matrix is square, the determinant of the matrix will be displayed</li>
 
                     </ul>
                 </div>
                 break;
             case "selection":
-                inside = <div>
+                selectedTutorial = <div>
                     You can drag your mouse over boxes to select a sub matrix. Then, you can edit all the elements in the selection, save the selection to another matrix, or paste another matrix of the same size into the selection.
                     <ul className={styles.tutorialList}>
                         <li>Drag your mouse over boxes to select them.</li>
@@ -94,7 +79,7 @@ const Tutorial = (props: TutorialProps) => {
                 </div>
                 break;
             case "importing":
-                inside = <div>
+                selectedTutorial = <div>
                     You can import your matrices from plain text following a specific format.
                     <ul className={styles.tutorialList}>
                         <li>When importing, you can either overwrite the current matrix or save it as a new matrix. If you save it as a new matrix, you can enter a new name or it will automatically generate one if no new name is provided.</li>
@@ -106,41 +91,21 @@ const Tutorial = (props: TutorialProps) => {
                     </ul>
                 </div>
                 break;
-            case "exporting":
-                inside = <div>
-                    You can export your matrices to plain text for use in programming, LaTeX, etc.
-                    <ul className={styles.tutorialList}>
-                        <li>The output will appear in the large text box for you to copy it.</li>
-                        <li>The 2D Arrays option will export the matrix in row major order. The quick options will allow you to quickly change the settings preset values.</li>
-                        <li>The LaTeX option exports the matrix following LaTeX syntax. You can choose if you want to automatically add escapes for these characters: {"&%$#_{}~^\\"}</li>
-                    </ul>
-                </div>
-                break;
 
             default: break;
         }
-        setSpecificTutorial(<div className={styles.specificTutorial}>{inside}</div>);
-    }, [selected])
 
 
-    const TutorialButton = (props: TutorialButtonProps) => {
-        return <button
-            className={styles.tutorialButton + " btn btn-" + (props.selected === props.name ? "dark" : "light")}
-            onClick={() => { props.setSelected(props.name) }}>
-            {props.text}
-        </button>
-    }
-
-    return <div className={styles.tutorial}>
-       
-
-        <h1>Matrix Generator</h1>
-        <p className={styles.tutorialBody}>This app can help you quickly create and modify matrices.
-            It features an interactive table to quickly modify your matrices, quick actions such as transpose
-            to modify the entire matrix, and export options to quickly save your matrix as plain text.
-            You can also import matrices from text. The app has numerous uses, such as quickly creating LaTeX matrices,
-            creating random matrices of arbitrary size, doing matrix math, etc. Click the buttons below to see how to
-            use the specific parts of this app:
+   
+    return (
+    <div className={styles.tutorial}>
+    
+        <h1>Matrix Generator Tutorial</h1>
+        <p className={styles.tutorialBody}>
+            This website is made for quickly creating and modify matrices.
+            It uses an interactive table to quickly input matrices, quick actions such as transpose
+            to modify the entire matrix, a math calculator, and export options to quickly save your matrix as plain text.
+            Click the buttons below to see how to use the specific parts of this app:
         </p>
 
         <TutorialButton text="Matrix Editor" name="editor" setSelected={setSelected} selected={selected} />
@@ -149,17 +114,28 @@ const Tutorial = (props: TutorialProps) => {
         <TutorialButton text="Matrix Math" name="math" setSelected={setSelected} selected={selected} />
         <TutorialButton text="Selection" name="selection" setSelected={setSelected} selected={selected} />
         <TutorialButton text="Importing From Text" name="importing" setSelected={setSelected} selected={selected} />
-        <TutorialButton text="Export Matrix" name="exporting" setSelected={setSelected} selected={selected} />
 
-        {specificTutorial}
+        <div className={styles.specificTutorial}>
+            {selectedTutorial}
+        </div>
+    
+    </div>)
+}
 
-        <button
-            className={"btn btn-danger " + styles.closeTutorial}
-            onClick={props.closeTutorial}>
-            {"Close"}
-        </button>
-    </div>
 
+interface TutorialButtonProps {
+    selected: string
+    name: string
+    text: string
+    setSelected: (str: string) => void
+}
+
+const TutorialButton = (props: TutorialButtonProps) => {
+    return <button
+        className={styles.tutorialButton + " btn btn-" + (props.selected === props.name ? "dark" : "light")}
+        onClick={() => { props.setSelected(props.name) }}>
+        {props.text}
+    </button>
 }
 
 

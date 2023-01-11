@@ -3,6 +3,7 @@ import TopMenu from "./floatingmenu/TopMenu";
 import MatrixEditor from "./editor/MatrixEditor";
 import { useAppDispatch } from "../../hooks/hooks";
 import { redo, undo } from "../../features/matrices-slice";
+import useSaving from "../../hooks/useSaving";
 
 
 export const enum ActiveTool {
@@ -14,6 +15,7 @@ const MatrixGenerator = () => {
     const dispatch = useAppDispatch();
     const [activeTool, setActiveTool] = useState<ActiveTool>(ActiveTool.None);
 
+    const doneLoading = useSaving();
 
     useEffect(() => {
         const handleUndoRedo = (e: KeyboardEvent) => {
@@ -40,11 +42,11 @@ const MatrixGenerator = () => {
             setActiveTool = {setActiveTool}
         />
 
-
+        { doneLoading ?
         <MatrixEditor
             activeTool={activeTool}
             setActiveTool = {setActiveTool}
-        />
+        /> : null }
 
     </>)
 }

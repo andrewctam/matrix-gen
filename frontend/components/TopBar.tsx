@@ -1,25 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppSelector } from '../hooks/hooks';
 import styles from "./App.module.css";
 import SaveMatrices from './saving/SaveMatrices';
-import Tutorial from './Tutorial';
 
 
 const enum Hovering { None, Saving, Tutorial }
 
 const TopBar = () => {
     const [hovering, setHovering] = useState<Hovering>(Hovering.None);
-    const [showTutorial, setShowTutorial] = useState(false);
     const [showSaveMenu, setShowSaveMenu] = useState(false);
 
     const {username, mergeConflict, saveToLocal} = useAppSelector((state) => state.user)
-
-
-    useEffect(() => {
-        if (localStorage.getItem("First Visit") !== "0") {
-            setShowTutorial(true);
-        }
-    }, []);
 
 
     if (mergeConflict) {
@@ -47,7 +38,6 @@ const TopBar = () => {
                 onClick={(e) => { 
                     e.stopPropagation(); 
                     setShowSaveMenu(!showSaveMenu); 
-                    setShowTutorial(false) 
                 }}>
 
                 {saving + (showSaveMenu ? " ↑" : " Click for options ↓")}
@@ -55,25 +45,18 @@ const TopBar = () => {
         
 
             
-            <div className={styles.toggleTutorial} 
+            <a className={styles.tutorialLink} 
                 style={{ color: hovering === Hovering.Tutorial ? "rgb(100, 198, 198)" : "white" }}
                 onMouseEnter={() => { setHovering(Hovering.Tutorial) }}
                 onMouseLeave={() => { setHovering(Hovering.None) }}
-                onClick={(e) => { 
-                    e.stopPropagation(); 
-                    setShowTutorial(!showTutorial);
-                    setShowSaveMenu(false); 
-                }}> {"?"}
-            </div>
+                href = "/tutorial" target = "_blank">
+                {"?"}
+            </a>
         </div>
 
         <div className={styles.floatingContainer}>
             {showSaveMenu ?
                 <SaveMatrices closeSaveMenu={() => { setShowSaveMenu(false) }} />
-            : null}
-
-            {showTutorial ?
-                <Tutorial closeTutorial={() => { setShowTutorial(false) }} />
             : null}
         </div>
 

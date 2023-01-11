@@ -30,13 +30,15 @@ const MatrixMath = (props: MatrixMathProps) => {
     const addAlert = useContext(AlertContext);
 
     useEffect(() => {
-        if (!matrix || matrix.length === 0 || matrix[0].length === 0 || matrix.length !== matrix[0].length) {
+        if (!matrix || matrix.length !== matrix[0].length) {
             setDeterminant(null);
             return;
         }
-        
+        console.log(matrix)
         calculateDecomp("determinant");
     }, [matrix])
+
+    
 
     const matrixMath = useExpand() as React.MutableRefObject<HTMLDivElement>;
 
@@ -89,13 +91,13 @@ const MatrixMath = (props: MatrixMathProps) => {
             })
         }).then((response) => {
             if (response === undefined) {
-                addAlert("Can not connect to server", 5000, "error");
+                addAlert("Could not connect to server", 5000, "error");
                 setError(true)
                 setDeterminant(null);
                 return null;
             }
             if (response.status === 400) {
-                addAlert("Expression could not be evaluated", 5000, "error");
+                addAlert("Expression could not be evaluated. Invalid matrices or expression", 5000, "error");
                 return null;
             }
 
@@ -111,16 +113,10 @@ const MatrixMath = (props: MatrixMathProps) => {
         if (response === null) 
             return;
 
-        const matrix = JSON.parse(response.result)
-        console.log(matrix)
+        const result = JSON.parse(response.result)
+        dispatch(updateMatrix({ "name": resultName !== "" ? resultName : placeholderName, "matrix": result}))
+        addAlert("Result matrix added to matrices!", 5000);
 
-        let saveName = "";
-        if (resultName !== "")
-            saveName = resultName;
-        else
-            saveName = placeholderName;
-
-        dispatch(updateMatrix({ "name": saveName, "matrix": matrix}))
     }
 
 
@@ -186,7 +182,6 @@ const MatrixMath = (props: MatrixMathProps) => {
 
             addAlert(`Results added to matrices!`, 5000, "success");
         }
-
     }
 
     
