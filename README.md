@@ -20,7 +20,7 @@ The [Matrix Generator](https://matrixgen.web.app) is a full stack web app that a
 Clone this repository, and update the environmental variables in `backend/.env.template` (rename this to `.env`) and in `frontend/.env.local.template` (rename this to `.env.local`).
 
 ```
-git clone https://github.com/tamandrew/matrix-gen.git
+git clone https://github.com/andrewctam/matrix-gen.git
 ```
 ## Run with Docker
 In the root directory,
